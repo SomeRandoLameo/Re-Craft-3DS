@@ -1,0 +1,6 @@
+ReCraft3DS.smdh
+ReCraft3DS.3dsx
+ReCraft3DS.elf
+ReCraft3DS.lst
+build/*
+/.idea/*
