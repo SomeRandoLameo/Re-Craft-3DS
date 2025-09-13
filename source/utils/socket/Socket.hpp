@@ -1,24 +1,36 @@
-#pragma once
+#ifndef SOCKET_HPP
+#define SOCKET_HPP
+
+#include <3ds.h>
 #include <string>
 #include <cstdint>
+#include <vector>
+
+struct ServerInfo {
+    std::string motd;
+    std::string playerCount;
+    int onlinePlayers;
+    int maxPlayers;
+    bool success;
+    
+    ServerInfo() : onlinePlayers(-1), maxPlayers(-1), success(false) {}
+};
 
 class Socket {
-public:
-    Socket();
-    ~Socket();
-
-    void setTimeout(int ms);
-    void setTcpNoDelay(bool enable);
-    void setTrafficClass(int value);
-
-    bool connect(const std::string& host, int port, int timeoutMs);
-    int send(const void* data, size_t len);
-    int recv(void* buffer, size_t len);
-    std::string readString(size_t maxLen);
-
-    void close();
-
 private:
-    int sockfd;
-    int timeoutMs = 3000;
+    static u32 *SOC_buffer;
+    static bool socInitialized;
+
+public:
+    // Static methods for SOC management
+    static void initSOC();
+    static void shutdownSOC();
+
+    static std::vector<std::string> parseHost(const std::string& host);
+    static int parseIntWithDefault(const std::string& str, int defaultValue);
+    static bool isAllowedChar(char c);
+    static std::string readString(int sock, int maxLength);
+    static int utf16be_to_utf8(const uint8_t *in, int inLen, char *out, int outSize);
 };
+
+#endif
