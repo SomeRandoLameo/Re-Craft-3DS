@@ -6,16 +6,6 @@
 #include <cstdint>
 #include <vector>
 
-struct ServerInfo {
-    std::string motd;
-    std::string playerCount;
-    int onlinePlayers;
-    int maxPlayers;
-    bool success;
-    
-    ServerInfo() : onlinePlayers(-1), maxPlayers(-1), success(false) {}
-};
-
 class Socket {
 private:
     static u32 *SOC_buffer;
