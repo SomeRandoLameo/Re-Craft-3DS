@@ -107,7 +107,7 @@ void ServerPollingThread::run() {
     
     while (running) {
 
-        Result res = LightEvent_WaitTimeout(&newRequestEvent, 1000000000LL); // 1 second in nanoseconds
+        LightEvent_WaitTimeout(&newRequestEvent, 1000000000LL); // 1 second in nanoseconds
         
         if (!running) {
             break;

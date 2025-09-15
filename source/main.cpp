@@ -2,7 +2,7 @@
 #include <iostream>
 #include "gui/ServerList/ServerList.hpp"
 
-
+#include "gui/Screen.hpp"
 
 int main() {
     gfxInitDefault();
@@ -10,6 +10,7 @@ int main() {
     std::atexit(gfxExit);
 
     ServerList serverList;
+    Screen::currentScreen = &serverList;
     serverList.initGui();
     serverList.pollAllAsync();
     serverList.drawScreen();
@@ -19,7 +20,10 @@ int main() {
         hidScanInput();
         u32 kDown = hidKeysDown();
 
-        serverList.updateControlls(kDown);
+        if (Screen::currentScreen) {
+            Screen::currentScreen->updateControls(kDown);
+        }
+    
         if (kDown & KEY_START) break;
     }
 

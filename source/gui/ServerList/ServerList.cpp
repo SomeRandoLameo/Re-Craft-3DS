@@ -8,6 +8,10 @@
 #include "../../packet/Packet.hpp"
 #include "../../utils/keyboard/keyboard.hpp"
 
+#include "../ServerConnect/ServerConnect.hpp"
+
+#include "../Screen.hpp"
+
 #include <3ds.h>
 #include <iostream>
 #include <sstream>
@@ -264,7 +268,7 @@ void ServerList::drawScreen() const {
     }
 }
 
-void ServerList::updateControlls(u32 kDown) {
+void ServerList::updateControls(u32 kDown) {
     if (kDown & KEY_UP) { 
         this->moveSelectionUp(); 
         this->drawScreen(); 
@@ -297,6 +301,13 @@ void ServerList::updateControlls(u32 kDown) {
         this->load(); 
         this->pollAllAsync();
         this->drawScreen(); 
+    }
+
+    if (kDown & KEY_SELECT) {
+        if (!servers.empty() && selectedServer < servers.size()) {
+            currentScreen = new ServerConnect(this, servers[selectedServer]);
+            currentScreen->drawScreen();
+        }
     }
     
     this->updateAsyncPolls();

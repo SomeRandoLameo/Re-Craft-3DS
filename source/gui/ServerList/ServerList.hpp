@@ -6,6 +6,8 @@
 #include "../../serverStorage/ServerNBTStorage.hpp"
 #include "../../nbt/NBTTagCompound.hpp"
 
+#include "../Screen.hpp"
+
 // Forward declaration
 class ServerPollingThread;
 
@@ -17,7 +19,7 @@ struct ServerInfo {
     bool success = false;
 };
 
-class ServerList {
+class ServerList : public Screen {
 private:
     std::vector<ServerNBTStorage> servers;
     size_t selectedServer = 0;
@@ -30,6 +32,9 @@ private:
 public:
     ServerList();
     ~ServerList();
+
+    void drawScreen() const override;
+    void updateControls(u32 kDown) override;
 
     void initGui();
 
@@ -48,10 +53,8 @@ public:
     size_t getPendingPollCount() const;
     void cancelAllPolls();
 
-    void drawScreen() const;
     void moveSelectionUp();
     void moveSelectionDown();
-    void updateControlls(u32 kDown);
     size_t getSelectedIndex() const { return selectedServer; }
     const std::vector<ServerNBTStorage>& getServers() const { return servers; }
     std::vector<ServerNBTStorage>& getServers() { return servers; } // Non-const version for thread access
