@@ -89,3 +89,11 @@ NBTTagCompound* CompressedStreamTools::readMapFromFile(const std::string& filena
     in.read(reinterpret_cast<char*>(buffer.data()), size);
     return readFromMemory(buffer.data(), buffer.size());
 }
+
+NBTTagCompound* CompressedStreamTools::loadMapFromByteArray(const std::vector<uint8_t>& data) {
+    return loadGzippedCompoundFromMemory(data);
+}
+
+std::vector<uint8_t> CompressedStreamTools::writeMapToByteArray(NBTTagCompound* nbt) {
+    return writeMapToGzippedMemory(nbt);
+}

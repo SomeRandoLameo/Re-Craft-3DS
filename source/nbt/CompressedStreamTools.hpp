@@ -9,6 +9,10 @@ public:
     static NBTTagCompound* loadGzippedCompoundFromMemory(const std::vector<uint8_t>& data);
     static std::vector<uint8_t> writeMapToGzippedMemory(NBTTagCompound* nbt);
 
+    // Raw gzipped helpers (Java parity)
+    static NBTTagCompound* loadMapFromByteArray(const std::vector<uint8_t>& data);
+    static std::vector<uint8_t> writeMapToByteArray(NBTTagCompound* nbt);
+
     // File-based
     static void saveMapToFileWithBackup(NBTTagCompound* nbt, const std::string& filename);
     static void saveMapToFile(NBTTagCompound* nbt, const std::string& filename);
