@@ -4,3 +4,5 @@ ReCraft3DS.elf
 ReCraft3DS.lst
 build/*
 /.idea/*
+/ServerPing.pcapng
+/ServerCom.pcapng
