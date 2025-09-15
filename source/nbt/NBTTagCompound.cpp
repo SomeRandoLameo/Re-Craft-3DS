@@ -19,7 +19,6 @@ NBTTagCompound::NBTTagCompound(const std::string& key) : NBTBase(key) {}
 
 void NBTTagCompound::writeTagContents(std::ostream& out) const {
     for (auto it = tagMap.begin(); it != tagMap.end(); ++it) {
-        const std::string& key = it->first;
         const std::unique_ptr<NBTBase>& tag = it->second;
 
         NBTBase::writeTag(*tag, out); 
