@@ -29,6 +29,7 @@ ServerConnect::~ServerConnect() {
 std::vector<uint8_t> encodeLoginPacket(const std::string& username) {
     // Manually construct the exact packet that Java sends
     // Java: 02000e0053006f006d006500520061006e0064006f004c0061006d0065006f
+    //  ´    02000e0053006f006d006500520061006e0064006f004c0061006d0065006f
     std::vector<uint8_t> out;
     
     // Just hardcode the working packet for "SomeRandoLameo"
@@ -40,7 +41,7 @@ std::vector<uint8_t> encodeLoginPacket(const std::string& username) {
         0x6f, 0x00, 0x4c, 0x00, 0x61, 0x00, 0x6d, 0x00,  // "oLam"
         0x65, 0x00, 0x6f                                   // "eo"
     };
-    
+   
     out.assign(hardcoded, hardcoded + sizeof(hardcoded));
     return out;
 }
@@ -48,13 +49,14 @@ std::vector<uint8_t> encodeLoginPacket(const std::string& username) {
 std::vector<uint8_t> encodeLoginResponsePacket(const std::string& username) {
     // Manually construct the exact second packet that Java sends
     // Java: 0100000017000e0053006f006d006500520061006e0064006f004c0061006d0065006f000000000000000000000000000000000000
+    //       0100000017000e[missing 00]53006f006d006500520061006e0064006f004c0061006d0065006f000000000000000000000000000000000000
     std::vector<uint8_t> out;
     
     // Just hardcode the working second packet for "SomeRandoLameo"
     uint8_t hardcoded[] = {
         0x01,                           // Packet ID
         0x00, 0x00, 0x00, 0x17,        // Length: 23 in little-endian
-        0x00, 0x0e,                     // String length: 14 in little-endian
+        0x00, 0x0e, 0x00,             // String length: 14 in little-endian
         0x53, 0x00, 0x6f, 0x00, 0x6d, 0x00, 0x65, 0x00,  // "Some"
         0x52, 0x00, 0x61, 0x00, 0x6e, 0x00, 0x64, 0x00,  // "Rand"
         0x6f, 0x00, 0x4c, 0x00, 0x61, 0x00, 0x6d, 0x00,  // "oLam"
