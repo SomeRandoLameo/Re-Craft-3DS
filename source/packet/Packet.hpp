@@ -55,7 +55,7 @@ public:
     static std::string readString(std::istream& in, int maxLen);
 
     static int utf16be_to_utf8(const uint8_t *in, int inLen, char *out, int outSize);
-
+    static std::vector<uint8_t> utf8_to_utf16be(const std::string& str);
 protected:
     // NBT helpers
     NBTTagCompound* readNBTPacket(std::istream& in);

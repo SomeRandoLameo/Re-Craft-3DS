@@ -26,6 +26,7 @@ int parseIntWithDefault(const std::string& str, int defaultValue) {
 }
 
 ServerList::ServerList() {
+    Socket::initSOC();
     pollingThread.reset(new ServerPollingThread(this));
 }
 
@@ -34,6 +35,7 @@ ServerList::~ServerList() {
         pollingThread->stop();
         pollingThread->join();
     }
+    Socket::shutdownSOC();
 }
 
 void ServerList::initGui() {
@@ -124,7 +126,7 @@ ServerInfo ServerList::pollServer(ServerNBTStorage& storage) {
         } else hostParts.push_back(host);
     }
 
-    Socket::initSOC();
+   
     ServerInfo result;
     if (hostParts.size() > 2) hostParts = {host};
     const std::string& address = hostParts[0];

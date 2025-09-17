@@ -159,6 +159,23 @@ int Packet::utf16be_to_utf8(const uint8_t *in, int inLen, char *out, int outSize
     return o;
 }
 
+std::vector<uint8_t> Packet::utf8_to_utf16be(const std::string& str) {
+    std::vector<uint8_t> out;
+
+    // Length (number of characters, not bytes)
+    uint16_t length = str.size();
+    out.push_back(length & 0xFF);       // little endian
+    out.push_back((length >> 8) & 0xFF);
+
+    // Convert each ASCII char to UTF-16LE
+    for (char c : str) {
+        out.push_back((uint8_t)c);  // low byte
+        out.push_back(0x00);        // high byte
+    }
+
+    return out;
+}
+
 /*
 // ItemStack handling (commented out until implemented)
 ItemStack* Packet::readItemStack(std::istream& in) { return nullptr; }
