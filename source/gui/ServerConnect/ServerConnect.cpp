@@ -2,6 +2,7 @@
 #include "../ServerList/ServerList.hpp"
 #include "../../packet/Packet.hpp"
 #include "../../utils/socket/Socket.hpp"
+#include "../../utils/keyboard/keyboard.hpp"
 
 #include <3ds.h>
 #include <arpa/inet.h>
@@ -16,6 +17,7 @@
 #define SOC_BUFFERSIZE 0x100000
 
 static u32* SOC_buffer = nullptr;
+//std::string username = "";
 
 ServerConnect::ServerConnect(ServerList* serverList, const ServerNBTStorage& server)
     : serverList(serverList), server(server) {
@@ -69,6 +71,43 @@ std::vector<uint8_t> encodeLoginResponsePacket(const std::string& username) {
     out.assign(hardcoded, hardcoded + sizeof(hardcoded));
     return out;
 }
+
+/*
+std::vector<uint8_t> encodeLoginResponsePacket(const std::string& username) {
+    std::vector<uint8_t> out;
+
+    // Packet ID
+    out.push_back(0x01);
+
+    // Compute payload length: 2 (string length) + username UTF-16 bytes + 36 padding //TODO: the padding might be wrong if the user enters a custom username
+    // Each char is 2 bytes in UTF-16
+    uint16_t strLen = username.size();
+    uint32_t payloadLen = 2 + (strLen * 2) + 36;
+
+    // Write payload length (little-endian, 4 bytes)
+    out.push_back((payloadLen >> 0) & 0xFF);
+    out.push_back((payloadLen >> 8) & 0xFF);
+    out.push_back((payloadLen >> 16) & 0xFF);
+    out.push_back((payloadLen >> 24) & 0xFF);
+
+    // Write string length (little-endian, 2 bytes)
+    out.push_back((strLen >> 0) & 0xFF);
+    out.push_back((strLen >> 8) & 0xFF);
+
+    // Encode username as UTF-16LE (2 bytes per char)
+    for (char c : username) {
+        out.push_back(c & 0xFF); // low byte
+        out.push_back(0x00);     // high byte (since ASCII range)
+    }
+
+    // 36 bytes padding (all zero)
+    for (int i = 0; i < 36; i++) {
+        out.push_back(0x00);
+    }
+
+    return out;
+}
+*/
 
 void connectToServer(const std::string& host) {
     Socket::initSOC();
@@ -236,5 +275,7 @@ void ServerConnect::updateControls(u32 kDown) {
 
 void ServerConnect::drawScreen() const {
     consoleClear();
+   // printf("Enter a Username\n");
+   // username = getKeyboardInput("Username");
     printf("Press A to connect to server\n");
 }

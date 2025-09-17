@@ -103,8 +103,6 @@ void ServerPollingThread::clearRequests() {
 }
 
 void ServerPollingThread::run() {
-    std::cout << "Server polling thread started\n";
-    
     while (running) {
 
         LightEvent_WaitTimeout(&newRequestEvent, 1000000000LL); // 1 second in nanoseconds
@@ -139,8 +137,6 @@ void ServerPollingThread::run() {
             }
         }
     }
-    
-    std::cout << "Server polling thread stopped\n";
 }
 
 void ServerPollingThread::processRequest(std::shared_ptr<ServerPollRequest> request) {
@@ -153,14 +149,6 @@ void ServerPollingThread::processRequest(std::shared_ptr<ServerPollRequest> requ
         ServerNBTStorage tempStorage = *(request->serverStorage);
         request->result = serverList->pollServer(tempStorage);
         request->isComplete = true;
-        
-        // Debug output
-        if (request->result.success) {
-            std::cout << "Poll successful for " << request->serverStorage->name 
-                      << ": " << request->result.playerCount << "\n";
-        } else {
-            std::cout << "Poll failed for " << request->serverStorage->name << "\n";
-        }
         
     } catch (...) {
         std::cout << "Exception during server poll for " << request->serverStorage->name << "\n";

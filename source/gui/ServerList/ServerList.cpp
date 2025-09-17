@@ -45,6 +45,8 @@ void ServerList::initGui() {
     if (pollingThread) {
         pollingThread->start();
     }
+
+    this->drawScreen();
 }
 
 void ServerList::load() {
@@ -190,6 +192,8 @@ ServerInfo ServerList::pollServer(ServerNBTStorage& storage) {
     } catch (...) { result.success = false; }
 
     if (sock >= 0) close(sock);
+
+    this->drawScreen();
     return result;
 }
 
@@ -200,17 +204,6 @@ void ServerList::pollAllAsync() {
     
     isPolling = true;
     pollingThread->pollAllServersAsync();
-    std::cout << "Started async polling of " << servers.size() << " servers...\n";
-}
-
-void ServerList::pollSelectedAsync() {
-    if (!pollingThread || servers.empty() || selectedServer >= servers.size()) {
-        return;
-    }
-    
-    isPolling = true;
-    pollingThread->pollServerAsync(selectedServer, &servers[selectedServer]);
-    std::cout << "Started async polling of " << servers[selectedServer].name << "...\n";
 }
 
 void ServerList::updateAsyncPolls() {
@@ -224,8 +217,11 @@ void ServerList::updateAsyncPolls() {
     // Check if polling is complete
     if (isPolling && pollingThread->getPendingCount() == 0) {
         isPolling = false;
-        std::cout << "Async polling completed\n";
+        
+        this->drawScreen();
     }
+
+   
 }
 
 size_t ServerList::getPendingPollCount() const {
@@ -235,20 +231,10 @@ size_t ServerList::getPendingPollCount() const {
     return pollingThread->getPendingCount();
 }
 
-void ServerList::cancelAllPolls() {
-    if (!pollingThread) {
-        return;
-    }
-    
-    pollingThread->clearRequests();
-    isPolling = false;
-    std::cout << "Cancelled all pending polls\n";
-}
-
 void ServerList::drawScreen() const {
     consoleClear();
     std::cout << "Re:Craft 3DS\n";
-    std::cout << "A:Add  B:Del  X:Poll Y:Reload  START:Exit\n";
+    std::cout << "A:Add  B:Del  X:Poll Y:Reload \nSELECT:Connect START:Exit\n";
     
     // Show polling status
     if (isPolling) {
