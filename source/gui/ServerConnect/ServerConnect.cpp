@@ -1,8 +1,9 @@
 #include "ServerConnect.hpp"
 #include "../ServerList/ServerList.hpp"
-#include "../../packet/Packet.hpp"
 #include "../../utils/socket/Socket.hpp"
 #include "../../utils/keyboard/keyboard.hpp"
+
+#include "../../dataIO/dataOutputStream/DataOutputStream.hpp"
 
 #include <3ds.h>
 #include <arpa/inet.h>
@@ -29,75 +30,44 @@ ServerConnect::~ServerConnect() {
 }
 
 std::vector<uint8_t> encodeLoginPacket(const std::string& username) {
-    std::vector<uint8_t> out;
+    DataOutputStream dos;
    
-    // Packet ID
-    out.push_back(0x02);
+    dos.writeByte(2);           // Packet ID
     
-    // String length (16-bit big-endian, matching Java's writeString format)
-    uint16_t usernameLen = username.length();
-    out.push_back((usernameLen >> 8) & 0xFF);
-    out.push_back(usernameLen & 0xFF);
-    
-    // Write username in UTF-16 format (each char followed by 0x00)
-    for (char c : username) {
-        out.push_back(static_cast<uint8_t>(c));
-        out.push_back(0x00);
-    }
+    dos.writeString(username);  // username
    
-    return out;
+    return dos.getBuffer();
 }
 
 
 std::vector<uint8_t> encodeLoginResponsePacket(const std::string& username) {
-    std::vector<uint8_t> out;
+    DataOutputStream dos;
     
-    // Packet ID
-    out.push_back(0x01);
+    dos.writeByte(1);           // Packet ID
     
-    // protocol version
-    uint32_t protocolVersion = 23;
-    out.push_back((protocolVersion >> 24) & 0xFF);
-    out.push_back((protocolVersion >> 16) & 0xFF);
-    out.push_back((protocolVersion >> 8) & 0xFF);
-    out.push_back(protocolVersion & 0xFF);
+    dos.writeInt(23);           // protocol version
+    dos.writeString(username);  // username
     
-    // username length (big-endian)
-    uint16_t usernameLen = username.length();
-    out.push_back((usernameLen >> 8) & 0xFF);
-    out.push_back(usernameLen & 0xFF);
-    out.push_back(0x00); // Extra byte
+    dos.writeLong(0);           // mapSeed 
     
-    // username in UTF-16 
-    for (char c : username) {
-        out.push_back(static_cast<uint8_t>(c));
-        out.push_back(0x00);
-    }
+    dos.writeString("");        // worldType string 
+    /* TODO: If WorldType is implemented and the packets are somewhere else, implement this
+
+		if(this.field_46032_d == null) {
+			writeString("", var1);
+		} else {
+			writeString(this.field_46032_d.name(), var1);
+		}
+
+        */
+    dos.writeInt(0);            // serverMode
+
+    dos.writeByte(0);           // worldType
+    dos.writeByte(0);           // difficulty
+    dos.writeByte(0);           // worldHeight
+    dos.writeByte(0);           // maxPlayers
     
-    // null terminator for the string
-    out.push_back(0x00);
-    
-    // remaining fields from the Java packet structure
-    // mapSeed (8 bytes) - using 0 for now
-    for (int i = 0; i < 8; i++) {
-        out.push_back(0x00);
-    }
-    
-    // worldType string (empty string = 2 bytes: 0x00, 0x00)
-    out.push_back(0x00);
-    out.push_back(0x00);
-    
-    // serverMode (4 bytes) - using 0
-    for (int i = 0; i < 4; i++) {
-        out.push_back(0x00);
-    }
-    
-    out.push_back(0x00); // worldType
-    out.push_back(0x00); // difficulty
-    out.push_back(0x00); // worldHeight
-    out.push_back(0x00); // maxPlayers
-    
-    return out;
+    return dos.getBuffer();
 }
 
 void connectToServer(const std::string& host) {
@@ -142,21 +112,9 @@ void connectToServer(const std::string& host) {
     std::cout << "Connected to " << host << ":" << port << "\n";
 
     std::string username = "Nintendo3DS";
-    
-    std::cout << "Username length: " << username.length();
-    std::cout << "Username: '" << username << "'" << std::endl;
-    
+
     auto loginPacket = encodeLoginPacket(username);
     
-    // Debug: Print the exact bytes being sent
-    std::cout << "Login packet bytes: ";
-    for (size_t i = 0; i < loginPacket.size(); i++) {
-        printf("%02x", loginPacket[i]);
-    }
-    std::cout << std::endl;
-    std::cout << "Login packet size: " << loginPacket.size() << " (should be 31)" << std::endl;
-    
-    std::cout << "Sending login packet...\n";
     if (send(sock, loginPacket.data(), loginPacket.size(), 0) < 0) {
         std::cerr << "Failed to send login packet\n";
         close(sock);
@@ -177,16 +135,12 @@ void connectToServer(const std::string& host) {
     // Step 3: Send follow-up login response packet
     auto responsePacket = encodeLoginResponsePacket(username);
     
-    std::cout << "Sending login response packet...\n";
     if (send(sock, responsePacket.data(), responsePacket.size(), 0) < 0) {
         std::cerr << "Failed to send login response packet\n";
         close(sock);
         return;
     }
 
-    // Step 4: Handle ongoing server communication
-    std::cout << "Login successful! Entering game loop...\n";
-    
     // Game communication loop
     while (true) {
         fd_set readfds;
