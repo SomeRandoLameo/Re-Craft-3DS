@@ -29,85 +29,76 @@ ServerConnect::~ServerConnect() {
 }
 
 std::vector<uint8_t> encodeLoginPacket(const std::string& username) {
-    // Manually construct the exact packet that Java sends
-    // Java: 02000e0053006f006d006500520061006e0064006f004c0061006d0065006f
-    //  ´    02000e0053006f006d006500520061006e0064006f004c0061006d0065006f
     std::vector<uint8_t> out;
-    
-    // Just hardcode the working packet for "SomeRandoLameo"
-    uint8_t hardcoded[] = {
-        0x02, 0x00,  // Packet ID
-        0x0e, 0x00,  // String length (14)
-        0x53, 0x00, 0x6f, 0x00, 0x6d, 0x00, 0x65, 0x00,  // "Some"
-        0x52, 0x00, 0x61, 0x00, 0x6e, 0x00, 0x64, 0x00,  // "Rand"
-        0x6f, 0x00, 0x4c, 0x00, 0x61, 0x00, 0x6d, 0x00,  // "oLam"
-        0x65, 0x00, 0x6f                                   // "eo"
-    };
    
-    out.assign(hardcoded, hardcoded + sizeof(hardcoded));
-    return out;
-}
-
-std::vector<uint8_t> encodeLoginResponsePacket(const std::string& username) {
-    // Manually construct the exact second packet that Java sends
-    // Java: 0100000017000e0053006f006d006500520061006e0064006f004c0061006d0065006f000000000000000000000000000000000000
-    //       0100000017000e[missing 00]53006f006d006500520061006e0064006f004c0061006d0065006f000000000000000000000000000000000000
-    std::vector<uint8_t> out;
-    
-    // Just hardcode the working second packet for "SomeRandoLameo"
-    uint8_t hardcoded[] = {
-        0x01,                           // Packet ID
-        0x00, 0x00, 0x00, 0x17,        // Length: 23 in little-endian
-        0x00, 0x0e, 0x00,             // String length: 14 in little-endian
-        0x53, 0x00, 0x6f, 0x00, 0x6d, 0x00, 0x65, 0x00,  // "Some"
-        0x52, 0x00, 0x61, 0x00, 0x6e, 0x00, 0x64, 0x00,  // "Rand"
-        0x6f, 0x00, 0x4c, 0x00, 0x61, 0x00, 0x6d, 0x00,  // "oLam"
-        0x65, 0x00, 0x6f,                                  // "eo"
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00,              // 18 bytes padding
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-    };
-    
-    out.assign(hardcoded, hardcoded + sizeof(hardcoded));
-    return out;
-}
-
-/*
-std::vector<uint8_t> encodeLoginResponsePacket(const std::string& username) {
-    std::vector<uint8_t> out;
-
     // Packet ID
-    out.push_back(0x01);
-
-    // Compute payload length: 2 (string length) + username UTF-16 bytes + 36 padding //TODO: the padding might be wrong if the user enters a custom username
-    // Each char is 2 bytes in UTF-16
-    uint16_t strLen = username.size();
-    uint32_t payloadLen = 2 + (strLen * 2) + 36;
-
-    // Write payload length (little-endian, 4 bytes)
-    out.push_back((payloadLen >> 0) & 0xFF);
-    out.push_back((payloadLen >> 8) & 0xFF);
-    out.push_back((payloadLen >> 16) & 0xFF);
-    out.push_back((payloadLen >> 24) & 0xFF);
-
-    // Write string length (little-endian, 2 bytes)
-    out.push_back((strLen >> 0) & 0xFF);
-    out.push_back((strLen >> 8) & 0xFF);
-
-    // Encode username as UTF-16LE (2 bytes per char)
+    out.push_back(0x02);
+    
+    // String length (16-bit big-endian, matching Java's writeString format)
+    uint16_t usernameLen = username.length();
+    out.push_back((usernameLen >> 8) & 0xFF);
+    out.push_back(usernameLen & 0xFF);
+    
+    // Write username in UTF-16 format (each char followed by 0x00)
     for (char c : username) {
-        out.push_back(c & 0xFF); // low byte
-        out.push_back(0x00);     // high byte (since ASCII range)
-    }
-
-    // 36 bytes padding (all zero)
-    for (int i = 0; i < 36; i++) {
+        out.push_back(static_cast<uint8_t>(c));
         out.push_back(0x00);
     }
-
+   
     return out;
 }
-*/
+
+
+std::vector<uint8_t> encodeLoginResponsePacket(const std::string& username) {
+    std::vector<uint8_t> out;
+    
+    // Packet ID
+    out.push_back(0x01);
+    
+    // protocol version
+    uint32_t protocolVersion = 23;
+    out.push_back((protocolVersion >> 24) & 0xFF);
+    out.push_back((protocolVersion >> 16) & 0xFF);
+    out.push_back((protocolVersion >> 8) & 0xFF);
+    out.push_back(protocolVersion & 0xFF);
+    
+    // username length (big-endian)
+    uint16_t usernameLen = username.length();
+    out.push_back((usernameLen >> 8) & 0xFF);
+    out.push_back(usernameLen & 0xFF);
+    out.push_back(0x00); // Extra byte
+    
+    // username in UTF-16 
+    for (char c : username) {
+        out.push_back(static_cast<uint8_t>(c));
+        out.push_back(0x00);
+    }
+    
+    // null terminator for the string
+    out.push_back(0x00);
+    
+    // remaining fields from the Java packet structure
+    // mapSeed (8 bytes) - using 0 for now
+    for (int i = 0; i < 8; i++) {
+        out.push_back(0x00);
+    }
+    
+    // worldType string (empty string = 2 bytes: 0x00, 0x00)
+    out.push_back(0x00);
+    out.push_back(0x00);
+    
+    // serverMode (4 bytes) - using 0
+    for (int i = 0; i < 4; i++) {
+        out.push_back(0x00);
+    }
+    
+    out.push_back(0x00); // worldType
+    out.push_back(0x00); // difficulty
+    out.push_back(0x00); // worldHeight
+    out.push_back(0x00); // maxPlayers
+    
+    return out;
+}
 
 void connectToServer(const std::string& host) {
     Socket::initSOC();
@@ -150,16 +141,9 @@ void connectToServer(const std::string& host) {
 
     std::cout << "Connected to " << host << ":" << port << "\n";
 
-    // Step 1: Send initial login packet
-    // Be very explicit about the string to avoid any encoding issues
-    std::string username;
-    username.reserve(13);
-    username += 'S'; username += 'o'; username += 'm'; username += 'e';
-    username += 'R'; username += 'a'; username += 'n'; username += 'd';
-    username += 'o'; username += 'L'; username += 'a'; username += 'm';
-    username += 'e'; username += 'o';
+    std::string username = "Nintendo3DS";
     
-    std::cout << "Username length: " << username.length() << " (should be 14)" << std::endl;
+    std::cout << "Username length: " << username.length();
     std::cout << "Username: '" << username << "'" << std::endl;
     
     auto loginPacket = encodeLoginPacket(username);
@@ -171,9 +155,6 @@ void connectToServer(const std::string& host) {
     }
     std::cout << std::endl;
     std::cout << "Login packet size: " << loginPacket.size() << " (should be 31)" << std::endl;
-    
-    // Expected: 02000e0053006f006d006500520061006e0064006f004c0061006d0065006f
-    std::cout << "Expected:         02000e0053006f006d006500520061006e0064006f004c0061006d0065006f" << std::endl;
     
     std::cout << "Sending login packet...\n";
     if (send(sock, loginPacket.data(), loginPacket.size(), 0) < 0) {
