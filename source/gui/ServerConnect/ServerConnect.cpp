@@ -4,6 +4,7 @@
 #include "../../utils/keyboard/keyboard.hpp"
 
 #include "../../dataIO/dataOutputStream/DataOutputStream.hpp"
+#include "../../dataIO/dataInputStream/DataInputStream.hpp"
 
 #include <3ds.h>
 #include <arpa/inet.h>
@@ -39,7 +40,6 @@ std::vector<uint8_t> encodeLoginPacket(const std::string& username) {
     return dos.getBuffer();
 }
 
-
 std::vector<uint8_t> encodeLoginResponsePacket(const std::string& username) {
     DataOutputStream dos;
     
@@ -69,6 +69,32 @@ std::vector<uint8_t> encodeLoginResponsePacket(const std::string& username) {
     
     return dos.getBuffer();
 }
+
+
+std::vector<uint8_t> encodeKeepAlivePacket(int responseID){
+    DataOutputStream dos;
+    dos.writeInt(responseID);
+    return dos.getBuffer();
+}
+
+
+//TODO: Use my own DataInputStream. this is temporary
+int decodeKeepAlivePacket(const char* buffer, int bytes) {
+    if (bytes < 9) { // Need at least 1 byte for packet ID + 8 bytes for UTF-16LE int
+        return -1; // Error: packet too short
+    }
+    
+    // Skip the first byte (packet ID 0x00)
+    // Read the 4-byte integer in UTF-16LE format (8 bytes total)
+    // Each byte is followed by a null byte in UTF-16LE
+    int responseID = (buffer[1]) |           // Low byte of low word
+                     (buffer[3] << 8) |      // High byte of low word  
+                     (buffer[5] << 16) |     // Low byte of high word
+                     (buffer[7] << 24);      // High byte of high word
+    
+    return responseID;
+}
+
 
 void connectToServer(const std::string& host) {
     Socket::initSOC();
@@ -143,6 +169,9 @@ void connectToServer(const std::string& host) {
 
     // Game communication loop
     while (true) {
+
+
+        //TODO: Fix sending KeepAlive packets. this doesnt work. I am tired
         fd_set readfds;
         FD_ZERO(&readfds);
         FD_SET(sock, &readfds);
@@ -159,25 +188,29 @@ void connectToServer(const std::string& host) {
         }
         
         if (activity > 0 && FD_ISSET(sock, &readfds)) {
-            // Receive data from server
             bytes = recv(sock, buffer, sizeof(buffer), 0);
             if (bytes <= 0) {
                 std::cout << "Server disconnected\n";
                 break;
             }
-            
-            std::cout << "Received " << bytes << " bytes from server\n";
-            
-            // Print first few bytes to understand packet structure
-            std::cout << "Packet data: ";
-            for (int i = 0; i < std::min(bytes, 20); i++) {
-                printf("%02x ", (unsigned char)buffer[i]);
+
+            if (bytes > 0) {
+                uint8_t firstByte = (unsigned char)buffer[0];
+                std::cout << "First byte: " << (int)firstByte << std::endl;
+                
+                if (firstByte == 0) { // Keep-alive packet
+                    //TODO: Whatever this is needs some attention
+                    int keepAliveID = decodeKeepAlivePacket(buffer, bytes);
+                    if (keepAliveID != -1) {
+                        std::cout << "Keep-alive ID: " << keepAliveID << std::endl;
+                        
+                        // Send the response back
+                        auto response = encodeKeepAlivePacket(keepAliveID);
+                        send(sock, response.data(), response.size(), 0);
+                        std::cout << "Sent keep-alive response\n";
+                    }
+                }
             }
-            std::cout << std::endl;
-            
-            // Send ACK for any data received to keep connection alive
-            // For now, just acknowledge that we received the data
-            // In a real implementation, you'd parse the packet and respond appropriately
         }
         
         // Check for input to exit
@@ -187,9 +220,6 @@ void connectToServer(const std::string& host) {
             std::cout << "Exiting game loop\n";
             break;
         }
-        
-        // You might need to send periodic keepalive packets here
-        // depending on what the server expects
     }
 
     close(sock);
