@@ -105,6 +105,8 @@ void ServerList::deleteSelectedServer() {
 }
 
 ServerInfo ServerList::pollServer(ServerNBTStorage& storage) {
+
+    //TODO: Refactor using dataIO
     std::string host = storage.host;
     if (host.empty()) host = "192.168.2.101";
 
@@ -234,7 +236,7 @@ size_t ServerList::getPendingPollCount() const {
 void ServerList::drawScreen() const {
     consoleClear();
     std::cout << "Re:Craft 3DS\n";
-    std::cout << "A:Add  B:Del  X:Poll Y:Reload \nSELECT:Connect START:Exit\n";
+    std::cout << "A:Add  B:Del  X:Poll  Y:Reload \nSELECT:Connect  START:Exit\n";
     
     // Show polling status
     if (isPolling) {
