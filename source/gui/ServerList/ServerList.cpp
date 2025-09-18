@@ -104,6 +104,56 @@ void ServerList::deleteSelectedServer() {
     save();
 }
 
+
+
+int utf16be_to_utf8(const uint8_t *in, int inLen, char *out, int outSize) {
+    int i = 0, o = 0;
+    while (i + 1 < inLen && o + 4 < outSize) {
+        uint16_t code = (in[i] << 8) | in[i+1];
+        i += 2;
+
+        if (code < 0x80) {
+            out[o++] = static_cast<char>(code);
+        } else if (code < 0x800) {
+            out[o++] = static_cast<char>(0xC0 | (code >> 6));
+            out[o++] = static_cast<char>(0x80 | (code & 0x3F));
+        } else {
+            out[o++] = static_cast<char>(0xE0 | (code >> 12));
+            out[o++] = static_cast<char>(0x80 | ((code >> 6) & 0x3F));
+            out[o++] = static_cast<char>(0x80 | (code & 0x3F));
+        }
+    }
+    out[o] = '\0';
+    return o;
+}
+//TODO: Remove once DataInputStream/DataOutputStream has been implemented here
+std::string readString(std::istream& in, int maxLen) {
+  
+    uint8_t lengthBytes[2];
+    in.read(reinterpret_cast<char*>(lengthBytes), 2);
+    if (in.gcount() != 2) {
+        throw std::runtime_error("Failed to read string length");
+    }
+
+    int strLen = (lengthBytes[0] << 8) | lengthBytes[1];
+    if (strLen > maxLen || strLen < 0) {
+        throw std::runtime_error("Invalid string length");
+    }
+
+    // --- Read UTF-16BE data (2 bytes per char) ---
+    std::vector<uint8_t> utf16Data(strLen * 2);
+    in.read(reinterpret_cast<char*>(utf16Data.data()), strLen * 2);
+    if (in.gcount() != strLen * 2) {
+        throw std::runtime_error("Failed to read string data");
+    }
+
+    // --- Convert UTF-16BE → UTF-8 ---
+    char utf8Buffer[1024];
+    utf16be_to_utf8(utf16Data.data(), strLen * 2, utf8Buffer, sizeof(utf8Buffer));
+
+    return std::string(utf8Buffer);
+}
+
 ServerInfo ServerList::pollServer(ServerNBTStorage& storage) {
 
     //TODO: Refactor using dataIO
@@ -172,7 +222,7 @@ ServerInfo ServerList::pollServer(ServerNBTStorage& storage) {
         if (len <= 0) throw std::runtime_error("Failed to read response string");
 
         std::istringstream in(std::string(buf, len), std::ios::binary);
-        std::string response = Packet::readString(in, 256);
+        std::string response = readString(in, 256);
 
         const char section_sign = static_cast<char>(0xa7);
         std::vector<std::string> responseParts;
