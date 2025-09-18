@@ -64,57 +64,6 @@ void Packet::writePacket(const Packet& packet, std::ostream& out) {
     packet.writePacketData(out);
 }
 
-void Packet::writeString(const std::string& str, std::ostream& out) {
-    if (str.size() > 32767) throw std::runtime_error("String too big");
-
-    std::vector<uint8_t> utf16Data;
-    for (unsigned char c : str) {
-        if (c < 0x80) {
-            utf16Data.push_back(0);
-            utf16Data.push_back(c);
-        } else {
-            // For simplicity, encode non-ASCII as '?'
-            utf16Data.push_back(0);
-            utf16Data.push_back('?');
-        }
-    }
-
-    uint16_t len = static_cast<uint16_t>(str.size());
-    
-    uint8_t lenBytes[2] = { static_cast<uint8_t>((len >> 8) & 0xFF),
-                             static_cast<uint8_t>(len & 0xFF) };
-    out.write(reinterpret_cast<char*>(lenBytes), 2);
-    
-    out.write(reinterpret_cast<char*>(utf16Data.data()), utf16Data.size());
-}
-
-
-std::string Packet::readString(std::istream& in, int maxLen) {
-  
-    uint8_t lengthBytes[2];
-    in.read(reinterpret_cast<char*>(lengthBytes), 2);
-    if (in.gcount() != 2) {
-        throw std::runtime_error("Failed to read string length");
-    }
-
-    int strLen = (lengthBytes[0] << 8) | lengthBytes[1];
-    if (strLen > maxLen || strLen < 0) {
-        throw std::runtime_error("Invalid string length");
-    }
-
-    // --- Read UTF-16BE data (2 bytes per char) ---
-    std::vector<uint8_t> utf16Data(strLen * 2);
-    in.read(reinterpret_cast<char*>(utf16Data.data()), strLen * 2);
-    if (in.gcount() != strLen * 2) {
-        throw std::runtime_error("Failed to read string data");
-    }
-
-    // --- Convert UTF-16BE → UTF-8 ---
-    char utf8Buffer[1024];
-    utf16be_to_utf8(utf16Data.data(), strLen * 2, utf8Buffer, sizeof(utf8Buffer));
-
-    return std::string(utf8Buffer);
-}
 
 NBTTagCompound* Packet::readNBTPacket(std::istream& in) {
     int16_t len;
@@ -137,47 +86,3 @@ void Packet::writeNBTPacket(NBTTagCompound* tag, std::ostream& out) {
         out.write(reinterpret_cast<char*>(bytes.data()), len);
     }
 }
-
-int Packet::utf16be_to_utf8(const uint8_t *in, int inLen, char *out, int outSize) {
-    int i = 0, o = 0;
-    while (i + 1 < inLen && o + 4 < outSize) {
-        uint16_t code = (in[i] << 8) | in[i+1];
-        i += 2;
-
-        if (code < 0x80) {
-            out[o++] = static_cast<char>(code);
-        } else if (code < 0x800) {
-            out[o++] = static_cast<char>(0xC0 | (code >> 6));
-            out[o++] = static_cast<char>(0x80 | (code & 0x3F));
-        } else {
-            out[o++] = static_cast<char>(0xE0 | (code >> 12));
-            out[o++] = static_cast<char>(0x80 | ((code >> 6) & 0x3F));
-            out[o++] = static_cast<char>(0x80 | (code & 0x3F));
-        }
-    }
-    out[o] = '\0';
-    return o;
-}
-
-std::vector<uint8_t> Packet::utf8_to_utf16be(const std::string& str) {
-    std::vector<uint8_t> out;
-
-    // Length (number of characters, not bytes)
-    uint16_t length = str.size();
-    out.push_back(length & 0xFF);       // little endian
-    out.push_back((length >> 8) & 0xFF);
-
-    // Convert each ASCII char to UTF-16LE
-    for (char c : str) {
-        out.push_back((uint8_t)c);  // low byte
-        out.push_back(0x00);        // high byte
-    }
-
-    return out;
-}
-
-/*
-// ItemStack handling (commented out until implemented)
-ItemStack* Packet::readItemStack(std::istream& in) { return nullptr; }
-void Packet::writeItemStack(ItemStack* stack, std::ostream& out) {}
-*/

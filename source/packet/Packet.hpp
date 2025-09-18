@@ -51,19 +51,9 @@ public:
     static std::unique_ptr<Packet> readPacket(std::istream& in, bool isServer);
     static void writePacket(const Packet& packet, std::ostream& out);
 
-    static void writeString(const std::string& str, std::ostream& out);
-    static std::string readString(std::istream& in, int maxLen);
-
-    static int utf16be_to_utf8(const uint8_t *in, int inLen, char *out, int outSize);
-    static std::vector<uint8_t> utf8_to_utf16be(const std::string& str);
 protected:
     // NBT helpers
     NBTTagCompound* readNBTPacket(std::istream& in);
     void writeNBTPacket(NBTTagCompound* tag, std::ostream& out);
 
-    /*
-    // Item helpers (commented out for now)
-    ItemStack* readItemStack(std::istream& in);
-    void writeItemStack(ItemStack* stack, std::ostream& out);
-    */
 };
