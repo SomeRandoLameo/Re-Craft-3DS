@@ -46,12 +46,6 @@ void DataOutputStream::writeString(const std::string& s) {
     writeChars(s);                            
 }
 
-
-
-
-
-
-
 const std::vector<uint8_t>& DataOutputStream::getBuffer() const {
     return buffer;
 }
