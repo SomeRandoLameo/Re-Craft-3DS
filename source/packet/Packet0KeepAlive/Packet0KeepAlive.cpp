@@ -1,0 +1,24 @@
+#include <iostream>
+
+#include "Packet0KeepAlive.hpp"
+
+void Packet0KeepAlive::readPacketData(DataInputStream input){
+    //Packet ID should already be read as 0
+    uint32_t randInt = input.readInt();
+
+    if(this->debugPacket) std::cout << "Packet input: "<< randInt << std::endl;
+
+    this->randomId = randInt;
+}
+
+void Packet0KeepAlive::writePacketData(DataOutputStream& output){
+    output.writeByte(0);           // Packet ID should ideally be set before, for now this is enough
+    output.writeInt(this->randomId);
+
+    if(this->debugPacket) std::cout << "Packet output: "<< this->randomId << std::endl;
+}
+
+int Packet0KeepAlive::getPacketSize(){
+    // 4 bytes for randomId, packetID doesnt count here
+    return 4;
+}
