@@ -15,6 +15,7 @@
 #include <cstring>
 #include <iostream>
 
+
 #define SOC_ALIGN      0x1000
 #define SOC_BUFFERSIZE 0x100000
 
@@ -77,25 +78,6 @@ std::vector<uint8_t> encodeKeepAlivePacket(int responseID){
     return dos.getBuffer();
 }
 
-
-//TODO: Use my own DataInputStream. this is temporary
-int decodeKeepAlivePacket(const char* buffer, int bytes) {
-    if (bytes < 9) { // Need at least 1 byte for packet ID + 8 bytes for UTF-16LE int
-        return -1; // Error: packet too short
-    }
-    
-    // Skip the first byte (packet ID 0x00)
-    // Read the 4-byte integer in UTF-16LE format (8 bytes total)
-    // Each byte is followed by a null byte in UTF-16LE
-    int responseID = (buffer[1]) |           // Low byte of low word
-                     (buffer[3] << 8) |      // High byte of low word  
-                     (buffer[5] << 16) |     // Low byte of high word
-                     (buffer[7] << 24);      // High byte of high word
-    
-    return responseID;
-}
-
-
 void connectToServer(const std::string& host) {
     Socket::initSOC();
 
@@ -147,7 +129,7 @@ void connectToServer(const std::string& host) {
         return;
     }
 
-    // Step 2: Receive server response
+   
     char buffer[512];
     int bytes = recv(sock, buffer, sizeof(buffer), 0);
     if (bytes <= 0) {
@@ -158,7 +140,7 @@ void connectToServer(const std::string& host) {
     
     std::cout << "Received server response (" << bytes << " bytes)\n";
     
-    // Step 3: Send follow-up login response packet
+  
     auto responsePacket = encodeLoginResponsePacket(username);
     
     if (send(sock, responsePacket.data(), responsePacket.size(), 0) < 0) {
@@ -167,17 +149,14 @@ void connectToServer(const std::string& host) {
         return;
     }
 
-    // Game communication loop
     while (true) {
 
-
-        //TODO: Fix sending KeepAlive packets. this doesnt work. I am tired
         fd_set readfds;
         FD_ZERO(&readfds);
         FD_SET(sock, &readfds);
         
         struct timeval timeout;
-        timeout.tv_sec = 1;  // 1 second timeout
+        timeout.tv_sec = 1;
         timeout.tv_usec = 0;
         
         int activity = select(sock + 1, &readfds, NULL, NULL, &timeout);
@@ -188,29 +167,46 @@ void connectToServer(const std::string& host) {
         }
         
         if (activity > 0 && FD_ISSET(sock, &readfds)) {
+            // Receive data from server
             bytes = recv(sock, buffer, sizeof(buffer), 0);
             if (bytes <= 0) {
                 std::cout << "Server disconnected\n";
                 break;
             }
+        
+            //TODO: This is very unsafe, since it CAN read wrong values!
+            int packetID = (unsigned char)buffer[0];
+            
+        
+            if (packetID == 0) {
+                bool debugKeepAlive = true;
+                if(debugKeepAlive) std::cout << "Possible KeepAlive detected\n";
 
-            if (bytes > 0) {
-                uint8_t firstByte = (unsigned char)buffer[0];
-                std::cout << "First byte: " << (int)firstByte << std::endl;
+                char* packet_data = &buffer[1];
+                int data_length = bytes - 1;
                 
-                if (firstByte == 0) { // Keep-alive packet
-                    //TODO: Whatever this is needs some attention
-                    int keepAliveID = decodeKeepAlivePacket(buffer, bytes);
-                    if (keepAliveID != -1) {
-                        std::cout << "Keep-alive ID: " << keepAliveID << std::endl;
-                        
-                        // Send the response back
-                        auto response = encodeKeepAlivePacket(keepAliveID);
-                        send(sock, response.data(), response.size(), 0);
-                        std::cout << "Sent keep-alive response\n";
+                if (data_length >= 4) {
+                    unsigned char* bytes_ptr = (unsigned char*)packet_data;
+                    
+                    uint32_t java_int = (bytes_ptr[0] << 24) |  // Most significant byte
+                                    (bytes_ptr[1] << 16) |  // 
+                                    (bytes_ptr[2] << 8)  |  // 
+                                    (bytes_ptr[3]);         // Least significant byte
+                    
+                    int32_t signed_value = (int32_t)java_int;
+                    
+                    if(debugKeepAlive) std::cout << "keepAlive value: " << signed_value << std::endl;
+
+                    auto keepAliveResponse = encodeKeepAlivePacket(signed_value);
+                    if(debugKeepAlive) std::cout << "sending: " << keepAliveResponse.data() << std::endl;
+                    if (send(sock, keepAliveResponse.data(), keepAliveResponse.size(), 0) < 0) {
+                        std::cerr << "Failed to send KeepAlive response\n";
+                    } else {
+                        if(debugKeepAlive) std::cout << "Sent KeepAlive response with value: " << signed_value << std::endl;
                     }
                 }
             }
+
         }
         
         // Check for input to exit
