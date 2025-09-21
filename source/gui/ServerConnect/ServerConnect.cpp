@@ -6,6 +6,8 @@
 #include "../../dataIO/dataOutputStream/DataOutputStream.hpp"
 #include "../../dataIO/dataInputStream/DataInputStream.hpp"
 
+#include "../../packet/Packet0KeepAlive/Packet0KeepAlive.hpp"
+
 #include <3ds.h>
 #include <arpa/inet.h>
 #include <unistd.h>
@@ -14,7 +16,7 @@
 #include <malloc.h>
 #include <cstring>
 #include <iostream>
-
+#include <iomanip>
 
 #define SOC_ALIGN      0x1000
 #define SOC_BUFFERSIZE 0x100000
@@ -72,10 +74,12 @@ std::vector<uint8_t> encodeLoginResponsePacket(const std::string& username) {
 }
 
 
-std::vector<uint8_t> encodeKeepAlivePacket(int responseID){
-    DataOutputStream dos;
-    dos.writeInt(responseID);
-    return dos.getBuffer();
+bool sendPacket(int sock, const std::vector<uint8_t>& packet, const std::string& packetName) {
+    if (send(sock, packet.data(), packet.size(), 0) < 0) {
+        std::cerr << "Failed to send " << packetName << " packet\n";
+        return false;
+    }
+    return true;
 }
 
 void connectToServer(const std::string& host) {
@@ -123,13 +127,11 @@ void connectToServer(const std::string& host) {
 
     auto loginPacket = encodeLoginPacket(username);
     
-    if (send(sock, loginPacket.data(), loginPacket.size(), 0) < 0) {
-        std::cerr << "Failed to send login packet\n";
+    if (!sendPacket(sock, loginPacket, "login")) {
         close(sock);
         return;
     }
 
-   
     char buffer[512];
     int bytes = recv(sock, buffer, sizeof(buffer), 0);
     if (bytes <= 0) {
@@ -140,17 +142,14 @@ void connectToServer(const std::string& host) {
     
     std::cout << "Received server response (" << bytes << " bytes)\n";
     
-  
     auto responsePacket = encodeLoginResponsePacket(username);
     
-    if (send(sock, responsePacket.data(), responsePacket.size(), 0) < 0) {
-        std::cerr << "Failed to send login response packet\n";
+    if (!sendPacket(sock, responsePacket, "login response")) {
         close(sock);
         return;
     }
 
     while (true) {
-
         fd_set readfds;
         FD_ZERO(&readfds);
         FD_SET(sock, &readfds);
@@ -167,49 +166,61 @@ void connectToServer(const std::string& host) {
         }
         
         if (activity > 0 && FD_ISSET(sock, &readfds)) {
-            // Receive data from server
+        
             bytes = recv(sock, buffer, sizeof(buffer), 0);
             if (bytes <= 0) {
                 std::cout << "Server disconnected\n";
                 break;
             }
         
-            //TODO: This is very unsafe, since it CAN read wrong values!
-            int packetID = (unsigned char)buffer[0];
+            DataInputStream stream(buffer, bytes);
             
-        
-            if (packetID == 0) {
-                bool debugKeepAlive = true;
-                if(debugKeepAlive) std::cout << "Possible KeepAlive detected\n";
+            try {
+                //packet ID should be first byte, this can be really unstable tho...
+                uint8_t packetID = stream.readByte();
 
-                char* packet_data = &buffer[1];
-                int data_length = bytes - 1;
-                
-                if (data_length >= 4) {
-                    unsigned char* bytes_ptr = (unsigned char*)packet_data;
-                    
-                    uint32_t java_int = (bytes_ptr[0] << 24) |  // Most significant byte
-                                    (bytes_ptr[1] << 16) |  // 
-                                    (bytes_ptr[2] << 8)  |  // 
-                                    (bytes_ptr[3]);         // Least significant byte
-                    
-                    int32_t signed_value = (int32_t)java_int;
-                    
-                    if(debugKeepAlive) std::cout << "keepAlive value: " << signed_value << std::endl;
+                // Packet0KeepAlive 
+                if (packetID == 0) {
+                    Packet0KeepAlive packet;
 
-                    auto keepAliveResponse = encodeKeepAlivePacket(signed_value);
-                    if(debugKeepAlive) std::cout << "sending: " << keepAliveResponse.data() << std::endl;
-                    if (send(sock, keepAliveResponse.data(), keepAliveResponse.size(), 0) < 0) {
-                        std::cerr << "Failed to send KeepAlive response\n";
+                    bool debugKeepAlive = false;
+                    
+                    packet.debugPacket = debugKeepAlive;
+
+                    if(debugKeepAlive) std::cout << "Possible KeepAlive detected\n";
+                    //this really shouldnt be nessessarry
+                    if (stream.bytesRemaining() >= 4) {
+
+                        packet.readPacketData(stream);
+                        
+                        //not every packet should create its own output stream...
+                        DataOutputStream packetData;
+                        packet.writePacketData(packetData);
+
+                        auto keepAliveResponse = packetData.getBuffer();
+
+                        if(debugKeepAlive) {
+                            std::cout << "Packetbuffer: ";
+                            for(const auto& byte : keepAliveResponse) {
+                                std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(byte) << " ";
+                            }
+                            std::cout << std::dec << std::endl;
+                        }
+
+                        if (!sendPacket(sock, keepAliveResponse, "KeepAlive response")) {
+                            std::cerr << "Failed to send KeepAlive response\n";
+                        } 
+
                     } else {
-                        if(debugKeepAlive) std::cout << "Sent KeepAlive response with value: " << signed_value << std::endl;
+                        std::cerr << "KeepAlive packet too short\n";
                     }
                 }
+                
+            } catch (const std::exception& e) {
+                std::cerr << "Error parsing packet: " << e.what() << std::endl;
             }
-
         }
         
-        // Check for input to exit
         hidScanInput();
         u32 kDown = hidKeysDown();
         if (kDown & KEY_B) {
@@ -217,9 +228,9 @@ void connectToServer(const std::string& host) {
             break;
         }
     }
-
     close(sock);
-    std::cout << "Press B to return to the server list.\n";
+    std::cout << "Press A to reconnect.\n";
+    std::cout << "Press SELECT to return to the server list.\n";
 }
 
 void ServerConnect::updateControls(u32 kDown) {
