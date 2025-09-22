@@ -12,7 +12,7 @@ void Packet0KeepAlive::readPacketData(DataInputStream input){
 }
 
 void Packet0KeepAlive::writePacketData(DataOutputStream& output){
-    output.writeByte(0);           // Packet ID should ideally be set before, for now this is enough
+    output.writeByte(this->packetID);           // Packet ID should ideally be set before, for now this is enough
     output.writeInt(this->randomId);
 
     if(this->debugPacket) std::cout << "Packet output: "<< this->randomId << std::endl;
