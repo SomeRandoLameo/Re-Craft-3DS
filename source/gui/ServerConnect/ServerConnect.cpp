@@ -6,7 +6,12 @@
 #include "../../dataIO/dataOutputStream/DataOutputStream.hpp"
 #include "../../dataIO/dataInputStream/DataInputStream.hpp"
 
+//TODO: Some form of networkmanager or packetRegistry, this sucks
 #include "../../packet/Packet0KeepAlive/Packet0KeepAlive.hpp"
+#include "../../packet/Packet1Login/Packet1Login.hpp"
+#include "../../packet/Packet2Handshake/Packet2Handshake.hpp"
+#include "../../packet/Packet3Chat/Packet3Chat.hpp"
+#include "../../packet/Packet255KickDisconnect/Packet255KickDisconnect.hpp"
 
 #include <3ds.h>
 #include <arpa/inet.h>
@@ -32,47 +37,6 @@ ServerConnect::ServerConnect(ServerList* serverList, const ServerNBTStorage& ser
 ServerConnect::~ServerConnect() {
     Socket::shutdownSOC();
 }
-
-std::vector<uint8_t> encodeLoginPacket(const std::string& username) {
-    DataOutputStream dos;
-   
-    dos.writeByte(2);           // Packet ID
-    
-    dos.writeString(username);  // username
-   
-    return dos.getBuffer();
-}
-
-std::vector<uint8_t> encodeLoginResponsePacket(const std::string& username) {
-    DataOutputStream dos;
-    
-    dos.writeByte(1);           // Packet ID
-    
-    dos.writeInt(23);           // protocol version
-    dos.writeString(username);  // username
-    
-    dos.writeLong(0);           // mapSeed 
-    
-    dos.writeString("");        // worldType string 
-    /* TODO: If WorldType is implemented and the packets are somewhere else, implement this
-
-		if(this.field_46032_d == null) {
-			writeString("", var1);
-		} else {
-			writeString(this.field_46032_d.name(), var1);
-		}
-
-        */
-    dos.writeInt(0);            // serverMode
-
-    dos.writeByte(0);           // worldType
-    dos.writeByte(0);           // difficulty
-    dos.writeByte(0);           // worldHeight
-    dos.writeByte(0);           // maxPlayers
-    
-    return dos.getBuffer();
-}
-
 
 bool sendPacket(int sock, const std::vector<uint8_t>& packet, const std::string& packetName) {
     if (send(sock, packet.data(), packet.size(), 0) < 0) {
@@ -123,11 +87,13 @@ void connectToServer(const std::string& host) {
 
     std::cout << "Connected to " << host << ":" << port << "\n";
 
-    std::string username = "Nintendo3DS";
-
-    auto loginPacket = encodeLoginPacket(username);
+    Packet2Handshake handshake;
+    handshake.username = "Nintendo3DS";
     
-    if (!sendPacket(sock, loginPacket, "login")) {
+    DataOutputStream hsData;
+    handshake.writePacketData(hsData);
+
+    if (!sendPacket(sock, hsData.getBuffer(), "Packet2Handshake")) {
         close(sock);
         return;
     }
@@ -139,16 +105,20 @@ void connectToServer(const std::string& host) {
         close(sock);
         return;
     }
-    
+
     std::cout << "Received server response (" << bytes << " bytes)\n";
-    
-    auto responsePacket = encodeLoginResponsePacket(username);
-    
-    if (!sendPacket(sock, responsePacket, "login response")) {
+
+    Packet1Login login;
+    login.username = handshake.username;
+
+    DataOutputStream liData;
+    login.writePacketData(liData);
+
+    if (!sendPacket(sock, liData.getBuffer(), "Packet1Login")) {
         close(sock);
         return;
     }
-
+//TODO: This needs to be moved inside some form of nethandler
     while (true) {
         fd_set readfds;
         FD_ZERO(&readfds);
@@ -214,6 +184,23 @@ void connectToServer(const std::string& host) {
                     } else {
                         std::cerr << "KeepAlive packet too short\n";
                     }
+                }
+                if(packetID == 3){
+                    Packet3Chat packet;
+
+                    //PacketData is too big sometimes
+                    packet.readPacketData(stream);
+                        
+                    std::cout << packet.message << "\n";
+                }
+                if (packetID == 255) {
+                    Packet255KickDisconnect packet;
+
+                    //PacketData is too big sometimes
+                    packet.readPacketData(stream);
+                        
+                    std::cout << packet.reason << "\n";
+                
                 }
                 
             } catch (const std::exception& e) {
