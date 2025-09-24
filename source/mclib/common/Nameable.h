@@ -1,5 +1,4 @@
-#ifndef MCLIB_COMMON_NAMEABLE_H_
-#define MCLIB_COMMON_NAMEABLE_H_
+#pragma once
 
 #include <string>
 
@@ -13,5 +12,3 @@ public:
     const std::wstring& GetCustomName() const noexcept { return m_CustomName; }
     void SetCustomName(const std::wstring& name) { m_CustomName = name; }
 };
-
-#endif

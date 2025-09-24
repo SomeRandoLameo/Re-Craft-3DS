@@ -1,8 +1,7 @@
-#ifndef MCLIB_COMMON_UUID_H_
-#define MCLIB_COMMON_UUID_H_
+#pragma once
 
-#include <mclib/mclib.h>
-#include <mclib/common/Types.h>
+#include "../mclib.h"
+#include "Types.h"
 
 #include <iosfwd>
 #include <string>
@@ -48,5 +47,3 @@ MCLIB_API std::ostream& operator<<(std::ostream& out, const UUID& uuid);
 MCLIB_API std::wostream& operator<<(std::wostream& out, const UUID& uuid);
 
 } // ns mc
-
-#endif

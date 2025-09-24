@@ -1,5 +1,4 @@
-#ifndef MCLIB_H_
-#define MCLIB_H_
+#pragma once
 
 #if defined(_MSC_VER)
     #ifdef MCLIB_EXPORTS
@@ -15,6 +14,4 @@
     #endif
 #else
     #error Unknown compiler. Dynamic link import/export semantics unknown.
-#endif
-
 #endif
