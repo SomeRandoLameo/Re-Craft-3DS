@@ -56,23 +56,24 @@ CFLAGS	:=	-g -Wall -O2 -mword-relocations \
 			-ffunction-sections \
 			$(ARCH)
 
-CFLAGS	+=	$(INCLUDE) -D__3DS__
+CFLAGS	+=	$(INCLUDE) -D__3DS__ -DUSE_CURL
 
 CXXFLAGS	:= $(CFLAGS) -Wno-changes-meaning -fexceptions -std=gnu++14 # removed: -fno-rtti
 
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
-LIBS	:= -lcitro3d -lctru -lm
+LIBS	:= -lcurl -lmbedtls -lmbedx509 -lmbedcrypto -lcitro3d -lctru -lm
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
 
+PORTLIBS ?= $(DEVKITPRO)/portlibs/3ds
 
-LIBDIRS	:= $(subst \,/,$(CTRULIB))
-
+# Gotta love windows...
+LIBDIRS	:= $(subst \,/,$(CTRULIB)) $(subst \,/,$(PORTLIBS))
 
 #---------------------------------------------------------------------------------
 # no real need to edit anything past this point unless you need to add additional
