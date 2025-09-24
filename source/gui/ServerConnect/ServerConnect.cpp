@@ -162,22 +162,16 @@ void connectToServer(const std::string& host) {
                     if (stream.bytesRemaining() >= 4) {
 
                         packet.readPacketData(stream);
-                        
-                        //not every packet should create its own output stream...
-                        DataOutputStream packetData;
-                        packet.writePacketData(packetData);
-
-                        auto keepAliveResponse = packetData.getBuffer();
 
                         if(debugKeepAlive) {
                             std::cout << "Packetbuffer: ";
-                            for(const auto& byte : keepAliveResponse) {
+                            for(const auto& byte : packet.writePacketData().m_Buffer) {
                                 std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(byte) << " ";
                             }
                             std::cout << std::dec << std::endl;
                         }
 
-                        if (!sendPacket(sock, keepAliveResponse, "KeepAlive response")) {
+                        if (!sendPacket(sock, packet.writePacketData().m_Buffer, "KeepAlive response")) {
                             std::cerr << "Failed to send KeepAlive response\n";
                         } 
 

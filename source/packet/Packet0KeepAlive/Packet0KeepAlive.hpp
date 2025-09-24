@@ -1,17 +1,19 @@
-#include "../../dataIO/dataOutputStream/DataOutputStream.hpp"
+#pragma once
+
+#include "../../mclib/common/Common.h"
 #include "../../dataIO/dataInputStream/DataInputStream.hpp"
 
 class Packet0KeepAlive {
 public: 
-    uint32_t randomId;
+    u32 randomId;
 
     void readPacketData(DataInputStream input);
-    void writePacketData(DataOutputStream& output);
+    mc::DataBuffer writePacketData();
 
     int getPacketSize();
 
     bool debugPacket = false;
 private:
     //TODO: Rewrite to set when utilized
-    int packetID = 0;
+    u8 packetID = 0x00;
 };

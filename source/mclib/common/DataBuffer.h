@@ -13,11 +13,14 @@ namespace mc {
 
     class DataBuffer {
     private:
-        typedef std::vector<u8> Data;
-        Data m_Buffer;
+
         std::size_t m_ReadOffset = 0;
 
     public:
+//TODO: Once properly implemented, make these private again
+        typedef std::vector<u8> Data;
+        Data m_Buffer;
+
         typedef Data::iterator iterator;
         typedef Data::const_iterator const_iterator;
         typedef Data::reference reference;

@@ -11,11 +11,13 @@ void Packet0KeepAlive::readPacketData(DataInputStream input){
     this->randomId = randInt;
 }
 
-void Packet0KeepAlive::writePacketData(DataOutputStream& output){
-    output.writeByte(this->packetID);           // Packet ID should ideally be set before, for now this is enough
-    output.writeInt(this->randomId);
+mc::DataBuffer Packet0KeepAlive::writePacketData(){
+    mc::DataBuffer buffer;
+    buffer << this->packetID;           // Packet ID should ideally be set before, for now this is enough
+    buffer << this->randomId;
 
     if(this->debugPacket) std::cout << "Packet output: "<< this->randomId << std::endl;
+    return buffer;
 }
 
 int Packet0KeepAlive::getPacketSize(){
