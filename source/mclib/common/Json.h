@@ -1,5 +1,5 @@
 #pragma once
-#include "/internal/json.hpp"
+#include "internal/json.hpp"
 
 namespace mc {
 
