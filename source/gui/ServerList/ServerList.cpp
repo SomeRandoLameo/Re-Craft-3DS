@@ -4,7 +4,6 @@
 #include "../../nbt/NBTTagCompound.hpp"
 #include "../../nbt/NBTTagList.hpp"
 #include "../../nbt/CompressedStreamTools.hpp"
-#include "../../utils/socket/Socket.hpp"
 #include "../../packet/Packet.hpp"
 #include "../../utils/keyboard/keyboard.hpp"
 
@@ -26,7 +25,7 @@ int parseIntWithDefault(const std::string& str, int defaultValue) {
 }
 
 ServerList::ServerList() {
-    Socket::initSOC();
+    //Socket::initSOC();
     pollingThread.reset(new ServerPollingThread(this));
 }
 
@@ -35,7 +34,7 @@ ServerList::~ServerList() {
         pollingThread->stop();
         pollingThread->join();
     }
-    Socket::shutdownSOC();
+    //Socket::shutdownSOC();
 }
 
 void ServerList::initGui() {
