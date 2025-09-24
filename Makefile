@@ -63,7 +63,7 @@ CXXFLAGS	:= $(CFLAGS) -Wno-changes-meaning -fexceptions -std=gnu++14 # removed: 
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
-LIBS	:= -lcurl -lmbedtls -lmbedx509 -lmbedcrypto -lcitro3d -lctru -lm
+LIBS	:= -lz -lcurl -lmbedtls -lmbedx509 -lmbedcrypto -lcitro3d -lctru -lm
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing

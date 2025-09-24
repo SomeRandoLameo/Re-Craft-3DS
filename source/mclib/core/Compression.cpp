@@ -2,7 +2,7 @@
 
 #include "../common/DataBuffer.h"
 
-#include <miniz.h>
+#include <zlib.h>
 #include <cassert>
 #include <iostream>
 
@@ -26,33 +26,16 @@ namespace mc {
         }
 
         unsigned long inflate(const std::string& source, std::string& dest) {
-            mz_ulong size = dest.size();
-            int result = mz_uncompress((unsigned char*)&dest[0], &size,
-                                       (const unsigned char*)source.c_str(), source.length());
-
-            if (result != MZ_OK) {
-                // Handle error - could throw exception or return error code
-                std::cerr << "Decompression failed with error: " << result << std::endl;
-                return 0;
-            }
-
+            unsigned long size = dest.size();
+            uncompress((Bytef*)&dest[0], &size, (const Bytef*)source.c_str(), source.length());
             return size;
         }
 
         unsigned long deflate(const std::string& source, std::string& dest) {
-            mz_ulong size = source.length();
+            unsigned long size = source.length();
             dest.resize(size);
 
-            int result = mz_compress((unsigned char*)&dest[0], &size,
-                                     (const unsigned char*)source.c_str(), source.length());
-
-            if (result != MZ_OK) {
-                // Handle error - could throw exception or return error code
-                std::cerr << "Compression failed with error: " << result << std::endl;
-                dest.clear();
-                return 0;
-            }
-
+            compress((Bytef*)&dest[0], &size, (const Bytef*)source.c_str(), source.length());
             dest.resize(size);
             return size;
         }
