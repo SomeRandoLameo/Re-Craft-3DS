@@ -15,13 +15,13 @@ enum class State {
 
 enum class Version {
     Minecraft_1_0_1 = 23,
-    //Minecraft_1_10_2 = 210,
-    //Minecraft_1_11_0 = 315,
-    //Minecraft_1_11_2 = 316,
-    //Minecraft_1_12_0 = 335,
-    //Minecraft_1_12_1 = 338,
-    Minecraft_1_12_2 = 340, //TODO: left here to prevent issues
-    //Minecraft_1_13_2 = 404,
+    Minecraft_1_10_2 = 210,
+    Minecraft_1_11_0 = 315,
+    Minecraft_1_11_2 = 316,
+    Minecraft_1_12_0 = 335,
+    Minecraft_1_12_1 = 338,
+    Minecraft_1_12_2 = 340,
+    Minecraft_1_13_2 = 404,
 };
 
 MCLIB_API std::string to_string(Version version);

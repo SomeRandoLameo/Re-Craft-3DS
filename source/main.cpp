@@ -1,30 +1,85 @@
 #include <3ds.h>
 #include <iostream>
-#include "gui/ServerList/ServerList.hpp"
 
-#include "gui/Screen.hpp"
+#include "mclib/common/Common.h"
+#include "mclib/core/Client.h"
+#include "mclib/util/Forge.h"
+#include "mclib/util/Hash.h"
+#include "mclib/util/Utility.h"
+#include "mclib/util/VersionFetcher.h"
+
+//#include "gui/ServerList/ServerList.hpp"
+
+//#include "gui/Screen.hpp"
+
+namespace {
+
+    const std::string server("192.168.2.101");
+    const u16 port = 25565;
+    const std::string username("Nintendo3DS");
+    const std::string password("");
+    const bool useProfileToken = false;
+
+} // ns
+
+
+int run(mc::protocol::Version version, mc::util::ForgeHandler& forge) {
+    mc::protocol::packets::PacketDispatcher dispatcher;
+    mc::core::Client client(&dispatcher, version);
+
+    forge.SetConnection(client.GetConnection());
+
+    client.GetPlayerController()->SetHandleFall(true);
+    client.GetConnection()->GetSettings()
+            .SetMainHand(mc::MainHand::Right)
+            .SetViewDistance(static_cast<s32>(16));
+
+
+    //example::Logger logger(&client, &dispatcher);
+
+    try {
+        std::cout << "Logging in." << std::endl;
+
+        mc::core::AuthToken token;
+
+        client.Login(server, port, username, password, mc::core::UpdateMethod::Block);
+    } catch (std::exception& e) {
+        std::wcout << e.what() << std::endl;
+        return 1;
+    }
+
+    return 0;
+}
 
 int main() {
     gfxInitDefault();
     consoleInit(GFX_BOTTOM, nullptr);
     std::atexit(gfxExit);
 
-    ServerList serverList;
-    Screen::currentScreen = &serverList;
-    serverList.initGui();
-    serverList.pollAllAsync();
-    serverList.drawScreen();
+    std::cout << "DEV, I AM INFACT ALIVE.\n";
 
+    mc::util::VersionFetcher versionFetcher(server, port);
+
+    std::cout << "Fetching version" << std::endl;
+    auto version = versionFetcher.GetVersion();
+
+    mc::block::BlockRegistry::GetInstance()->RegisterVanillaBlocks(version);
+
+    std::cout << "Connecting with version " << mc::protocol::to_string(version) << std::endl;
+    std::cout << "ERROR: " << run(version, versionFetcher.GetForge()) << std::endl;
+
+    // Keep the program running until SELECT is pressed
     while (aptMainLoop()) {
-        gspWaitForVBlank();
         hidScanInput();
         u32 kDown = hidKeysDown();
 
-        if (Screen::currentScreen) {
-            Screen::currentScreen->updateControls(kDown);
+        if (kDown & KEY_SELECT) {
+            std::cout << "SELECT pressed. Exiting...\n";
+            break;
         }
-    
-        if (kDown & KEY_START) break;
+
+        // Optional: delay a bit to reduce CPU usage
+        gspWaitForVBlank();
     }
 
     return 0;
