@@ -1,7 +1,7 @@
-#include <mclib/util/HTTPClient.h>
+#include "HTTPClient.h"
 
-#include <mclib/common/Json.h>
-#include <mclib/util/Tokenizer.h>
+#include "../common/Json.h"
+#include "Tokenizer.h"
 
 #include <curl/curl.h>
 #include <iostream>

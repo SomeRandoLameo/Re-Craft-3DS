@@ -1,8 +1,7 @@
-#ifndef MCLIB_UTIL_HTTP_CLIENT_H_
-#define MCLIB_UTIL_HTTP_CLIENT_H_
+#pragma once
 
-#include <mclib/mclib.h>
-#include <mclib/common/JsonFwd.h>
+#include "../mclib.h"
+#include "../common/Json.h"
 
 #include <map>
 #include <memory>
@@ -52,5 +51,3 @@ public:
 
 } // ns util
 } // ns mc
-
-#endif

@@ -1,8 +1,8 @@
 #ifndef NETWORK_SOCKET_H_
 #define NETWORK_SOCKET_H_
 
-#include <mclib/common/DataBuffer.h>
-#include <mclib/common/Types.h>
+#include "../common/DataBuffer.h"
+#include "../common/Types.h"
 #include <string>
 #include <vector>
 #include <memory>

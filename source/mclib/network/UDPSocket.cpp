@@ -1,6 +1,6 @@
-#include <mclib/network/UDPSocket.h>
+#include "UDPSocket.h"
 
-#include <mclib/common/DataBuffer.h>
+#include "../common/DataBuffer.h"
 
 #include <iostream>
 
