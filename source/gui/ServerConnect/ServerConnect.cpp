@@ -1,6 +1,5 @@
 #include "ServerConnect.hpp"
 #include "../ServerList/ServerList.hpp"
-#include "../../utils/socket/Socket.hpp"
 #include "../../utils/keyboard/keyboard.hpp"
 
 #include "../../dataIO/dataOutputStream/DataOutputStream.hpp"
@@ -35,7 +34,7 @@ ServerConnect::ServerConnect(ServerList* serverList, const ServerNBTStorage& ser
 }
 
 ServerConnect::~ServerConnect() {
-    Socket::shutdownSOC();
+    //Socket::shutdownSOC();
 }
 
 bool sendPacket(int sock, const std::vector<uint8_t>& packet, const std::string& packetName) {
@@ -47,7 +46,7 @@ bool sendPacket(int sock, const std::vector<uint8_t>& packet, const std::string&
 }
 
 void connectToServer(const std::string& host) {
-    Socket::initSOC();
+    //Socket::initSOC();
 
     u16 port = 25565; // Default Minecraft port
     if (!SOC_buffer) {
