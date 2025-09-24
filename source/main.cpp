@@ -50,37 +50,3 @@ int run(mc::protocol::Version version, mc::util::ForgeHandler& forge) {
 
     return 0;
 }
-
-int main() {
-    gfxInitDefault();
-    consoleInit(GFX_BOTTOM, nullptr);
-    std::atexit(gfxExit);
-
-    std::cout << "DEV, I AM INFACT ALIVE.\n";
-
-    mc::util::VersionFetcher versionFetcher(server, port);
-
-    std::cout << "Fetching version" << std::endl;
-    auto version = versionFetcher.GetVersion();
-
-    mc::block::BlockRegistry::GetInstance()->RegisterVanillaBlocks(version);
-
-    std::cout << "Connecting with version " << mc::protocol::to_string(version) << std::endl;
-    std::cout << "ERROR: " << run(version, versionFetcher.GetForge()) << std::endl;
-
-    // Keep the program running until SELECT is pressed
-    while (aptMainLoop()) {
-        hidScanInput();
-        u32 kDown = hidKeysDown();
-
-        if (kDown & KEY_SELECT) {
-            std::cout << "SELECT pressed. Exiting...\n";
-            break;
-        }
-
-        // Optional: delay a bit to reduce CPU usage
-        gspWaitForVBlank();
-    }
-
-    return 0;
-}
