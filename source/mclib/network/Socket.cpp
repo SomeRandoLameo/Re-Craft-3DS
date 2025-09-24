@@ -1,8 +1,8 @@
-#include <mclib/network/Socket.h>
+#include "Socket.h"
 
-#include <mclib/common/DataBuffer.h>
-#include <mclib/network/IPAddress.h>
-#include <mclib/network/Network.h>
+#include "../common/DataBuffer.h"
+#include "IPAddress.h"
+#include "Network.h"
 
 namespace mc {
 namespace network {

@@ -1,8 +1,8 @@
 #ifndef NETWORK_TCP_SOCKET_H_
 #define NETWORK_TCP_SOCKET_H_
 
-#include <mclib/network/IPAddress.h>
-#include <mclib/network/Socket.h>
+#include "IPAddress.h"
+#include "Socket.h"
 
 #include <cstdint>
 

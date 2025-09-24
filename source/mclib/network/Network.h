@@ -13,10 +13,10 @@
 #include <fcntl.h>
 #endif
 
-#include <mclib/network/Socket.h>
-#include <mclib/network/IPAddress.h>
-#include <mclib/network/UDPSocket.h>
-#include <mclib/network/TCPSocket.h>
+#include "Socket.h"
+#include "IPAddress.h"
+#include "UDPSocket.h"
+#include "TCPSocket.h"
 
 namespace mc {
 namespace network {

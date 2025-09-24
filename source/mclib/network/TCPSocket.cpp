@@ -1,6 +1,6 @@
-#include <mclib/network/TCPSocket.h>
+#include "TCPSocket.h"
 
-#include <mclib/common/DataBuffer.h>
+#include "../common/DataBuffer.h"
 
 #include <iostream>
 

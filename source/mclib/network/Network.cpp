@@ -1,4 +1,4 @@
-#include <mclib/network/Network.h>
+#include "Network.h"
 
 namespace mc {
 namespace network {
