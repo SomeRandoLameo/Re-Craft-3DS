@@ -56,12 +56,11 @@ CFLAGS	:=	-g -Wall -O2 -mword-relocations \
 			-ffunction-sections \
 			$(ARCH)
 
-CFLAGS	+=	$(INCLUDE) -D__3DS__ -DUSE_CURL
+CFLAGS   += $(INCLUDE) -D__3DS__ -DUSE_CURL -g -O0
+CXXFLAGS := $(CFLAGS) -Wno-changes-meaning -fexceptions -std=gnu++14 # removed: -fno-rtti
 
-CXXFLAGS	:= $(CFLAGS) -Wno-changes-meaning -fexceptions -std=gnu++14 # removed: -fno-rtti
-
-ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	=	-specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
+ASFLAGS :=  -g $(ARCH)
+LDFLAGS =  -specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
 LIBS	:= -lz -lcurl -lmbedtls -lmbedx509 -lmbedcrypto -lcitro3d -lctru -lm
 
@@ -180,8 +179,8 @@ all: $(BUILD) $(GFXBUILD) $(DEPSDIR) $(ROMFS_T3XFILES) $(T3XHFILES)
 	@$(MAKE) -j$(JOBS) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 
 run: all
-	@echo "Launching ReCraft3DS.smdh in Citra..."
-	@"E:/Development/3DS/citra/citra-qt.exe" ReCraft3DS.3dsx
+	@echo "Launching ReCraft3DS.elf in Citra..."
+	@"E:/Development/3DS/citra/citra.exe" ReCraft3DS.elf
 
 $(BUILD):
 	@mkdir -p $@

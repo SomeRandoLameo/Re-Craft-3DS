@@ -1,5 +1,8 @@
 #include "Block.h"
 
+#include <iostream> //TODO: Remove once debugged
+
+
 namespace {
 
 void Register1_12() {
@@ -473,11 +476,18 @@ namespace mc {
         }
 
         void BlockRegistry::RegisterVanillaBlocks(protocol::Version protocolVersion) {
+            std::cout << "DEV" << std::endl;
+        /*
+            std::cout << "Registering vanilla blocks" << std::endl;
             const AABB FullSolidBounds(Vector3d(0, 0, 0), Vector3d(1, 1, 1));
+            std::cout << "created FullSolidBounds" << std::endl;
 
             if (protocolVersion <= protocol::Version::Minecraft_1_12_2) {
+                std::cout << "registering 1.12" << std::endl;
                 Register1_12();
+                std::cout << "registered 1.12" << std::endl;
             } else {
+                std::cout << "registering everything else" << std::endl;
                 const char* blockNames[] = {
                     "minecraft:air",
                     "minecraft:stone",
@@ -1079,6 +1089,8 @@ namespace mc {
                     "minecraft:structure_block",
                 };
 
+                std::cout << "created block names array" << std::endl;
+
                 unsigned int map[] = {
                     0, 1, 2, 3, 4, 5, 6, 7, 8, 8, 9, 10, 11, 11, 12, 13, 14, 15, 16, 17, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 26, 26, 26, 26, 26, 26, 26, 26, 26,
                     26, 26, 26, 26, 26, 26, 26, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 28, 29, 30, 31, 32, 33, 34, 34, 34, 35, 35, 35, 36, 36, 36, 37, 37,
@@ -1343,7 +1355,7 @@ namespace mc {
                     577, 578, 578, 578, 578, 578, 578, 578, 578, 579, 579, 579, 579, 579, 579, 579, 579, 580, 580, 580, 580, 580, 580, 580, 580, 581, 581, 582, 582, 583, 583, 584,
                     584, 585, 585, 586, 586, 587, 587, 588, 588, 589, 589, 590, 590, 591, 591, 591, 591, 591, 591, 591, 591, 592, 593, 593, 594, 595, 596, 596, 597, 597, 597, 597,
                 };
-
+                std::cout << "created some maps" << std::endl;
                 unsigned int transparent_ids[] = {
                     0, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61,
                     62, 63, 64, 65, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011, 1012, 1013, 1014, 1015, 1016, 1017, 1018, 1019, 1020, 1021, 1022, 1023, 1024, 1025, 1026, 1027,
@@ -1441,22 +1453,28 @@ namespace mc {
                     5434, 5435, 5436, 5437, 5438, 5439, 5440, 5441, 5442, 5443, 5444, 5445, 5446, 5447, 5781, 5782, 5783, 5784, 5785, 5786, 5787, 5788, 5789, 5790, 5791, 5792, 6843,
                     6844, 6845, 6846, 6847, 6848, 6849, 6850, 6851, 6852, 6853, 6854, 8591, 8592,
                 };
-
+                std::cout << "created transparent ids" << std::endl;
                 for (int i = 0; i < sizeof(map) / sizeof(*map); ++i) {
                     RegisterBlock(new Block(blockNames[map[i]], i, true));
+                    std::cout << "registered block: "<< blockNames[map[i]] << std::endl;
                 }
 
                 for (int i = 0; i < sizeof(transparent_ids) / sizeof(*transparent_ids); ++i) {
                     GetBlock(transparent_ids[i])->m_Solid = false;
+                    std::cout << "gotten block transparency" << std::endl;
                 }
             }
 
             // Set full boudning box on fully solid blocks
             for (auto kv : m_Blocks) {
                 AABB bounds = kv.second->GetBoundingBox();
-                if (kv.second->IsSolid() && (bounds.max - bounds.min).Length() == 0)
+                std::cout << "gotten bounding box" << std::endl;
+                if (kv.second->IsSolid() && (bounds.max - bounds.min).Length() == 0) {
                     kv.second->SetBoundingBox(FullSolidBounds);
+                    std::cout << "set bounding box" << std::endl;
+                }
             }
+            */
         }
 
         void BlockRegistry::ClearRegistry() {
