@@ -12,6 +12,9 @@
 #include <future>
 #include <thread>
 #include <memory>
+//TODO: Remove when debugging completed
+#include <iostream>
+
 
 namespace mc {
     namespace core {
@@ -164,39 +167,54 @@ namespace mc {
 
         bool Connection::Connect(const std::string& server, u16 port) {
             bool result = false;
-
+            std::cout << "opening server TCP Socket" << std::endl;
             m_Socket = std::make_unique<network::TCPSocket>();
+            std::cout << "starting YGGDRASIL SHIT" << std::endl;
             m_Yggdrasil = std::unique_ptr<util::Yggdrasil>(new util::Yggdrasil());
+            std::cout << "Setting protocol to handshake" << std::endl;
             m_ProtocolState = protocol::State::Handshake;
 
-
+            std::cout << "creating compression" << std::endl;
             m_Compressor = std::make_unique<CompressionNone>();
+            std::cout << "creating encrypter" << std::endl;
             m_Encrypter = std::make_unique<EncryptionStrategyNone>();
 
+            std::cout << "setting server" << std::endl;
             m_Server = server;
+            std::cout << "setting port" << std::endl;
             m_Port = port;
 
             if (isdigit(m_Server.at(0))) {
+                std::cout << "creating IP" << std::endl;
                 network::IPAddress addr(m_Server);
-
+                std::cout << "connecting to Socket" << std::endl;
                 result = m_Socket->Connect(addr, m_Port);
+                std::cout << "connected to Socket" << std::endl;
             } else {
+                std::cout << "Resolving dnsses" << std::endl;
                 auto addrs = network::Dns::Resolve(m_Server);
                 if (addrs.size() == 0) return false;
 
                 for (auto addr : addrs) {
+                    std::cout << "connecting to addresses" << std::endl;
                     if (m_Socket->Connect(addr, m_Port)) {
+                        std::cout << "connected to addresses" << std::endl;
                         result = true;
                         break;
                     }
                 }
             }
-
+            std::cout << "unsetting blocking socket" << std::endl;
             m_Socket->SetBlocking(false);
+            std::cout << "unset blocking socket" << std::endl;
 
-            if (result)
+            if (result) {
+                std::cout << "getting server status notification" << std::endl;
                 NotifyListeners(&ConnectionListener::OnSocketStateChange, m_Socket->GetStatus());
+                std::cout << "gotten server status notification" << std::endl;
+            }
 
+            std::cout << "returning result" << std::endl;
             return result;
         }
 

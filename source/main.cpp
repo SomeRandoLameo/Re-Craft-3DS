@@ -56,17 +56,16 @@ int main() {
     consoleInit(GFX_BOTTOM, nullptr);
     std::atexit(gfxExit);
 
-    std::cout << "DEV, I AM INFACT ALIVE.\n";
 
     mc::util::VersionFetcher versionFetcher(server, port);
 
     std::cout << "Fetching version" << std::endl;
     auto version = versionFetcher.GetVersion();
     std::cout << "Fetched version, is: " << to_string(version) << std::endl;
-
-    std::cout << "Opening Blockregistry" << std::endl;
-    mc::block::BlockRegistry::GetInstance()->RegisterVanillaBlocks(version);
-    std::cout << "Opened Blockregistry" << std::endl;
+    //TODO: Fix BlockRegistry. This causes a data issue
+    // std::cout << "Opening Blockregistry" << std::endl;
+    // mc::block::BlockRegistry::GetInstance()->RegisterVanillaBlocks(version);
+    // std::cout << "Opened Blockregistry" << std::endl;
 
     std::cout << "Connecting with version " << mc::protocol::to_string(version) << std::endl;
     std::cout << "ERROR: " << run(version, versionFetcher.GetForge()) << std::endl;

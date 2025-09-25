@@ -1,68 +1,89 @@
+// Network.cpp - 3DS Implementation
 #include "Network.h"
+#include <3ds.h>
+#include <malloc.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <errno.h>
 
 namespace mc {
-namespace network {
+    namespace network {
 
-class NetworkInitializer {
-private:
-public:
-    MCLIB_API NetworkInitializer();
-    MCLIB_API ~NetworkInitializer();
+        class NetworkInitializer {
+        private:
+            static u32* SOC_buffer;
+            static bool initialized;
+        public:
+            MCLIB_API NetworkInitializer();
+            MCLIB_API ~NetworkInitializer();
 
-    NetworkInitializer(const NetworkInitializer& rhs) = delete;
-    NetworkInitializer& operator=(const NetworkInitializer& rhs) = delete;
-};
+            NetworkInitializer(const NetworkInitializer& rhs) = delete;
+            NetworkInitializer& operator=(const NetworkInitializer& rhs) = delete;
+        };
 
-#ifdef _WIN32
-NetworkInitializer::NetworkInitializer() {
-    WSADATA wsaData;
-    WSAStartup(MAKEWORD(2, 2), &wsaData);
-}
-NetworkInitializer::~NetworkInitializer() {
-    WSACleanup();
-}
-#else
-NetworkInitializer::NetworkInitializer() {
+        u32* NetworkInitializer::SOC_buffer = nullptr;
+        bool NetworkInitializer::initialized = false;
 
-}
-NetworkInitializer::~NetworkInitializer() {
+        NetworkInitializer::NetworkInitializer() {
+            if (!initialized) {
+                // Allocate buffer for SOC service (0x100000 bytes recommended)
+                SOC_buffer = (u32*)memalign(0x1000, 0x100000);
+                if (SOC_buffer) {
+                    // Initialize SOC service
+                    Result ret = socInit(SOC_buffer, 0x100000);
+                    if (R_SUCCEEDED(ret)) {
+                        initialized = true;
+                    }
+                }
+            }
+        }
 
-}
-#endif
+        NetworkInitializer::~NetworkInitializer() {
+            if (initialized) {
+                socExit();
+                if (SOC_buffer) {
+                    free(SOC_buffer);
+                    SOC_buffer = nullptr;
+                }
+                initialized = false;
+            }
+        }
 
-NetworkInitializer initializer;
+        NetworkInitializer initializer;
 
-IPAddresses Dns::Resolve(const std::string& host) {
-    IPAddresses list;
-    addrinfo hints = { 0 }, *addresses;
+        IPAddresses Dns::Resolve(const std::string& host) {
+            IPAddresses list;
+            struct addrinfo hints = { 0 };
+            struct addrinfo* addresses = nullptr;
 
-    //hints.ai_family = AF_UNSPEC;
-    hints.ai_family = AF_INET;
-    hints.ai_socktype = SOCK_STREAM;
-    hints.ai_protocol = IPPROTO_TCP;
+            hints.ai_family = AF_INET;
+            hints.ai_socktype = SOCK_STREAM;
+            hints.ai_protocol = IPPROTO_TCP;
 
-    getaddrinfo(host.c_str(), NULL, &hints, &addresses);
+            int ret = getaddrinfo(host.c_str(), nullptr, &hints, &addresses);
+            if (ret != 0) {
+                return list; // Return empty list on failure
+            }
 
-    for (addrinfo *p = addresses; p != NULL; p = p->ai_next) {
-#ifdef _WIN32
-        //wchar_t straddr[35];
-        //char straddr[512];
-        //DWORD len;
-        //WSAAddressToStringA(p->ai_addr, p->ai_addrlen, NULL, straddr, &len);
+            for (struct addrinfo* p = addresses; p != nullptr; p = p->ai_next) {
+                if (p->ai_family == AF_INET) {
+                    struct sockaddr_in* sockaddr_ipv4 = (struct sockaddr_in*)p->ai_addr;
+                    char straddr[INET_ADDRSTRLEN];
 
-        char* straddr = inet_ntoa(((sockaddr_in*)p->ai_addr)->sin_addr);
+                    if (inet_ntop(AF_INET, &(sockaddr_ipv4->sin_addr), straddr, INET_ADDRSTRLEN)) {
+                        list.push_back(IPAddress(straddr));
+                    }
+                }
+            }
 
-#else
-        char straddr[512];
+            if (addresses) {
+                freeaddrinfo(addresses);
+            }
 
-        inet_ntop(p->ai_family, &((sockaddr_in*)p->ai_addr)->sin_addr, straddr, sizeof(straddr));
-#endif
+            return list;
+        }
 
-        list.push_back(IPAddress(straddr));
-    }
-
-    return list;
-}
-
-} // ns network
+    } // ns network
 } // ns mc
