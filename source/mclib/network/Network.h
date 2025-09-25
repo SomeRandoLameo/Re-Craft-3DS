@@ -1,17 +1,12 @@
-#ifndef NETWORK_NETWORK_H_
-#define NETWORK_NETWORK_H_
+#pragma once
 
-#ifdef _WIN32
-#include <WS2tcpip.h>
-#pragma comment(lib, "ws2_32.lib")
-#else
+#include <3ds.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <fcntl.h>
-#endif
 
 #include "Socket.h"
 #include "IPAddress.h"
@@ -19,14 +14,13 @@
 #include "TCPSocket.h"
 
 namespace mc {
-namespace network {
+    namespace network {
 
-class Dns {
-public:
-    static MCLIB_API IPAddresses Resolve(const std::string& host);
-};
+        class Dns {
+        public:
+            static MCLIB_API IPAddresses Resolve(const std::string& host);
+        };
 
-} // ns network
+    } // ns network
 } // ns mc
 
-#endif
