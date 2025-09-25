@@ -2,16 +2,16 @@
 
 #include "../common/DataBuffer.h"
 #include "../common/Types.h"
-#include <string>
-#include <vector>
-#include <memory>
 #include <3ds.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <netdb.h>
+#include <sys/types.h>
 #include <unistd.h>
-#include <fcntl.h>
+#include <netdb.h>
+#include <string>
+#include <vector>
+#include <memory>
 
 #define closesocket close
 
