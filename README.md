@@ -1,5 +1,5 @@
 # Re-Craft-3DS
-a Minecraft 1.0.1 client implemented on the 3DS (and new 3DS)
+a Minecraft (1.10.x - 1.12.x) client implemented on the 3DS (and new 3DS)
 
 ### Additional libraries (you need to install them in order to build this project)
 
