@@ -11,8 +11,8 @@ namespace mc {
 
         class Dropper : public BlockEntity, public InventoryBlock, public Nameable {
         public:
-            MCLIB_API Dropper(BlockEntityType type, Vector3i position) : BlockEntity(type, position) { }
-            MCLIB_API bool ImportNBT(nbt::NBT* nbt);
+            Dropper(BlockEntityType type, Vector3i position) : BlockEntity(type, position) { }
+            bool ImportNBT(nbt::NBT* nbt);
         };
 
     } // ns block

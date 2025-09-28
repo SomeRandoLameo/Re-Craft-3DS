@@ -59,8 +59,8 @@ namespace mc {
                 Initialize();
             }
 
-            MCLIB_API Yggdrasil(const Yggdrasil& other);
-            MCLIB_API Yggdrasil& operator=(const Yggdrasil& other);
+            Yggdrasil(const Yggdrasil& other);
+            Yggdrasil& operator=(const Yggdrasil& other);
 
             const std::string& GetAccessToken() const { return m_AccessToken; }
             const std::string& GetClientToken() const { return m_ClientToken; }
@@ -78,7 +78,7 @@ namespace mc {
              * @param client A unique client token. Must be the same for every request. Uses a default client if none is provided.
              * @return true if the login was successful.
              */
-            bool MCLIB_API Authenticate(const std::string& username, const std::string& password, const std::string& client = "");
+            bool Authenticate(const std::string& username, const std::string& password, const std::string& client = "");
 
             /**
              * Posts a new session to the session server.
@@ -89,7 +89,7 @@ namespace mc {
              * @return true if it successfully posted the session to the server.
              * @throws YggdrasilException if it can't connect to the server, or if it receives an error from the server.
              */
-            bool MCLIB_API JoinServer(const std::wstring& serverId, const std::string& sharedSecret, const std::string& publicKey);
+            bool JoinServer(const std::wstring& serverId, const std::string& sharedSecret, const std::string& publicKey);
 
             /**
              * Posts a new session to the session server.
@@ -100,7 +100,7 @@ namespace mc {
              * @param serverHash the java-style hex digest
              * @throws YggdrasilException if it can't connect to the server, or if it receives an error from the server.
              */
-            bool MCLIB_API JoinServer(const std::string& serverHash);
+            bool JoinServer(const std::string& serverHash);
 
             /**
              * Refreshes an access token by creating a new one and invalidating the old one.
@@ -110,7 +110,7 @@ namespace mc {
              * @param clientToken This should match the clientToken used to obtain the accessToken originally.
              * @return A pair containing the access token and the username.
              */
-            std::pair<std::string, std::string> MCLIB_API Refresh(const std::string& accessToken, const std::string& clientToken = 0);
+            std::pair<std::string, std::string> Refresh(const std::string& accessToken, const std::string& clientToken = 0);
 
             /**
              * Checks if an access token is usable for authentication. The token should be refreshed if it isn't valid.
@@ -118,7 +118,7 @@ namespace mc {
              * @param clientToken This should match the clientToken used to obtain the accessToken originally.
              * @return True if the token is usable for authentication, false otherwise.
              */
-            bool MCLIB_API Validate(const std::string& accessToken, const std::string& clientToken = 0);
+            bool Validate(const std::string& accessToken, const std::string& clientToken = 0);
 
             /**
              * Invalidates the last used accessToken for an account using login credentials.
@@ -126,7 +126,7 @@ namespace mc {
              * @param username Username for the account.
              * @param password Password for the account.
              */
-            void MCLIB_API Signout(const std::string& username, const std::string& password);
+            void Signout(const std::string& username, const std::string& password);
 
             /**
              * Invalidates the last used accessToken for an account using login credentials.
@@ -134,10 +134,10 @@ namespace mc {
              * @param accessToken The access token to invalidate.
              * @param clientToken This should match the clientToken used to obtain the accessToken originally.
              */
-            void MCLIB_API Invalidate(const std::string& accessToken, const std::string& clientToken = 0);
+            void Invalidate(const std::string& accessToken, const std::string& clientToken = 0);
 
-            UUID MCLIB_API GetPlayerUUID(const std::string& name);
-            json MCLIB_API GetPlayerProfile(UUID& uuid);
+            UUID GetPlayerUUID(const std::string& name);
+            json GetPlayerProfile(UUID& uuid);
         };
 
     } // ns util

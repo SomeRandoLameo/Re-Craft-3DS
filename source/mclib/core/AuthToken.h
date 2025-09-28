@@ -23,18 +23,18 @@ namespace mc {
             bool m_Valid;
 
         public:
-            MCLIB_API AuthToken();
-            MCLIB_API AuthToken(const std::string& accessToken, const std::string& clientToken, const std::string& profileId = "");
+            AuthToken();
+            AuthToken(const std::string& accessToken, const std::string& clientToken, const std::string& profileId = "");
 
-            MCLIB_API AuthToken(const AuthToken& rhs);
-            MCLIB_API AuthToken& operator=(const AuthToken& rhs);
-            MCLIB_API AuthToken(AuthToken&& rhs) = default;
-            MCLIB_API AuthToken& operator=(AuthToken&& rhs) = default;
+            AuthToken(const AuthToken& rhs);
+            AuthToken& operator=(const AuthToken& rhs);
+            AuthToken(AuthToken&& rhs) = default;
+            AuthToken& operator=(AuthToken&& rhs) = default;
 
             // Checks the api to see if the access token is valid.
-            MCLIB_API bool Validate(const std::string& username = "");
+            bool Validate(const std::string& username = "");
             // This will invalidate the accessToken and get a new one if possible.
-            MCLIB_API bool Refresh();
+            bool Refresh();
 
             inline bool IsValid() const noexcept { return m_Valid; }
             inline const std::string& GetAccessToken() const noexcept { return m_AccessToken; }

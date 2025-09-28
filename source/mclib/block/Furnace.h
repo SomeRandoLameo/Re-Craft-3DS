@@ -16,8 +16,8 @@ namespace mc {
             s16 m_CookTimeTotal;
 
         public:
-            MCLIB_API Furnace(BlockEntityType type, Vector3i position) : BlockEntity(type, position), m_BurnTime(0), m_CookTime(0), m_CookTimeTotal(0) { }
-            MCLIB_API bool ImportNBT(nbt::NBT* nbt);
+            Furnace(BlockEntityType type, Vector3i position) : BlockEntity(type, position), m_BurnTime(0), m_CookTime(0), m_CookTimeTotal(0) { }
+            bool ImportNBT(nbt::NBT* nbt);
 
             inventory::Slot GetSmeltingSlot() const noexcept;
             inventory::Slot GetFuelSlot() const noexcept;

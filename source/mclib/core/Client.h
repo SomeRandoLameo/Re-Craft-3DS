@@ -49,20 +49,20 @@ namespace mc {
         std::thread m_UpdateThread;
 
     public:
-        MCLIB_API Client(protocol::packets::PacketDispatcher* dispatcher, protocol::Version version = protocol::Version::Minecraft_1_11_2);
-        MCLIB_API ~Client();
+        Client(protocol::packets::PacketDispatcher* dispatcher, protocol::Version version = protocol::Version::Minecraft_1_11_2);
+        ~Client();
 
         Client(const Client& rhs) = delete;
         Client& operator=(const Client& rhs) = delete;
         Client(Client&& rhs) = delete;
         Client& operator=(Client&& rhs) = delete;
 
-        void MCLIB_API OnSocketStateChange(network::Socket::Status newState);
-        void MCLIB_API UpdateThread();
-        void MCLIB_API Update();
-        bool MCLIB_API Login(const std::string& host, unsigned short port, const std::string& user, const std::string& password, UpdateMethod method = UpdateMethod::Block);
-        bool MCLIB_API Login(const std::string& host, unsigned short port, const std::string& user, AuthToken token, UpdateMethod method = UpdateMethod::Block);
-        void MCLIB_API Ping(const std::string& host, unsigned short port, UpdateMethod method = UpdateMethod::Block);
+        void OnSocketStateChange(network::Socket::Status newState);
+        void UpdateThread();
+        void Update();
+        bool Login(const std::string& host, unsigned short port, const std::string& user, const std::string& password, UpdateMethod method = UpdateMethod::Block);
+        bool Login(const std::string& host, unsigned short port, const std::string& user, AuthToken token, UpdateMethod method = UpdateMethod::Block);
+        void Ping(const std::string& host, unsigned short port, UpdateMethod method = UpdateMethod::Block);
 
         protocol::packets::PacketDispatcher* GetDispatcher() { return m_Dispatcher; }
         core::Connection* GetConnection() { return &m_Connection; }

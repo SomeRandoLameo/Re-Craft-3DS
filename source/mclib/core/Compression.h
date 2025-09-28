@@ -11,15 +11,15 @@ namespace mc {
 
         class CompressionStrategy {
         public:
-            virtual MCLIB_API ~CompressionStrategy() { }
-            virtual DataBuffer MCLIB_API Compress(DataBuffer& buffer) = 0;
-            virtual DataBuffer MCLIB_API Decompress(DataBuffer& buffer, std::size_t packetLength) = 0;
+            virtual ~CompressionStrategy() { }
+            virtual DataBuffer Compress(DataBuffer& buffer) = 0;
+            virtual DataBuffer Decompress(DataBuffer& buffer, std::size_t packetLength) = 0;
         };
 
         class CompressionNone : public CompressionStrategy {
         public:
-            DataBuffer MCLIB_API Compress(DataBuffer& buffer);
-            DataBuffer MCLIB_API Decompress(DataBuffer& buffer, std::size_t packetLength);
+            DataBuffer Compress(DataBuffer& buffer);
+            DataBuffer Decompress(DataBuffer& buffer, std::size_t packetLength);
         };
 
         class CompressionZ : public CompressionStrategy {
@@ -30,10 +30,10 @@ namespace mc {
             u64 m_CompressionThreshold;
 
         public:
-            MCLIB_API CompressionZ(u64 threshold) : m_CompressionThreshold(threshold) { }
+            CompressionZ(u64 threshold) : m_CompressionThreshold(threshold) { }
 
-            DataBuffer MCLIB_API Compress(DataBuffer& buffer);
-            DataBuffer MCLIB_API Decompress(DataBuffer& buffer, std::size_t packetLength);
+            DataBuffer Compress(DataBuffer& buffer);
+            DataBuffer Decompress(DataBuffer& buffer, std::size_t packetLength);
         };
 
     } // ns core

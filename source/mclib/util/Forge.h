@@ -39,15 +39,15 @@ namespace mc {
             }
 
         public:
-            MCLIB_API ForgeHandler(protocol::packets::PacketDispatcher* dispatcher, core::Connection* connection);
-            MCLIB_API ~ForgeHandler();
+            ForgeHandler(protocol::packets::PacketDispatcher* dispatcher, core::Connection* connection);
+            ~ForgeHandler();
 
-            MCLIB_API void SetConnection(core::Connection* conn) { m_Connection = conn; }
+            void SetConnection(core::Connection* conn) { m_Connection = conn; }
 
-            MCLIB_API void HandlePacket(protocol::packets::in::PluginMessagePacket* packet);
-            MCLIB_API void HandlePacket(protocol::packets::in::status::ResponsePacket* packet);
+            void HandlePacket(protocol::packets::in::PluginMessagePacket* packet);
+            void HandlePacket(protocol::packets::in::status::ResponsePacket* packet);
 
-            MCLIB_API bool HasModInfo() const;
+            bool HasModInfo() const;
         };
 
     } // ns util

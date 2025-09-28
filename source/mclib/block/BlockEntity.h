@@ -52,16 +52,16 @@ namespace mc {
             nbt::NBT m_NBT;
 
         protected:
-            virtual MCLIB_API bool ImportNBT(nbt::NBT* nbt) { return true; }
+            virtual bool ImportNBT(nbt::NBT* nbt) { return true; }
 
         public:
-            MCLIB_API BlockEntity(BlockEntityType type, Vector3i position) noexcept;
+            BlockEntity(BlockEntityType type, Vector3i position) noexcept;
 
-            MCLIB_API BlockEntityType GetType() const noexcept { return m_Type; }
-            MCLIB_API Vector3i GetPosition() const noexcept { return m_Position; }
-            MCLIB_API nbt::NBT* GetNBT() noexcept { return &m_NBT; }
+            BlockEntityType GetType() const noexcept { return m_Type; }
+            Vector3i GetPosition() const noexcept { return m_Position; }
+            nbt::NBT* GetNBT() noexcept { return &m_NBT; }
 
-            MCLIB_API static std::unique_ptr<BlockEntity> CreateFromNBT(nbt::NBT* nbt);
+            static std::unique_ptr<BlockEntity> CreateFromNBT(nbt::NBT* nbt);
         };
         using BlockEntityPtr = std::shared_ptr<BlockEntity>;
 

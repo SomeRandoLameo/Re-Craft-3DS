@@ -72,31 +72,31 @@ namespace mc {
             UUID m_ClientUUID;
 
         public:
-            MCLIB_API PlayerManager(protocol::packets::PacketDispatcher* dispatcher, entity::EntityManager* entityManager);
-            MCLIB_API ~PlayerManager();
+            PlayerManager(protocol::packets::PacketDispatcher* dispatcher, entity::EntityManager* entityManager);
+            ~PlayerManager();
 
             PlayerManager(const PlayerManager& rhs) = delete;
             PlayerManager& operator=(const PlayerManager& rhs) = delete;
             PlayerManager(PlayerManager&& rhs) = delete;
             PlayerManager& operator=(PlayerManager&& rhs) = delete;
 
-            iterator MCLIB_API begin();
-            iterator MCLIB_API end();
+            iterator begin();
+            iterator end();
 
             // Gets a player by their UUID. Fast method, just requires map lookup.
-            PlayerPtr MCLIB_API GetPlayerByUUID(UUID uuid) const;
+            PlayerPtr GetPlayerByUUID(UUID uuid) const;
             // Gets a player by their EntityId. Somewhat slow method, has to loop through player map to find the player with that eid.
             // It should still be pretty fast though since there aren't many players on a server usually.
-            PlayerPtr MCLIB_API GetPlayerByEntityId(EntityId eid) const;
+            PlayerPtr GetPlayerByEntityId(EntityId eid) const;
             // Gets a player by their username.
-            PlayerPtr MCLIB_API GetPlayerByName(const std::wstring& name) const;
+            PlayerPtr GetPlayerByName(const std::wstring& name) const;
 
-            void MCLIB_API OnPlayerSpawn(entity::PlayerEntityPtr entity, UUID uuid);
-            void MCLIB_API OnEntityDestroy(entity::EntityPtr entity);
-            void MCLIB_API OnEntityMove(entity::EntityPtr entity, Vector3d oldPos, Vector3d newPos);
-            void MCLIB_API HandlePacket(protocol::packets::in::LoginSuccessPacket* packet);
-            void MCLIB_API HandlePacket(protocol::packets::in::PlayerPositionAndLookPacket* packet);
-            void MCLIB_API HandlePacket(protocol::packets::in::PlayerListItemPacket* packet);
+            void OnPlayerSpawn(entity::PlayerEntityPtr entity, UUID uuid);
+            void OnEntityDestroy(entity::EntityPtr entity);
+            void OnEntityMove(entity::EntityPtr entity, Vector3d oldPos, Vector3d newPos);
+            void HandlePacket(protocol::packets::in::LoginSuccessPacket* packet);
+            void HandlePacket(protocol::packets::in::PlayerPositionAndLookPacket* packet);
+            void HandlePacket(protocol::packets::in::PlayerListItemPacket* packet);
         };
     } // ns core
 } // ns mc

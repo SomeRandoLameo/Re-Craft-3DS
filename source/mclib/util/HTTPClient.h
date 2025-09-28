@@ -35,18 +35,18 @@ private:
     class Impl;
     std::unique_ptr<Impl> m_Impl;
 public:
-    MCLIB_API CurlHTTPClient();
-    MCLIB_API ~CurlHTTPClient();
+    CurlHTTPClient();
+    ~CurlHTTPClient();
 
     CurlHTTPClient(const CurlHTTPClient& other);
     CurlHTTPClient& operator=(const CurlHTTPClient& rhs);
     CurlHTTPClient(CurlHTTPClient&& other);
     CurlHTTPClient& operator=(CurlHTTPClient&& rhs);
 
-    HTTPResponse MCLIB_API Get(const std::string& url, Headers headers = {});
-    HTTPResponse MCLIB_API Post(const std::string& url, const std::string& data, Headers headers = {});
-    HTTPResponse MCLIB_API PostJSON(const std::string& url, const std::string& data, Headers headers = {});
-    HTTPResponse MCLIB_API PostJSON(const std::string& url, const json& json, Headers headers = {});
+    HTTPResponse Get(const std::string& url, Headers headers = {});
+    HTTPResponse Post(const std::string& url, const std::string& data, Headers headers = {});
+    HTTPResponse PostJSON(const std::string& url, const std::string& data, Headers headers = {});
+    HTTPResponse PostJSON(const std::string& url, const json& json, Headers headers = {});
 };
 
 } // ns util

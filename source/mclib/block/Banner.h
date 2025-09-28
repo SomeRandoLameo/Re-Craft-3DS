@@ -18,8 +18,8 @@ namespace mc {
             DyeColor m_Base;
 
         public:
-            MCLIB_API Banner(BlockEntityType type, Vector3i position) : BlockEntity(type, position) { }
-            MCLIB_API bool ImportNBT(nbt::NBT* nbt);
+            Banner(BlockEntityType type, Vector3i position) : BlockEntity(type, position) { }
+            bool ImportNBT(nbt::NBT* nbt);
 
             DyeColor GetBaseColor() const noexcept { return m_Base; }
             const std::vector<Pattern>& GetPattern() const noexcept { return m_Patterns; }

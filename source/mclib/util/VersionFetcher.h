@@ -18,10 +18,10 @@ namespace mc {
         bool m_Found;
 
     public:
-        MCLIB_API VersionFetcher(const std::string& host, u16 port);
+        VersionFetcher(const std::string& host, u16 port);
 
-        MCLIB_API mc::protocol::Version GetVersion();
-        MCLIB_API void OnPingResponse(const json& node) override;
+        mc::protocol::Version GetVersion();
+        void OnPingResponse(const json& node) override;
 
         mc::util::ForgeHandler& GetForge() { return m_Forge; }
     };

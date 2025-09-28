@@ -17,29 +17,29 @@ namespace mc {
             bool m_ChatColors;
 
         public:
-            MCLIB_API ClientSettings();
+            ClientSettings();
 
-            MCLIB_API ClientSettings(const ClientSettings& rhs) = default;
-            MCLIB_API ClientSettings& operator=(const ClientSettings& rhs) = default;
-            MCLIB_API ClientSettings(ClientSettings&& rhs) = default;
-            MCLIB_API ClientSettings& operator=(ClientSettings&& rhs) = default;
+            ClientSettings(const ClientSettings& rhs) = default;
+            ClientSettings& operator=(const ClientSettings& rhs) = default;
+            ClientSettings(ClientSettings&& rhs) = default;
+            ClientSettings& operator=(ClientSettings&& rhs) = default;
 
-            MCLIB_API ClientSettings& SetLocale(const std::wstring& locale);
-            MCLIB_API ClientSettings& SetChatMode(ChatMode mode) noexcept;
-            MCLIB_API ClientSettings& SetMainHand(MainHand main) noexcept;
-            MCLIB_API ClientSettings& SetViewDistance(u8 distance) noexcept;
-            MCLIB_API ClientSettings& SetViewDistance(s32 distance) noexcept;
-            MCLIB_API ClientSettings& SetSkinParts(u8 parts) noexcept;
-            MCLIB_API ClientSettings& SetChatColors(bool chatColors) noexcept;
+            ClientSettings& SetLocale(const std::wstring& locale);
+            ClientSettings& SetChatMode(ChatMode mode) noexcept;
+            ClientSettings& SetMainHand(MainHand main) noexcept;
+            ClientSettings& SetViewDistance(u8 distance) noexcept;
+            ClientSettings& SetViewDistance(s32 distance) noexcept;
+            ClientSettings& SetSkinParts(u8 parts) noexcept;
+            ClientSettings& SetChatColors(bool chatColors) noexcept;
 
-            MCLIB_API ClientSettings& SetSkinPart(SkinPart part, bool display) noexcept;
+            ClientSettings& SetSkinPart(SkinPart part, bool display) noexcept;
 
-            MCLIB_API inline const std::wstring& GetLocale() const noexcept { return m_Locale; }
-            MCLIB_API inline ChatMode GetChatMode() const noexcept { return m_ChatMode; }
-            MCLIB_API inline MainHand GetMainHand() const noexcept { return m_MainHand; }
-            MCLIB_API inline u8 GetViewDistance() const noexcept { return m_ViewDistance; }
-            MCLIB_API inline u8 GetSkinParts() const noexcept { return m_SkinParts; }
-            MCLIB_API inline bool GetChatColors() const noexcept { return m_ChatColors; }
+            inline const std::wstring& GetLocale() const noexcept { return m_Locale; }
+            inline ChatMode GetChatMode() const noexcept { return m_ChatMode; }
+            inline MainHand GetMainHand() const noexcept { return m_MainHand; }
+            inline u8 GetViewDistance() const noexcept { return m_ViewDistance; }
+            inline u8 GetSkinParts() const noexcept { return m_SkinParts; }
+            inline bool GetChatColors() const noexcept { return m_ChatColors; }
         };
 
     } // ns core

@@ -11,8 +11,8 @@ namespace mc {
 
         class Dispenser : public BlockEntity, public InventoryBlock, public Nameable {
         public:
-            MCLIB_API Dispenser(BlockEntityType type, Vector3i position) : BlockEntity(type, position) { }
-            MCLIB_API bool ImportNBT(nbt::NBT* nbt);
+            Dispenser(BlockEntityType type, Vector3i position) : BlockEntity(type, position) { }
+            bool ImportNBT(nbt::NBT* nbt);
         };
 
     } // ns block

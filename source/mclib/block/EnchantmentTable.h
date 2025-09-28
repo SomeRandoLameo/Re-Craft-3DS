@@ -10,8 +10,8 @@ namespace mc {
 
         class EnchantmentTable : public BlockEntity, public Nameable {
         public:
-            MCLIB_API EnchantmentTable(BlockEntityType type, Vector3i position) : BlockEntity(type, position) { }
-            MCLIB_API bool ImportNBT(nbt::NBT* nbt);
+            EnchantmentTable(BlockEntityType type, Vector3i position) : BlockEntity(type, position) { }
+            bool ImportNBT(nbt::NBT* nbt);
         };
 
     } // ns block

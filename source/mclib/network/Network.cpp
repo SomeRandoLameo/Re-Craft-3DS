@@ -8,8 +8,8 @@ namespace mc {
         private:
             u32* m_SOCBuffer;
         public:
-            MCLIB_API NetworkInitializer();
-            MCLIB_API ~NetworkInitializer();
+            NetworkInitializer();
+            ~NetworkInitializer();
 
             NetworkInitializer(const NetworkInitializer& rhs) = delete;
             NetworkInitializer& operator=(const NetworkInitializer& rhs) = delete;

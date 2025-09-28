@@ -45,25 +45,25 @@ namespace mc {
             void SetStatus(Status status);
 
         public:
-            virtual MCLIB_API ~Socket();
+            virtual ~Socket();
 
             Socket(Socket&& rhs) = default;
             Socket& operator=(Socket&& rhs) = default;
 
-            void MCLIB_API SetBlocking(bool block);
-            bool MCLIB_API IsBlocking() const noexcept;
+            void SetBlocking(bool block);
+            bool IsBlocking() const noexcept;
 
-            Type MCLIB_API GetType() const noexcept;
-            Status MCLIB_API GetStatus() const noexcept;
-            SocketHandle MCLIB_API GetHandle() const noexcept;
+            Type GetType() const noexcept;
+            Status GetStatus() const noexcept;
+            SocketHandle GetHandle() const noexcept;
 
-            bool MCLIB_API Connect(const std::string& ip, u16 port);
+            bool Connect(const std::string& ip, u16 port);
             virtual bool Connect(const IPAddress& address, u16 port) = 0;
 
-            void MCLIB_API Disconnect();
+            void Disconnect();
 
-            std::size_t MCLIB_API Send(const std::string& data);
-            std::size_t MCLIB_API Send(DataBuffer& buffer);
+            std::size_t Send(const std::string& data);
+            std::size_t Send(DataBuffer& buffer);
 
             virtual std::size_t Send(const uint8_t* data, std::size_t size) = 0;
             virtual DataBuffer Receive(std::size_t amount) = 0;

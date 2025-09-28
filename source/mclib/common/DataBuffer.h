@@ -26,14 +26,14 @@ namespace mc {
         typedef Data::reference reference;
         typedef Data::const_reference const_reference;
 
-        MCLIB_API DataBuffer();
-        MCLIB_API DataBuffer(const DataBuffer& other);
-        MCLIB_API DataBuffer(const DataBuffer& other, std::size_t offset);
-        MCLIB_API DataBuffer(DataBuffer&& other);
-        MCLIB_API DataBuffer(const std::string& str);
+        DataBuffer();
+        DataBuffer(const DataBuffer& other);
+        DataBuffer(const DataBuffer& other, std::size_t offset);
+        DataBuffer(DataBuffer&& other);
+        DataBuffer(const std::string& str);
 
-        MCLIB_API DataBuffer& operator=(const DataBuffer& other);
-        MCLIB_API DataBuffer& operator=(DataBuffer&& other);
+        DataBuffer& operator=(const DataBuffer& other);
+        DataBuffer& operator=(DataBuffer&& other);
 
         template <typename T>
         void Append(T data) {
@@ -137,23 +137,23 @@ namespace mc {
         }
 
         std::size_t GetReadOffset() const { return m_ReadOffset; }
-        void MCLIB_API SetReadOffset(std::size_t pos);
+        void SetReadOffset(std::size_t pos);
 
-        std::string MCLIB_API ToString() const;
-        std::size_t MCLIB_API GetSize() const;
-        bool MCLIB_API IsEmpty() const;
-        std::size_t MCLIB_API GetRemaining() const;
+        std::string ToString() const;
+        std::size_t GetSize() const;
+        bool IsEmpty() const;
+        std::size_t GetRemaining() const;
 
-        iterator MCLIB_API begin();
-        iterator MCLIB_API end();
-        const_iterator MCLIB_API begin() const;
-        const_iterator MCLIB_API end() const;
+        iterator begin();
+        iterator end();
+        const_iterator begin() const;
+        const_iterator end() const;
 
         reference operator[](Data::size_type i) { return m_Buffer[i]; }
         const_reference operator[](Data::size_type i) const { return m_Buffer[i]; }
     };
 
-    MCLIB_API std::ostream& operator<<(std::ostream& os, const DataBuffer& buffer);
+    std::ostream& operator<<(std::ostream& os, const DataBuffer& buffer);
 
 } // ns mc
 

@@ -93,9 +93,9 @@ namespace mc {
 
             BlockRegistry() { }
         public:
-            static MCLIB_API BlockRegistry* GetInstance();
+            static BlockRegistry* GetInstance();
 
-            MCLIB_API ~BlockRegistry();
+            ~BlockRegistry();
 
             BlockPtr GetBlock(u32 data) const {
                 auto iter = m_Blocks.find(data);
@@ -114,15 +114,15 @@ namespace mc {
                 return GetBlock(data);
             }
 
-            BlockPtr MCLIB_API GetBlock(const std::string& name) const;
+            BlockPtr GetBlock(const std::string& name) const;
 
             void RegisterBlock(BlockPtr block) {
                 m_Blocks[block->GetType()] = block;
                 m_BlockNames[block->GetName()] = block;
             }
 
-            void MCLIB_API RegisterVanillaBlocks(protocol::Version protocolVersion);
-            void MCLIB_API ClearRegistry();
+            void RegisterVanillaBlocks(protocol::Version protocolVersion);
+            void ClearRegistry();
         };
 
     } // ns block

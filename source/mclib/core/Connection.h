@@ -24,12 +24,12 @@ namespace mc {
 
         class ConnectionListener {
         public:
-            virtual MCLIB_API ~ConnectionListener() { }
+            virtual ~ConnectionListener() { }
 
-            virtual void MCLIB_API OnSocketStateChange(network::Socket::Status newStatus) { }
-            virtual void MCLIB_API OnLogin(bool success) { }
-            virtual void MCLIB_API OnAuthentication(bool success, std::string error) { }
-            virtual void MCLIB_API OnPingResponse(const nlohmann::json& node) { }
+            virtual void OnSocketStateChange(network::Socket::Status newStatus) { }
+            virtual void OnLogin(bool success) { }
+            virtual void OnAuthentication(bool success, std::string error) { }
+            virtual void OnPingResponse(const nlohmann::json& node) { }
         };
 
         class Connection : public protocol::packets::PacketHandler, public util::ObserverSubject<ConnectionListener> {
@@ -55,8 +55,8 @@ namespace mc {
             void SendSettingsPacket();
 
         public:
-            MCLIB_API Connection(protocol::packets::PacketDispatcher* dispatcher, protocol::Version version = protocol::Version::Minecraft_1_11_2);
-            MCLIB_API ~Connection();
+            Connection(protocol::packets::PacketDispatcher* dispatcher, protocol::Version version = protocol::Version::Minecraft_1_11_2);
+            ~Connection();
 
             Connection(const Connection& other) = delete;
             Connection& operator=(const Connection& rhs) = delete;
@@ -64,31 +64,31 @@ namespace mc {
             Connection& operator=(Connection&& rhs) = delete;
 
             util::Yggdrasil* GetYggdrasil() { return m_Yggdrasil.get(); }
-            network::Socket::Status MCLIB_API GetSocketState() const;
+            network::Socket::Status GetSocketState() const;
             ClientSettings& GetSettings() noexcept { return m_ClientSettings; }
             s32 GetDimension() const noexcept { return m_Dimension; }
             protocol::State GetProtocolState() const { return m_ProtocolState; }
 
             void SendSettings() noexcept { m_SentSettings = false; }
 
-            void MCLIB_API HandlePacket(protocol::packets::in::KeepAlivePacket* packet);
-            void MCLIB_API HandlePacket(protocol::packets::in::PlayerPositionAndLookPacket* packet);
-            void MCLIB_API HandlePacket(protocol::packets::in::DisconnectPacket* packet);
-            void MCLIB_API HandlePacket(protocol::packets::in::EncryptionRequestPacket* packet);
-            void MCLIB_API HandlePacket(protocol::packets::in::LoginSuccessPacket* packet);
-            void MCLIB_API HandlePacket(protocol::packets::in::SetCompressionPacket* packet);
-            void MCLIB_API HandlePacket(protocol::packets::in::JoinGamePacket* packet);
-            void MCLIB_API HandlePacket(protocol::packets::in::RespawnPacket* packet);
-            void MCLIB_API HandlePacket(protocol::packets::in::UpdateHealthPacket* packet);
-            void MCLIB_API HandlePacket(protocol::packets::in::status::ResponsePacket* packet);
+            void HandlePacket(protocol::packets::in::KeepAlivePacket* packet);
+            void HandlePacket(protocol::packets::in::PlayerPositionAndLookPacket* packet);
+            void HandlePacket(protocol::packets::in::DisconnectPacket* packet);
+            void HandlePacket(protocol::packets::in::EncryptionRequestPacket* packet);
+            void HandlePacket(protocol::packets::in::LoginSuccessPacket* packet);
+            void HandlePacket(protocol::packets::in::SetCompressionPacket* packet);
+            void HandlePacket(protocol::packets::in::JoinGamePacket* packet);
+            void HandlePacket(protocol::packets::in::RespawnPacket* packet);
+            void HandlePacket(protocol::packets::in::UpdateHealthPacket* packet);
+            void HandlePacket(protocol::packets::in::status::ResponsePacket* packet);
 
-            bool MCLIB_API Connect(const std::string& server, u16 port);
-            void MCLIB_API Disconnect();
-            void MCLIB_API CreatePacket();
+            bool Connect(const std::string& server, u16 port);
+            void Disconnect();
+            void CreatePacket();
 
-            void MCLIB_API Ping();
-            bool MCLIB_API Login(const std::string& username, const std::string& password);
-            bool MCLIB_API Login(const std::string& username, AuthToken token);
+            void Ping();
+            bool Login(const std::string& username, const std::string& password);
+            bool Login(const std::string& username, AuthToken token);
 
             template <typename T>
             void SendPacket(T&& packet) {

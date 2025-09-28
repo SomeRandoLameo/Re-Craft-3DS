@@ -25,8 +25,8 @@ namespace mc {
             s16 m_RequiredPlayerRange;
 
         public:
-            MCLIB_API MonsterSpawner(BlockEntityType type, Vector3i position) : BlockEntity(type, position) { }
-            MCLIB_API bool ImportNBT(nbt::NBT* nbt);
+            MonsterSpawner(BlockEntityType type, Vector3i position) : BlockEntity(type, position) { }
+            bool ImportNBT(nbt::NBT* nbt);
 
             inline const std::vector<SpawnPotential>& GetSpawnPotentials() const noexcept { return m_SpawnPotentials; }
             inline const std::wstring& GetEntityId() const noexcept { return m_EntityId; }

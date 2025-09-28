@@ -17,8 +17,8 @@ namespace mc {
             Dragon
         };
 
-        MCLIB_API std::string to_string(SkullType type);
-        MCLIB_API std::wstring to_wstring(SkullType type);
+        std::string to_string(SkullType type);
+        std::wstring to_wstring(SkullType type);
 
         class Skull : public BlockEntity {
         public:
@@ -34,8 +34,8 @@ namespace mc {
             std::vector<Texture> m_Textures;
 
         public:
-            MCLIB_API Skull(BlockEntityType type, Vector3i position) : BlockEntity(type, position) { }
-            MCLIB_API bool ImportNBT(nbt::NBT* nbt);
+            Skull(BlockEntityType type, Vector3i position) : BlockEntity(type, position) { }
+            bool ImportNBT(nbt::NBT* nbt);
 
             inline SkullType GetType() const noexcept { return m_Type; }
             inline u8 GetRotation() const noexcept { return m_Rotation; }

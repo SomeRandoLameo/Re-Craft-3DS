@@ -24,7 +24,7 @@ enum class Version {
     Minecraft_1_13_2 = 404,
 };
 
-MCLIB_API std::string to_string(Version version);
+ std::string to_string(Version version);
 
 class UnfinishedProtocolException {
 private:
