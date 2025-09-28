@@ -37,8 +37,8 @@ namespace mc {
             protocol::Version m_ProtocolVersion;
 
         public:
-            MCLIB_API EntityManager(protocol::packets::PacketDispatcher* dispatcher, protocol::Version protocolVersion);
-            MCLIB_API ~EntityManager();
+             EntityManager(protocol::packets::PacketDispatcher* dispatcher, protocol::Version protocolVersion);
+             ~EntityManager();
 
             EntityManager(const EntityManager& rhs) = delete;
             EntityManager& operator=(const EntityManager& rhs) = delete;
@@ -64,25 +64,25 @@ namespace mc {
             const_iterator begin() const { return m_Entities.begin(); }
             const_iterator end() const { return m_Entities.end(); }
 
-            void MCLIB_API HandlePacket(protocol::packets::in::JoinGamePacket* packet);
-            void MCLIB_API HandlePacket(protocol::packets::in::PlayerPositionAndLookPacket* packet);
-            void MCLIB_API HandlePacket(protocol::packets::in::SpawnPlayerPacket* packet);
-            void MCLIB_API HandlePacket(protocol::packets::in::SpawnPaintingPacket* packet);
-            void MCLIB_API HandlePacket(protocol::packets::in::SpawnExperienceOrbPacket* packet);
-            void MCLIB_API HandlePacket(protocol::packets::in::SpawnGlobalEntityPacket* packet);
-            void MCLIB_API HandlePacket(protocol::packets::in::SpawnMobPacket* packet);
-            void MCLIB_API HandlePacket(protocol::packets::in::SpawnObjectPacket* packet);
-            void MCLIB_API HandlePacket(protocol::packets::in::EntityPacket* packet);
-            void MCLIB_API HandlePacket(protocol::packets::in::EntityRelativeMovePacket* packet);
-            void MCLIB_API HandlePacket(protocol::packets::in::EntityLookAndRelativeMovePacket* packet);
-            void MCLIB_API HandlePacket(protocol::packets::in::EntityTeleportPacket* packet);
-            void MCLIB_API HandlePacket(protocol::packets::in::EntityLookPacket* packet);
-            void MCLIB_API HandlePacket(protocol::packets::in::EntityHeadLookPacket* packet);
-            void MCLIB_API HandlePacket(protocol::packets::in::EntityVelocityPacket* packet);
-            void MCLIB_API HandlePacket(protocol::packets::in::EntityMetadataPacket* packet);
-            void MCLIB_API HandlePacket(protocol::packets::in::EntityPropertiesPacket* packet);
-            void MCLIB_API HandlePacket(protocol::packets::in::DestroyEntitiesPacket* packet);
-            void MCLIB_API HandlePacket(protocol::packets::in::AttachEntityPacket* packet);
+            void  HandlePacket(protocol::packets::in::JoinGamePacket* packet);
+            void  HandlePacket(protocol::packets::in::PlayerPositionAndLookPacket* packet);
+            void  HandlePacket(protocol::packets::in::SpawnPlayerPacket* packet);
+            void  HandlePacket(protocol::packets::in::SpawnPaintingPacket* packet);
+            void  HandlePacket(protocol::packets::in::SpawnExperienceOrbPacket* packet);
+            void  HandlePacket(protocol::packets::in::SpawnGlobalEntityPacket* packet);
+            void  HandlePacket(protocol::packets::in::SpawnMobPacket* packet);
+            void  HandlePacket(protocol::packets::in::SpawnObjectPacket* packet);
+            void  HandlePacket(protocol::packets::in::EntityPacket* packet);
+            void  HandlePacket(protocol::packets::in::EntityRelativeMovePacket* packet);
+            void  HandlePacket(protocol::packets::in::EntityLookAndRelativeMovePacket* packet);
+            void  HandlePacket(protocol::packets::in::EntityTeleportPacket* packet);
+            void  HandlePacket(protocol::packets::in::EntityLookPacket* packet);
+            void  HandlePacket(protocol::packets::in::EntityHeadLookPacket* packet);
+            void  HandlePacket(protocol::packets::in::EntityVelocityPacket* packet);
+            void  HandlePacket(protocol::packets::in::EntityMetadataPacket* packet);
+            void  HandlePacket(protocol::packets::in::EntityPropertiesPacket* packet);
+            void  HandlePacket(protocol::packets::in::DestroyEntitiesPacket* packet);
+            void  HandlePacket(protocol::packets::in::AttachEntityPacket* packet);
         };
 
     } // ns entity

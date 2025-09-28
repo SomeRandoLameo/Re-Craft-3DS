@@ -14,8 +14,8 @@ namespace mc {
             Vector3i m_Exit;
 
         public:
-            MCLIB_API EndGateway(BlockEntityType type, Vector3i position) : BlockEntity(type, position) { }
-            MCLIB_API bool ImportNBT(nbt::NBT* nbt);
+            EndGateway(BlockEntityType type, Vector3i position) : BlockEntity(type, position) { }
+            bool ImportNBT(nbt::NBT* nbt);
 
             inline s64 GetAge() const noexcept { return m_Age; }
             inline bool IsExactTeleport() const noexcept { return m_ExactTeleport; }

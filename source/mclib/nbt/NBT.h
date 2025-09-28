@@ -20,7 +20,7 @@ namespace mc {
             TagCompound m_Root;
 
         public:
-            MCLIB_API NBT() { }
+             NBT() { }
 
             NBT(const NBT& rhs) = default;
             NBT& operator=(const NBT& rhs) = default;
@@ -38,11 +38,11 @@ namespace mc {
                 return m_Root.GetTag<T>(tagName);
             }
 
-            friend MCLIB_API DataBuffer& operator>>(DataBuffer& out, NBT& nbt);
+            friend  DataBuffer& operator>>(DataBuffer& out, NBT& nbt);
         };
 
-        MCLIB_API DataBuffer& operator<<(DataBuffer& out, const NBT& nbt);
-        MCLIB_API DataBuffer& operator>>(DataBuffer& in, NBT& nbt);
+         DataBuffer& operator<<(DataBuffer& out, const NBT& nbt);
+         DataBuffer& operator>>(DataBuffer& in, NBT& nbt);
 
     } // ns nbt
 } // ns mc

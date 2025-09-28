@@ -15,8 +15,8 @@ namespace mc {
             u8 m_Fuel;
 
         public:
-            MCLIB_API BrewingStand(BlockEntityType type, Vector3i position) : BlockEntity(type, position) { }
-            MCLIB_API bool ImportNBT(nbt::NBT* nbt);
+            BrewingStand(BlockEntityType type, Vector3i position) : BlockEntity(type, position) { }
+            bool ImportNBT(nbt::NBT* nbt);
 
             inventory::Slot GetLeftSlot() const noexcept;
             inventory::Slot GetMiddleSlot() const noexcept;

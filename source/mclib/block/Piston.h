@@ -25,8 +25,8 @@ namespace mc {
             bool m_Source;
 
         public:
-            MCLIB_API Piston(BlockEntityType type, Vector3i position) : BlockEntity(type, position) { }
-            MCLIB_API bool ImportNBT(nbt::NBT* nbt);
+            Piston(BlockEntityType type, Vector3i position) : BlockEntity(type, position) { }
+            bool ImportNBT(nbt::NBT* nbt);
 
             inline s32 GetBlockId() const noexcept { return m_BlockId; }
             inline s32 GetBlockData() const noexcept { return m_BlockData; }

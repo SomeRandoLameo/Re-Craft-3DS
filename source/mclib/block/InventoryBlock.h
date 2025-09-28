@@ -23,7 +23,7 @@ namespace mc {
             s64 m_LootTableSeed;
 
         public:
-            MCLIB_API bool ImportNBT(nbt::NBT* nbt);
+            bool ImportNBT(nbt::NBT* nbt);
 
             const std::wstring& GetLock() const noexcept { return m_Lock; }
             const ItemMap& GetItems() const noexcept { return m_Items; }

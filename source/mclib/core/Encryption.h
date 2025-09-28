@@ -19,8 +19,8 @@ namespace mc {
 
         class EncryptionStrategyNone : public EncryptionStrategy {
         public:
-            DataBuffer MCLIB_API Encrypt(const DataBuffer& buffer);
-            DataBuffer MCLIB_API Decrypt(const DataBuffer& buffer);
+            DataBuffer Encrypt(const DataBuffer& buffer);
+            DataBuffer Decrypt(const DataBuffer& buffer);
         };
 
         class EncryptionStrategyAES : public EncryptionStrategy {
@@ -29,19 +29,19 @@ namespace mc {
             Impl* m_Impl;
 
         public:
-            MCLIB_API EncryptionStrategyAES(const std::string& publicKey, const std::string& verifyToken);
-            MCLIB_API ~EncryptionStrategyAES();
+            EncryptionStrategyAES(const std::string& publicKey, const std::string& verifyToken);
+            ~EncryptionStrategyAES();
 
             EncryptionStrategyAES(const EncryptionStrategyAES& other) = delete;
             EncryptionStrategyAES& operator=(const EncryptionStrategyAES& other) = delete;
             EncryptionStrategyAES(EncryptionStrategyAES&& other) = delete;
             EncryptionStrategyAES& operator=(EncryptionStrategyAES&& other) = delete;
 
-            DataBuffer MCLIB_API Encrypt(const DataBuffer& buffer);
-            DataBuffer MCLIB_API Decrypt(const DataBuffer& buffer);
+            DataBuffer Encrypt(const DataBuffer& buffer);
+            DataBuffer Decrypt(const DataBuffer& buffer);
 
-            std::string MCLIB_API GetSharedSecret() const;
-            MCLIB_API protocol::packets::out::EncryptionResponsePacket* GenerateResponsePacket() const;
+            std::string GetSharedSecret() const;
+            protocol::packets::out::EncryptionResponsePacket* GenerateResponsePacket() const;
         };
 
     } // ns core

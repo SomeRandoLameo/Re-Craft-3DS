@@ -19,10 +19,10 @@ namespace mc {
                 PacketDispatcher* m_Dispatcher;
 
             public:
-                MCLIB_API PacketHandler(PacketDispatcher* dispatcher);
-                virtual MCLIB_API ~PacketHandler();
+                 PacketHandler(PacketDispatcher* dispatcher);
+                virtual  ~PacketHandler();
 
-                MCLIB_API PacketDispatcher* GetDispatcher();
+                 PacketDispatcher* GetDispatcher();
 
                 // Login protocol state
                 virtual void HandlePacket(in::DisconnectPacket* packet) { } // 0x00

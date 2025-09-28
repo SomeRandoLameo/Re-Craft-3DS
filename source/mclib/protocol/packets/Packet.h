@@ -87,9 +87,9 @@ namespace mc {
 
                 noexcept { m_ProtocolVersion = version; }
 
-                MCLIB_API void SetConnection(core::Connection *connection);
+                void SetConnection(core::Connection *connection);
 
-                MCLIB_API core::Connection
+                core::Connection
                 *
 
                 GetConnection();
@@ -122,14 +122,14 @@ namespace mc {
                     MCString m_Reason;
 
                 public:
-                    MCLIB_API DisconnectPacket();
+                    DisconnectPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -143,14 +143,14 @@ namespace mc {
                     std::string m_VerifyToken;
 
                 public:
-                    MCLIB_API EncryptionRequestPacket();
+                    EncryptionRequestPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -167,14 +167,14 @@ namespace mc {
                     MCString m_Username;
 
                 public:
-                    MCLIB_API LoginSuccessPacket();
+                    LoginSuccessPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -188,14 +188,14 @@ namespace mc {
                     VarInt m_MaxPacketSize;
 
                 public:
-                    MCLIB_API SetCompressionPacket();
+                    SetCompressionPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -217,14 +217,14 @@ namespace mc {
                     Vector3s m_Velocity;
 
                 public:
-                    MCLIB_API SpawnObjectPacket();
+                    SpawnObjectPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -252,14 +252,14 @@ namespace mc {
                     u16 m_Count;
 
                 public:
-                    MCLIB_API SpawnExperienceOrbPacket();
+                    SpawnExperienceOrbPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -277,14 +277,14 @@ namespace mc {
                     Vector3d m_Position;
 
                 public:
-                    MCLIB_API SpawnGlobalEntityPacket();
+                    SpawnGlobalEntityPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -309,14 +309,14 @@ namespace mc {
                     entity::EntityMetadata m_Metadata;
 
                 public:
-                    MCLIB_API SpawnMobPacket();
+                    SpawnMobPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -351,14 +351,14 @@ namespace mc {
                     Direction m_Direction;
 
                 public:
-                    MCLIB_API SpawnPaintingPacket();
+                    SpawnPaintingPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -383,14 +383,14 @@ namespace mc {
                     entity::EntityMetadata m_Metadata;
 
                 public:
-                    MCLIB_API SpawnPlayerPacket();
+                    SpawnPlayerPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -418,14 +418,14 @@ namespace mc {
                     Animation m_Animation;
 
                 public:
-                    MCLIB_API AnimationPacket();
+                    AnimationPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -442,14 +442,14 @@ namespace mc {
                     Statistics m_Statistics;
 
                 public:
-                    MCLIB_API StatisticsPacket();
+                    StatisticsPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -500,14 +500,14 @@ namespace mc {
 
 
                 public:
-                    MCLIB_API AdvancementsPacket();
+                    AdvancementsPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -521,14 +521,14 @@ namespace mc {
                     u8 m_DestroyStage;
 
                 public:
-                    MCLIB_API BlockBreakAnimationPacket();
+                    BlockBreakAnimationPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -563,14 +563,14 @@ namespace mc {
                     block::BlockEntityPtr m_BlockEntity;
 
                 public:
-                    MCLIB_API UpdateBlockEntityPacket();
+                    UpdateBlockEntityPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -589,14 +589,14 @@ namespace mc {
                     s32 m_BlockType;
 
                 public:
-                    MCLIB_API BlockActionPacket();
+                    BlockActionPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -616,14 +616,14 @@ namespace mc {
                     s32 m_BlockId;
 
                 public:
-                    MCLIB_API BlockChangePacket();
+                    BlockChangePacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -655,14 +655,14 @@ namespace mc {
                     u8 m_Flags;
 
                 public:
-                    MCLIB_API BossBarPacket();
+                    BossBarPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -688,14 +688,14 @@ namespace mc {
                     u8 m_Difficulty;
 
                 public:
-                    MCLIB_API ServerDifficultyPacket();
+                    ServerDifficultyPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -707,14 +707,14 @@ namespace mc {
                     std::vector <std::wstring> m_Matches;
 
                 public:
-                    MCLIB_API TabCompletePacket();
+                    TabCompletePacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -732,14 +732,14 @@ namespace mc {
                     ChatPosition m_Position;
 
                 public:
-                    MCLIB_API ChatPacket();
+                    ChatPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -767,14 +767,14 @@ namespace mc {
                     std::vector <BlockChange> m_BlockChanges;
 
                 public:
-                    MCLIB_API MultiBlockChangePacket();
+                    MultiBlockChangePacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -792,14 +792,14 @@ namespace mc {
                     bool m_Accepted;
 
                 public:
-                    MCLIB_API ConfirmTransactionPacket();
+                    ConfirmTransactionPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -815,14 +815,14 @@ namespace mc {
                     u8 m_WindowId;
 
                 public:
-                    MCLIB_API CloseWindowPacket();
+                    CloseWindowPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -839,14 +839,14 @@ namespace mc {
                     EntityId m_EntityId;
 
                 public:
-                    MCLIB_API OpenWindowPacket();
+                    OpenWindowPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -867,14 +867,14 @@ namespace mc {
                     std::vector <inventory::Slot> m_Slots;
 
                 public:
-                    MCLIB_API WindowItemsPacket();
+                    WindowItemsPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -891,14 +891,14 @@ namespace mc {
                     s16 m_Value;
 
                 public:
-                    MCLIB_API WindowPropertyPacket();
+                    WindowPropertyPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -916,14 +916,14 @@ namespace mc {
                     inventory::Slot m_Slot;
 
                 public:
-                    MCLIB_API SetSlotPacket();
+                    SetSlotPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -948,14 +948,14 @@ namespace mc {
                     s32 m_Ticks;
 
                 public:
-                    MCLIB_API SetCooldownPacket();
+                    SetCooldownPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -970,14 +970,14 @@ namespace mc {
                     std::string m_Data;
 
                 public:
-                    MCLIB_API PluginMessagePacket();
+                    PluginMessagePacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -995,14 +995,14 @@ namespace mc {
                     float m_Pitch;
 
                 public:
-                    MCLIB_API NamedSoundEffectPacket();
+                    NamedSoundEffectPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1026,14 +1026,14 @@ namespace mc {
                     u8 m_Status;
 
                 public:
-                    MCLIB_API EntityStatusPacket();
+                    EntityStatusPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1050,14 +1050,14 @@ namespace mc {
                     Vector3d m_PlayerMotion;
 
                 public:
-                    MCLIB_API ExplosionPacket();
+                    ExplosionPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1079,14 +1079,14 @@ namespace mc {
                     s32 m_ChunkZ;
 
                 public:
-                    MCLIB_API UnloadChunkPacket();
+                    UnloadChunkPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1107,14 +1107,14 @@ namespace mc {
                     float m_Value;
 
                 public:
-                    MCLIB_API ChangeGameStatePacket();
+                    ChangeGameStatePacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1128,14 +1128,14 @@ namespace mc {
                     s64 m_AliveId;
 
                 public:
-                    MCLIB_API KeepAlivePacket();
+                    KeepAlivePacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1148,14 +1148,14 @@ namespace mc {
                     std::vector <block::BlockEntityPtr> m_BlockEntities;
 
                 public:
-                    MCLIB_API ChunkDataPacket();
+                    ChunkDataPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1172,14 +1172,14 @@ namespace mc {
                     bool m_DisableRelativeVolume;
 
                 public:
-                    MCLIB_API EffectPacket();
+                    EffectPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1203,14 +1203,14 @@ namespace mc {
                     std::vector <s32> m_Data;
 
                 public:
-                    MCLIB_API ParticlePacket();
+                    ParticlePacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1240,14 +1240,14 @@ namespace mc {
                     bool m_ReducedDebug;
 
                 public:
-                    MCLIB_API JoinGamePacket();
+                    JoinGamePacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1288,14 +1288,14 @@ namespace mc {
                     std::string m_Data;
 
                 public:
-                    MCLIB_API MapPacket();
+                    MapPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1329,14 +1329,14 @@ namespace mc {
                     bool m_OnGround;
 
                 public:
-                    MCLIB_API EntityRelativeMovePacket();
+                    EntityRelativeMovePacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1357,14 +1357,14 @@ namespace mc {
                     bool m_OnGround;
 
                 public:
-                    MCLIB_API EntityLookAndRelativeMovePacket();
+                    EntityLookAndRelativeMovePacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1387,14 +1387,14 @@ namespace mc {
                     bool m_OnGround;
 
                 public:
-                    MCLIB_API EntityLookPacket();
+                    EntityLookPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1412,14 +1412,14 @@ namespace mc {
                     EntityId m_EntityId;
 
                 public:
-                    MCLIB_API EntityPacket();
+                    EntityPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1433,14 +1433,14 @@ namespace mc {
                     float m_Pitch;
 
                 public:
-                    MCLIB_API VehicleMovePacket();
+                    VehicleMovePacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1456,14 +1456,14 @@ namespace mc {
                     Vector3i m_Position;
 
                 public:
-                    MCLIB_API OpenSignEditorPacket();
+                    OpenSignEditorPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1482,14 +1482,14 @@ namespace mc {
                     float m_FOVModifier;
 
                 public:
-                    MCLIB_API PlayerAbilitiesPacket();
+                    PlayerAbilitiesPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1516,14 +1516,14 @@ namespace mc {
                     std::wstring m_Message; // EntityDead only
 
                 public:
-                    MCLIB_API CombatEventPacket();
+                    CombatEventPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1559,14 +1559,14 @@ namespace mc {
                     std::vector <ActionDataPtr> m_Data;
 
                 public:
-                    MCLIB_API PlayerListItemPacket();
+                    PlayerListItemPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1583,14 +1583,14 @@ namespace mc {
                     s32 m_TeleportId;
 
                 public:
-                    MCLIB_API PlayerPositionAndLookPacket();
+                    PlayerPositionAndLookPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1611,14 +1611,14 @@ namespace mc {
                     Vector3i m_Position;
 
                 public:
-                    MCLIB_API UseBedPacket();
+                    UseBedPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1632,14 +1632,14 @@ namespace mc {
                     std::vector <EntityId> m_EntityIds;
 
                 public:
-                    MCLIB_API DestroyEntitiesPacket();
+                    DestroyEntitiesPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1663,14 +1663,14 @@ namespace mc {
                     std::vector <s32> m_Array2;
 
                 public:
-                    MCLIB_API UnlockRecipesPacket();
+                    UnlockRecipesPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
                 };
@@ -1681,14 +1681,14 @@ namespace mc {
                     u8 m_EffectId;
 
                 public:
-                    MCLIB_API RemoveEntityEffectPacket();
+                    RemoveEntityEffectPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1703,14 +1703,14 @@ namespace mc {
                     std::string m_Hash;
 
                 public:
-                    MCLIB_API ResourcePackSendPacket();
+                    ResourcePackSendPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1727,14 +1727,14 @@ namespace mc {
                     std::wstring m_Level;
 
                 public:
-                    MCLIB_API RespawnPacket();
+                    RespawnPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1753,14 +1753,14 @@ namespace mc {
                     u8 m_Yaw;
 
                 public:
-                    MCLIB_API EntityHeadLookPacket();
+                    EntityHeadLookPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1788,14 +1788,14 @@ namespace mc {
                     Action m_Action;
 
                 public:
-                    MCLIB_API WorldBorderPacket();
+                    WorldBorderPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1848,14 +1848,14 @@ namespace mc {
                     EntityId m_EntityId;
 
                 public:
-                    MCLIB_API CameraPacket();
+                    CameraPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1867,14 +1867,14 @@ namespace mc {
                     u8 m_Slot;
 
                 public:
-                    MCLIB_API HeldItemChangePacket();
+                    HeldItemChangePacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1892,14 +1892,14 @@ namespace mc {
                     std::wstring m_Name;
 
                 public:
-                    MCLIB_API DisplayScoreboardPacket();
+                    DisplayScoreboardPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1914,14 +1914,14 @@ namespace mc {
                     entity::EntityMetadata m_Metadata;
 
                 public:
-                    MCLIB_API EntityMetadataPacket();
+                    EntityMetadataPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1936,14 +1936,14 @@ namespace mc {
                     EntityId m_VehicleId;
 
                 public:
-                    MCLIB_API AttachEntityPacket();
+                    AttachEntityPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1958,14 +1958,14 @@ namespace mc {
                     Vector3s m_Velocity;
 
                 public:
-                    MCLIB_API EntityVelocityPacket();
+                    EntityVelocityPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -1987,14 +1987,14 @@ namespace mc {
                     inventory::Slot m_Item;
 
                 public:
-                    MCLIB_API EntityEquipmentPacket();
+                    EntityEquipmentPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -2012,14 +2012,14 @@ namespace mc {
                     s32 m_TotalExperience;
 
                 public:
-                    MCLIB_API SetExperiencePacket();
+                    SetExperiencePacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -2037,14 +2037,14 @@ namespace mc {
                     float m_Saturation;
 
                 public:
-                    MCLIB_API UpdateHealthPacket();
+                    UpdateHealthPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -2067,14 +2067,14 @@ namespace mc {
                     std::wstring m_Type;
 
                 public:
-                    MCLIB_API ScoreboardObjectivePacket();
+                    ScoreboardObjectivePacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -2093,14 +2093,14 @@ namespace mc {
                     std::vector <EntityId> m_Passengers;
 
                 public:
-                    MCLIB_API SetPassengersPacket();
+                    SetPassengersPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -2127,14 +2127,14 @@ namespace mc {
                     std::vector <std::wstring> m_Players;
 
                 public:
-                    MCLIB_API TeamsPacket();
+                    TeamsPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -2172,14 +2172,14 @@ namespace mc {
                     s32 m_Value;
 
                 public:
-                    MCLIB_API UpdateScorePacket();
+                    UpdateScorePacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -2197,14 +2197,14 @@ namespace mc {
                     Position m_Location;
 
                 public:
-                    MCLIB_API SpawnPositionPacket();
+                    SpawnPositionPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -2217,14 +2217,14 @@ namespace mc {
                     s64 m_Time;
 
                 public:
-                    MCLIB_API TimeUpdatePacket();
+                    TimeUpdatePacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -2247,14 +2247,14 @@ namespace mc {
                     s32 m_FadeOut;
 
                 public:
-                    MCLIB_API TitlePacket();
+                    TitlePacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -2278,14 +2278,14 @@ namespace mc {
                     float m_Pitch;
 
                 public:
-                    MCLIB_API SoundEffectPacket();
+                    SoundEffectPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -2306,14 +2306,14 @@ namespace mc {
                     std::wstring m_Footer;
 
                 public:
-                    MCLIB_API PlayerListHeaderAndFooterPacket();
+                    PlayerListHeaderAndFooterPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -2329,14 +2329,14 @@ namespace mc {
                     s32 m_PickupCount;
 
                 public:
-                    MCLIB_API CollectItemPacket();
+                    CollectItemPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -2356,14 +2356,14 @@ namespace mc {
                     bool m_OnGround;
 
                 public:
-                    MCLIB_API EntityTeleportPacket();
+                    EntityTeleportPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -2384,14 +2384,14 @@ namespace mc {
                     std::map <std::wstring, mc::entity::Attribute> m_Properties;
 
                 public:
-                    MCLIB_API EntityPropertiesPacket();
+                    EntityPropertiesPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -2413,14 +2413,14 @@ namespace mc {
                     u8 m_Flags;
 
                 public:
-                    MCLIB_API EntityEffectPacket();
+                    EntityEffectPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
 
@@ -2442,14 +2442,14 @@ namespace mc {
                     std::wstring m_Id;
 
                 public:
-                    MCLIB_API AdvancementProgressPacket();
+                    AdvancementProgressPacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
                 };
@@ -2460,14 +2460,14 @@ namespace mc {
                     s32 m_RecipeId;
 
                 public:
-                    MCLIB_API CraftRecipeResponsePacket();
+                    CraftRecipeResponsePacket();
 
-                    bool MCLIB_API
+                    bool
                     Deserialize(DataBuffer
                     & data,
                     std::size_t packetLength
                     );
-                    void MCLIB_API
+                    void
                     Dispatch(PacketHandler
                     * handler);
                 };
@@ -2480,14 +2480,14 @@ namespace mc {
                         std::wstring m_Response;
 
                     public:
-                        MCLIB_API ResponsePacket();
+                        ResponsePacket();
 
-                        bool MCLIB_API
+                        bool
                         Deserialize(DataBuffer
                         & data,
                         std::size_t packetLength
                         );
-                        void MCLIB_API
+                        void
                         Dispatch(PacketHandler
                         * handler);
 
@@ -2499,14 +2499,14 @@ namespace mc {
                         s64 m_Payload;
 
                     public:
-                        MCLIB_API PongPacket();
+                        PongPacket();
 
-                        bool MCLIB_API
+                        bool
                         Deserialize(DataBuffer
                         & data,
                         std::size_t packetLength
                         );
-                        void MCLIB_API
+                        void
                         Dispatch(PacketHandler
                         * handler);
 
@@ -2529,9 +2529,9 @@ namespace mc {
                     VarInt m_NewState;
 
                 public:
-                    MCLIB_API HandshakePacket(s32 protocol, std::string server, u16 port, State state);
+                    HandshakePacket(s32 protocol, std::string server, u16 port, State state);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -2543,9 +2543,9 @@ namespace mc {
                     MCString m_Name;
 
                 public:
-                    MCLIB_API LoginStartPacket(const std::string &name);
+                    LoginStartPacket(const std::string &name);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -2556,9 +2556,9 @@ namespace mc {
                     std::string m_VerifyToken;
 
                 public:
-                    MCLIB_API EncryptionResponsePacket(const std::string &sharedSecret, const std::string &verifyToken);
+                    EncryptionResponsePacket(const std::string &sharedSecret, const std::string &verifyToken);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
 
@@ -2573,9 +2573,9 @@ namespace mc {
                     s32 m_TeleportId;
 
                 public:
-                    MCLIB_API TeleportConfirmPacket(s32 teleportId);
+                    TeleportConfirmPacket(s32 teleportId);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -2594,11 +2594,11 @@ namespace mc {
                     std::vector <Entry> m_PrepareEntries;
 
                 public:
-                    MCLIB_API
+
                     PrepareCraftingGridPacket(u8 windowId, s16 actionNumber, const std::vector <Entry> &returnEntries,
                                               const std::vector <Entry> &prepareEntries);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -2610,9 +2610,9 @@ namespace mc {
                     bool m_MakeAll;
 
                 public:
-                    MCLIB_API CraftRecipeRequestPacket(u8 windowId, s32 recipeId, bool makeAll);
+                    CraftRecipeRequestPacket(u8 windowId, s32 recipeId, bool makeAll);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -2625,12 +2625,12 @@ namespace mc {
                     Position m_LookingAt;
 
                 public:
-                    MCLIB_API TabCompletePacket(const std::wstring &text, bool assumeCommand);
+                    TabCompletePacket(const std::wstring &text, bool assumeCommand);
 
-                    MCLIB_API TabCompletePacket(const std::wstring &text, bool assumeCommand, bool hasPosition,
+                    TabCompletePacket(const std::wstring &text, bool assumeCommand, bool hasPosition,
                                                 Position lookingAt);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -2640,11 +2640,11 @@ namespace mc {
                     std::wstring m_Message;
 
                 public:
-                    MCLIB_API ChatPacket(const std::wstring &message);
+                    ChatPacket(const std::wstring &message);
 
-                    MCLIB_API ChatPacket(const std::string &message);
+                    ChatPacket(const std::string &message);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
 
@@ -2661,9 +2661,9 @@ namespace mc {
                     Action m_Action;
 
                 public:
-                    MCLIB_API ClientStatusPacket(Action action);
+                    ClientStatusPacket(Action action);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
 
@@ -2680,10 +2680,10 @@ namespace mc {
                     MainHand m_MainHand;
 
                 public:
-                    MCLIB_API ClientSettingsPacket(const std::wstring &locale, u8 viewDistance, ChatMode chatMode,
+                    ClientSettingsPacket(const std::wstring &locale, u8 viewDistance, ChatMode chatMode,
                                                    bool chatColors, u8 skinFlags, MainHand hand);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -2695,9 +2695,9 @@ namespace mc {
                     bool m_Accepted;
 
                 public:
-                    MCLIB_API ConfirmTransactionPacket(u8 windowId, s16 action, bool accepted);
+                    ConfirmTransactionPacket(u8 windowId, s16 action, bool accepted);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
 
@@ -2709,9 +2709,9 @@ namespace mc {
                     u8 m_EnchantmentIndex;
 
                 public:
-                    MCLIB_API EnchantItemPacket(u8 windowId, u8 enchantmentIndex);
+                    EnchantItemPacket(u8 windowId, u8 enchantmentIndex);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -2726,10 +2726,10 @@ namespace mc {
                     inventory::Slot m_ClickedItem;
 
                 public:
-                    MCLIB_API ClickWindowPacket(u8 windowId, u16 slotIndex, u8 button, u16 action, s32 mode,
+                    ClickWindowPacket(u8 windowId, u16 slotIndex, u8 button, u16 action, s32 mode,
                                                 inventory::Slot clickedItem);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -2739,9 +2739,9 @@ namespace mc {
                     u8 m_WindowId;
 
                 public:
-                    MCLIB_API CloseWindowPacket(u8 windowId);
+                    CloseWindowPacket(u8 windowId);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -2752,9 +2752,9 @@ namespace mc {
                     std::string m_Data;
 
                 public:
-                    MCLIB_API PluginMessagePacket(const std::wstring &channel, const std::string &data);
+                    PluginMessagePacket(const std::wstring &channel, const std::string &data);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -2772,10 +2772,10 @@ namespace mc {
                     Hand m_Hand;
 
                 public:
-                    MCLIB_API UseEntityPacket(EntityId target, Action action, Hand hand = Hand::Main,
+                    UseEntityPacket(EntityId target, Action action, Hand hand = Hand::Main,
                                               Vector3f position = Vector3f(0, 0, 0));
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -2785,9 +2785,9 @@ namespace mc {
                     s64 m_KeepAliveId;
 
                 public:
-                    MCLIB_API KeepAlivePacket(s64 id);
+                    KeepAlivePacket(s64 id);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
 
@@ -2800,9 +2800,9 @@ namespace mc {
                     bool m_OnGround;
 
                 public:
-                    MCLIB_API PlayerPositionPacket(Vector3d position, bool onGround);
+                    PlayerPositionPacket(Vector3d position, bool onGround);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -2815,9 +2815,9 @@ namespace mc {
                     bool m_OnGround;
 
                 public:
-                    MCLIB_API PlayerPositionAndLookPacket(Vector3d position, float yaw, float pitch, bool onGround);
+                    PlayerPositionAndLookPacket(Vector3d position, float yaw, float pitch, bool onGround);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -2829,9 +2829,9 @@ namespace mc {
                     bool m_OnGround;
 
                 public:
-                    MCLIB_API PlayerLookPacket(float yaw, float pitch, bool onGround);
+                    PlayerLookPacket(float yaw, float pitch, bool onGround);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -2841,9 +2841,9 @@ namespace mc {
                     bool m_OnGround;
 
                 public:
-                    MCLIB_API PlayerPacket(bool onGround);
+                    PlayerPacket(bool onGround);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -2855,9 +2855,9 @@ namespace mc {
                     float m_Pitch;
 
                 public:
-                    MCLIB_API VehicleMovePacket(Vector3d position, float yaw, float pitch);
+                    VehicleMovePacket(Vector3d position, float yaw, float pitch);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -2868,9 +2868,9 @@ namespace mc {
                     bool m_LeftPaddle;
 
                 public:
-                    MCLIB_API SteerBoatPacket(bool rightPaddle, bool leftPaddle);
+                    SteerBoatPacket(bool rightPaddle, bool leftPaddle);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -2880,9 +2880,9 @@ namespace mc {
                     bool m_IsFlying;
 
                 public:
-                    MCLIB_API PlayerAbilitiesPacket(bool isFlying);
+                    PlayerAbilitiesPacket(bool isFlying);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -2904,9 +2904,9 @@ namespace mc {
                     Face m_Face;
 
                 public:
-                    MCLIB_API PlayerDiggingPacket(Status status, Vector3i position, Face face);
+                    PlayerDiggingPacket(Status status, Vector3i position, Face face);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -2927,9 +2927,9 @@ namespace mc {
 
                 public:
                     // Action data is only used for HorseJump (0 to 100), 0 otherwise.
-                    MCLIB_API EntityActionPacket(EntityId eid, Action action, s32 actionData = 0);
+                    EntityActionPacket(EntityId eid, Action action, s32 actionData = 0);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -2942,9 +2942,9 @@ namespace mc {
 
                 public:
                     // Flags: 0x01 = Jump, 0x02 = Unmount
-                    MCLIB_API SteerVehiclePacket(float sideways, float forward, u8 flags);
+                    SteerVehiclePacket(float sideways, float forward, u8 flags);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -2958,9 +2958,9 @@ namespace mc {
                     Result m_Result;
 
                 public:
-                    MCLIB_API ResourcePackStatusPacket(Result result);
+                    ResourcePackStatusPacket(Result result);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -2969,9 +2969,9 @@ namespace mc {
                 private:
 
                 public:
-                    MCLIB_API CraftingBookDataPacket();
+                    CraftingBookDataPacket();
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -2982,9 +2982,9 @@ namespace mc {
 
                 public:
                     // Slot should be between 0 and 8, representing hot bar left to right
-                    MCLIB_API HeldItemChangePacket(u16 slot);
+                    HeldItemChangePacket(u16 slot);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -2995,9 +2995,9 @@ namespace mc {
                     inventory::Slot m_Item;
 
                 public:
-                    MCLIB_API CreativeInventoryActionPacket(s16 slot, inventory::Slot item);
+                    CreativeInventoryActionPacket(s16 slot, inventory::Slot item);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -3011,10 +3011,10 @@ namespace mc {
                     std::wstring m_Line4;
 
                 public:
-                    MCLIB_API UpdateSignPacket(Vector3d position, const std::wstring &line1, const std::wstring &line2,
+                    UpdateSignPacket(Vector3d position, const std::wstring &line1, const std::wstring &line2,
                                                const std::wstring &line3, const std::wstring &line4);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -3025,9 +3025,9 @@ namespace mc {
                     Hand m_Hand;
 
                 public:
-                    MCLIB_API AnimationPacket(Hand hand = Hand::Main);
+                    AnimationPacket(Hand hand = Hand::Main);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -3037,9 +3037,9 @@ namespace mc {
                     UUID m_UUID;
 
                 public:
-                    MCLIB_API SpectatePacket(UUID uuid);
+                    SpectatePacket(UUID uuid);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -3053,9 +3053,9 @@ namespace mc {
 
                 public:
                     // Cursor position is the position of the crosshair on the block
-                    MCLIB_API PlayerBlockPlacementPacket(Vector3i position, Face face, Hand hand, Vector3f cursorPos);
+                    PlayerBlockPlacementPacket(Vector3i position, Face face, Hand hand, Vector3f cursorPos);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -3065,9 +3065,9 @@ namespace mc {
                     Hand m_Hand;
 
                 public:
-                    MCLIB_API UseItemPacket(Hand hand);
+                    UseItemPacket(Hand hand);
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -3076,9 +3076,9 @@ namespace mc {
                 private:
 
                 public:
-                    MCLIB_API AdvancementTabPacket();
+                    AdvancementTabPacket();
 
-                    DataBuffer MCLIB_API
+                    DataBuffer
 
                     Serialize() const;
                 };
@@ -3087,9 +3087,9 @@ namespace mc {
 
                     class RequestPacket : public OutboundPacket { // 0x00
                     public:
-                        MCLIB_API RequestPacket();
+                        RequestPacket();
 
-                        DataBuffer MCLIB_API
+                        DataBuffer
 
                         Serialize() const;
                     };
@@ -3099,9 +3099,9 @@ namespace mc {
                         s64 m_Payload;
 
                     public:
-                        MCLIB_API PingPacket(s64 payload);
+                        PingPacket(s64 payload);
 
-                        DataBuffer MCLIB_API
+                        DataBuffer
 
                         Serialize() const;
                     };

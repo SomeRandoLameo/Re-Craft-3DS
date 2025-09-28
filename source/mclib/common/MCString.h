@@ -14,24 +14,24 @@ namespace mc {
         std::wstring m_UTF16;
 
     public:
-        MCLIB_API MCString();
-        MCLIB_API MCString(const std::string& str);
-        MCLIB_API MCString(const std::wstring& str);
+        MCString();
+        MCString(const std::string& str);
+        MCString(const std::wstring& str);
 
-        std::wstring MCLIB_API GetUTF16() const;
-        std::string MCLIB_API GetUTF8() const;
+        std::wstring GetUTF16() const;
+        std::string GetUTF8() const;
 
 
-        static MCString MCLIB_API FromUTF8(const std::string& utf8);
+        static MCString FromUTF8(const std::string& utf8);
 
-        friend MCLIB_API DataBuffer& operator<<(DataBuffer& out, const MCString& str);
-        friend MCLIB_API DataBuffer& operator>>(DataBuffer& in, MCString& str);
+        friend DataBuffer& operator<<(DataBuffer& out, const MCString& str);
+        friend DataBuffer& operator>>(DataBuffer& in, MCString& str);
     };
 
-    MCLIB_API std::string utf16to8(std::wstring str);
-    MCLIB_API std::wstring utf8to16(std::string str);
+    std::string utf16to8(std::wstring str);
+    std::wstring utf8to16(std::string str);
 
-    MCLIB_API DataBuffer& operator<<(DataBuffer& out, const MCString& pos);
-    MCLIB_API DataBuffer& operator>>(DataBuffer& in, MCString& pos);
+    DataBuffer& operator<<(DataBuffer& out, const MCString& pos);
+    DataBuffer& operator>>(DataBuffer& in, MCString& pos);
 
 } // ns mc

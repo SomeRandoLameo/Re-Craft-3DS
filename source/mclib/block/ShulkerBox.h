@@ -11,8 +11,8 @@ namespace mc {
 
         class ShulkerBox : public BlockEntity, public InventoryBlock, public Nameable {
         public:
-            MCLIB_API ShulkerBox(BlockEntityType type, Vector3i position) : BlockEntity(type, position) { }
-            MCLIB_API bool ImportNBT(nbt::NBT* nbt);
+            ShulkerBox(BlockEntityType type, Vector3i position) : BlockEntity(type, position) { }
+            bool ImportNBT(nbt::NBT* nbt);
         };
 
     } // ns block

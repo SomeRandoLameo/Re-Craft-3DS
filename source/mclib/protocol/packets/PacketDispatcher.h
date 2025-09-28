@@ -25,11 +25,11 @@ namespace mc {
                 PacketDispatcher(PacketDispatcher&& rhs) = delete;
                 PacketDispatcher& operator=(PacketDispatcher&& rhs) = delete;
 
-                void MCLIB_API Dispatch(Packet* packet);
+                void  Dispatch(Packet* packet);
 
-                void MCLIB_API RegisterHandler(State protocolState, PacketId id, PacketHandler* handler);
-                void MCLIB_API UnregisterHandler(State protocolState, PacketId id, PacketHandler* handler);
-                void MCLIB_API UnregisterHandler(PacketHandler* handler);
+                void  RegisterHandler(State protocolState, PacketId id, PacketHandler* handler);
+                void  UnregisterHandler(State protocolState, PacketId id, PacketHandler* handler);
+                void  UnregisterHandler(PacketHandler* handler);
             };
 
         } // ns packets

@@ -18,7 +18,7 @@ namespace mc {
 
         class Dns {
         public:
-            static MCLIB_API IPAddresses Resolve(const std::string& host);
+            static IPAddresses Resolve(const std::string& host);
         };
 
     } // ns network

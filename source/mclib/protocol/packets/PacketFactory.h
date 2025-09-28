@@ -15,8 +15,8 @@ namespace mc {
 
             class PacketFactory {
             public:
-                static MCLIB_API Packet* CreatePacket(Protocol& protocol, State state, DataBuffer data, std::size_t length, core::Connection* connection = nullptr);
-                static void MCLIB_API FreePacket(Packet* packet);
+                static Packet* CreatePacket(Protocol& protocol, State state, DataBuffer data, std::size_t length, core::Connection* connection = nullptr);
+                static void FreePacket(Packet* packet);
             };
 
         } // ns packets

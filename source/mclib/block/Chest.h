@@ -11,8 +11,8 @@ namespace mc {
 
         class Chest : public BlockEntity, public InventoryBlock, public Nameable {
         public:
-            MCLIB_API Chest(BlockEntityType type, Vector3i position) : BlockEntity(type, position) { }
-            MCLIB_API bool ImportNBT(nbt::NBT* nbt);
+            Chest(BlockEntityType type, Vector3i position) : BlockEntity(type, position) { }
+            bool ImportNBT(nbt::NBT* nbt);
         };
 
     } // ns block

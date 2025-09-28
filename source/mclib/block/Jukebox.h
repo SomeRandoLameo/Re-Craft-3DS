@@ -12,8 +12,8 @@ namespace mc {
         inventory::Slot m_RecordItem;
 
     public:
-        MCLIB_API Jukebox(BlockEntityType type, Vector3i position) : BlockEntity(type, position) { }
-        MCLIB_API bool ImportNBT(nbt::NBT* nbt);
+        Jukebox(BlockEntityType type, Vector3i position) : BlockEntity(type, position) { }
+        bool ImportNBT(nbt::NBT* nbt);
 
         inline s32 GetRecordId() const noexcept { return m_RecordId; }
         inline inventory::Slot GetItem() const noexcept { return m_RecordItem; }

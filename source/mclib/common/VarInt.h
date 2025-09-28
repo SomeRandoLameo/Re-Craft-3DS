@@ -14,11 +14,11 @@ namespace mc {
         s64 m_Value;
 
     public:
-        MCLIB_API VarInt() noexcept;
-        MCLIB_API VarInt(s8 val) noexcept;
-        MCLIB_API VarInt(s16 val) noexcept;
-        MCLIB_API VarInt(s32 val) noexcept;
-        MCLIB_API VarInt(s64 val) noexcept;
+        VarInt() noexcept;
+        VarInt(s8 val) noexcept;
+        VarInt(s16 val) noexcept;
+        VarInt(s32 val) noexcept;
+        VarInt(s64 val) noexcept;
 
         s8 GetByte() const noexcept { return (s8)m_Value; }
         s16 GetShort() const noexcept { return (s16)m_Value; }
@@ -26,19 +26,19 @@ namespace mc {
         s64 GetLong() const noexcept { return m_Value; }
 
         // Returns how many bytes this will take up in a buffer
-        std::size_t MCLIB_API GetSerializedLength() const;
+        std::size_t GetSerializedLength() const;
 
-        friend MCLIB_API DataBuffer& operator<<(DataBuffer& out, const VarInt& pos);
-        friend MCLIB_API DataBuffer& operator>>(DataBuffer& in, VarInt& pos);
+        friend DataBuffer& operator<<(DataBuffer& out, const VarInt& pos);
+        friend DataBuffer& operator>>(DataBuffer& in, VarInt& pos);
     };
 
     typedef VarInt VarLong;
 
-    MCLIB_API DataBuffer& operator<<(DataBuffer& out, const VarInt& var);
-    MCLIB_API DataBuffer& operator>>(DataBuffer& in, VarInt& var);
+    DataBuffer& operator<<(DataBuffer& out, const VarInt& var);
+    DataBuffer& operator>>(DataBuffer& in, VarInt& var);
 
 } // ns mc
 
-MCLIB_API std::ostream& operator<<(std::ostream& out, const mc::VarInt& v);
+std::ostream& operator<<(std::ostream& out, const mc::VarInt& v);
 
 

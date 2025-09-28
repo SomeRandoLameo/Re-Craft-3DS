@@ -37,7 +37,7 @@ class DataBuffer;
             s16 GetItemDamage() const noexcept { return m_ItemDamage; }
             const nbt::NBT& GetNBT() const noexcept { return m_NBT; }
 
-            static MCLIB_API Slot FromNBT(nbt::TagCompound& compound);
+            static  Slot FromNBT(nbt::TagCompound& compound);
 
             DataBuffer Serialize(protocol::Version version) const;
             void Deserialize(DataBuffer& in, protocol::Version version);

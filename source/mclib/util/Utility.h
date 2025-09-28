@@ -26,10 +26,10 @@ namespace mc {
 
     namespace util {
 
-        MCLIB_API bool GetProfileToken(const std::string& username, core::AuthToken* token);
-        MCLIB_API std::string ParseChatNode(const json& node);
-        MCLIB_API std::string StripChatMessage(const std::string& message);
-        MCLIB_API s64 GetTime();
+        bool GetProfileToken(const std::string& username, core::AuthToken* token);
+        std::string ParseChatNode(const json& node);
+        std::string StripChatMessage(const std::string& message);
+        s64 GetTime();
 
         class PlayerController : public core::PlayerListener {
         private:
@@ -57,35 +57,35 @@ namespace mc {
             std::vector<std::pair<block::BlockPtr, mc::Vector3i>> GetNearbyBlocks(const s32 radius);
 
         public:
-            MCLIB_API PlayerController(core::Connection* connection, world::World& world, core::PlayerManager& playerManager);
-            MCLIB_API ~PlayerController();
+            PlayerController(core::Connection* connection, world::World& world, core::PlayerManager& playerManager);
+            ~PlayerController();
 
-            void MCLIB_API OnClientSpawn(core::PlayerPtr player);
-            bool MCLIB_API ClearPath(Vector3d target);
+            void OnClientSpawn(core::PlayerPtr player);
+            bool ClearPath(Vector3d target);
 
-            void MCLIB_API Dig(Vector3d target);
-            void MCLIB_API Attack(EntityId id);
-            void MCLIB_API Move(Vector3d delta);
+            void Dig(Vector3d target);
+            void Attack(EntityId id);
+            void Move(Vector3d delta);
 
-            bool MCLIB_API HandleJump();
-            bool MCLIB_API HandleFall();
-            void MCLIB_API UpdateDigging();
-            void MCLIB_API UpdatePosition();
-            void MCLIB_API Update();
+            bool HandleJump();
+            bool HandleFall();
+            void UpdateDigging();
+            void UpdatePosition();
+            void Update();
 
-            bool MCLIB_API InLoadedChunk() const;
-            Vector3d MCLIB_API GetPosition() const;
-            Vector3d MCLIB_API GetHeading() const;
-            float MCLIB_API GetYaw() const;
-            float MCLIB_API GetPitch() const;
-            AABB MCLIB_API GetBoundingBox() const;
+            bool InLoadedChunk() const;
+            Vector3d GetPosition() const;
+            Vector3d GetHeading() const;
+            float GetYaw() const;
+            float GetPitch() const;
+            AABB GetBoundingBox() const;
 
-            void MCLIB_API SetYaw(float yaw);
-            void MCLIB_API SetPitch(float pitch);
-            void MCLIB_API LookAt(Vector3d target);
-            void MCLIB_API SetMoveSpeed(double speed);
-            void MCLIB_API SetTargetPosition(Vector3d target);
-            void MCLIB_API SetHandleFall(bool handle);
+            void SetYaw(float yaw);
+            void SetPitch(float pitch);
+            void LookAt(Vector3d target);
+            void SetMoveSpeed(double speed);
+            void SetTargetPosition(Vector3d target);
+            void SetHandleFall(bool handle);
         };
 
         class PlayerFollower : public core::PlayerListener, public core::ClientListener {
@@ -99,22 +99,22 @@ namespace mc {
             u64 m_LastUpdate;
 
         public:
-            MCLIB_API PlayerFollower(protocol::packets::PacketDispatcher* dispatcher, core::Client* client);
+            PlayerFollower(protocol::packets::PacketDispatcher* dispatcher, core::Client* client);
 
-            MCLIB_API ~PlayerFollower();
+            ~PlayerFollower();
 
-            MCLIB_API void UpdateRotation();
+            void UpdateRotation();
 
-            MCLIB_API void OnTick() override;
-            MCLIB_API bool IsIgnored(const std::wstring& name);
+            void OnTick() override;
+            bool IsIgnored(const std::wstring& name);
 
-            MCLIB_API void FindClosestPlayer();
+            void FindClosestPlayer();
 
-            MCLIB_API void OnPlayerJoin(core::PlayerPtr player) override;
-            MCLIB_API void OnPlayerLeave(core::PlayerPtr player) override;
-            MCLIB_API void OnPlayerSpawn(core::PlayerPtr player) override;
-            MCLIB_API void OnPlayerDestroy(core::PlayerPtr player, EntityId eid) override;
-            MCLIB_API void OnPlayerMove(core::PlayerPtr player, Vector3d oldPos, Vector3d newPos) override;
+            void OnPlayerJoin(core::PlayerPtr player) override;
+            void OnPlayerLeave(core::PlayerPtr player) override;
+            void OnPlayerSpawn(core::PlayerPtr player) override;
+            void OnPlayerDestroy(core::PlayerPtr player, EntityId eid) override;
+            void OnPlayerMove(core::PlayerPtr player, Vector3d oldPos, Vector3d newPos) override;
         };
 
         class IConsole {

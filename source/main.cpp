@@ -65,6 +65,7 @@ int main() {
 
     //TODO: Fix BlockRegistry. This causes a data issue
     std::cout << "Opening Blockregistry" << std::endl;
+    svcSleepThread(3000000000LL);
     mc::block::BlockRegistry::GetInstance()->RegisterVanillaBlocks(version);
     std::cout << "Opened Blockregistry" << std::endl;
 

@@ -8,7 +8,7 @@
 namespace mc {
     namespace util {
 
-        std::string MCLIB_API Base64Decode(const std::string& message);
+        std::string Base64Decode(const std::string& message);
 
         #define SHA1_DIGEST_LENGTH 20
 
@@ -17,7 +17,7 @@ namespace mc {
         * @param digest The original sha1 digest.
         * @return an array that contains the two's complement of the digest.
         */
-        std::array<unsigned char, SHA1_DIGEST_LENGTH> MCLIB_API Sha1TwosComplement(const unsigned char* digest);
+        std::array<unsigned char, SHA1_DIGEST_LENGTH> Sha1TwosComplement(const unsigned char* digest);
 
         /**
         * Gets the hex representation of a sha1 digest.
@@ -25,8 +25,8 @@ namespace mc {
         * @param digest The raw sha1 digest
         * @return a string containing the hex digest
         */
-        std::string MCLIB_API Sha1HexDigest(const unsigned char* digest);
-        bool MCLIB_API Sha1DigestTest();
+        std::string Sha1HexDigest(const unsigned char* digest);
+        bool Sha1DigestTest();
 
     } // ns util
 } // ns mc
