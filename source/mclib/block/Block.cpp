@@ -1438,10 +1438,8 @@ namespace mc {
         };
 
         void BlockRegistry::RegisterVanillaBlocks(protocol::Version protocolVersion) {
-            std::cout << "RegisterVanillaBlocks" << std::endl;
 
             const AABB FullSolidBounds(Vector3d(0, 0, 0), Vector3d(1, 1, 1));
-            std::cout << "created FullSolidBounds" << std::endl;
 
             if (protocolVersion <= protocol::Version::Minecraft_1_12_2) {
                 Register1_12();

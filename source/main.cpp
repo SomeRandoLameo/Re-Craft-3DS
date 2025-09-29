@@ -38,11 +38,10 @@ int run(mc::protocol::Version version, mc::util::ForgeHandler& forge) {
     //example::Logger logger(&client, &dispatcher);
 
     try {
-        std::cout << "Logging in." << std::endl;
-
         mc::core::AuthToken token;
 
         client.Login(server, port, username, password, mc::core::UpdateMethod::Block);
+
     } catch (std::exception& e) {
         std::wcout << e.what() << std::endl;
         return 1;
@@ -56,33 +55,16 @@ int main() {
     consoleInit(GFX_BOTTOM, nullptr);
     std::atexit(gfxExit);
 
-
     mc::util::VersionFetcher versionFetcher(server, port);
 
-    std::cout << "Fetching version" << std::endl;
     auto version = versionFetcher.GetVersion();
-    std::cout << "Fetched version, is: " << to_string(version) << std::endl;
-
-    //TODO: Fix BlockRegistry. This causes a data issue
-    std::cout << "Opening Blockregistry" << std::endl;
-
     mc::block::BlockRegistry::GetInstance()->RegisterVanillaBlocks(version);
-    std::cout << "Opened Blockregistry" << std::endl;
 
-    std::cout << "Connecting with version " << mc::protocol::to_string(version) << std::endl;
-    std::cout << "ERROR: " << run(version, versionFetcher.GetForge()) << std::endl;
+    int err = run(version, versionFetcher.GetForge());
 
-    // Keep the program running until SELECT is pressed
     while (aptMainLoop()) {
         hidScanInput();
-        u32 kDown = hidKeysDown();
-
-        if (kDown & KEY_SELECT) {
-            std::cout << "SELECT pressed. Exiting...\n";
-            break;
-        }
-
-        // Optional: delay a bit to reduce CPU usage
+        if (hidKeysDown() & KEY_SELECT) break;
         gspWaitForVBlank();
     }
 

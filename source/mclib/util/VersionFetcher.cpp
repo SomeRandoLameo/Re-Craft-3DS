@@ -54,23 +54,19 @@ namespace mc {
         mc::protocol::Version VersionFetcher::GetVersion() {
             if (m_Found) return m_Version;
 
-            std::cout << "Starting client" << std::endl;
+
             mc::core::Client m_Client(&m_Dispatcher);
-            std::cout << "Started client" << std::endl;
-            std::cout << "getting client connection" << std::endl;
+
             m_Connection = m_Client.GetConnection();
-            std::cout << "gotten client connection" << std::endl;
-            std::cout << "registering listener" << std::endl;
+
             m_Client.GetConnection()->RegisterListener(this);
-            std::cout << "registered listener" << std::endl;
-            std::cout << "pinging server" << std::endl;
+
             //TODO: Crash fix in here, probably socket crash, i dont know
             m_Client.Ping(m_Host, m_Port, mc::core::UpdateMethod::Block);
 
-            std::cout << "pinged server" << std::endl;
-            std::cout << "unregistering listener" << std::endl;
+
             m_Client.GetConnection()->UnregisterListener(this);
-            std::cout << "unregistered listener" << std::endl;
+
             return m_Version;
         }
 

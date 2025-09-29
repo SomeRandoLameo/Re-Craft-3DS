@@ -84,8 +84,6 @@ void connectToServer(const std::string& host) {
         return;
     }
 
-    std::cout << "Connected to " << host << ":" << port << "\n";
-
     Packet2Handshake handshake;
     handshake.username = "Nintendo3DS";
     
@@ -104,8 +102,6 @@ void connectToServer(const std::string& host) {
         close(sock);
         return;
     }
-
-    std::cout << "Received server response (" << bytes << " bytes)\n";
 
     Packet1Login login;
     login.username = handshake.username;
@@ -138,7 +134,6 @@ void connectToServer(const std::string& host) {
         
             bytes = recv(sock, buffer, sizeof(buffer), 0);
             if (bytes <= 0) {
-                std::cout << "Server disconnected\n";
                 break;
             }
         
