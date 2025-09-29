@@ -60,7 +60,9 @@ int main() {
     auto version = versionFetcher.GetVersion();
     mc::block::BlockRegistry::GetInstance()->RegisterVanillaBlocks(version);
 
+    std::cout << "You connected successfully\n";
     int err = run(version, versionFetcher.GetForge());
+
 
     while (aptMainLoop()) {
         hidScanInput();
