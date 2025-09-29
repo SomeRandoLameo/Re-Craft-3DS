@@ -43,30 +43,20 @@ namespace mc {
 
         void Client::Update() {
             try {
-                std::cout << "attempting to create packet thread" << std::endl;
                 m_Connection.CreatePacket();
-                std::cout << "created packet thread" << std::endl;
             } catch (std::exception& e) {
                 std::wcout << e.what() << std::endl;
             }
-            std::cout << "creating player entity" << std::endl;
             entity::EntityPtr playerEntity = m_EntityManager.GetPlayerEntity();
-            std::cout << "created player entity" << std::endl;
             if (playerEntity) {
                 // Keep entity manager and player controller in sync
-                std::cout << "setting player pos" << std::endl;
                 playerEntity->SetPosition(m_PlayerController->GetPosition());
-                std::cout << "set player pos" << std::endl;
             }
 
             s64 time = util::GetTime();
             if (time >= m_LastUpdate + (1000 / 20)) {
-                std::cout << "updating player pos" << std::endl;
                 m_PlayerController->Update();
-                std::cout << "updated player pos" << std::endl;
-                std::cout << "Notifying client tick listener" << std::endl;
                 NotifyListeners(&ClientListener::OnTick);
-                std::cout << "Notified client tick listener" << std::endl;
 
                 m_LastUpdate = time;
             }
@@ -75,7 +65,6 @@ namespace mc {
         void Client::UpdateThread() {
             while (m_Connected) {
                 Update();
-                std::cout << "Updating Thread " << std::endl;
                 //TODO: UNDEBUGIFY (this is supposed to be 1ms)
                 std::this_thread::sleep_for(std::chrono::milliseconds(1));
             }
@@ -130,29 +119,20 @@ namespace mc {
         }
 
         void Client::Ping(const std::string& host, unsigned short port, UpdateMethod method) {
-            std::cout << "starting update thread" << std::endl;
             if (m_UpdateThread.joinable()) {
                 m_Connected = false;
                 m_UpdateThread.join();
-                std::cout << "started update thread" << std::endl;
             }
 
-            std::cout << "starting server connection" << std::endl;
             if (!m_Connection.Connect(host, port)) {
-                std::cout << "Could not connect to server" << std::endl;
                 throw std::runtime_error("Could not connect to server");
             }
 
-            std::cout << "started server connection" << std::endl;
-            std::cout << "starting server ping" << std::endl;
             m_Connection.Ping();
-            std::cout << "pinged server" << std::endl;
 
             if (method == UpdateMethod::Threaded) {
-                std::cout << "starting Threaded update" << std::endl;
                 m_UpdateThread = std::thread(&Client::UpdateThread, this);
             } else if (method == UpdateMethod::Block) {
-                std::cout << "starting Blocking update" << std::endl;
                 UpdateThread();
             }
         }

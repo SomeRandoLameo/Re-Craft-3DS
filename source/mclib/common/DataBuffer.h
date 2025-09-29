@@ -69,7 +69,8 @@ namespace mc {
         template <typename T>
         DataBuffer& operator>>(T& data) {
             assert(m_ReadOffset + sizeof(T) <= GetSize());
-            data = *(T *)&m_Buffer[m_ReadOffset];
+
+            memcpy(&data, &m_Buffer[m_ReadOffset], sizeof(T));
             std::reverse((u8*)&data, (u8*)&data + sizeof(T));
             m_ReadOffset += sizeof(T);
             return *this;
@@ -156,4 +157,3 @@ namespace mc {
     std::ostream& operator<<(std::ostream& os, const DataBuffer& buffer);
 
 } // ns mc
-
