@@ -3,9 +3,17 @@
 //
 
 #include "Core.h"
+#include "gui/ScreenManager.h"
+#include "gui/screens/GuiInGame.h"
+#include <citro3d.h>
 #include <iostream>
 #include <3ds.h>
 
+
+#define DISPLAY_TRANSFER_FLAGS \
+	(GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) | GX_TRANSFER_RAW_COPY(0) | \
+	GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGBA8) | GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB8) | \
+	GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
 
 namespace {
 
@@ -74,13 +82,24 @@ void updatePlayerMovement(mc::core::Client* client) {
 }
 
 
-void Core::run() {
 
-    consoleInit(GFX_BOTTOM, nullptr);
+//TODO: Multithreading for network and rendering
+void Core::run() {
+    gfxInitDefault();
+    C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
+    //consoleInit(GFX_BOTTOM, nullptr);
+
+    // Initialize the render targets
+    C3D_RenderTarget* topTarget = C3D_RenderTargetCreate(240, 400, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
+    C3D_RenderTargetSetOutput(topTarget, GFX_TOP, GFX_LEFT, DISPLAY_TRANSFER_FLAGS);
+
+    C3D_RenderTarget* bottomTarget = C3D_RenderTargetCreate(240, 320, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
+    C3D_RenderTargetSetOutput(bottomTarget, GFX_BOTTOM, GFX_LEFT, DISPLAY_TRANSFER_FLAGS);
+
+    // Initialize the scene
 
 
     mc::util::VersionFetcher versionFetcher(server, port);
-
     auto version = versionFetcher.GetVersion();
     mc::block::BlockRegistry::GetInstance()->RegisterVanillaBlocks(version);
 
@@ -98,9 +117,7 @@ void Core::run() {
 
     try {
         mc::core::AuthToken token;
-
         client.Login(server, port, username, password, mc::core::UpdateMethod::Manual);
-
     } catch (std::exception& e) {
         std::wcout << e.what() << std::endl;
     }
@@ -109,8 +126,13 @@ void Core::run() {
     const double fixedDeltaTime = 1.0 / targetFPS;
     u64 lastTime = svcGetSystemTick();
     double accumulator = 0.0;
+    float ticks = 0.0f;
     const u64 ticksPerSecond = SYSCLOCK_ARM11;
 
+    ScreenManager screenManager;
+    screenManager.init();
+
+    screenManager.displayScreen(new GuiInGame(), true);
 
     while (aptMainLoop()) {
         // Calculate delta time
@@ -121,19 +143,44 @@ void Core::run() {
         accumulator += frameTime;
 
         hidScanInput();
-        if (hidKeysDown() & KEY_SELECT) goto exit_loop;
+
+        // Respond to user input
+        u32 kDown = hidKeysDown();
+        if (kDown & KEY_START)
+            break;
 
         // Fixed update loop
         while (accumulator >= fixedDeltaTime) {
+            C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+
             updatePlayerMovement(&client);
+            screenManager.update(ticks);
             client.Update();
+
+            // Rendering für Top-Screen
+            C3D_RenderTargetClear(topTarget, C3D_CLEAR_ALL, 0x000000FF, 0);
+            C3D_FrameDrawOn(topTarget);
+            if (screenManager.getCurrentTopScreen())
+                screenManager.getCurrentTopScreen()->drawScreen(ticks);
+
+            // Rendering für Bottom-Screen (optional, falls genutzt)
+            C3D_RenderTargetClear(bottomTarget, C3D_CLEAR_ALL, 0x000000FF, 0);
+            C3D_FrameDrawOn(bottomTarget);
+            if (screenManager.getCurrentBottomScreen())
+                screenManager.getCurrentBottomScreen()->drawScreen(ticks);
+
+            C3D_FrameEnd(0);
+
             accumulator -= fixedDeltaTime;
+            ticks += 1.0f;  // Increment ticks each fixed update
         }
 
         gspWaitForVBlank();
     }
-    exit_loop:;
 
+    // Deinitialize graphics
+    C3D_Fini();
+    gfxExit();
 }
 
 void Core::startGame() {
