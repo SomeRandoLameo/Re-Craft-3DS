@@ -9,14 +9,12 @@ public:
     Screen();
     virtual ~Screen();
 
-    // Core screen lifecycle methods
     virtual void initGUI() = 0;
     virtual void updateScreen() = 0;
     virtual void drawScreen(float ticks) = 0;
     virtual void onGUIClosed() = 0;
     virtual bool doesGUIPauseGame() = 0;
 
-    // Screen switching helper - call this to switch to another screen
     void switchToScreen(Screen* newScreen, bool isTopScreen);
 
 protected:
