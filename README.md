@@ -9,6 +9,7 @@ Please dont be annoyed if this crashed on your device, as this is my first prope
 
 ### Additional libraries (you need to install them in order to build this project)
 
+- 3ds-zlib
 - 3ds-curl 
 - 3ds-mbedtls
 

@@ -17,7 +17,7 @@
 
 namespace {
 
-    const std::string server("192.168.2.101");
+    const std::string server("192.168.2.175");
     const u16 port = 25565;
     const std::string username("Nintendo3DS");
     const std::string password("");

@@ -245,3 +245,29 @@ $(OUTPUT).elf	:	$(OFILES)
 #---------------------------------------------------------------------------------------
 endif
 #---------------------------------------------------------------------------------------
+
+# 1.12 server stuff for ease of use
+
+SERVER_DIR := server
+SERVER_JAR := $(SERVER_DIR)/server.jar
+SERVER_URL := https://piston-data.mojang.com/v1/objects/8494e844e911ea0d63878f64da9dcc21f53a3463/server.jar
+
+.PHONY: download-server start-server
+
+$(SERVER_DIR):
+	@mkdir -p $(SERVER_DIR)
+
+download-server: $(SERVER_DIR)
+	@echo "Downloading Minecraft server JAR..."
+	@curl -L $(SERVER_URL) -o $(SERVER_JAR)
+	@echo "Download complete: $(SERVER_JAR)"
+
+start-server: $(SERVER_JAR)
+	@echo "Checking for Java..."
+	@command -v java >/dev/null 2>&1 || { \
+		echo >&2 "Error: Java is not installed or not in your PATH."; \
+		echo >&2 "Please install Java 17 or newer and try again."; \
+		exit 1; \
+	}
+	@echo "Starting Minecraft server..."
+	@cd $(SERVER_DIR) && java -Xmx1024M -Xms1024M -jar server.jar nogui
