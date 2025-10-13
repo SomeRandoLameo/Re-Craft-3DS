@@ -9,7 +9,7 @@ a Minecraft (1.10.x - 1.12.x) client implemented on the 3DS (and new 3DS)
 ### Credits
 
 - core bits from [mclib](https://github.com/plushmonkey/mclib)
-- graphics bits from [craftus-reloaded][https://github.com/RSDuck/craftus_reloaded]
+- graphics bits from [craftus-reloaded](https://github.com/RSDuck/craftus_reloaded)
 
 ### Licencing
 - every external snippet should respect the original licence
