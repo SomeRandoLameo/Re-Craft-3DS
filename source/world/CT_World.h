@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Chunk.h"
+#include "CT_Chunk.h"
 #include "WorkQueue.h"
 
 #include "../misc/NumberUtils.h"

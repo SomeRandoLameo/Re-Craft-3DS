@@ -2,7 +2,7 @@
 
 #include <citro3d.h>
 
-#include "../world/World.h"
+#include "../world/CT_World.h"
 
 void Clouds_Init();
 void Clouds_Deinit();

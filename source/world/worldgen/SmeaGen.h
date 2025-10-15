@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../World.h"
+#include "../CT_World.h"
 
 typedef struct { World* world; } SmeaGen;
 

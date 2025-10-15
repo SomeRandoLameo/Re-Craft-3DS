@@ -4,21 +4,16 @@
 #include "Player.h"
 #include "Damage.h"
 
-extern Player* GetPlayer(void);
-
 void OvertimeDamage(char* cause, int time) {
-    Player* player = GetPlayer();
-
-    if (player == NULL) {
-        return;
-    }
-
+    Player* player;
     if (strcmp(cause, "fire") == 0) {
         while (time > 0) {
             player->hp -= 1;
             sleep(1);
             time -= 1;
         }
+        cause = NULL;
+        time = 0;
     }
     else if (strcmp(cause, "poison") == 0) {
         while (time > 0) {

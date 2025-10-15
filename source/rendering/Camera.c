@@ -1,6 +1,6 @@
 #include "Camera.h"
 
-#include "../world/Chunk.h"
+#include "../world/CT_Chunk.h"
 
 #include "../gui/DebugUI.h"
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../world/WorkQueue.h"
-#include "../world/World.h"
+#include "../world/CT_World.h"
 #include "../entity/Player.h"
 
 #include "VertexFmt.h"

@@ -15,7 +15,7 @@
 #include "rendering/PolyGen.h"
 #include "rendering/Renderer.h"
 #include "world/ChunkWorker.h"
-#include "world/World.h"
+#include "world/CT_World.h"
 #include "world/savegame/SaveManager.h"
 #include "world/savegame/SuperChunk.h"
 #include "world/worldgen/SmeaGen.h"

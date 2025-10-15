@@ -1,9 +1,9 @@
 #include "Renderer.h"
 
-#include "../blocks/Block.h"
+#include "../blocks/CT_Block.h"
 #include "../gui/DebugUI.h"
 #include "../gui/Gui.h"
-#include "../gui/Inventory.h"
+#include "../gui/CT_Inventory.h"
 #include "../gui/SpriteBatch.h"
 #include "../gui/WorldSelect.h"
 #include "Camera.h"

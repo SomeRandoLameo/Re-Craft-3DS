@@ -1,4 +1,4 @@
-#include "Inventory.h"
+#include "CT_Inventory.h"
 
 #include "Gui.h"
 #include "SpriteBatch.h"

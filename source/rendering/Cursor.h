@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../world/Direction.h"
-#include "../world/World.h"
+#include "../world/CT_World.h"
 
 #include <citro3d.h>
 

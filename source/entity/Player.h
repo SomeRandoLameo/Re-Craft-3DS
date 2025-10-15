@@ -1,9 +1,9 @@
 ﻿#pragma once
 
 #include <stdbool.h>
-#include "../world/World.h"
+#include "../world/CT_World.h"
 
-#include "../gui/Inventory.h"
+#include "../gui/CT_Inventory.h"
 #include "../inventory/ItemStack.h"
 #include "Damage.h"
 

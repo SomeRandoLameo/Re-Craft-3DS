@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "../entity/Player.h"
 
-#include "../world/World.h"
+#include "../world/CT_World.h"
 
 typedef struct {
     char worldName[WORLD_NAME_SIZE];

@@ -3,7 +3,7 @@
 #include "VertexFmt.h"
 
 #include "Cursor.h"
-#include "../blocks/Block.h"
+#include "../blocks/CT_Block.h"
 
 #include "../gui/DebugUI.h"
 

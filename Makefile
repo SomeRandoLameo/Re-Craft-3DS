@@ -38,7 +38,7 @@ DATA		:=	data
 INCLUDES	:=	include
 GRAPHICS	:=	gfx
 GFXBUILD	:=	$(BUILD)
-#ROMFS		:=	romfs
+ROMFS		:=	romfs
 #GFXBUILD	:=	$(ROMFS)/gfx
 
 ifeq ($(OS),Windows_NT)
@@ -62,7 +62,7 @@ CXXFLAGS := $(CFLAGS) -Wno-changes-meaning -fexceptions -std=gnu++14 # removed: 
 ASFLAGS :=  -g $(ARCH)
 LDFLAGS =  -specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
-LIBS	:= -lz -lcurl -lmbedtls -lmbedx509 -lmbedcrypto -lcitro3d -lctru -lm -lopusfile -lopus
+LIBS	:= -lz -lcurl -lmbedtls -lmbedx509 -lmbedcrypto -lcitro3d -lctru -lm -lopusfile -logg -lopus
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
@@ -86,6 +86,7 @@ export TOPDIR	:=	$(CURDIR)
 
 # Recursively find all source directories
 SOURCES_ALL := $(shell find $(SOURCES) -type d 2>/dev/null)
+SOURCES_ALL += $(shell find $(INCLUDES) -type d 2>/dev/null)
 
 export VPATH	:=	$(foreach dir,$(SOURCES_ALL),$(CURDIR)/$(dir)) \
 			$(foreach dir,$(GRAPHICS),$(CURDIR)/$(dir)) \

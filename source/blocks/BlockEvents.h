@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Block.h"
-#include "../world/World.h"
+#include "CT_Block.h"
+#include "../world/CT_World.h"
 
 #define RANDOMTICKS_PER_CLUSTER (3)
 #define RANDOMTICKS_PER_CHUNK (CLUSTER_PER_CHUNK * RANDOMTICKS_PER_CLUSTER)

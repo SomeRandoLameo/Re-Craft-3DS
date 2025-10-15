@@ -6,7 +6,7 @@
 
 
 #include "../misc/InputData.h"
-#include "../world/World.h"
+#include "../world/CT_World.h"
 
 #include <citro3d.h>
 
