@@ -3,7 +3,7 @@
 #include "Player.h"
 
 typedef struct {
-    char cause;
+    char* cause;
     int time;
 }Damage;
 

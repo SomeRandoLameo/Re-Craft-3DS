@@ -21,7 +21,7 @@
 #include "world/worldgen/SmeaGen.h"
 #include "world/worldgen/SuperFlatGen.h"
 #include "misc/Crash.h"
-
+#include "misc/Sound.h"
 #include <sino/sino.h>
 #include <citro3d.h>
 
@@ -122,7 +122,7 @@ int main() {
 		Renderer_Render();
 
 		uint64_t currentTime = svcGetSystemTick();
-		dt = ((float)(currentTime / (float)TICKS_PER_MSEC) - (float)(lastTime / (float)TICKS_PER_MSEC)) / 1000.f;
+		dt = ((float)(currentTime / (float)CPU_TICKS_PER_MSEC) - (float)(lastTime / (float)CPU_TICKS_PER_MSEC)) / 1000.f;
 		lastTime = currentTime;
 		timeAccum += dt;
 

@@ -2,7 +2,7 @@
 #include "../misc/Collision.h"
 #include "Damage.h"
 #include "../misc/Sound.h"
-
+#include "../gui/DebugUI.h"  // Add this include at the top
 
 void Player_Init(Player* player, World* world) {
 	player->position = f3_new(0.f, 0.f, 0.f);
@@ -141,7 +141,7 @@ void Player_Update(Player* player, Sound* sound, Damage* dmg) {
 					bool shouldOffset = world->genSettings.type != WorldGen_SuperFlat;
 					player->position.y=shouldOffset ? spawnY + 1 : spawnY;
 					player->position.z=0.0;
-				} 
+				}
 				if (player->spawnset=1){
 					if (dmg->cause==NULL){
 						DebugUI_Log("Player died");

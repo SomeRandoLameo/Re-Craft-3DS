@@ -10,6 +10,7 @@
 #include <string.h>
 
 #include "Sound.h"
+#include "../gui/DebugUI.h"
 
 static const int SAMPLE_RATE = 48000;
 static const int SAMPLES_PER_BUF = SAMPLE_RATE * 120 / 1000;

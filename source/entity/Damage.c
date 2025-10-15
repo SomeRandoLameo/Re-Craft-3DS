@@ -4,6 +4,8 @@
 #include "Player.h"
 #include "Damage.h"
 
+extern Player* GetPlayer(void);
+
 void OvertimeDamage(char* cause, int time) {
     Player* player = GetPlayer();
 
