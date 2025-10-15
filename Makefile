@@ -62,7 +62,7 @@ CXXFLAGS := $(CFLAGS) -Wno-changes-meaning -fexceptions -std=gnu++14 # removed: 
 ASFLAGS :=  -g $(ARCH)
 LDFLAGS =  -specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
-LIBS	:= -lz -lcurl -lmbedtls -lmbedx509 -lmbedcrypto -lcitro3d -lctru -lm
+LIBS	:= -lz -lcurl -lmbedtls -lmbedx509 -lmbedcrypto -lcitro3d -lctru -lm -lopusfile -lopus
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
@@ -145,6 +145,7 @@ export HFILES	:=	$(PICAFILES:.v.pica=_shbin.h) $(SHLISTFILES:.shlist=_shbin.h) \
 INCLUDES_ALL := $(shell find $(INCLUDES) -type d 2>/dev/null)
 export INCLUDE	:=	$(foreach dir,$(INCLUDES_ALL),-I$(CURDIR)/$(dir)) \
 			$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
+			-I$(PORTLIBS)/include/opus \
 			-I$(CURDIR)/$(BUILD)
 
 export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)

@@ -12,6 +12,7 @@ Please dont be annoyed if this crashed on your device, as this is my first prope
 - 3ds-zlib
 - 3ds-curl 
 - 3ds-mbedtls
+- 3ds-libopus
 
 ### Credits
 
