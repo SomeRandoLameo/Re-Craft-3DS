@@ -56,7 +56,7 @@ CFLAGS	:=	-g -Wall -O2 -mword-relocations \
 			-ffunction-sections \
 			$(ARCH)
 
-CFLAGS   += $(INCLUDE) -D__3DS__ -DUSE_CURL -g -O0
+CFLAGS   += $(INCLUDE) -D__3DS__ -DUSE_CURL -g -O0 -D_3DS=1
 CXXFLAGS := $(CFLAGS) -Wno-changes-meaning -fexceptions -std=gnu++14 # removed: -fno-rtti
 
 ASFLAGS :=  -g $(ARCH)

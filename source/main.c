@@ -108,16 +108,16 @@ int main() {
 			playopus(&BackgroundSound);
 		}
 		
-		//DebugUI_Text("%d FPS  Usage: CPU: %5.2f%% GPU: %5.2f%% Buf: %5.2f%% Lin: %d", fps, C3D_GetProcessingTime() * 6.f,
-		//C3D_GetDrawingTime() * 6.f, C3D_GetCmdBufUsage() * 100.f, linearSpaceFree());
-		//DebugUI_Text("X: %f, Y: %f, Z: %f", f3_unpack(player.position));
-		//DebugUI_Text("HP: %i",player.hp);
-		//DebugUI_Text("velocity: %f rndy: %f",player.velocity.y,player.rndy);
-		//DebugUI_Text("Time: %i Cause: %c",dmg->time,dmg->cause);
-		//DebugUI_Text("SX: %f SY: %f SZ: %f",player->spawnx,player->spawny,player->spawnz);
-		//DebugUI_Text("Hunger: %i Hungertimer: %i",player.hunger,player.hungertimer);
-		//DebugUI_Text("Gamemode: %i",player.gamemode);
-		//DebugUI_Text("quickbar %i",player.quickSelectBarSlot);
+		DebugUI_Text("%d FPS  Usage: CPU: %5.2f%% GPU: %5.2f%% Buf: %5.2f%% Lin: %d", fps, C3D_GetProcessingTime() * 6.f,
+		C3D_GetDrawingTime() * 6.f, C3D_GetCmdBufUsage() * 100.f, linearSpaceFree());
+		DebugUI_Text("X: %f, Y: %f, Z: %f", f3_unpack(player.position));
+		DebugUI_Text("HP: %i",player.hp);
+		DebugUI_Text("velocity: %f rndy: %f",player.velocity.y,player.rndy);
+		//DebugUI_Text("Time: %i Cause: %c",dmg.time,dmg.cause);
+		DebugUI_Text("SX: %f SY: %f SZ: %f",player.spawnx,player.spawny,player.spawnz);
+		DebugUI_Text("Hunger: %i Hungertimer: %i",player.hunger,player.hungertimer);
+		DebugUI_Text("Gamemode: %i",player.gamemode);
+		DebugUI_Text("quickbar %i",player.quickSelectBarSlot);
 
 		Renderer_Render();
 
