@@ -4,7 +4,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include "../misc/Sound.h"
+//#include "../misc/Sound.h"
 
 typedef int KeyCombo;
 typedef struct {
@@ -32,4 +32,4 @@ typedef struct {
 } PlayerController;
 
 void PlayerController_Init(PlayerController* ctrl, Player* player);
-void PlayerController_Update(PlayerController* ctrl, Sound* sound, InputData input, float dt);
+void PlayerController_Update(PlayerController* ctrl, /*Sound* sound,*/ InputData input, float dt);

@@ -21,7 +21,7 @@
 #include "world/worldgen/SmeaGen.h"
 #include "world/worldgen/SuperFlatGen.h"
 #include "misc/Crash.h"
-#include "misc/Sound.h"
+//#include "misc/Sound.h"
 
 extern "C"{
     #include <sino/sino.h>
@@ -73,8 +73,8 @@ int main() {
 
 	World* world = (World*)malloc(sizeof(World));
 
-	Sound BackgroundSound;
-	Sound PlayerSound;
+	//Sound BackgroundSound;
+	//Sound PlayerSound;
 	Player player;
 	PlayerController playerCtrl;
 	Player_Init(&player, world);
@@ -99,18 +99,18 @@ int main() {
 	uint64_t lastTime = svcGetSystemTick();
 	float dt = 0.f, timeAccum = 0.f, fpsClock = 0.f;
 	int frameCounter = 0, fps = 0;
-	bool initBackgroundSound = true;
+	//bool initBackgroundSound = false;
 	while (aptMainLoop()) 
 	{
-		if (initBackgroundSound)
-		{
-			initBackgroundSound = false;
-			BackgroundSound.background = true;
-			char *soundfile = "romfs:/assets/sound/music/1.opus";
-			BackgroundSound.path[0] = '\0';
-			strncat(BackgroundSound.path, soundfile, sizeof(BackgroundSound.path) - 1);
-			playopus(&BackgroundSound);
-		}
+		//if (initBackgroundSound)
+		//{
+		//	initBackgroundSound = false;
+		//	BackgroundSound.background = true;
+		//	char *soundfile = "romfs:/assets/sound/music/1.opus";
+		//	BackgroundSound.path[0] = '\0';
+		//	strncat(BackgroundSound.path, soundfile, sizeof(BackgroundSound.path) - 1);
+		//	playopus(&BackgroundSound);
+		//}
 		
 		DebugUI_Text("%d FPS  Usage: CPU: %5.2f%% GPU: %5.2f%% Buf: %5.2f%% Lin: %d", fps, C3D_GetProcessingTime() * 6.f,
 		C3D_GetDrawingTime() * 6.f, C3D_GetCmdBufUsage() * 100.f, linearSpaceFree());
@@ -173,7 +173,7 @@ int main() {
 				timeAccum -= 1.f / 20.f;
 			}
 
-			PlayerController_Update(&playerCtrl, &PlayerSound, inputData, dt);
+			PlayerController_Update(&playerCtrl, /*&PlayerSound,*/ inputData, dt);
 
 			World_UpdateChunkCache(world, WorldToChunkCoord(FastFloor(player.position.x)),
 					       WorldToChunkCoord(FastFloor(player.position.z)));
@@ -239,7 +239,7 @@ int main() {
 	SuperChunk_DeinitPools();
 
 	free(world);
-
+/*
 	if (BackgroundSound.threaid != NULL)
 	{
 		DoQuit(0);
@@ -262,7 +262,7 @@ int main() {
 		}
 		audioExit(1);
 	}
-
+*/
 	ndspExit();
 	sino_exit();
 

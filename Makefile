@@ -56,8 +56,8 @@ CFLAGS	:=	-g -Wall -O2 -mword-relocations \
 			-ffunction-sections \
 			$(ARCH)
 
-CFLAGS   += $(INCLUDE) -D__3DS__ -DUSE_CURL -g -O0 -D_3DS=1
-CXXFLAGS := $(CFLAGS) -Wno-changes-meaning -fexceptions -std=gnu++14 # removed: -fno-rtti
+CFLAGS   += $(INCLUDE) -D__3DS__ -DUSE_CURL -D_3DS=1 -g -O0
+CXXFLAGS := $(CFLAGS) -Wno-changes-meaning -fexceptions -std=gnu++14 -g -O0 # removed: -fno-rtti
 
 ASFLAGS :=  -g $(ARCH)
 LDFLAGS =  -specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)

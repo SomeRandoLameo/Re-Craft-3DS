@@ -1,7 +1,7 @@
 #include "Player.h"
 #include "../misc/Collision.h"
 #include "Damage.h"
-#include "../misc/Sound.h"
+//#include "../misc/Sound.h"
 #include "../gui/DebugUI.h"  // Add this include at the top
 
 void Player_Init(Player* player, World* world) {
@@ -86,7 +86,7 @@ void Player_Init(Player* player, World* world) {
 	player->autoJumpEnabled = true;
 }
 
-void Player_Update(Player* player, Sound* sound, Damage* dmg) {
+void Player_Update(Player* player, /*Sound* sound, */Damage* dmg) {
 	player->view = f3_new(-sinf(player->yaw) * cosf(player->pitch), sinf(player->pitch), -cosf(player->yaw) * cosf(player->pitch));
 	player->blockInSight =Raycast_Cast(player->world, f3_new(player->position.x, player->position.y + PLAYER_EYEHEIGHT, player->position.z), player->view,&player->viewRayCast);
 	player->blockInActionRange = player->blockInSight && player->viewRayCast.distSqr < 3.5f * 3.5f * 3.5f;
@@ -313,7 +313,7 @@ void Player_Move(Player* player, float dt, float3 accl) {
 	}
 }
 
-void Player_PlaceBlock(Player* player, Sound* sound) {
+void Player_PlaceBlock(Player* player/*, Sound* sound*/) {
 	if (player->world && player->blockInActionRange && player->breakPlaceTimeout < 0.f) {
 		const int* offset = DirectionToOffset[player->viewRayCast.direction];
 		if (AABB_Overlap(player->position.x - PLAYER_COLLISIONBOX_SIZE / 2.f, player->position.y,
@@ -324,12 +324,12 @@ void Player_PlaceBlock(Player* player, Sound* sound) {
 		World_SetBlockAndMeta(player->world, player->viewRayCast.x + offset[0], player->viewRayCast.y + offset[1],
 				      player->viewRayCast.z + offset[2], player->quickSelectBar[player->quickSelectBarSlot].block,
 				      player->quickSelectBar[player->quickSelectBarSlot].meta);
-		sound->background = false;
-		char *soundfile = "romfs:/assets/sound/entity/player/hit.opus";
-		sound->path[0] = '\0';
-		strncat(sound->path, soundfile, sizeof(sound->path) - 1);
+		//sound->background = false;
+		//char *soundfile = "romfs:/assets/sound/entity/player/hit.opus";
+		//sound->path[0] = '\0';
+		//strncat(sound->path, soundfile, sizeof(sound->path) - 1);
 		//DebugUI_Log("File path for player sound %s", sound->path);
-		playopus(sound);
+		//playopus(sound);
 	}
 	if (player->breakPlaceTimeout < 0.f) player->breakPlaceTimeout = PLAYER_PLACE_REPLACE_TIMEOUT;
 }
