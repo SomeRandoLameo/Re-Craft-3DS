@@ -9,20 +9,52 @@ static Texture_Map textureMap;
 #define PPRX "romfs:/assets/textures/blocks/"
 
 #define TEXTURE_FILES                                                                                                               \
-	A(stone, "stone.png"), A(dirt, "dirt.png"), A(cobblestone, "cobblestone.png"), A(grass_side, "grass_side.png"), 				\
-	A(grass_top, "grass_top.png"),A(stonebrick, "stonebrick.png"), A(sand, "sand.png"), A(oaklog_side, "log_oak.png"), 				\
-	A(oaklog_top, "log_oak_top.png"), A(leaves_oak, "leaves_oak.png"),A(glass, "glass.png"), A(brick, "brick.png"), 				\
-	A(oakplanks, "planks_oak.png"),A(wool, "wool.png"), A(bedrock, "bedrock.png"), A(gravel, "gravel.png"), 						\
-	A(coarse, "coarse_dirt.png"), A(door_top, "door_top.png"), A(door_bottom, "door_bottom.png"),									\
-	A(snow_grass_side, "snow_grass_side.png"), A(snow, "snow.png"),A(obsidian, "obsidian.png"), 									\
-	A(sandstone_side, "sandstone_side.png"), A(sandstone_top, "sandstone_top.png"), A(sandstone_bottom, "sandstone_bottom.png"), 	\
-	A(netherrack, "netherrack.png"), A(smooth_stone, "smooth_stone.png"), A(lava,"lava.png"), A(water,"water.png"),					\
-	A(grass_path_side, "grass_path_side.png"),A(grass_path_top, "grass_path_top.png"), 												\
-	A(crafting_table_side, "crafting_table_side.png"), A(crafting_table_top, "crafting_table_top.png"),								\
-	A(iron_ore,"iron_ore.png"),A(iron_block,"iron_block.png"),A(diamond_ore,"diamond_ore.png"),A(diamond_block,"diamond_block.png"),\
-	A(gold_ore,"gold_ore.png"),A(gold_block,"gold_block.png"),A(coal_ore,"coal_ore.png"),A(coal_block,"coal_block.png"),			\
-	A(emerald_ore,"emerald_ore.png"),A(emerald_block,"emerald_block.png"),A(furnace_side,"furnace_side.png"),						\
-	A(furnace_front,"furnace_front.png"),A(furnace_top,"furnace_top.png")
+	A(stone, "stone.png"),                                                                                                             \
+    A(dirt, "dirt.png"),                                                                                                            \
+    A(cobblestone, "cobblestone.png"),                                                                                              \
+    A(grass_side, "grass_side.png"), 				\
+	A(grass_top, "grass_top.png"),                                                                                                     \
+    A(stonebrick, "stonebrick.png"),                                                                                                \
+    A(sand, "sand.png"),                                                                                                            \
+    A(oaklog_side, "log_oak.png"), 				\
+	A(oaklog_top, "log_oak_top.png"),                                                                                                  \
+    A(leaves_oak, "leaves_oak.png"),                                                                                                \
+    A(glass, "glass.png"),                                                                          \
+    A(brick, "brick.png"), 				\
+	A(oakplanks, "planks_oak.png"),                                                                                                    \
+    A(wool, "wool.png"),                                                                                                            \
+    A(bedrock, "bedrock.png"),                                                                                 \
+    A(gravel, "gravel.png"), 						\
+	A(coarse, "coarse_dirt.png"),                                                                                                      \
+    A(door_top, "door_top.png"),                                                                                                    \
+    A(door_bottom, "door_bottom.png"),									\
+	A(snow_grass_side, "snow_grass_side.png"),                                                                                         \
+    A(snow, "snow.png"),                                                                                                            \
+    A(obsidian, "obsidian.png"), 									\
+	A(sandstone_side, "sandstone_side.png"),                                                                                           \
+    A(sandstone_top, "sandstone_top.png"),                                                                                          \
+    A(sandstone_bottom, "sandstone_bottom.png"), 	\
+	A(netherrack, "netherrack.png"),                                                                                                   \
+    A(smooth_stone, "smooth_stone.png"),                                                                                            \
+    A(lava,"lava.png"),                                                                                                             \
+    A(water,"water.png"),					\
+	A(grass_path_side, "grass_path_side.png"),                                                                                         \
+    A(grass_path_top, "grass_path_top.png"), 												\
+	A(crafting_table_side, "crafting_table_side.png"),                                                                                 \
+    A(crafting_table_top, "crafting_table_top.png"),								\
+	A(iron_ore,"iron_ore.png"),                                                                                                        \
+    A(iron_block,"iron_block.png"),                                                                                                 \
+    A(diamond_ore,"diamond_ore.png"),                                                                                               \
+    A(diamond_block,"diamond_block.png"),\
+	A(gold_ore,"gold_ore.png"),                                                                                                        \
+    A(gold_block,"gold_block.png"),                                                                                                 \
+    A(coal_ore,"coal_ore.png"),                                                                      \
+    A(coal_block,"coal_block.png"),			\
+	A(emerald_ore,"emerald_ore.png"),                                                                                                  \
+    A(emerald_block,"emerald_block.png"),                                                                                           \
+    A(furnace_side,"furnace_side.png"),						\
+	A(furnace_front,"furnace_front.png"),                                                                                              \
+    A(furnace_top,"furnace_top.png")
 
 #define A(i, n) PPRX n
 const char* block_texture_files[] = {TEXTURE_FILES};
@@ -309,8 +341,41 @@ void Block_GetColor(Block block, uint8_t metadata, Direction direction, uint8_t 
 bool Block_Opaque(Block block, uint8_t metadata) { return block != Block_Air && block != Block_Glass && block != Block_Door_Top && block != Block_Door_Bottom; }
 
 const char* BlockNames[Blocks_Count] = {
-	"Air","Stone","Dirt","Grass","Cobblestone","Sand","Log","Leaves","Glass","Stone Bricks","Bricks","Planks","Wool","Bedrock","Gravel",
-	"Water","Coarse","Door_Top","Door_Bottom","Snow_Grass","Snow","Obsidian","Netherrack","Sandstone","Smooth_Stone","Crafting_Table",
-	"Grass_Path","Water","Lava","Iron_Ore","Iron_Block","Coal_Ore","Coal_Block","Diamond_Ore","Diamond_Block","Gold_Ore","Gold_Block",
-	"Emerald_Ore","Emerald_Block","Furnace"
+	"Air",
+    "Stone","Dirt",
+    "Grass","Cobblestone",
+    "Sand",
+    "Log",
+    "Leaves",
+    "Glass",
+    "Stone Bricks",
+    "Bricks",
+    "Planks",
+    "Wool",
+    "Bedrock",
+    "Gravel",
+	"Coarse",
+    "Door_Top",
+    "Door_Bottom",
+    "Snow_Grass",
+    "Snow",
+    "Obsidian",
+    "Netherrack",
+    "Sandstone",
+    "Smooth_Stone",
+    "Crafting_Table",
+	"Grass_Path",
+    "Water",
+    "Lava",
+    "Iron_Ore",
+    "Iron_Block",
+    "Coal_Ore",
+    "Coal_Block",
+    "Diamond_Ore",
+    "Diamond_Block",
+    "Gold_Ore",
+    "Gold_Block",
+	"Emerald_Ore",
+    "Emerald_Block",
+    "Furnace"
 };

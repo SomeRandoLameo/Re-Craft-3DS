@@ -17,8 +17,8 @@ static char* fileBuffer;
 
 void SuperChunk_InitPools() {
 	nodeDataPool = (mpack_node_data_t*)malloc(sizeof(mpack_node_data_t) * nodeDataPoolSize);
-	fileBuffer = malloc(fileBufferSize);  // 4kb
-	decompressBuffer = malloc(decompressBufferSize);
+	fileBuffer = (char*)malloc(fileBufferSize);  // 4kb
+	decompressBuffer = (char*)malloc(decompressBufferSize);
 }
 void SuperChunk_DeinitPools() {
 	free(nodeDataPool);
@@ -260,7 +260,7 @@ void SuperChunk_LoadChunk(SuperChunk* superchunk, Chunk* chunk) {
 					       sizeof(chunk->clusters[i].metadataLight));
 			}
 
-			chunk->genProgress = mpack_node_int(mpack_node_map_cstr(root, "genProgress"));
+			chunk->genProgress = (ChunkGenProgress)mpack_node_int(mpack_node_map_cstr(root, "genProgress"));
 
 			mpack_node_t heightmapNode = mpack_node_map_cstr(root, "heightmap");
 			if (mpack_node_type(heightmapNode) != mpack_type_nil) {

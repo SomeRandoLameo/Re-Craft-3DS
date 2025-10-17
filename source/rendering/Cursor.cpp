@@ -9,7 +9,7 @@ static WorldVertex* cursorVBO;
 extern const WorldVertex cube_sides_lut[6 * 6];
 
 void Cursor_Init() {
-	cursorVBO = linearAlloc(sizeof(cube_sides_lut));
+	cursorVBO = (WorldVertex*)linearAlloc(sizeof(cube_sides_lut));
 	memcpy(cursorVBO, cube_sides_lut, sizeof(cube_sides_lut));
 
 	for (int i = 0; i < 6 * 6; i++) {
@@ -54,7 +54,7 @@ void Cursor_Draw(int projUniform, C3D_Mtx* projectionview, World* world, int x, 
 
 	C3D_TexEnv* env = C3D_GetTexEnv(0);
 	C3D_TexEnvInit(env);
-	C3D_TexEnvSrc(env, C3D_Both, GPU_PRIMARY_COLOR, 0, 0);
+	C3D_TexEnvSrc(env, C3D_Both, GPU_PRIMARY_COLOR, (GPU_TEVSRC)0, (GPU_TEVSRC)0);
 	C3D_TexEnvFunc(env, C3D_Both, GPU_REPLACE);
 
 	C3D_BufInfo* bufInfo = C3D_GetBufInfo();

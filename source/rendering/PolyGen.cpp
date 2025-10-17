@@ -7,67 +7,68 @@
 #include "../entity/Player.h"
 
 #include <stdbool.h>
+extern "C" {
 #include <vec/vec.h>
-
+}
 #include <3ds.h>
-
+extern "C" {
 const WorldVertex cube_sides_lut[] = {
-    // Fourth face (MX)
-    // First triangle
-    {{0, 0, 0}, {0, 0}, {255, 255, 255}, {0, 0, 0}},
-    {{0, 0, 1}, {1, 0}, {255, 255, 255}, {0, 0, 0}},
-    {{0, 1, 1}, {1, 1}, {255, 255, 255}, {0, 0, 0}},
-    // Second triangle
-    {{0, 1, 1}, {1, 1}, {255, 255, 255}, {0, 0, 0}},
-    {{0, 1, 0}, {0, 1}, {255, 255, 255}, {0, 0, 0}},
-    {{0, 0, 0}, {0, 0}, {255, 255, 255}, {0, 0, 0}},
-    // Third face (PX)
-    // First triangle
-    {{1, 0, 0}, {1, 0}, {255, 255, 255}, {0, 0, 0}},
-    {{1, 1, 0}, {1, 1}, {255, 255, 255}, {0, 0, 0}},
-    {{1, 1, 1}, {0, 1}, {255, 255, 255}, {0, 0, 0}},
-    // Second triangle
-    {{1, 1, 1}, {0, 1}, {255, 255, 255}, {0, 0, 0}},
-    {{1, 0, 1}, {0, 0}, {255, 255, 255}, {0, 0, 0}},
-    {{1, 0, 0}, {1, 0}, {255, 255, 255}, {0, 0, 0}},
-    // Sixth face (MY)
-    // First triangle
-    {{0, 0, 0}, {0, 1}, {255, 255, 255}, {0, 0, 0}},
-    {{1, 0, 0}, {1, 1}, {255, 255, 255}, {0, 0, 0}},
-    {{1, 0, 1}, {1, 0}, {255, 255, 255}, {0, 0, 0}},
-    // Second triangle
-    {{1, 0, 1}, {1, 0}, {255, 255, 255}, {0, 0, 0}},
-    {{0, 0, 1}, {0, 0}, {255, 255, 255}, {0, 0, 0}},
-    {{0, 0, 0}, {0, 1}, {255, 255, 255}, {0, 0, 0}},
-    // Fifth face (PY)
-    // First triangle
-    {{0, 1, 0}, {0, 1}, {255, 255, 255}, {0, 0, 0}},
-    {{0, 1, 1}, {0, 0}, {255, 255, 255}, {0, 0, 0}},
-    {{1, 1, 1}, {1, 0}, {255, 255, 255}, {0, 0, 0}},
-    // Second triangle
-    {{1, 1, 1}, {1, 0}, {255, 255, 255}, {0, 0, 0}},
-    {{1, 1, 0}, {1, 1}, {255, 255, 255}, {0, 0, 0}},
-    {{0, 1, 0}, {0, 1}, {255, 255, 255}, {0, 0, 0}},
-    // Second face (MZ)
-    // First triangle
-    {{0, 0, 0}, {1, 0}, {255, 255, 255}, {0, 0, 0}},
-    {{0, 1, 0}, {1, 1}, {255, 255, 255}, {0, 0, 0}},
-    {{1, 1, 0}, {0, 1}, {255, 255, 255}, {0, 0, 0}},
-    // Second triangle
-    {{1, 1, 0}, {0, 1}, {255, 255, 255}, {0, 0, 0}},
-    {{1, 0, 0}, {0, 0}, {255, 255, 255}, {0, 0, 0}},
-    {{0, 0, 0}, {1, 0}, {255, 255, 255}, {0, 0, 0}},
-    // First face (PZ)
-    // First triangle
-    {{0, 0, 1}, {0, 0}, {255, 255, 255}, {0, 0, 0}},
-    {{1, 0, 1}, {1, 0}, {255, 255, 255}, {0, 0, 0}},
-    {{1, 1, 1}, {1, 1}, {255, 255, 255}, {0, 0, 0}},
-    // Second triangle
-    {{1, 1, 1}, {1, 1}, {255, 255, 255}, {0, 0, 0}},
-    {{0, 1, 1}, {0, 1}, {255, 255, 255}, {0, 0, 0}},
-    {{0, 0, 1}, {0, 0}, {255, 255, 255}, {0, 0, 0}},
+        // Fourth face (MX)
+        // First triangle
+        {{0, 0, 0}, {0, 0}, {255, 255, 255}, {0, 0, 0}},
+        {{0, 0, 1}, {1, 0}, {255, 255, 255}, {0, 0, 0}},
+        {{0, 1, 1}, {1, 1}, {255, 255, 255}, {0, 0, 0}},
+        // Second triangle
+        {{0, 1, 1}, {1, 1}, {255, 255, 255}, {0, 0, 0}},
+        {{0, 1, 0}, {0, 1}, {255, 255, 255}, {0, 0, 0}},
+        {{0, 0, 0}, {0, 0}, {255, 255, 255}, {0, 0, 0}},
+        // Third face (PX)
+        // First triangle
+        {{1, 0, 0}, {1, 0}, {255, 255, 255}, {0, 0, 0}},
+        {{1, 1, 0}, {1, 1}, {255, 255, 255}, {0, 0, 0}},
+        {{1, 1, 1}, {0, 1}, {255, 255, 255}, {0, 0, 0}},
+        // Second triangle
+        {{1, 1, 1}, {0, 1}, {255, 255, 255}, {0, 0, 0}},
+        {{1, 0, 1}, {0, 0}, {255, 255, 255}, {0, 0, 0}},
+        {{1, 0, 0}, {1, 0}, {255, 255, 255}, {0, 0, 0}},
+        // Sixth face (MY)
+        // First triangle
+        {{0, 0, 0}, {0, 1}, {255, 255, 255}, {0, 0, 0}},
+        {{1, 0, 0}, {1, 1}, {255, 255, 255}, {0, 0, 0}},
+        {{1, 0, 1}, {1, 0}, {255, 255, 255}, {0, 0, 0}},
+        // Second triangle
+        {{1, 0, 1}, {1, 0}, {255, 255, 255}, {0, 0, 0}},
+        {{0, 0, 1}, {0, 0}, {255, 255, 255}, {0, 0, 0}},
+        {{0, 0, 0}, {0, 1}, {255, 255, 255}, {0, 0, 0}},
+        // Fifth face (PY)
+        // First triangle
+        {{0, 1, 0}, {0, 1}, {255, 255, 255}, {0, 0, 0}},
+        {{0, 1, 1}, {0, 0}, {255, 255, 255}, {0, 0, 0}},
+        {{1, 1, 1}, {1, 0}, {255, 255, 255}, {0, 0, 0}},
+        // Second triangle
+        {{1, 1, 1}, {1, 0}, {255, 255, 255}, {0, 0, 0}},
+        {{1, 1, 0}, {1, 1}, {255, 255, 255}, {0, 0, 0}},
+        {{0, 1, 0}, {0, 1}, {255, 255, 255}, {0, 0, 0}},
+        // Second face (MZ)
+        // First triangle
+        {{0, 0, 0}, {1, 0}, {255, 255, 255}, {0, 0, 0}},
+        {{0, 1, 0}, {1, 1}, {255, 255, 255}, {0, 0, 0}},
+        {{1, 1, 0}, {0, 1}, {255, 255, 255}, {0, 0, 0}},
+        // Second triangle
+        {{1, 1, 0}, {0, 1}, {255, 255, 255}, {0, 0, 0}},
+        {{1, 0, 0}, {0, 0}, {255, 255, 255}, {0, 0, 0}},
+        {{0, 0, 0}, {1, 0}, {255, 255, 255}, {0, 0, 0}},
+        // First face (PZ)
+        // First triangle
+        {{0, 0, 1}, {0, 0}, {255, 255, 255}, {0, 0, 0}},
+        {{1, 0, 1}, {1, 0}, {255, 255, 255}, {0, 0, 0}},
+        {{1, 1, 1}, {1, 1}, {255, 255, 255}, {0, 0, 0}},
+        // Second triangle
+        {{1, 1, 1}, {1, 1}, {255, 255, 255}, {0, 0, 0}},
+        {{0, 1, 1}, {0, 1}, {255, 255, 255}, {0, 0, 0}},
+        {{0, 0, 1}, {0, 0}, {255, 255, 255}, {0, 0, 0}},
 };
-
+}
 typedef struct {
 	VBO_Block vbo, transparentVBO;
 	int x, y, z;
@@ -205,11 +206,11 @@ static uint16_t floodFill(World* world, Chunk* chunk, Cluster* cluster, int x, i
 	for (int i = 0; i < 6; i++)
 		if (exitPoints[i])
 			for (int j = 0; j < 6; j++)
-				if (i != j && exitPoints[j]) visiblity |= ChunkSeeThrough(i, j);
+				if (i != j && exitPoints[j]) visiblity |= ChunkSeeThrough((Direction)i, (Direction)j);
 	return visiblity;
 }
 
-void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* this) {
+void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context) {
 	for (int i = 0; i < CLUSTER_PER_CHUNK; i++) {
 		Cluster* cluster = &item.chunk->clusters[i];
 
@@ -324,8 +325,8 @@ void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* this) {
 				VBO_Block transparentMem;
 				if (transparentFaces > 0) transparentMem = VBO_Alloc(transparentVertices * sizeof(WorldVertex));
 
-				WorldVertex* opaqueData = memBlock.memory;
-				WorldVertex* transparentData = transparentMem.memory;
+				WorldVertex* opaqueData = (WorldVertex*)memBlock.memory;
+				WorldVertex* transparentData = (WorldVertex*)transparentMem.memory;
 				for (int j = 0; j < currentFace; j++) {
 					Face face = faceBuffer[j];
 

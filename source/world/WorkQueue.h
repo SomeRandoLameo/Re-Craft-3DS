@@ -1,7 +1,8 @@
 #pragma once
 
-#include <vec/vec.h>
-
+extern "C" {
+    #include <vec/vec.h>
+}
 #include "CT_Chunk.h"
 
 #include "../misc/Xorshift.h"

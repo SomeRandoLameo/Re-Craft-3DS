@@ -171,16 +171,16 @@ void Player_Update(Player* player, Sound* sound, Damage* dmg) {
 	//}
 }
 
-bool Player_CanMove(Player* player, float3 new) {
+bool Player_CanMove(Player* player, float3 newVec) {
 	for (int x = -1; x < 2; x++) {
 		for (int y = 0; y < 3; y++) {
 			for (int z = -1; z < 2; z++) {
-				int pX = FastFloor(new.x) + x;
-				int pY = FastFloor(new.y) + y;
-				int pZ = FastFloor(new.z) + z;
+				int pX = FastFloor(newVec.x) + x;
+				int pY = FastFloor(newVec.y) + y;
+				int pZ = FastFloor(newVec.z) + z;
 				if (World_GetBlock(player->world, pX, pY, pZ) != Block_Air&&World_GetBlock(player->world, pX, pY, pZ) != Block_Lava
 				&&World_GetBlock(player->world, pX, pY, pZ) != Block_Water) {
-					if (AABB_Overlap(new.x - PLAYER_COLLISIONBOX_SIZE / 2.f, new.y, new.z - PLAYER_COLLISIONBOX_SIZE / 2.f,
+					if (AABB_Overlap(newVec.x - PLAYER_COLLISIONBOX_SIZE / 2.f, newVec.y, newVec.z - PLAYER_COLLISIONBOX_SIZE / 2.f,
 							 PLAYER_COLLISIONBOX_SIZE, PLAYER_HEIGHT, PLAYER_COLLISIONBOX_SIZE, pX, pY, pZ, 1.f,
 							 1.f, 1.f)) {
 						return false;

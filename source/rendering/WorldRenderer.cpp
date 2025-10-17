@@ -131,7 +131,7 @@ static void renderWorld() {
 		// if (polysTotal >= 150000) break;
 
 		for (int i = 0; i < 6; i++) {
-			Direction dir = i;
+			Direction dir = (Direction)i;
 			const int* offset = DirectionToOffset[dir];
 
 			int newX = chunk->x + offset[0], newY = cluster->y + offset[1], newZ = chunk->z + offset[2];
@@ -149,7 +149,7 @@ static void renderWorld() {
 
 			if (clusterWasRendered(newX, newY, newZ) & 1) continue;
 
-			if (!ChunkCanBeSeenThrough(cluster->seeThrough, step.enteredFrom, i) && step.enteredFrom != Direction_Invalid)
+			if (!ChunkCanBeSeenThrough(cluster->seeThrough, step.enteredFrom, (Direction)i) && step.enteredFrom != Direction_Invalid)
 				continue;
 
 			C3D_FVec chunkPosition = FVec3_New(newX * CHUNK_SIZE, newY * CHUNK_SIZE, newZ * CHUNK_SIZE);
@@ -202,7 +202,7 @@ void WorldRenderer_Render(float iod) {
 	Camera_Update(&camera, player, iod);
 
 	Hand_Draw(projectionUniform, &camera.projection, player->quickSelectBar[player->quickSelectBarSlot], player);
-	C3D_TexBind(0, Block_GetTextureMap());
+	C3D_TexBind(0, (C3D_Tex*)Block_GetTextureMap());
 
 	C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, projectionUniform, &camera.vp);
 

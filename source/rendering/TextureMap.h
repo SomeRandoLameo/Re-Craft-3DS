@@ -1,6 +1,7 @@
 #pragma once
-
+extern "C" {
 #include <c3d/texture.h>
+}
 #include <stdint.h>
 
 void Texture_Load(C3D_Tex* result, char* filename);

@@ -1,7 +1,7 @@
 #include "VBOCache.h"
-
+extern "C" {
 #include <vec/vec.h>
-
+}
 #include <3ds.h>
 
 static vec_t(VBO_Block) freedBlocks;

@@ -3,7 +3,9 @@
 #include "Gui.h"
 #include "SpriteBatch.h"
 
-#include <vec/vec.h>
+extern "C" {
+    #include <vec/vec.h>
+}
 
 #include "../rendering/VertexFmt.h"
 
@@ -14,9 +16,14 @@
 
 #include "../entity/Player.h"
 
-#include <mpack/mpack.h>
 
-#include <3ds.h>
+    #include <mpack/mpack.h>
+
+extern "C" {
+    #include <3ds.h>
+}
+
+
 
 typedef struct {
 	uint32_t lastPlayed;
@@ -190,8 +197,9 @@ void WorldSelect_Render() {
 		Gui_Label(0.45f, true, INT16_MAX, false, "World type:");
 		Gui_Space(0.1f);
 		if (Gui_Button(0.45f, "%s", worldGenTypesStr[worldGenType])) {
-			worldGenType++;
-			if (worldGenType == WorldGenTypes_Count) worldGenType = 0;
+            worldGenType = static_cast<WorldGenType>(static_cast<int>(worldGenType) + 1);
+            if (worldGenType == WorldGenTypes_Count)
+                worldGenType = static_cast<WorldGenType>(0);
 		}
 		Gui_EndRow();
 

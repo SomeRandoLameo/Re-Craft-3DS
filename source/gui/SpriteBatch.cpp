@@ -6,8 +6,10 @@
 #include "../rendering/VertexFmt.h"
 
 #include <stdarg.h>
-
+extern "C" {
 #include <vec/vec.h>
+}
+
 
 typedef struct {
 	int depth;
@@ -37,8 +39,8 @@ static int guiScale = 2;
 void SpriteBatch_Init(int projUniform_) {
 	vec_init(&cmdList);
 
-	vertexList[0] = linearAlloc(sizeof(GuiVertex) * 256);
-	vertexList[1] = linearAlloc(sizeof(GuiVertex) * 2 * (4096 + 1024));
+	vertexList[0] = (GuiVertex*)linearAlloc(sizeof(GuiVertex) * 256);
+	vertexList[1] = (GuiVertex*)linearAlloc(sizeof(GuiVertex) * 2 * (4096 + 1024));
 
 	projUniform = projUniform_;
 
@@ -106,20 +108,21 @@ void SpriteBatch_PushQuadColor(int x, int y, int z, int w, int h, int rx, int ry
 }
 
 static float rot = 0.f;
-extern const WorldVertex cube_sides_lut[6 * 6];
+WorldVertex cube_sides_lut[6 * 6];
+
 void SpriteBatch_PushIcon(Block block, uint8_t metadata, int x, int y, int z) {
 	WorldVertex vertices[6 * 6];
 	memcpy(vertices, cube_sides_lut, sizeof(cube_sides_lut));
 	for (int i = 0; i < 6; i++) {
 		if (i != Direction_Top && i != Direction_South && i != Direction_West) continue;
 		int16_t iconUV[2];
-		Block_GetTexture(block, i, metadata, iconUV);
+		Block_GetTexture(block, (Direction)i, metadata, iconUV);
 
 #define oneDivIconsPerRow (32768 / 8)
 #define halfTexel (6)
 
 		uint8_t color[3];
-		Block_GetColor(block, metadata, i, color);
+		Block_GetColor(block, metadata, (Direction)i, color);
 
 		for (int j = 0; j < 5; j++) {
 			int k = i * 6 + j;
@@ -135,7 +138,7 @@ void SpriteBatch_PushIcon(Block block, uint8_t metadata, int x, int y, int z) {
 		WorldVertex topRight = vertices[i * 6 + 2];
 		WorldVertex topLeft = vertices[i * 6 + 4];
 
-		C3D_Tex* texture = Block_GetTextureMap();
+		C3D_Tex* texture = (C3D_Tex* )Block_GetTextureMap();
 
 		int16_t color16 = SHADER_RGB(color[0] >> 3, color[1] >> 3, color[2] >> 3);
 		if(i == Direction_South) color16 = SHADER_RGB_DARKEN(color16, 14);
@@ -263,7 +266,7 @@ void SpriteBatch_Render(gfxScreen_t screen) {
 
 	C3D_TexEnv* env = C3D_GetTexEnv(0);
 	C3D_TexEnvInit(env);
-	C3D_TexEnvSrc(env, C3D_Both, GPU_TEXTURE0, GPU_PRIMARY_COLOR, 0);
+	C3D_TexEnvSrc(env, C3D_Both, GPU_TEXTURE0, GPU_PRIMARY_COLOR, (GPU_TEVSRC)0);
 	C3D_TexEnvFunc(env, C3D_Both, GPU_MODULATE);
 
 	GuiVertex* usedVertexList = vertexList[screen];

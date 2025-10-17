@@ -1,9 +1,9 @@
 #pragma once
 
 #include "../CT_Chunk.h"
-
+extern "C" {
 #include <vec/vec.h>
-
+}
 #define SUPERCHUNK_SIZE 8
 #define SUPERCHUNK_BLOCKSIZE (SUPERCHUNK_SIZE * CHUNK_SIZE)
 

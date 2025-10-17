@@ -3,6 +3,7 @@
 #include "../misc/Crash.h"
 
 #include <lodepng/lodepng.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -42,7 +43,7 @@ void FontLoader_Init(Font* font, const char* filename) {
 
 		// Hiermit zu konvertieren funktioniert irgendwie nicht richtig
 		C3D_SyncDisplayTransfer(
-		    (uint32_t*)imgInLinRam, GX_BUFFER_DIM(width, height), font->texture.data, GX_BUFFER_DIM(width, height),
+		    (uint32_t*)imgInLinRam, GX_BUFFER_DIM(width, height), (u32*)font->texture.data, GX_BUFFER_DIM(width, height),
 		    (GX_TRANSFER_FLIP_VERT(1) | GX_TRANSFER_OUT_TILED(1) | GX_TRANSFER_RAW_COPY(0) | GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGB5A1) |
 		     GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB5A1) | GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO)));
 

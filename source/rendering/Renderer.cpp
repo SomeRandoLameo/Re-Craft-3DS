@@ -136,14 +136,14 @@ void Renderer_Render() {
 
 		C3D_TexEnv* env = C3D_GetTexEnv(0);
 		C3D_TexEnvInit(env);
-		C3D_TexEnvSrc(env, C3D_Both, GPU_TEXTURE0, GPU_PRIMARY_COLOR, 0);
+		C3D_TexEnvSrc(env, C3D_Both, GPU_TEXTURE0, GPU_PRIMARY_COLOR, (GPU_TEVSRC)0);
 		C3D_TexEnvFunc(env, C3D_Both, GPU_MODULATE);
 
 		C3D_BindProgram(&world_shader);
 		C3D_SetAttrInfo(&world_vertexAttribs);
 
 		if (*gamestate == GameState_Playing) {
-			C3D_TexBind(0, Block_GetTextureMap());
+			C3D_TexBind(0, (C3D_Tex*)Block_GetTextureMap());
 
 			WorldRenderer_Render(!i ? -iod : iod);
 

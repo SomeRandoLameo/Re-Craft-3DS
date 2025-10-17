@@ -22,8 +22,12 @@
 #include "world/worldgen/SuperFlatGen.h"
 #include "misc/Crash.h"
 #include "misc/Sound.h"
-#include <sino/sino.h>
-#include <citro3d.h>
+
+extern "C"{
+    #include <sino/sino.h>
+    #include <citro3d.h>
+}
+
 
 bool showDebugInfo = false;
 

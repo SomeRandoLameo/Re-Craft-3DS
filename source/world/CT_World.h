@@ -5,8 +5,9 @@
 
 #include "../misc/NumberUtils.h"
 #include "../misc/Xorshift.h"
+extern "C" {
 #include <vec/vec.h>
-
+}
 
 #define CHUNKCACHE_SIZE (9)
 

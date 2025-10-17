@@ -10,4 +10,4 @@ void PolyGen_Init(World* world_, Player* player_);
 void PolyGen_Deinit();
 
 void PolyGen_Harvest();
-void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* this);
+void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context);

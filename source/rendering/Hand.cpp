@@ -10,10 +10,12 @@
 static WorldVertex* handVBO;
 static C3D_Tex SkinTexture;
 
-extern const WorldVertex cube_sides_lut[6 * 6];
+extern "C" {
+    extern const WorldVertex cube_sides_lut[6 * 6];
+}
 
 void Hand_Init() {
-	handVBO = linearAlloc(sizeof(cube_sides_lut));
+	handVBO = (WorldVertex*)linearAlloc(sizeof(cube_sides_lut));
 	
 	Texture_Load(&SkinTexture, "romfs:/assets/textures/entity/player.png");
 }
@@ -48,8 +50,8 @@ void Hand_Draw(int projUniform, C3D_Mtx* projection, ItemStack stack, Player* pl
 		if (stack.amount > 0) {
 			int16_t iconUV[2];
 			uint8_t color[3];
-			Block_GetTexture(stack.block, i, stack.meta, iconUV);
-			Block_GetColor(stack.block, stack.meta, i, color);
+			Block_GetTexture(stack.block, (Direction)i, stack.meta, iconUV);
+			Block_GetColor(stack.block, stack.meta, (Direction)i, color);
 
 #define oneDivIconsPerRow (32768 / 8)
 #define halfTexel (6)

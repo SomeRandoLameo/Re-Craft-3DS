@@ -4,9 +4,12 @@
 #include "../misc/NumberUtils.h"
 #include "../gui/DebugUI.h"
 
-#include <ini/ini.h>
 #include <unistd.h>
 #include "../misc/Sound.h"
+
+extern "C" {
+    #include <ini/ini.h>
+}
 
 #ifdef _3DS
 #include <3ds.h>

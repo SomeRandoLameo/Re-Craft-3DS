@@ -46,7 +46,7 @@ void SaveManager_Load(SaveManager* mgr, char* path) {
 
 		mpack_node_t worldTypeNode = mpack_node_map_cstr_optional(root, "worldType");
 		if (mpack_node_type(worldTypeNode) != mpack_type_nil)
-			mgr->world->genSettings.type = mpack_node_uint(worldTypeNode);
+			mgr->world->genSettings.type = (WorldGenType)mpack_node_uint(worldTypeNode);
 		else
 			mgr->world->genSettings.type = WorldGen_SuperFlat;
 
@@ -167,16 +167,16 @@ static SuperChunk* fetchSuperChunk(SaveManager* mgr, int x, int z) {
 	return superchunk;
 }
 
-void SaveManager_LoadChunk(WorkQueue* queue, WorkerItem item, void* this) {
-	SaveManager* mgr = (SaveManager*)this;
+void SaveManager_LoadChunk(WorkQueue* queue, WorkerItem item, void* context) {
+	SaveManager* mgr = (SaveManager*)context;
 	int x = ChunkToSuperChunkCoord(item.chunk->x);
 	int z = ChunkToSuperChunkCoord(item.chunk->z);
 	SuperChunk* superchunk = fetchSuperChunk(mgr, x, z);
 	
 	SuperChunk_LoadChunk(superchunk, item.chunk);
 }
-void SaveManager_SaveChunk(WorkQueue* queue, WorkerItem item, void* this) {
-	SaveManager* mgr = (SaveManager*)this;
+void SaveManager_SaveChunk(WorkQueue* queue, WorkerItem item, void* context) {
+	SaveManager* mgr = (SaveManager*)context;
 	int x = ChunkToSuperChunkCoord(item.chunk->x);
 	int z = ChunkToSuperChunkCoord(item.chunk->z);
 
