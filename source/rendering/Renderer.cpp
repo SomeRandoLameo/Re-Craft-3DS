@@ -1,7 +1,6 @@
 #include "Renderer.h"
 
 #include "../blocks/CT_Block.h"
-#include "../gui/DebugUI.h"
 #include "../gui/Gui.h"
 #include "../gui/CT_Inventory.h"
 #include "../gui/SpriteBatch.h"
@@ -121,12 +120,12 @@ void Renderer_Deinit() {
 	C3D_Fini();
 }
 
-void Renderer_Render() {
+void Renderer_Render(DebugUI* debugUi) {
 	float iod = osGet3DSliderState() * PLAYER_HALFEYEDIFF;
 
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 
-	if (*gamestate == GameState_Playing) PolyGen_Harvest();
+	if (*gamestate == GameState_Playing) PolyGen_Harvest(debugUi);
 
 	for (int i = 0; i < 2; i++) {
 		C3D_RenderTargetClear(renderTargets[i], C3D_CLEAR_ALL, CLEAR_COLOR_SKY, 0);
@@ -198,7 +197,7 @@ void Renderer_Render() {
 					  &player->quickSelectBarSlot);
 		player->inventorySite = Inventory_Draw(16, 0, 160, player->inventory, sizeof(player->inventory) / sizeof(ItemStack),player->inventorySite);
 
-		if (showDebugInfo) DebugUI_Draw();
+		if (showDebugInfo) debugUi->Draw();
 	}
 
 	Gui_Frame();

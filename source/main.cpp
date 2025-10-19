@@ -84,8 +84,8 @@ int main() {
 	SmeaGen_Init(&smeaGen, world);
 
 	Renderer_Init(world, &player, &chunkWorker.queue, &gamestate);
-	
-	DebugUI_Init();
+
+    DebugUI debugUI;
 
 	WorldSelect_Init();
 
@@ -112,18 +112,18 @@ int main() {
 		//	playopus(&BackgroundSound);
 		//}
 		
-		DebugUI_Text("%d FPS  Usage: CPU: %5.2f%% GPU: %5.2f%% Buf: %5.2f%% Lin: %d", fps, C3D_GetProcessingTime() * 6.f,
+		debugUI.Text("%d FPS  Usage: CPU: %5.2f%% GPU: %5.2f%% Buf: %5.2f%% Lin: %d", fps, C3D_GetProcessingTime() * 6.f,
 		C3D_GetDrawingTime() * 6.f, C3D_GetCmdBufUsage() * 100.f, linearSpaceFree());
-		DebugUI_Text("X: %f, Y: %f, Z: %f", f3_unpack(player.position));
-		DebugUI_Text("HP: %i",player.hp);
-		DebugUI_Text("velocity: %f rndy: %f",player.velocity.y,player.rndy);
-		//DebugUI_Text("Time: %i Cause: %c",dmg.time,dmg.cause);
-		DebugUI_Text("SX: %f SY: %f SZ: %f",player.spawnx,player.spawny,player.spawnz);
-		DebugUI_Text("Hunger: %i Hungertimer: %i",player.hunger,player.hungertimer);
-		DebugUI_Text("Gamemode: %i",player.gamemode);
-		DebugUI_Text("quickbar %i",player.quickSelectBarSlot);
+        debugUI.Text("X: %f, Y: %f, Z: %f", f3_unpack(player.position));
+        debugUI.Text("HP: %i",player.hp);
+        debugUI.Text("velocity: %f rndy: %f",player.velocity.y,player.rndy);
+		//debugUI.Text("Time: %i Cause: %c",dmg.time,dmg.cause);
+        debugUI.Text("SX: %f SY: %f SZ: %f",player.spawnx,player.spawny,player.spawnz);
+        debugUI.Text("Hunger: %i Hungertimer: %i",player.hunger,player.hungertimer);
+        debugUI.Text("Gamemode: %i",player.gamemode);
+        debugUI.Text("quickbar %i",player.quickSelectBarSlot);
 
-		Renderer_Render();
+		Renderer_Render(&debugUI);
 
 		uint64_t currentTime = svcGetSystemTick();
 		dt = ((float)(currentTime / (float)CPU_TICKS_PER_MSEC) - (float)(lastTime / (float)CPU_TICKS_PER_MSEC)) / 1000.f;
@@ -173,7 +173,7 @@ int main() {
 				timeAccum -= 1.f / 20.f;
 			}
 
-			PlayerController_Update(&playerCtrl, /*&PlayerSound,*/ inputData, dt);
+			PlayerController_Update(&playerCtrl,&debugUI, /*&PlayerSound,*/ inputData, dt);
 
 			World_UpdateChunkCache(world, WorldToChunkCoord(FastFloor(player.position.x)),
 					       WorldToChunkCoord(FastFloor(player.position.z)));
@@ -268,7 +268,8 @@ int main() {
 
 	WorldSelect_Deinit();
 
-	DebugUI_Deinit();
+    debugUI.~DebugUI();
+	//DebugUI_Deinit();
 
 	ChunkWorker_Deinit(&chunkWorker);
 

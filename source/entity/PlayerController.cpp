@@ -2,7 +2,6 @@
 
 #include "../misc/CommandLine.h"
 #include "../misc/NumberUtils.h"
-#include "../gui/DebugUI.h"
 
 #include <unistd.h>
 //#include "../misc/Sound.h"
@@ -215,7 +214,7 @@ void PlayerController_Init(PlayerController* ctrl, Player* player) {
     ctrl->flyTimer = -1.f;
 }
 
-void PlayerController_Update(PlayerController* ctrl,/* Sound* sound, */InputData input, float dt) {
+void PlayerController_Update(PlayerController* ctrl, DebugUI* debugUi,/* Sound* sound, */InputData input, float dt) {
     Player* player = ctrl->player;
 
     Damage* dmg = NULL; // setting to NULL properly
@@ -291,7 +290,7 @@ void PlayerController_Update(PlayerController* ctrl,/* Sound* sound, */InputData
 
     float cmdLine = WasKeyPressed(ctrl->controlScheme.openCmd, &agnosticInput);
     if (cmdLine) {
-        CommandLine_Activate(player->world, player);
+        CommandLine_Activate(player->world, player,debugUi);
         ctrl->openedCmd = true;
     }
 

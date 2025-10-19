@@ -119,7 +119,7 @@ void Player::HandleFallDamage() {
 
 void Player::HandleFireDamage() {
     if (World_GetBlock(world, f3_unpack(position)) == Block_Lava) {
-        DebugUI_Log("ur burning lol");
+      //  DebugUI_Log("ur burning lol");
         OvertimeDamage("Fire", 10);
     }
 }
@@ -145,11 +145,11 @@ void Player::HandleRespawn(Damage* dmg) {
         if (difficulty != 4) {
             if (spawnset == 0) {
                 if (dmg->cause == NULL) {
-                    DebugUI_Log("Player died");
+                  //  DebugUI_Log("Player died");
                 } else {
-                    DebugUI_Log("Died by %s", dmg->cause);
+                   // DebugUI_Log("Died by %s", dmg->cause);
                 }
-                DebugUI_Log("No spawn was set");
+                //DebugUI_Log("No spawn was set");
                 position.x = 0.0;
 
                 int spawnY = 1;
@@ -162,9 +162,9 @@ void Player::HandleRespawn(Damage* dmg) {
             }
             if (spawnset == 1) {
                 if (dmg->cause == NULL) {
-                    DebugUI_Log("Player died");
+                //    DebugUI_Log("Player died");
                 } else {
-                    DebugUI_Log("Died by %s", dmg->cause);
+               //     DebugUI_Log("Died by %s", dmg->cause);
                 }
                 position.x = spawnx;
 
@@ -179,7 +179,7 @@ void Player::HandleRespawn(Damage* dmg) {
             hp = 20;
             hunger = 20;
         } else {
-            DebugUI_Log("lol ur world is gone");
+           // DebugUI_Log("lol ur world is gone");
         }
     }
 }

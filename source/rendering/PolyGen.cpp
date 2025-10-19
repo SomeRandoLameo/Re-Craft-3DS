@@ -1,6 +1,6 @@
 #include "PolyGen.h"
 
-#include "../gui/DebugUI.h"
+
 #include "VBOCache.h"
 #include "../world/Direction.h"
 
@@ -130,9 +130,9 @@ void PolyGen_Deinit() {
 	vec_deinit(&floodfill_queue);
 }
 
-void PolyGen_Harvest() {
+void PolyGen_Harvest(DebugUI* debugUi) {
 	if (LightLock_TryLock(&updateLock) == 0) {
-		DebugUI_Text("VBOUpdates %d", vboUpdates.length);
+        debugUi->Text("VBOUpdates %d", vboUpdates.length);
 		if (vboUpdates.length > 0) {
 			if (vboUpdates.data[0].delay++ > 2)
 				while (vboUpdates.length > 0) {

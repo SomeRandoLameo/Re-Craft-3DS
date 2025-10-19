@@ -10,7 +10,7 @@
 #include <string.h>
 
 #include "Sound.h"
-#include "../gui/DebugUI.h"
+//#include "../gui/DebugUI.h"
 
 static const int SAMPLE_RATE = 48000;
 static const int SAMPLES_PER_BUF = SAMPLE_RATE * 120 / 1000;
@@ -206,7 +206,7 @@ void playopus(Sound* sound) {
 		DoQuit(1);
 		threadJoin(sound->threaid, 50000);
 		threadFree(sound->threaid);
-		DebugUI_Log("Free thread %p\n", sound->threaid);
+		//DebugUI_Log("Free thread %p\n", sound->threaid);
 		sound->threaid = NULL;
 		if (sound->opusFile != NULL)
 		{
@@ -228,7 +228,7 @@ void playopus(Sound* sound) {
 	OggOpusFile* opusFile = op_open_file(sound->path, &error);
 	if (error)
 	{
-		DebugUI_Log("An Error occured opening file %s \n", sound->path);
+		//DebugUI_Log("An Error occured opening file %s \n", sound->path);
 		return;
 	}
 	if (!audioInit(sound->background == true ? 0 : 1))
