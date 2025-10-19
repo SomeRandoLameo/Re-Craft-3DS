@@ -11,7 +11,7 @@ extern "C" {
 #include <vec/vec.h>
 }
 #include <3ds.h>
-extern "C" {
+
 const WorldVertex cube_sides_lut[] = {
         // Fourth face (MX)
         // First triangle
@@ -68,7 +68,7 @@ const WorldVertex cube_sides_lut[] = {
         {{0, 1, 1}, {0, 1}, {255, 255, 255}, {0, 0, 0}},
         {{0, 0, 1}, {0, 0}, {255, 255, 255}, {0, 0, 0}},
 };
-}
+
 typedef struct {
 	VBO_Block vbo, transparentVBO;
 	int x, y, z;

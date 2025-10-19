@@ -10,10 +10,6 @@
 static WorldVertex* handVBO;
 static C3D_Tex SkinTexture;
 
-extern "C" {
-    extern const WorldVertex cube_sides_lut[6 * 6];
-}
-
 void Hand_Init() {
 	handVBO = (WorldVertex*)linearAlloc(sizeof(cube_sides_lut));
 	

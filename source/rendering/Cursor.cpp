@@ -6,7 +6,7 @@
 
 static WorldVertex* cursorVBO;
 
-extern const WorldVertex cube_sides_lut[6 * 6];
+
 
 void Cursor_Init() {
 	cursorVBO = (WorldVertex*)linearAlloc(sizeof(cube_sides_lut));

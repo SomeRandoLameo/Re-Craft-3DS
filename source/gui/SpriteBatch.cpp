@@ -108,7 +108,7 @@ void SpriteBatch_PushQuadColor(int x, int y, int z, int w, int h, int rx, int ry
 }
 
 static float rot = 0.f;
-WorldVertex cube_sides_lut[6 * 6];
+
 
 void SpriteBatch_PushIcon(Block block, uint8_t metadata, int x, int y, int z) {
 	WorldVertex vertices[6 * 6];
@@ -138,7 +138,7 @@ void SpriteBatch_PushIcon(Block block, uint8_t metadata, int x, int y, int z) {
 		WorldVertex topRight = vertices[i * 6 + 2];
 		WorldVertex topLeft = vertices[i * 6 + 4];
 
-		C3D_Tex* texture = (C3D_Tex* )Block_GetTextureMap();
+        C3D_Tex* texture = &((Texture_Map*)Block_GetTextureMap())->texture;
 
 		int16_t color16 = SHADER_RGB(color[0] >> 3, color[1] >> 3, color[2] >> 3);
 		if(i == Direction_South) color16 = SHADER_RGB_DARKEN(color16, 14);

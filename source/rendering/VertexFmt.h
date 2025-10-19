@@ -11,6 +11,8 @@ typedef struct {
 	uint8_t fxyz[3];
 } WorldVertex;
 
+extern const WorldVertex cube_sides_lut[6 * 6];
+
 typedef struct {
 	int16_t xyz[3];
 	int16_t uvc[3];
