@@ -11,7 +11,7 @@ extern "C" {
     #include <ini/ini.h>
 }
 
-#ifdef _3DS
+
 #include <3ds.h>
 
 #define PLATFORM_BUTTONS 23
@@ -129,15 +129,6 @@ typedef struct {
     bool keysdown[PLATFORM_BUTTONS];
 } PlatformAgnosticInput;
 
-#else
-// Fallback for non-3DS builds
-#define PLATFORM_BUTTONS 1
-typedef struct {
-    float keys[PLATFORM_BUTTONS];
-    bool keysup[PLATFORM_BUTTONS];
-    bool keysdown[PLATFORM_BUTTONS];
-} PlatformAgnosticInput;
-#endif
 
 // Utility functions
 static inline float IsKeyDown(KeyCombo combo, PlatformAgnosticInput* input) { return input->keys[combo]; }
@@ -148,7 +139,7 @@ void PlayerController_Init(PlayerController* ctrl, Player* player) {
     ctrl->breakPlaceTimeout = 0.f;
     ctrl->player = player;
 
-#ifdef _3DS
+
     bool isNew3ds = false;
     APT_CheckNew3DS(&isNew3ds);
     if (isNew3ds) {
@@ -158,12 +149,12 @@ void PlayerController_Init(PlayerController* ctrl, Player* player) {
         ctrl->controlScheme = platform_default_scheme;
         ctrl->player->autoJumpEnabled = true;
     }
-#endif
+
 
     ctrl->openedCmd = false;
     bool elementMissing = false;
 
-#ifdef _3DS
+
     const char path[] = "sdmc:/craftus_redesigned/options.ini";
     if (access(path, F_OK) != -1) {
         ini_t* cfg = ini_load(path);
@@ -220,7 +211,7 @@ void PlayerController_Init(PlayerController* ctrl, Player* player) {
                 player->autoJumpEnabled);
         fclose(f);
     }
-#endif
+
     ctrl->flyTimer = -1.f;
 }
 
@@ -231,7 +222,7 @@ void PlayerController_Update(PlayerController* ctrl,/* Sound* sound, */InputData
 
     PlatformAgnosticInput agnosticInput = {0};
 
-#ifdef _3DS
+
     convertPlatformInput(&input, agnosticInput.keys, agnosticInput.keysdown, agnosticInput.keysup);
 
     float jump = IsKeyDown(ctrl->controlScheme.jump, &agnosticInput);
@@ -271,10 +262,10 @@ void PlayerController_Update(PlayerController* ctrl,/* Sound* sound, */InputData
 
     float placeBlock = IsKeyDown(ctrl->controlScheme.placeBlock, &agnosticInput);
     float breakBlock = IsKeyDown(ctrl->controlScheme.breakBlock, &agnosticInput);
-    if (placeBlock > 0.f) Player_PlaceBlock(player/*, sound*/);
-    if (breakBlock > 0.f) Player_BreakBlock(player);
+    if (placeBlock > 0.f) player->PlaceBlock();/*, sound*/
+    if (breakBlock > 0.f) player->BreakBlock();
 
-    if (jump > 0.f) Player_Jump(player, movement);
+    if (jump > 0.f) player->Jump(movement);
 
     bool releasedJump = WasKeyReleased(ctrl->controlScheme.jump, &agnosticInput);
     if (ctrl->flyTimer >= 0.f) {
@@ -304,8 +295,8 @@ void PlayerController_Update(PlayerController* ctrl,/* Sound* sound, */InputData
         ctrl->openedCmd = true;
     }
 
-    Player_Move(player, dt, movement);
-#endif
+    player->Move( dt, movement);
 
-    Player_Update(player, /*sound, */dmg);
+
+    player->Update(/*sound, */dmg);
 }

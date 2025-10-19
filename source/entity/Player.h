@@ -2,71 +2,77 @@
 
 #include <stdbool.h>
 #include "../world/CT_World.h"
-
 #include "../gui/CT_Inventory.h"
 #include "../inventory/ItemStack.h"
 #include "Damage.h"
-
 #include "../misc/Raycast.h"
 #include "../misc/VecMath.h"
-//#include "../misc/Sound.h"
 
 #define PLAYER_EYEHEIGHT (1.65f)
 #define PLAYER_HEIGHT (1.8f)
 #define PLAYER_COLLISIONBOX_SIZE (0.65f)
 #define PLAYER_HALFEYEDIFF (0.07f)
-
 #define PLAYER_PLACE_REPLACE_TIMEOUT (0.2f)
 
-typedef struct {
-	float3 position;
-	float pitch, yaw;
-	float bobbing, fovAdd, crouchAdd;
-	bool grounded, jumped, sprinting, flying, crouching;
-	World* world;
+class Player {
+public:
+    // Constructor and destructor
+    Player(World* world);
+    ~Player() = default;
 
-	float3 view;
+    // Public methods
+    void Update(Damage* dmg);
+    void Move(float dt, float3 accl);
+    void PlaceBlock();
+    void BreakBlock();
+    void Jump(float3 accl);
+    bool CanMove(float3 newVec);
 
-	bool autoJumpEnabled;
+    // Public member variables (for compatibility with existing code)
+    float3 position;
+    float pitch, yaw;
+    float bobbing, fovAdd, crouchAdd;
+    bool grounded, jumped, sprinting, flying, crouching;
+    World* world;
 
-	float3 velocity;
-	float simStepAccum;
+    float3 view;
+    bool autoJumpEnabled;
 
-	float breakPlaceTimeout;
-	int hungertimer;
+    float3 velocity;
+    float simStepAccum;
 
-	int hp;
-	int armour;
-	int oxygen;
-	int hunger;
-	int difficulty;
-	float rndy;
+    float breakPlaceTimeout;
+    int hungertimer;
 
-	float spawnx;
-	float spawny;
-	float spawnz;
-	int spawnset;
+    int hp;
+    int armour;
+    int oxygen;
+    int hunger;
+    int difficulty;
+    float rndy;
 
-	int gamemode;
-	bool cheats;	
+    float spawnx;
+    float spawny;
+    float spawnz;
+    int spawnset;
 
-	int quickSelectBarSlots;
-	int quickSelectBarSlot;
-	int inventorySite;
-	ItemStack quickSelectBar[INVENTORY_QUICKSELECT_MAXSLOTS];
+    int gamemode;
+    bool cheats;
 
-	Raycast_Result viewRayCast;
-	bool blockInSight, blockInActionRange;
-	ItemStack inventory[64];
-} Player;
+    int quickSelectBarSlots;
+    int quickSelectBarSlot;
+    int inventorySite;
+    ItemStack quickSelectBar[INVENTORY_QUICKSELECT_MAXSLOTS];
 
-void Player_Init(Player* player, World* world);
+    Raycast_Result viewRayCast;
+    bool blockInSight, blockInActionRange;
+    ItemStack inventory[64];
 
-void Player_Update(Player* player, /*Sound* sound, */Damage* dmg);
-
-void Player_Move(Player* player, float dt, float3 accl);
-
-void Player_PlaceBlock(Player* player /*Sound* sound*/);
-void Player_BreakBlock(Player* player);
-
-void Player_Jump(Player* player, float3 accl);
+private:
+    // Private methods
+    void InitializeInventory();
+    void HandleFallDamage();
+    void HandleFireDamage();
+    void HandleHunger();
+    void HandleRespawn(Damage* dmg);
+};

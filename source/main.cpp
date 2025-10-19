@@ -75,9 +75,9 @@ int main() {
 
 	//Sound BackgroundSound;
 	//Sound PlayerSound;
-	Player player;
+	Player player(world);
 	PlayerController playerCtrl;
-	Player_Init(&player, world);
+
 	PlayerController_Init(&playerCtrl, &player);
 
 	SuperFlatGen_Init(&flatGen, world);
