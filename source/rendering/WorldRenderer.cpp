@@ -1,10 +1,8 @@
 #include "WorldRenderer.h"
 
 #include "VertexFmt.h"
-
 #include "Cursor.h"
 #include "../blocks/CT_Block.h"
-
 #include "../gui/DebugUI.h"
 
 #include <citro3d.h>
@@ -20,12 +18,12 @@ int sky_time = 0;
 
 static Player* player;
 static World* world;
-
 static WorkQueue* workqueue;
-
 static Camera camera;
-
 static int projectionUniform;
+
+// Class instance instead of function calls
+static Cursor* cursor;
 
 typedef struct {
 	Cluster* cluster;
@@ -58,7 +56,9 @@ void WorldRenderer_Init(Player* player_, World* world_, WorkQueue* workqueue_, i
 
 	Camera_Init(&camera);
 
-	Cursor_Init();
+	// Create cursor instance
+	cursor = new Cursor();
+
 	Hand_Init();
 
 	float data[256];
@@ -78,18 +78,20 @@ void WorldRenderer_Init(Player* player_, World* world_, WorkQueue* workqueue_, i
 
 	Clouds_Init();
 }
+
 void WorldRenderer_Deinit() {
 	vec_deinit(&renderingQueue);
 	vec_deinit(&transparentClusters);
-	Cursor_Deinit();
+
+	// Delete cursor instance
+	delete cursor;
+	cursor = nullptr;
 
 	Hand_Deinit();
-
 	Clouds_Deinit();
 }
 
 static void renderWorld() {
-
 	C3D_FogColor(0xffd990);
 
 	memset(chunkRendered, 0, sizeof(chunkRendered));
@@ -100,8 +102,8 @@ static void renderWorld() {
 	vec_clear(&transparentClusters);
 
 	int pY = CLAMP(WorldToChunkCoord(FastFloor(player->position.y)), 0, CLUSTER_PER_CHUNK - 1);
-	Chunk* pChunk =
-	    World_GetChunk(world, WorldToChunkCoord(FastFloor(player->position.x)), WorldToChunkCoord(FastFloor(player->position.z)));
+	Chunk* pChunk = World_GetChunk(world, WorldToChunkCoord(FastFloor(player->position.x)),
+								   WorldToChunkCoord(FastFloor(player->position.z)));
 	vec_push(&renderingQueue, ((RenderStep){&pChunk->clusters[pY], pChunk, Direction_Invalid}));
 	chunkRendered[CHUNKCACHE_SIZE / 2][pY][CHUNKCACHE_SIZE / 2] = 1;
 
@@ -122,13 +124,11 @@ static void renderWorld() {
 			C3D_DrawArrays(GPU_TRIANGLES, 0, cluster->vertices);
 
 			polysTotal += cluster->vertices;
-
 			clustersDrawn++;
 		}
 		if (cluster->transparentVertices > 0 && cluster->transparentVBO.size) {
 			vec_push(&transparentClusters, ((TransparentRender){cluster, chunk}));
 		}
-		// if (polysTotal >= 150000) break;
 
 		for (int i = 0; i < 6; i++) {
 			Direction dir = (Direction)i;
@@ -136,24 +136,28 @@ static void renderWorld() {
 
 			int newX = chunk->x + offset[0], newY = cluster->y + offset[1], newZ = chunk->z + offset[2];
 			if (newX < world->cacheTranslationX - CHUNKCACHE_SIZE / 2 + 1 ||
-			    newX > world->cacheTranslationX + CHUNKCACHE_SIZE / 2 - 1 ||
-			    newZ < world->cacheTranslationZ - CHUNKCACHE_SIZE / 2 + 1 ||
-			    newZ > world->cacheTranslationZ + CHUNKCACHE_SIZE / 2 - 1 || newY < 0 || newY >= CLUSTER_PER_CHUNK)
+				newX > world->cacheTranslationX + CHUNKCACHE_SIZE / 2 - 1 ||
+				newZ < world->cacheTranslationZ - CHUNKCACHE_SIZE / 2 + 1 ||
+				newZ > world->cacheTranslationZ + CHUNKCACHE_SIZE / 2 - 1 ||
+				newY < 0 || newY >= CLUSTER_PER_CHUNK)
 				continue;
-			float3 dist = f3_sub(f3_new(newX * CHUNK_SIZE + CHUNK_SIZE / 2, newY * CHUNK_SIZE + CHUNK_SIZE / 2,
-						    newZ * CHUNK_SIZE + CHUNK_SIZE / 2),
-					     playerPos);
+			float3 dist = f3_sub(f3_new(newX * CHUNK_SIZE + CHUNK_SIZE / 2,
+										newY * CHUNK_SIZE + CHUNK_SIZE / 2,
+										newZ * CHUNK_SIZE + CHUNK_SIZE / 2),
+								 playerPos);
 			if (f3_dot(dist, dist) > (3.f * CHUNK_SIZE) * (3.f * CHUNK_SIZE)) {
 				continue;
 			}
 
 			if (clusterWasRendered(newX, newY, newZ) & 1) continue;
 
-			if (!ChunkCanBeSeenThrough(cluster->seeThrough, step.enteredFrom, (Direction)i) && step.enteredFrom != Direction_Invalid)
+			if (!ChunkCanBeSeenThrough(cluster->seeThrough, step.enteredFrom, (Direction)i) &&
+				step.enteredFrom != Direction_Invalid)
 				continue;
 
 			C3D_FVec chunkPosition = FVec3_New(newX * CHUNK_SIZE, newY * CHUNK_SIZE, newZ * CHUNK_SIZE);
-			if (!Camera_IsAABBVisible(&camera, chunkPosition, FVec3_New(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE))) continue;
+			if (!Camera_IsAABBVisible(&camera, chunkPosition, FVec3_New(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE)))
+				continue;
 
 			clusterWasRendered(newX, newY, newZ) |= 1;
 
@@ -171,9 +175,11 @@ static void renderWorld() {
 				bool clear = true;
 				for (int xOff = -1; xOff < 2 && clear; xOff++)
 					for (int zOff = -1; zOff < 2 && clear; zOff++)
-						if (world->chunkCache[x + xOff][z + zOff]->genProgress == ChunkGen_Empty) clear = false;
+						if (world->chunkCache[x + xOff][z + zOff]->genProgress == ChunkGen_Empty)
+							clear = false;
 
-				if (clear) WorkQueue_AddItem(workqueue, (WorkerItem){WorkerItemType_PolyGen, chunk});
+				if (clear)
+					WorkQueue_AddItem(workqueue, (WorkerItem){WorkerItemType_PolyGen, chunk});
 			}
 		}
 	}
@@ -195,13 +201,15 @@ static void renderWorld() {
 
 	DebugUI_Text("Clusters drawn %d with %d steps. %d vertices", clustersDrawn, steps, polysTotal);
 	DebugUI_Text("T: %u P: %u %d", world->chunkCache[CHUNKCACHE_SIZE / 2][CHUNKCACHE_SIZE / 2]->tasksRunning,
-		     world->chunkCache[CHUNKCACHE_SIZE / 2][CHUNKCACHE_SIZE / 2]->genProgress, workqueue->queue.length);
+				 world->chunkCache[CHUNKCACHE_SIZE / 2][CHUNKCACHE_SIZE / 2]->genProgress,
+				 workqueue->queue.length);
 }
 
 void WorldRenderer_Render(float iod) {
 	Camera_Update(&camera, player, iod);
 
-	Hand_Draw(projectionUniform, &camera.projection, player->quickSelectBar[player->quickSelectBarSlot], player);
+	Hand_Draw(projectionUniform, &camera.projection,
+			  player->quickSelectBar[player->quickSelectBarSlot], player);
 	C3D_TexBind(0, (C3D_Tex*)Block_GetTextureMap());
 
 	C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, projectionUniform, &camera.vp);
@@ -210,7 +218,9 @@ void WorldRenderer_Render(float iod) {
 
 	Clouds_Render(projectionUniform, &camera.vp, world, player->position.x, player->position.z);
 
+	// Use cursor class instance
 	if (player->blockInActionRange)
-		Cursor_Draw(projectionUniform, &camera.vp, world, player->viewRayCast.x, player->viewRayCast.y, player->viewRayCast.z,
-			    player->viewRayCast.direction);
+		cursor->Draw(projectionUniform, &camera.vp, world,
+					 player->viewRayCast.x, player->viewRayCast.y, player->viewRayCast.z,
+					 player->viewRayCast.direction);
 }
