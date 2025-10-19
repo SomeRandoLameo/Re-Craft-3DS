@@ -226,7 +226,9 @@ void PlayerController_Init(PlayerController* ctrl, Player* player) {
 
 void PlayerController_Update(PlayerController* ctrl,/* Sound* sound, */InputData input, float dt) {
     Player* player = ctrl->player;
-    Damage* dmg = NULL;
+
+    Damage* dmg = NULL; // setting to NULL properly
+
     PlatformAgnosticInput agnosticInput = {0};
 
 #ifdef _3DS

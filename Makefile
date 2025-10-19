@@ -197,6 +197,9 @@ $(DEPSDIR):
 	@mkdir -p $@
 endif
 
+upload: all
+	 @3dslink Re-Craft-3DS.3dsx
+
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...

@@ -142,12 +142,13 @@ void Player_Update(Player* player, /*Sound* sound, */Damage* dmg) {
 					player->position.y=shouldOffset ? spawnY + 1 : spawnY;
 					player->position.z=0.0;
 				}
-				if (player->spawnset=1){
-					if (dmg->cause==NULL){
-						DebugUI_Log("Player died");
-					} else {
-						DebugUI_Log("Died by %s",dmg->cause);
-					}
+				if (player->spawnset == 1){
+					//maybe this can be commented out 
+                    if (dmg->cause == NULL) {
+                        DebugUI_Log("Player died");
+                    } else {
+                        DebugUI_Log("Died by %s", dmg->cause);
+                    }
 					player->position.x=player->spawnx;
 					World* world = player->world;
 					int spawnY = 1;
@@ -160,7 +161,7 @@ void Player_Update(Player* player, /*Sound* sound, */Damage* dmg) {
 				}
 				player->hp=20;
 				player->hunger=20;
-				dmg->cause=NULL;
+				//dmg->cause = "";
 			} else {
 				DebugUI_Log("lol ur world is gone");
 				/*char buffer[512];
