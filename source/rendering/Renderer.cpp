@@ -23,6 +23,7 @@ GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
 #define CLEAR_COLOR_SKY 0x90d9ffff
 #define CLEAR_COLOR_BLACK 0x000000ff
 
+//TODO: Fix this
 extern bool showDebugInfo;
 
 Renderer::Renderer(World* world_, Player* player_, WorkQueue* queue, GameState* gamestate_)
