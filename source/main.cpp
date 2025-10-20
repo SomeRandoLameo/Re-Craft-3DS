@@ -83,7 +83,7 @@ int main() {
 	SuperFlatGen_Init(&flatGen, world);
 	SmeaGen_Init(&smeaGen, world);
 
-	Renderer_Init(world, &player, &chunkWorker.queue, &gamestate);
+    Renderer renderer(world, &player, &chunkWorker.queue, &gamestate);
 
     DebugUI debugUI;
 
@@ -123,7 +123,7 @@ int main() {
         debugUI.Text("Gamemode: %i",player.gamemode);
         debugUI.Text("quickbar %i",player.quickSelectBarSlot);
 
-		Renderer_Render(&debugUI);
+		renderer.Render(&debugUI);
 
 		uint64_t currentTime = svcGetSystemTick();
 		dt = ((float)(currentTime / (float)CPU_TICKS_PER_MSEC) - (float)(lastTime / (float)CPU_TICKS_PER_MSEC)) / 1000.f;
@@ -273,7 +273,7 @@ int main() {
 
 	ChunkWorker_Deinit(&chunkWorker);
 
-	Renderer_Deinit();
+    renderer.~Renderer();
 
 	romfsExit();
 
