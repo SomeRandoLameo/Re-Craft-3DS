@@ -1,7 +1,13 @@
 #include "ReCraftCore.h"
 
+
 bool showDebugInfo = false;
 
+ReCraftCore* ReCraftCore::theReCraftCore = nullptr;
+
+ReCraftCore::ReCraftCore() {
+    theReCraftCore = this;
+}
 
 void ReCraftCore::ReleaseWorld(ChunkWorker* chunkWorker, SaveManager* savemgr, World* world) {
 	for (int i = 0; i < CHUNKCACHE_SIZE; i++) {
@@ -56,7 +62,6 @@ void ReCraftCore::Run() {
 	SuperFlatGen_Init(&flatGen, world);
 	SmeaGen_Init(&smeaGen, world);
 
-    SpriteBatch spriteBatch();
     Renderer renderer(world, &player, &chunkWorker.queue, &gamestate);
 
     DebugUI debugUI;

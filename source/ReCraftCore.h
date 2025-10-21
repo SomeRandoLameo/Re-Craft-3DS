@@ -23,7 +23,9 @@ extern "C" {
 
 class ReCraftCore {
 public:
+    ReCraftCore();
     void Run();
 private:
+    static ReCraftCore* theReCraftCore;
     void ReleaseWorld(ChunkWorker* chunkWorker, SaveManager* savemgr, World* world);
 };
