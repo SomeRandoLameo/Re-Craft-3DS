@@ -2,13 +2,20 @@
 
 #include <stdio.h>
 
-void VBOCache_Init();
-void VBOCache_Deinit();
-
 typedef struct {
-	size_t size;
-	void* memory;
+    size_t size;
+    void* memory;
 } VBO_Block;
 
-VBO_Block VBO_Alloc(size_t size);
-void VBO_Free(VBO_Block block);
+class VBOCache {
+public:
+    VBOCache();
+    ~VBOCache();
+
+
+    VBO_Block Alloc(size_t size);
+    void Free(VBO_Block block);
+private:
+
+    static int SortBySize(const void* a, const void* b);
+};

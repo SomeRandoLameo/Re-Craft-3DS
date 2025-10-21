@@ -110,11 +110,12 @@ static vec_t(QueueElement) floodfill_queue;
 
 static LightLock updateLock;
 
+VBOCache vboCache;
+
 void PolyGen_Init(World* world_, Player* player_) {
 	world = world_;
 	player = player_;
 
-	VBOCache_Init();
 
 	vec_init(&floodfill_queue);
 
@@ -125,7 +126,7 @@ void PolyGen_Init(World* world_, Player* player_) {
 void PolyGen_Deinit() {
 	vec_deinit(&vboUpdates);
 
-	VBOCache_Deinit();
+	vboCache.~VBOCache();
 
 	vec_deinit(&floodfill_queue);
 }
@@ -140,9 +141,9 @@ void PolyGen_Harvest(DebugUI* debugUi) {
 
 					Chunk* chunk = World_GetChunk(world, update.x, update.z);
 					if (chunk) {
-						if (chunk->clusters[update.y].vertices > 0) VBO_Free(chunk->clusters[update.y].vbo);
+						if (chunk->clusters[update.y].vertices > 0) vboCache.Free(chunk->clusters[update.y].vbo);
 						if (chunk->clusters[update.y].transparentVertices > 0)
-							VBO_Free(chunk->clusters[update.y].transparentVBO);
+							vboCache.Free(chunk->clusters[update.y].transparentVBO);
 						chunk->clusters[update.y].vbo = update.vbo;
 						chunk->clusters[update.y].vertices = update.vertices;
 						chunk->clusters[update.y].transparentVBO = update.transparentVBO;
@@ -321,9 +322,9 @@ void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context) 
 
 			if (currentFace) {
 				VBO_Block memBlock;
-				if (verticesTotal > 0) memBlock = VBO_Alloc(verticesTotal * sizeof(WorldVertex));
+				if (verticesTotal > 0) memBlock = vboCache.Alloc(verticesTotal * sizeof(WorldVertex));
 				VBO_Block transparentMem;
-				if (transparentFaces > 0) transparentMem = VBO_Alloc(transparentVertices * sizeof(WorldVertex));
+				if (transparentFaces > 0) transparentMem = vboCache.Alloc(transparentVertices * sizeof(WorldVertex));
 
 				WorldVertex* opaqueData = (WorldVertex*)memBlock.memory;
 				WorldVertex* transparentData = (WorldVertex*)transparentMem.memory;

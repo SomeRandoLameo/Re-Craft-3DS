@@ -8,18 +8,18 @@ static vec_t(VBO_Block) freedBlocks;
 
 static LightLock lock;
 
-void VBOCache_Init() {
+VBOCache::VBOCache() {
 	vec_init(&freedBlocks);
 	LightLock_Init(&lock);
 }
-void VBOCache_Deinit() {
+VBOCache::~VBOCache() {
 	VBO_Block block;
 	int i;
 	vec_foreach (&freedBlocks, block, i) { linearFree(block.memory); }
 	vec_deinit(&freedBlocks);
 }
 
-VBO_Block VBO_Alloc(size_t size) {
+VBO_Block VBOCache::Alloc(size_t size) {
 	LightLock_Lock(&lock);
 	if (freedBlocks.length > 0) {
 		VBO_Block block;
@@ -39,13 +39,15 @@ VBO_Block VBO_Alloc(size_t size) {
 	return block;
 }
 
-static int sort_by_size(const void* a, const void* b) { return ((VBO_Block*)b)->size - ((VBO_Block*)a)->size; }
+int VBOCache::SortBySize(const void* a, const void* b) {
+    return ((VBO_Block*)b)->size - ((VBO_Block*)a)->size;
+}
 
-void VBO_Free(VBO_Block block) {
+void VBOCache::Free(VBO_Block block) {
 	if (block.size > 0 && block.memory != NULL) {
 		LightLock_Lock(&lock);
 		vec_push(&freedBlocks, block);
-		vec_sort(&freedBlocks, &sort_by_size);
+		vec_sort(&freedBlocks, &SortBySize);
 		LightLock_Unlock(&lock);
 	}
 }
