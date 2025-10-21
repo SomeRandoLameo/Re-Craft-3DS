@@ -18,7 +18,7 @@ void ReCraftCore::ReleaseWorld(ChunkWorker* chunkWorker, SaveManager* savemgr, W
 	ChunkWorker_Finish(chunkWorker);
 	World_Reset(world);
 
-	SaveManager_Unload(savemgr);
+    savemgr->Unload();
 }
 
 void ReCraftCore::Run() {
@@ -39,8 +39,8 @@ void ReCraftCore::Run() {
 	SmeaGen smeaGen;
 
 	SuperChunk_InitPools();
-
-	SaveManager_InitFileSystem();
+    SaveManager savemgr;
+    savemgr.InitFileSystem();
 
 	ChunkWorker chunkWorker;
 	ChunkWorker_Init(&chunkWorker);
@@ -70,10 +70,10 @@ void ReCraftCore::Run() {
 
 	World_Init(world, &chunkWorker.queue);
 
-	SaveManager savemgr;
-	SaveManager_Init(&savemgr, &player);
-	ChunkWorker_AddHandler(&chunkWorker, WorkerItemType_Load, (WorkerFuncObj){&SaveManager_LoadChunk, &savemgr, true});
-	ChunkWorker_AddHandler(&chunkWorker, WorkerItemType_Save, (WorkerFuncObj){&SaveManager_SaveChunk, &savemgr, true});
+
+    savemgr.Init(&player);
+    ChunkWorker_AddHandler(&chunkWorker, WorkerItemType_Load, (WorkerFuncObj){SaveManager::LoadChunkCallback, &savemgr, true});
+    ChunkWorker_AddHandler(&chunkWorker, WorkerItemType_Save, (WorkerFuncObj){SaveManager::SaveChunkCallback, &savemgr, true});
 
 	uint64_t lastTime = svcGetSystemTick();
 	float dt = 0.f, timeAccum = 0.f, fpsClock = 0.f;
@@ -165,7 +165,7 @@ void ReCraftCore::Run() {
 				strcpy(world->name, name);
 				world->genSettings.type = worldType;
 
-				SaveManager_Load(&savemgr, path);
+                savemgr.Load(path);
 
 				ChunkWorker_SetHandlerActive(&chunkWorker, WorkerItemType_BaseGen, &flatGen,
 							     world->genSettings.type == WorldGen_SuperFlat);
@@ -213,7 +213,7 @@ void ReCraftCore::Run() {
 		ReleaseWorld(&chunkWorker, &savemgr, world);
 	}
 
-	SaveManager_Deinit(&savemgr);
+	savemgr.~SaveManager();
 
 	SuperChunk_DeinitPools();
 

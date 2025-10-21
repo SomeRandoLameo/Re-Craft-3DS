@@ -1,27 +1,40 @@
 #pragma once
 
-#include <stdio.h>
+#include <cstdio>
 extern "C" {
 #include <vec/vec.h>
 }
 #include "../../entity/Player.h"
-
 #include "SuperChunk.h"
 
-typedef struct {
-	Player* player;
-	World* world;
+class SaveManager {
+public:
+    SaveManager();
+    ~SaveManager();
 
-	vec_t(SuperChunk*) superchunks;
-} SaveManager;
+    // Delete copy constructor and assignment operator
+    SaveManager(const SaveManager&) = delete;
+    SaveManager& operator=(const SaveManager&) = delete;
 
-void SaveManager_InitFileSystem();
+    static void InitFileSystem();
 
-void SaveManager_Init(SaveManager* mgr, Player* player);
-void SaveManager_Deinit(SaveManager* mgr);
+    void Init(Player* player);
+    void Deinit();
 
-void SaveManager_Load(SaveManager* mgr, char* path);
-void SaveManager_Unload(SaveManager* mgr);
+    void Load(char* path);
+    void Unload();
 
-void SaveManager_LoadChunk(WorkQueue* queue, WorkerItem item, void* context);
-void SaveManager_SaveChunk(WorkQueue* queue, WorkerItem item, void* context);
+    void LoadChunk(WorkQueue* queue, WorkerItem item);
+    void SaveChunk(WorkQueue* queue, WorkerItem item);
+
+    // Static wrappers for WorkQueue callbacks
+    static void LoadChunkCallback(WorkQueue* queue, WorkerItem item, void* context);
+    static void SaveChunkCallback(WorkQueue* queue, WorkerItem item, void* context);
+
+private:
+    Player* player;
+    World* world;
+    vec_t(SuperChunk*) superchunks;
+
+    SuperChunk* FetchSuperChunk(int x, int z);
+};
