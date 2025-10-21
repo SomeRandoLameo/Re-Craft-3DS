@@ -44,8 +44,10 @@ void SpriteBatch_Init(int projUniform_) {
 
 	projUniform = projUniform_;
 
-	font = (Font*)malloc(sizeof(Font));
-	FontLoader_Init(font, "romfs:/assets/textures/font/ascii.png");
+    font = (Font*)malloc(sizeof(Font));
+    FontLoader fontLoader;
+    fontLoader.LoadFont(font, "romfs:/assets/textures/font/ascii.png");
+
 	Texture_Load(&widgetsTex, "romfs:/assets/textures/gui/widgets.png");
 
 	uint8_t data[16 * 16];

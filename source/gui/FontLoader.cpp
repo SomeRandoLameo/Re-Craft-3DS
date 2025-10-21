@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void FontLoader_Init(Font* font, const char* filename) {
+void FontLoader::LoadFont(Font* font, const char* filename) {
 	uint32_t* image = NULL;
 	unsigned int width = 255, height = 255;
 	uint32_t error = lodepng_decode32_file((uint8_t**)&image, &width, &height, filename);

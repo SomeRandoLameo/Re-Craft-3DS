@@ -9,4 +9,7 @@ typedef struct {
 	C3D_Tex texture;
 } Font;
 
-void FontLoader_Init(Font* font, const char* filename);
+class FontLoader{
+public:
+    void LoadFont(Font* font, const char* filename);
+};
