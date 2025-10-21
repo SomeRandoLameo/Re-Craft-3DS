@@ -30,7 +30,7 @@ enum FrustumCorners {
 
 class Camera {
 public:
-    void Init();
+    Camera();
     void Update(Player* player, float iod);
 
     bool IsPointVisible(C3D_FVec point) const;

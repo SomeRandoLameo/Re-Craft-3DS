@@ -54,8 +54,6 @@ void WorldRenderer_Init(Player* player_, World* world_, WorkQueue* workqueue_, i
 	vec_init(&renderingQueue);
 	vec_init(&transparentClusters);
 
-    cam.Init();
-
 	// Create cursor instance
 	cursor = new Cursor();
 

@@ -4,7 +4,7 @@
 
 #include "../gui/DebugUI.h"
 
-void Camera::Init() {
+Camera::Camera() {
 	Mtx_Identity(&view);
 
 	fov = C3D_AngleFromDegrees(60.f);
