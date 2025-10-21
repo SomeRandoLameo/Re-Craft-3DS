@@ -1,197 +1,256 @@
 #include "ReCraftCore.h"
 
-ReCraftCore* ReCraftCore::Instance = nullptr;
+bool showDebugInfo = false;
 
-ReCraftCore::ReCraftCore()
-        : player(nullptr), renderer(nullptr, nullptr, nullptr, nullptr) {
-    Instance = this;
-}
+#include "ReCraftCore.h"
 
-ReCraftCore::~ReCraftCore() {
-    Instance = nullptr;
-}
 
-void ReCraftCore::Init() {
-    gfxInitDefault();
-    osSetSpeedupEnable(true);
-    gfxSet3D(true);
-    romfsInit();
-    sino_init();
+void ReCraftCore::ReleaseWorld(ChunkWorker* chunkWorker, SaveManager* savemgr, World* world) {
+	for (int i = 0; i < CHUNKCACHE_SIZE; i++) {
+		for (int j = 0; j < CHUNKCACHE_SIZE; j++) {
+			World_UnloadChunk(world, world->chunkCache[i][j]);
+		}
+	}
+	ChunkWorker_Finish(chunkWorker);
+	World_Reset(world);
 
-    SuperChunk_InitPools();
-    SaveManager_InitFileSystem();
-
-    // Chunk worker setup
-    ChunkWorker_Init(&chunkWorker);
-    ChunkWorker_AddHandler(&chunkWorker, WorkerItemType_PolyGen, (WorkerFuncObj){&PolyGen_GeneratePolygons, NULL, true});
-    ChunkWorker_AddHandler(&chunkWorker, WorkerItemType_BaseGen, (WorkerFuncObj){&SuperFlatGen_Generate, &flatGen, true});
-    ChunkWorker_AddHandler(&chunkWorker, WorkerItemType_BaseGen, (WorkerFuncObj){&SmeaGen_Generate, &smeaGen, true});
-
-    world = (World*)malloc(sizeof(World));
-    World_Init(world, &chunkWorker.queue);
-
-    player = Player(world);
-    PlayerController_Init(&playerController, &player);
-
-    SuperFlatGen_Init(&flatGen, world);
-    SmeaGen_Init(&smeaGen, world);
-
-    renderer = Renderer(world, &player, &chunkWorker.queue, &gameState);
-    debugUI = DebugUI();
-
-    SaveManager_Init(&saveManager, &player);
-    ChunkWorker_AddHandler(&chunkWorker, WorkerItemType_Load, (WorkerFuncObj){&SaveManager_LoadChunk, &saveManager, true});
-    ChunkWorker_AddHandler(&chunkWorker, WorkerItemType_Save, (WorkerFuncObj){&SaveManager_SaveChunk, &saveManager, true});
-
-    WorldSelect_Init();
-    lastTime = svcGetSystemTick();
+	SaveManager_Unload(savemgr);
 }
 
 void ReCraftCore::Run() {
-    while (aptMainLoop()) {
-        debugUI.Text("%d FPS  Usage: CPU: %5.2f%% GPU: %5.2f%% Buf: %5.2f%% Lin: %d", fps,
-                     C3D_GetProcessingTime() * 6.f,
-                     C3D_GetDrawingTime() * 6.f,
-                     C3D_GetCmdBufUsage() * 100.f,
-                     linearSpaceFree());
 
+    GameState gamestate = GameState_SelectWorld;
+	//printf("gfxinit\n");
+	gfxInitDefault();
+
+	// Enable N3DS 804MHz operation, where available
+	osSetSpeedupEnable(true);
+
+	//consoleInit(GFX_TOP, NULL);
+	gfxSet3D(true);
+	//printf("romfsinit\n");
+	romfsInit();
+
+	SuperFlatGen flatGen;
+	SmeaGen smeaGen;
+
+	SuperChunk_InitPools();
+
+	SaveManager_InitFileSystem();
+
+	ChunkWorker chunkWorker;
+	ChunkWorker_Init(&chunkWorker);
+	ChunkWorker_AddHandler(&chunkWorker, WorkerItemType_PolyGen, (WorkerFuncObj){&PolyGen_GeneratePolygons, NULL, true});
+	ChunkWorker_AddHandler(&chunkWorker, WorkerItemType_BaseGen, (WorkerFuncObj){&SuperFlatGen_Generate, &flatGen, true});
+	ChunkWorker_AddHandler(&chunkWorker, WorkerItemType_BaseGen, (WorkerFuncObj){&SmeaGen_Generate, &smeaGen, true});
+
+	sino_init();
+
+	World* world = (World*)malloc(sizeof(World));
+
+	//Sound BackgroundSound;
+	//Sound PlayerSound;
+	Player player(world);
+	PlayerController playerCtrl;
+
+	PlayerController_Init(&playerCtrl, &player);
+
+	SuperFlatGen_Init(&flatGen, world);
+	SmeaGen_Init(&smeaGen, world);
+
+    Renderer renderer(world, &player, &chunkWorker.queue, &gamestate);
+
+    DebugUI debugUI;
+
+	WorldSelect_Init();
+
+	World_Init(world, &chunkWorker.queue);
+
+	SaveManager savemgr;
+	SaveManager_Init(&savemgr, &player);
+	ChunkWorker_AddHandler(&chunkWorker, WorkerItemType_Load, (WorkerFuncObj){&SaveManager_LoadChunk, &savemgr, true});
+	ChunkWorker_AddHandler(&chunkWorker, WorkerItemType_Save, (WorkerFuncObj){&SaveManager_SaveChunk, &savemgr, true});
+
+	uint64_t lastTime = svcGetSystemTick();
+	float dt = 0.f, timeAccum = 0.f, fpsClock = 0.f;
+	int frameCounter = 0, fps = 0;
+	//bool initBackgroundSound = false;
+	while (aptMainLoop())
+	{
+		//if (initBackgroundSound)
+		//{
+		//	initBackgroundSound = false;
+		//	BackgroundSound.background = true;
+		//	char *soundfile = "romfs:/assets/sound/music/1.opus";
+		//	BackgroundSound.path[0] = '\0';
+		//	strncat(BackgroundSound.path, soundfile, sizeof(BackgroundSound.path) - 1);
+		//	playopus(&BackgroundSound);
+		//}
+
+		debugUI.Text("%d FPS  Usage: CPU: %5.2f%% GPU: %5.2f%% Buf: %5.2f%% Lin: %d", fps, C3D_GetProcessingTime() * 6.f,
+		C3D_GetDrawingTime() * 6.f, C3D_GetCmdBufUsage() * 100.f, linearSpaceFree());
         debugUI.Text("X: %f, Y: %f, Z: %f", f3_unpack(player.position));
-        debugUI.Text("HP: %i", player.hp);
+        debugUI.Text("HP: %i",player.hp);
+        debugUI.Text("velocity: %f rndy: %f",player.velocity.y,player.rndy);
+		//debugUI.Text("Time: %i Cause: %c",dmg.time,dmg.cause);
+        debugUI.Text("SX: %f SY: %f SZ: %f",player.spawnx,player.spawny,player.spawnz);
+        debugUI.Text("Hunger: %i Hungertimer: %i",player.hunger,player.hungertimer);
+        debugUI.Text("Gamemode: %i",player.gamemode);
+        debugUI.Text("quickbar %i",player.quickSelectBarSlot);
 
-        renderer.Render(&debugUI);
+		renderer.Render(&debugUI);
 
-        uint64_t currentTime = svcGetSystemTick();
-        dt = ((float)(currentTime / (float)CPU_TICKS_PER_MSEC) - (float)(lastTime / (float)CPU_TICKS_PER_MSEC)) / 1000.f;
-        lastTime = currentTime;
-        timeAccum += dt;
+		uint64_t currentTime = svcGetSystemTick();
+		dt = ((float)(currentTime / (float)CPU_TICKS_PER_MSEC) - (float)(lastTime / (float)CPU_TICKS_PER_MSEC)) / 1000.f;
+		lastTime = currentTime;
+		timeAccum += dt;
 
-        frameCounter++;
-        fpsClock += dt;
-        if (fpsClock >= 1.f) {
-            fps = frameCounter;
-            frameCounter = 0;
-            fpsClock = 0.f;
-        }
+		frameCounter++;
+		fpsClock += dt;
+		if (fpsClock >= 1.f) {
+			fps = frameCounter;
+			frameCounter = 0;
+			fpsClock = 0.f;
+		}
 
-        hidScanInput();
-        u32 keysHeld = ::hidKeysHeld();
-        u32 keysDown = ::hidKeysDown();
+		hidScanInput();
+		u32 keysheld = hidKeysHeld(), keysdown = hidKeysDown();
+		if (keysdown & KEY_START) {
+			if (gamestate == GameState_SelectWorld)
+				break;
+			else if (gamestate == GameState_Playing) {
+				ReleaseWorld(&chunkWorker, &savemgr, world);
 
-        if (keysDown & KEY_START) {
-            if (gameState == GameState_SelectWorld)
-                break;
-            else if (gameState == GameState_Playing) {
-                ReleaseWorld();
-                gameState = GameState_SelectWorld;
-                WorldSelect_ScanWorlds();
-                lastTime = svcGetSystemTick();
-            }
-        }
+				gamestate = GameState_SelectWorld;
 
-        circlePosition circlePos;
-        hidCircleRead(&circlePos);
-        circlePosition cstickPos;
-        hidCstickRead(&cstickPos);
-        touchPosition touchPos;
-        hidTouchRead(&touchPos);
+				WorldSelect_ScanWorlds();
 
-        InputData inputData = (InputData){keysHeld,    keysDown,    hidKeysUp(),  circlePos.dx, circlePos.dy,
-                                          touchPos.px, touchPos.py, cstickPos.dx, cstickPos.dy};
+				lastTime = svcGetSystemTick();
+			}
+		}
 
-        if (gameState == GameState_Playing) {
-            while (timeAccum >= 1.f / 20.f) {
-                World_Tick(world);
-                timeAccum -= 1.f / 20.f;
-            }
+		circlePosition circlePos;
+		hidCircleRead(&circlePos);
 
-            PlayerController_Update(&playerController, &debugUI, inputData, dt);
-            World_UpdateChunkCache(world,
-                                   WorldToChunkCoord(FastFloor(player.position.x)),
-                                   WorldToChunkCoord(FastFloor(player.position.z)));
-        } else if (gameState == GameState_SelectWorld) {
-            char path[256];
-            char name[WORLD_NAME_SIZE] = {'\0'};
-            WorldGenType worldType;
-            bool newWorld = false;
+		circlePosition cstickPos;
+		hidCstickRead(&cstickPos);
 
-            if (WorldSelect_Update(path, name, &worldType, &newWorld)) {
-                strcpy(world->name, name);
-                world->genSettings.type = worldType;
-                SaveManager_Load(&saveManager, path);
+		touchPosition touchPos;
+		hidTouchRead(&touchPos);
 
-                ChunkWorker_SetHandlerActive(&chunkWorker, WorkerItemType_BaseGen, &flatGen,
-                                             world->genSettings.type == WorldGen_SuperFlat);
-                ChunkWorker_SetHandlerActive(&chunkWorker, WorkerItemType_BaseGen, &smeaGen,
-                                             world->genSettings.type == WorldGen_Smea);
+		InputData inputData = (InputData){keysheld,    keysdown,    hidKeysUp(),  circlePos.dx, circlePos.dy,
+						  touchPos.px, touchPos.py, cstickPos.dx, cstickPos.dy};
 
-                world->cacheTranslationX = WorldToChunkCoord(FastFloor(player.position.x));
-                world->cacheTranslationZ = WorldToChunkCoord(FastFloor(player.position.z));
+		if (gamestate == GameState_Playing) {
+			while (timeAccum >= 1.f / 20.f) {
+				World_Tick(world);
 
-                for (int i = 0; i < CHUNKCACHE_SIZE; i++) {
-                    for (int j = 0; j < CHUNKCACHE_SIZE; j++) {
-                        world->chunkCache[i][j] =
-                                World_LoadChunk(world,
-                                                i - CHUNKCACHE_SIZE / 2 + world->cacheTranslationX,
-                                                j - CHUNKCACHE_SIZE / 2 + world->cacheTranslationZ);
-                    }
-                }
+				timeAccum -= 1.f / 20.f;
+			}
 
-                for (int i = 0; i < 3; i++) {
-                    while (chunkWorker.working || chunkWorker.queue.queue.length > 0)
-                        svcSleepThread(50000000);
-                    World_Tick(world);
-                }
+			PlayerController_Update(&playerCtrl,&debugUI, /*&PlayerSound,*/ inputData, dt);
 
-                if (newWorld) {
-                    int highestBlock = 0;
-                    for (int x = -1; x < 1; x++) {
-                        for (int z = -1; z < 1; z++) {
-                            int height = World_GetHeight(world, x, z);
-                            if (height > highestBlock)
-                                highestBlock = height;
-                        }
-                    }
-                    player.hunger = 20;
-                    player.hp = 20;
-                    player.position.y = (float)highestBlock + 0.2f;
-                }
+			World_UpdateChunkCache(world, WorldToChunkCoord(FastFloor(player.position.x)),
+					       WorldToChunkCoord(FastFloor(player.position.z)));
+		} else if (gamestate == GameState_SelectWorld) {
+			char path[256];
+			char name[WORLD_NAME_SIZE] = {'\0'};
+			WorldGenType worldType;
+			bool newWorld = false;
+			if (WorldSelect_Update(path, name, &worldType, &newWorld)) {
+				strcpy(world->name, name);
+				world->genSettings.type = worldType;
 
-                gameState = GameState_Playing;
-                lastTime = svcGetSystemTick();
-            }
-        }
+				SaveManager_Load(&savemgr, path);
 
-        Gui_InputData(inputData);
-    }
-}
+				ChunkWorker_SetHandlerActive(&chunkWorker, WorkerItemType_BaseGen, &flatGen,
+							     world->genSettings.type == WorldGen_SuperFlat);
+				ChunkWorker_SetHandlerActive(&chunkWorker, WorkerItemType_BaseGen, &smeaGen,
+							     world->genSettings.type == WorldGen_Smea);
 
-void ReCraftCore::ReleaseWorld() {
-    for (int i = 0; i < CHUNKCACHE_SIZE; i++) {
-        for (int j = 0; j < CHUNKCACHE_SIZE; j++) {
-            World_UnloadChunk(world, world->chunkCache[i][j]);
-        }
-    }
-    ChunkWorker_Finish(&chunkWorker);
-    World_Reset(world);
-    SaveManager_Unload(&saveManager);
-}
+				world->cacheTranslationX = WorldToChunkCoord(FastFloor(player.position.x));
+				world->cacheTranslationZ = WorldToChunkCoord(FastFloor(player.position.z));
+				for (int i = 0; i < CHUNKCACHE_SIZE; i++) {
+					for (int j = 0; j < CHUNKCACHE_SIZE; j++) {
+						world->chunkCache[i][j] =
+						    World_LoadChunk(world, i - CHUNKCACHE_SIZE / 2 + world->cacheTranslationX,
+								    j - CHUNKCACHE_SIZE / 2 + world->cacheTranslationZ);
+					}
+				}
 
-void ReCraftCore::Shutdown() {
-    if (gameState == GameState_Playing)
-        ReleaseWorld();
+				for (int i = 0; i < 3; i++) {
+					while (chunkWorker.working || chunkWorker.queue.queue.length > 0) {
+						svcSleepThread(50000000);  // 1 Tick
+					}
+					World_Tick(world);
+				}
 
-    SaveManager_Deinit(&saveManager);
-    SuperChunk_DeinitPools();
+				if (newWorld) {
+					int highestblock = 0;
+					for (int x = -1; x < 1; x++) {
+						for (int z = -1; z < 1; z++) {
+							int height = World_GetHeight(world, x, z);
+							if (height > highestblock) highestblock = height;
+						}
+					}
+					player.hunger=20;
+					player.hp=20;
+					player.position.y = (float)highestblock + 0.2f;
+				}
+				gamestate = GameState_Playing;
+				lastTime = svcGetSystemTick();  // fix timing
+			}
+		}
+		Gui_InputData(inputData);
+	}
 
-    free(world);
+	if (gamestate == GameState_Playing)
+	{
+		ReleaseWorld(&chunkWorker, &savemgr, world);
+	}
 
-    WorldSelect_Deinit();
+	SaveManager_Deinit(&savemgr);
+
+	SuperChunk_DeinitPools();
+
+	free(world);
+/*
+	if (BackgroundSound.threaid != NULL)
+	{
+		DoQuit(0);
+		threadJoin(BackgroundSound.threaid, 50000);
+		threadFree(BackgroundSound.threaid);
+		if (BackgroundSound.opusFile)
+		{
+			op_free(BackgroundSound.opusFile);
+		}
+		audioExit(0);
+	}
+	if (PlayerSound.threaid != NULL)
+	{
+		DoQuit(1);
+		threadJoin(PlayerSound.threaid, 50000);
+		threadFree(PlayerSound.threaid);
+		if (PlayerSound.opusFile)
+		{
+			op_free(PlayerSound.opusFile);
+		}
+		audioExit(1);
+	}
+*/
+	ndspExit();
+	sino_exit();
+
+	WorldSelect_Deinit();
+
     debugUI.~DebugUI();
-    ChunkWorker_Deinit(&chunkWorker);
+	//DebugUI_Deinit();
+
+	ChunkWorker_Deinit(&chunkWorker);
+
     renderer.~Renderer();
 
-    ndspExit();
-    sino_exit();
-    romfsExit();
-    gfxExit();
+	romfsExit();
+
+	gfxExit();
 }

@@ -23,40 +23,7 @@ extern "C" {
 
 class ReCraftCore {
 public:
-    static ReCraftCore* Instance; // Global access point
-
-    ReCraftCore();
-    ~ReCraftCore();
-
-    void Init();
     void Run();
-    void Shutdown();
-
-    // Accessors for subsystems
-    inline World* GetWorld() { return world; }
-    inline Player* GetPlayer() { return &player; }
-    inline Renderer* GetRenderer() { return &renderer; }
-    inline DebugUI* GetDebugUI() { return &debugUI; }
-    inline SaveManager* GetSaveManager() { return &saveManager; }
-    inline ChunkWorker* GetChunkWorker() { return &chunkWorker; }
-
 private:
-    void ReleaseWorld();
-
-    GameState gameState = GameState_SelectWorld;
-    bool showDebugInfo = false;
-
-    World* world = nullptr;
-    Player player;
-    PlayerController playerController;
-    Renderer renderer;
-    DebugUI debugUI;
-    SaveManager saveManager;
-    ChunkWorker chunkWorker;
-    SuperFlatGen flatGen;
-    SmeaGen smeaGen;
-
-    uint64_t lastTime = 0;
-    float dt = 0.f, timeAccum = 0.f, fpsClock = 0.f;
-    int frameCounter = 0, fps = 0;
+    void ReleaseWorld(ChunkWorker* chunkWorker, SaveManager* savemgr, World* world);
 };
