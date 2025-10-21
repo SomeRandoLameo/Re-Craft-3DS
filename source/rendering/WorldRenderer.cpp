@@ -19,7 +19,7 @@ int sky_time = 0;
 static Player* player;
 static World* world;
 static WorkQueue* workqueue;
-static Camera camera;
+static Camera cam;
 static int projectionUniform;
 
 // Class instance instead of function calls
@@ -54,7 +54,7 @@ void WorldRenderer_Init(Player* player_, World* world_, WorkQueue* workqueue_, i
 	vec_init(&renderingQueue);
 	vec_init(&transparentClusters);
 
-	Camera_Init(&camera);
+    cam.Init();
 
 	// Create cursor instance
 	cursor = new Cursor();
@@ -156,7 +156,7 @@ static void renderWorld() {
 				continue;
 
 			C3D_FVec chunkPosition = FVec3_New(newX * CHUNK_SIZE, newY * CHUNK_SIZE, newZ * CHUNK_SIZE);
-			if (!Camera_IsAABBVisible(&camera, chunkPosition, FVec3_New(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE)))
+			if (!cam.IsAABBVisible(chunkPosition, FVec3_New(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE)))
 				continue;
 
 			clusterWasRendered(newX, newY, newZ) |= 1;
@@ -206,21 +206,21 @@ static void renderWorld() {
 }
 
 void WorldRenderer_Render(float iod) {
-	Camera_Update(&camera, player, iod);
+	cam.Update(player, iod);
 
-	Hand_Draw(projectionUniform, &camera.projection,
+	Hand_Draw(projectionUniform, cam.GetProjection(),
 			  player->quickSelectBar[player->quickSelectBarSlot], player);
 	C3D_TexBind(0, (C3D_Tex*)Block_GetTextureMap());
 
-	C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, projectionUniform, &camera.vp);
+	C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, projectionUniform, cam.GetVP());
 
 	renderWorld();
 
-	Clouds_Render(projectionUniform, &camera.vp, world, player->position.x, player->position.z);
+	Clouds_Render(projectionUniform, cam.GetVP(), world, player->position.x, player->position.z);
 
 	// Use cursor class instance
 	if (player->blockInActionRange)
-		cursor->Draw(projectionUniform, &camera.vp, world,
+		cursor->Draw(projectionUniform, cam.GetVP(), world,
 					 player->viewRayCast.x, player->viewRayCast.y, player->viewRayCast.z,
 					 player->viewRayCast.direction);
 }

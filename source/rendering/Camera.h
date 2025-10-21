@@ -1,9 +1,7 @@
 #pragma once
 
 #include "../entity/Player.h"
-
-#include <stdbool.h>
-
+#include <stdbool.h> // if really needed
 #include <citro3d.h>
 
 enum FrustumPlanes {
@@ -30,16 +28,23 @@ enum FrustumCorners {
 	FrustumCorners_Count
 };
 
-typedef struct {
-	C3D_Mtx projection, view, vp;
-	C3D_FVec frustumPlanes[FrustumPlanes_Count];
-	float3 frustumCorners[FrustumCorners_Count];
+class Camera {
+public:
+    void Init();
+    void Update(Player* player, float iod);
 
-	float near, far, fov;
-} Camera;
+    bool IsPointVisible(C3D_FVec point) const;
+    bool IsAABBVisible(C3D_FVec origin, C3D_FVec size) const;
 
-void Camera_Init(Camera* cam);
-void Camera_Update(Camera* cam, Player* player, float iod);
+    // Getters for matrices if really needed
+    C3D_Mtx* GetProjection() { return &projection; }
+    C3D_Mtx* GetView() { return &view; }
+    C3D_Mtx* GetVP() { return &vp; }
 
-bool Camera_IsPointVisible(Camera* cam, C3D_FVec point);
-bool Camera_IsAABBVisible(Camera* cam, C3D_FVec orgin, C3D_FVec size);
+private:
+    C3D_Mtx projection, view, vp;
+    C3D_FVec frustumPlanes[FrustumPlanes_Count];
+    float3 frustumCorners[FrustumCorners_Count];
+
+    float near, far, fov;
+};
