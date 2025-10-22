@@ -1,4 +1,4 @@
-#include "ReCraftCore.h"
+#include "recraft/ReCraftCore.h"
 
 int main() {
     ReCraftCore core;

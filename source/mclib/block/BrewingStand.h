@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../common/Nameable.h"
-#include "../block/BlockEntity.h"
-#include "../block/InventoryBlock.h"
+#include "BlockEntity.h"
+#include "InventoryBlock.h"
 
 #include <unordered_map>
 

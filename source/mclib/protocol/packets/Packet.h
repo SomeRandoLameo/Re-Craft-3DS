@@ -8,7 +8,7 @@
 #include "../../inventory/Slot.h"
 #include "../../entity/Attribute.h"
 #include "../../entity/Metadata.h"
-#include "../../protocol/ProtocolState.h"
+#include "../ProtocolState.h"
 #include "../../world/Chunk.h"
 
 #include <map>
