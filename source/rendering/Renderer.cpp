@@ -10,7 +10,6 @@
 #include "Cursor.h"
 #include "PolyGen.h"
 #include "TextureMap.h"
-#include "WorldRenderer.h"
 
 #include <gui_shbin.h>
 #include <world_shbin.h>
@@ -33,6 +32,7 @@ Renderer::Renderer(World* world_, Player* player_, WorkQueue* queue, GameState* 
 		, player(player_)
 		, workqueue(queue)
 		, gamestate(gamestate_)
+		, worldRenderer(nullptr)
 		, world_shader_uLocProjection(0)
 		, gui_shader_uLocProjection(0) {
 
@@ -72,7 +72,7 @@ Renderer::Renderer(World* world_, Player* player_, WorkQueue* queue, GameState* 
 
 	PolyGen_Init(world, player);
 
-	WorldRenderer_Init(player, world, workqueue, world_shader_uLocProjection);
+	worldRenderer = new WorldRenderer(player, world, workqueue, world_shader_uLocProjection);
 
 	SpriteBatch_Init(gui_shader_uLocProjection);
 
@@ -94,7 +94,8 @@ Renderer::~Renderer() {
 
 	PolyGen_Deinit();
 
-	WorldRenderer_Deinit();
+	delete worldRenderer;
+	worldRenderer = nullptr;
 
 	Gui_Deinit();
 
@@ -143,7 +144,7 @@ void Renderer::RenderFrame(int eyeIndex, float iod) {
 	if (*gamestate == GameState_Playing) {
 		C3D_TexBind(0, (C3D_Tex*)Block_GetTextureMap());
 
-		WorldRenderer_Render(!eyeIndex ? -iod : iod);
+		worldRenderer->Render(!eyeIndex ? -iod : iod);
 
 		SpriteBatch_BindGuiTexture(GuiTexture_Widgets);
 		if (iod == 0.f) SpriteBatch_PushQuad(200 / 2 - 16 / 2, 120 / 2 - 16 / 2, 0, 16, 16, 240, 0, 16, 16);

@@ -95,6 +95,7 @@ static inline Block fastBlockFetch(World* world, Chunk* chunk, Cluster* cluster,
 		   ? World_GetBlock(world, (chunk->x * CHUNK_SIZE) + x, (cluster->y * CHUNK_SIZE) + y, (chunk->z * CHUNK_SIZE) + z)
 		   : cluster->blocks[x][y][z];
 }
+
 static inline uint8_t fastMetadataFetch(World* world, Chunk* chunk, Cluster* cluster, int x, int y, int z) {
 	return (x < 0 || y < 0 || z < 0 || x >= CHUNK_SIZE || y >= CHUNK_SIZE || z >= CHUNK_SIZE)
 		   ? World_GetMetadata(world, (chunk->x * CHUNK_SIZE) + x, (cluster->y * CHUNK_SIZE) + y, (chunk->z * CHUNK_SIZE) + z)
@@ -123,6 +124,7 @@ void PolyGen_Init(World* world_, Player* player_) {
 
 	vec_init(&vboUpdates);
 }
+
 void PolyGen_Deinit() {
 	vec_deinit(&vboUpdates);
 
@@ -169,8 +171,7 @@ static inline void addFace(int x, int y, int z, Direction dir, Block block, uint
 	}
 }
 
-static uint16_t floodFill(World* world, Chunk* chunk, Cluster* cluster, int x, int y, int z, Direction entrySide0, Direction entrySide1,
-			  Direction entrySide2) {
+static uint16_t floodFill(World* world, Chunk* chunk, Cluster* cluster, int x, int y, int z, Direction entrySide0, Direction entrySide1, Direction entrySide2) {
 	if (floodfill_visited[x][y][z] & 1) return 0;
 	uint8_t exitPoints[6] = {false};
 	if (entrySide0 != Direction_Invalid) exitPoints[entrySide0] = true;

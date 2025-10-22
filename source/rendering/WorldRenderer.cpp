@@ -1,60 +1,23 @@
 #include "WorldRenderer.h"
-
 #include "VertexFmt.h"
-#include "Cursor.h"
 #include "../blocks/CT_Block.h"
 #include "../gui/DebugUI.h"
-
-#include <citro3d.h>
-
 #include "Clouds.h"
 #include "Hand.h"
 
+#include <citro3d.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
 int sky_time = 0;
 
-static Player* player;
-static World* world;
-static WorkQueue* workqueue;
-static Camera cam;
-static int projectionUniform;
-
-// Class instance instead of function calls
-static Cursor* cursor;
-
-typedef struct {
-	Cluster* cluster;
-	Chunk* chunk;
-	Direction enteredFrom;
-} RenderStep;
-
-typedef struct {
-	Cluster* cluster;
-	Chunk* chunk;
-} TransparentRender;
-
-static vec_t(RenderStep) renderingQueue;
-static uint8_t chunkRendered[CHUNKCACHE_SIZE][CLUSTER_PER_CHUNK][CHUNKCACHE_SIZE];
-static vec_t(TransparentRender) transparentClusters;
-
-static C3D_FogLut fogLut;
-
-#define clusterWasRendered(x, y, z) \
-	chunkRendered[x - (world->cacheTranslationX - (CHUNKCACHE_SIZE / 2))][y][z - (world->cacheTranslationZ - (CHUNKCACHE_SIZE / 2))]
-
-void WorldRenderer_Init(Player* player_, World* world_, WorkQueue* workqueue_, int projectionUniform_) {
-	world = world_;
-	player = player_;
-	projectionUniform = projectionUniform_;
-	workqueue = workqueue_;
+WorldRenderer::WorldRenderer(Player* player_, World* world_, WorkQueue* workqueue_, int projectionUniform_)
+		: player(player_), world(world_), workqueue(workqueue_), projectionUniform(projectionUniform_), cursor(nullptr) {
 
 	vec_init(&renderingQueue);
 	vec_init(&transparentClusters);
 
-	// Create cursor instance
 	cursor = new Cursor();
 
 	Hand_Init();
@@ -77,11 +40,10 @@ void WorldRenderer_Init(Player* player_, World* world_, WorkQueue* workqueue_, i
 	Clouds_Init();
 }
 
-void WorldRenderer_Deinit() {
+WorldRenderer::~WorldRenderer() {
 	vec_deinit(&renderingQueue);
 	vec_deinit(&transparentClusters);
 
-	// Delete cursor instance
 	delete cursor;
 	cursor = nullptr;
 
@@ -89,7 +51,7 @@ void WorldRenderer_Deinit() {
 	Clouds_Deinit();
 }
 
-static void renderWorld() {
+void WorldRenderer::RenderWorld() {
 	C3D_FogColor(0xffd990);
 
 	memset(chunkRendered, 0, sizeof(chunkRendered));
@@ -103,7 +65,8 @@ static void renderWorld() {
 	Chunk* pChunk = World_GetChunk(world, WorldToChunkCoord(FastFloor(player->position.x)),
 								   WorldToChunkCoord(FastFloor(player->position.z)));
 	vec_push(&renderingQueue, ((RenderStep){&pChunk->clusters[pY], pChunk, Direction_Invalid}));
-	chunkRendered[CHUNKCACHE_SIZE / 2][pY][CHUNKCACHE_SIZE / 2] = 1;
+	ClusterRenderedRef(CHUNKCACHE_SIZE / 2 + world->cacheTranslationX, pY,
+					   CHUNKCACHE_SIZE / 2 + world->cacheTranslationZ) = 1;
 
 	float3 playerPos = player->position;
 
@@ -113,7 +76,7 @@ static void renderWorld() {
 		Cluster* cluster = step.cluster;
 
 		if (cluster->vertices > 0 && cluster->vbo.size) {
-			clusterWasRendered(chunk->x, cluster->y, chunk->z) |= 2;
+			ClusterRenderedRef(chunk->x, cluster->y, chunk->z) |= 2;
 
 			C3D_BufInfo bufInfo;
 			BufInfo_Init(&bufInfo);
@@ -147,7 +110,7 @@ static void renderWorld() {
 				continue;
 			}
 
-			if (clusterWasRendered(newX, newY, newZ) & 1) continue;
+			if (ClusterRenderedRef(newX, newY, newZ) & 1) continue;
 
 			if (!ChunkCanBeSeenThrough(cluster->seeThrough, step.enteredFrom, (Direction)i) &&
 				step.enteredFrom != Direction_Invalid)
@@ -157,7 +120,7 @@ static void renderWorld() {
 			if (!cam.IsAABBVisible(chunkPosition, FVec3_New(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE)))
 				continue;
 
-			clusterWasRendered(newX, newY, newZ) |= 1;
+			ClusterRenderedRef(newX, newY, newZ) |= 1;
 
 			Chunk* newChunk = World_GetChunk(world, newX, newZ);
 			RenderStep nextStep = (RenderStep){&newChunk->clusters[newY], newChunk, DirectionOpposite[dir]};
@@ -203,7 +166,7 @@ static void renderWorld() {
 	//			 workqueue->queue.length);
 }
 
-void WorldRenderer_Render(float iod) {
+void WorldRenderer::Render(float iod) {
 	cam.Update(player, iod);
 
 	Hand_Draw(projectionUniform, cam.GetProjection(),
@@ -212,11 +175,10 @@ void WorldRenderer_Render(float iod) {
 
 	C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, projectionUniform, cam.GetVP());
 
-	renderWorld();
+	RenderWorld();
 
 	Clouds_Render(projectionUniform, cam.GetVP(), world, player->position.x, player->position.z);
 
-	// Use cursor class instance
 	if (player->blockInActionRange)
 		cursor->Draw(projectionUniform, cam.GetVP(), world,
 					 player->viewRayCast.x, player->viewRayCast.y, player->viewRayCast.z,

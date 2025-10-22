@@ -5,6 +5,7 @@
 #include "../world/CT_World.h"
 #include "../GameStates.h"
 #include "../gui/DebugUI.h"
+#include "WorldRenderer.h"
 
 #include <citro3d.h>
 
@@ -28,7 +29,9 @@ private:
     C3D_Tex logoTex;
 
     World* world;
+
     Player* player;
+    WorldRenderer* worldRenderer;
     WorkQueue* workqueue;
 
     GameState* gamestate;
