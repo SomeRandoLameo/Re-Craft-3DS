@@ -15,7 +15,7 @@ void ReCraftCore::ReleaseWorld(ChunkWorker* chunkWorker, SaveManager* savemgr, W
 			World_UnloadChunk(world, world->chunkCache[i][j]);
 		}
 	}
-	ChunkWorker_Finish(chunkWorker);
+	chunkWorker->Finish();
 	World_Reset(world);
 
     savemgr->Unload();
@@ -43,10 +43,10 @@ void ReCraftCore::Run() {
     savemgr.InitFileSystem();
 
 	ChunkWorker chunkWorker;
-	ChunkWorker_Init(&chunkWorker);
-	ChunkWorker_AddHandler(&chunkWorker, WorkerItemType_PolyGen, (WorkerFuncObj){&PolyGen_GeneratePolygons, NULL, true});
-	ChunkWorker_AddHandler(&chunkWorker, WorkerItemType_BaseGen, (WorkerFuncObj){&SuperFlatGen_Generate, &flatGen, true});
-	ChunkWorker_AddHandler(&chunkWorker, WorkerItemType_BaseGen, (WorkerFuncObj){&SmeaGen_Generate, &smeaGen, true});
+
+	chunkWorker.AddHandler(WorkerItemType_PolyGen, (WorkerFuncObj){&PolyGen_GeneratePolygons, NULL, true});
+	chunkWorker.AddHandler(WorkerItemType_BaseGen, (WorkerFuncObj){&SuperFlatGen_Generate, &flatGen, true});
+	chunkWorker.AddHandler(WorkerItemType_BaseGen, (WorkerFuncObj){&SmeaGen_Generate, &smeaGen, true});
 
 	sino_init();
 
@@ -62,18 +62,18 @@ void ReCraftCore::Run() {
 	SuperFlatGen_Init(&flatGen, world);
 	SmeaGen_Init(&smeaGen, world);
 
-    Renderer renderer(world, &player, &chunkWorker.queue, &gamestate);
+    Renderer renderer(world, &player, &chunkWorker.GetQueue(), &gamestate);
 
     DebugUI debugUI;
 
 	WorldSelect_Init();
 
-	World_Init(world, &chunkWorker.queue);
+	World_Init(world, &chunkWorker.GetQueue());
 
 
     savemgr.Init(&player);
-    ChunkWorker_AddHandler(&chunkWorker, WorkerItemType_Load, (WorkerFuncObj){SaveManager::LoadChunkCallback, &savemgr, true});
-    ChunkWorker_AddHandler(&chunkWorker, WorkerItemType_Save, (WorkerFuncObj){SaveManager::SaveChunkCallback, &savemgr, true});
+    chunkWorker.AddHandler(WorkerItemType_Load, (WorkerFuncObj){SaveManager::LoadChunkCallback, &savemgr, true});
+    chunkWorker.AddHandler(WorkerItemType_Save, (WorkerFuncObj){SaveManager::SaveChunkCallback, &savemgr, true});
 
 	uint64_t lastTime = svcGetSystemTick();
 	float dt = 0.f, timeAccum = 0.f, fpsClock = 0.f;
@@ -167,9 +167,9 @@ void ReCraftCore::Run() {
 
                 savemgr.Load(path);
 
-				ChunkWorker_SetHandlerActive(&chunkWorker, WorkerItemType_BaseGen, &flatGen,
+				chunkWorker.SetHandlerActive(WorkerItemType_BaseGen, &flatGen,
 							     world->genSettings.type == WorldGen_SuperFlat);
-				ChunkWorker_SetHandlerActive(&chunkWorker, WorkerItemType_BaseGen, &smeaGen,
+				chunkWorker.SetHandlerActive(WorkerItemType_BaseGen, &smeaGen,
 							     world->genSettings.type == WorldGen_Smea);
 
 				world->cacheTranslationX = WorldToChunkCoord(FastFloor(player.position.x));
@@ -183,7 +183,7 @@ void ReCraftCore::Run() {
 				}
 
 				for (int i = 0; i < 3; i++) {
-					while (chunkWorker.working || chunkWorker.queue.queue.length > 0) {
+					while (chunkWorker.IsWorking() || chunkWorker.GetQueue().queue.length > 0) {
 						svcSleepThread(50000000);  // 1 Tick
 					}
 					World_Tick(world);
@@ -248,9 +248,8 @@ void ReCraftCore::Run() {
 	WorldSelect_Deinit();
 
     debugUI.~DebugUI();
-	//DebugUI_Deinit();
 
-	ChunkWorker_Deinit(&chunkWorker);
+	chunkWorker.~ChunkWorker();
 
     renderer.~Renderer();
 

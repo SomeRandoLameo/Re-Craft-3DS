@@ -7,28 +7,36 @@
 #define CHUNKWORKER_THREAD_STACKSIZE (16 * 1024)
 
 typedef void (*WorkerFunc)(WorkQueue* queue, WorkerItem item, void* context);
-typedef struct {
+
+struct WorkerFuncObj{
 	WorkerFunc func;
 	void* context;
 	bool active;
-} WorkerFuncObj;
+};
 
-typedef struct {
+class ChunkWorker {
+public:
+	ChunkWorker();
+	~ChunkWorker();
+
+	// Delete copy constructor and assignment operator
+	//ChunkWorker(const ChunkWorker&) = delete;
+	//ChunkWorker& operator=(const ChunkWorker&) = delete;
+
+	void Finish();
+	void AddHandler(WorkerItemType type, WorkerFuncObj obj);
+	void SetHandlerActive(WorkerItemType type, void* context, bool active);
+
+	inline bool IsWorking() const { return working; }
+	inline WorkQueue& GetQueue() { return queue; }
+
+private:
+	static void MainloopWrapper(void* context);
+	void Mainloop();
+
 	Thread thread;
-
 	WorkQueue queue;
-
 	vec_t(WorkerFuncObj) handler[WorkerItemTypes_Count];
-
 	volatile bool working;
-} ChunkWorker;
-
-void ChunkWorker_Init(ChunkWorker* chunkworker);
-void ChunkWorker_Deinit(ChunkWorker* chunkworker);
-
-void ChunkWorker_Finish(ChunkWorker* chunkworker);
-
-void ChunkWorker_AddHandler(ChunkWorker* chunkworker, WorkerItemType type, WorkerFuncObj obj);
-void ChunkWorker_SetHandlerActive(ChunkWorker* chunkworker, WorkerItemType type, void* context, bool active);
-
-void ChunkWorker_Mainloop(void* _context);
+	volatile bool shouldStop;
+};
