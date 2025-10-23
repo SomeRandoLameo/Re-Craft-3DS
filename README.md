@@ -39,8 +39,8 @@ Please dont be annoyed if this crashed on your device, as this is my first prope
 - [ ] On-device server (3DS "local multiplayer" to connect with PC and other 3DSes) — *may be limited by 3DS network capabilities*
 
 ### Credits
-- Core bits from [mclib](https://github.com/plushmonkey/mclib)
-- Engine bits from [craftus](https://github.com/Onixiya/craftus)
+- Network engine bits from [mclib](https://github.com/plushmonkey/mclib)
+- Client Engine bits from [craftus](https://github.com/Onixiya/craftus)
 - Audio & Other misc. bits from [QuickLime](https://github.com/syelan34/quicklime) (this may be used in the future)
 
 ### Licensing
