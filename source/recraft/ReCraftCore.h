@@ -20,6 +20,7 @@ extern "C" {
 #include "world/worldgen/SmeaGen.h"
 #include "world/worldgen/SuperFlatGen.h"
 #include "misc/Crash.h"
+#include "mcbridge/MCBridge.h"
 
 class ReCraftCore {
 public:

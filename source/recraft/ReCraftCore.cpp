@@ -1,7 +1,7 @@
 #include "ReCraftCore.h"
 
 
-bool showDebugInfo = false;
+bool showDebugInfo = true;
 
 ReCraftCore* ReCraftCore::theReCraftCore = nullptr;
 
@@ -70,6 +70,7 @@ void ReCraftCore::Run() {
 
 	World_Init(world, &chunkWorker.GetQueue());
 
+    MCBridge mcBridge;
 
     savemgr.Init(&player);
     chunkWorker.AddHandler(WorkerItemType_Load, (WorkerFuncObj){SaveManager::LoadChunkCallback, &savemgr, true});
@@ -156,53 +157,79 @@ void ReCraftCore::Run() {
 
 			World_UpdateChunkCache(world, WorldToChunkCoord(FastFloor(player.position.x)),
 					       WorldToChunkCoord(FastFloor(player.position.z)));
-		} else if (gamestate == GameState_SelectWorld) {
+		}else if(gamestate == GameState_Playing_OnLine){
+
+            //ONLINE LOGIC HERE
+            s32 dimension = 0;
+            if(mcBridge.isConnected()){
+                mcBridge.withClient([&](mc::core::Client* client) {
+
+                    //current dimension (test for packet read)
+                    dimension = client->GetConnection()->GetDimension();
+
+                });
+            }
+
+            debugUI.Text("%d ",dimension);
+
+
+
+
+        } else if (gamestate == GameState_SelectWorld) {
 			char path[256];
 			char name[WORLD_NAME_SIZE] = {'\0'};
 			WorldGenType worldType;
 			bool newWorld = false;
-			if (WorldSelect_Update(path, name, &worldType, &newWorld)) {
-				strcpy(world->name, name);
-				world->genSettings.type = worldType;
+			bool isMultiplayer = false;
+			if (WorldSelect_Update(path, name, &worldType, &newWorld, &isMultiplayer)) {
+                if(!isMultiplayer){
+                    strcpy(world->name, name);
+                    world->genSettings.type = worldType;
 
-                savemgr.Load(path);
+                    savemgr.Load(path);
 
-				chunkWorker.SetHandlerActive(WorkerItemType_BaseGen, &flatGen,
-							     world->genSettings.type == WorldGen_SuperFlat);
-				chunkWorker.SetHandlerActive(WorkerItemType_BaseGen, &smeaGen,
-							     world->genSettings.type == WorldGen_Smea);
+                    chunkWorker.SetHandlerActive(WorkerItemType_BaseGen, &flatGen,
+                                     world->genSettings.type == WorldGen_SuperFlat);
+                    chunkWorker.SetHandlerActive(WorkerItemType_BaseGen, &smeaGen,
+                                     world->genSettings.type == WorldGen_Smea);
 
-				world->cacheTranslationX = WorldToChunkCoord(FastFloor(player.position.x));
-				world->cacheTranslationZ = WorldToChunkCoord(FastFloor(player.position.z));
-				for (int i = 0; i < CHUNKCACHE_SIZE; i++) {
-					for (int j = 0; j < CHUNKCACHE_SIZE; j++) {
-						world->chunkCache[i][j] =
-						    World_LoadChunk(world, i - CHUNKCACHE_SIZE / 2 + world->cacheTranslationX,
-								    j - CHUNKCACHE_SIZE / 2 + world->cacheTranslationZ);
-					}
-				}
+                    world->cacheTranslationX = WorldToChunkCoord(FastFloor(player.position.x));
+                    world->cacheTranslationZ = WorldToChunkCoord(FastFloor(player.position.z));
+                    for (int i = 0; i < CHUNKCACHE_SIZE; i++) {
+                        for (int j = 0; j < CHUNKCACHE_SIZE; j++) {
+                            world->chunkCache[i][j] =
+                                World_LoadChunk(world, i - CHUNKCACHE_SIZE / 2 + world->cacheTranslationX,
+                                        j - CHUNKCACHE_SIZE / 2 + world->cacheTranslationZ);
+                        }
+                    }
 
-				for (int i = 0; i < 3; i++) {
-					while (chunkWorker.IsWorking() || chunkWorker.GetQueue().queue.length > 0) {
-						svcSleepThread(50000000);  // 1 Tick
-					}
-					World_Tick(world);
-				}
+                    for (int i = 0; i < 3; i++) {
+                        while (chunkWorker.IsWorking() || chunkWorker.GetQueue().queue.length > 0) {
+                            svcSleepThread(50000000);  // 1 Tick
+                        }
+                        World_Tick(world);
+                    }
 
-				if (newWorld) {
-					int highestblock = 0;
-					for (int x = -1; x < 1; x++) {
-						for (int z = -1; z < 1; z++) {
-							int height = World_GetHeight(world, x, z);
-							if (height > highestblock) highestblock = height;
-						}
-					}
-					player.hunger=20;
-					player.hp=20;
-					player.position.y = (float)highestblock + 0.2f;
-				}
-				gamestate = GameState_Playing;
-				lastTime = svcGetSystemTick();  // fix timing
+                    if (newWorld) {
+                        int highestblock = 0;
+                        for (int x = -1; x < 1; x++) {
+                            for (int z = -1; z < 1; z++) {
+                                int height = World_GetHeight(world, x, z);
+                                if (height > highestblock) highestblock = height;
+                            }
+                        }
+                        player.hunger=20;
+                        player.hp=20;
+                        player.position.y = (float)highestblock + 0.2f;
+                    }
+                    gamestate = GameState_Playing;
+                    lastTime = svcGetSystemTick();  // fix timing
+                } else {
+
+                    mcBridge.connect();
+                    mcBridge.startBackgroundThread();
+                    gamestate = GameState_Playing_OnLine;
+                }
 			}
 		}
 		Gui_InputData(inputData);
@@ -211,6 +238,12 @@ void ReCraftCore::Run() {
 	if (gamestate == GameState_Playing)
 	{
 		ReleaseWorld(&chunkWorker, &savemgr, world);
+	}
+
+    if (gamestate == GameState_Playing_OnLine)
+	{
+        mcBridge.stopBackgroundThread();
+        mcBridge.disconnect();
 	}
 
 	savemgr.~SaveManager();

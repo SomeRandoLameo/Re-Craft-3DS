@@ -109,6 +109,7 @@ static int selectedWorld = -1;
 
 static bool clicked_play = false;
 static bool clicked_new_world = false;
+static bool clicked_mp_connect = false;
 static bool clicked_delete_world = false;
 
 static bool confirmed_world_options = false;
@@ -177,8 +178,9 @@ void WorldSelect_Render() {
 		clicked_play = Gui_Button(1.f, "Play selected world");
 		Gui_EndRow();
 		Gui_BeginRowCenter(Gui_RelativeWidth(0.95f), 2);
-		clicked_new_world = Gui_Button(0.5f, "New World");
-		clicked_delete_world = Gui_Button(0.5f, "Delete World");
+		clicked_new_world = Gui_Button(0.333f, "New Wrld");
+		clicked_delete_world = Gui_Button(0.333f, "Del Wrld");
+        clicked_mp_connect = Gui_Button(0.333f, "MP CON");
 		Gui_EndRow();
 	} else if (menustate == MenuState_ConfirmDeletion) {
 		Gui_Offset(0, 10);
@@ -222,11 +224,18 @@ void WorldSelect_Render() {
 	}
 }
 
-bool WorldSelect_Update(char* out_worldpath, char* out_name, WorldGenType* worldType, bool* newWorld) {
+bool WorldSelect_Update(char* out_worldpath, char* out_name, WorldGenType* worldType, bool* newWorld, bool* isMP) {
 	if (clicked_new_world) {
 		clicked_new_world = false;
 		menustate = MenuState_WorldOptions;
 	}
+    if(clicked_mp_connect){
+        *isMP = true;
+        *newWorld = false;
+        menustate = MenuState_SelectWorld;
+        return true;
+        //Crazy shit happens here :D
+    }
 	if (confirmed_world_options) {
 		confirmed_world_options = false;
 		*worldType = worldGenType;
@@ -284,6 +293,7 @@ bool WorldSelect_Update(char* out_worldpath, char* out_name, WorldGenType* world
 		clicked_play = false;
 		strcpy(out_name, worlds.data[selectedWorld].name);
 		strcpy(out_worldpath, worlds.data[selectedWorld].path);
+		*isMP = false;
 
 		*newWorld = false;
 		menustate = MenuState_SelectWorld;

@@ -275,4 +275,4 @@ start-server: $(SERVER_JAR)
 		exit 1; \
 	}
 	@echo "Starting Minecraft server..."
-	@cd $(SERVER_DIR) && java -Xmx1024M -Xms1024M -jar server.jar nogui
+	@cd $(SERVER_DIR) && java -Xmx1024M -Xms1024M -jar server.jar
