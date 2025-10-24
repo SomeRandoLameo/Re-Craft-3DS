@@ -161,12 +161,20 @@ void ReCraftCore::Run() {
 
             //ONLINE LOGIC HERE
             s32 dimension = 0;
+            char m_InputText[256]  = "Nein";
+            mc::protocol::packets::out::ChatPacket chatPacket(m_InputText);
+
             if(mcBridge.isConnected()){
-                mcBridge.withClient([&](mc::core::Client* client) {
+                mcBridge.withClient([&](mc::core::Client* client, mc::protocol::packets::PacketDispatcher* dispatcher) {
 
                     //current dimension (test for packet read)
                     dimension = client->GetConnection()->GetDimension();
+                   // client->GetPlayerManager()->Ge
 
+
+
+                    client->GetPlayerController()->Move(mc::Vector3d(0.25,0,0));
+                   //client->GetConnection()->SendPacket(&chatPacket);
                 });
             }
 
