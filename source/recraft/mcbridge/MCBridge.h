@@ -34,7 +34,7 @@ public:
         bool result = false;
         if (m_client && m_connected.load()) {
             try {
-                func(m_client.get());
+                func(m_client.get(), m_dispatcher.get());
                 result = true;
             } catch (std::exception& e) {
                 std::cout << "Client operation error: " << e.what() << std::endl;
