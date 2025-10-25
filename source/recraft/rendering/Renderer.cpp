@@ -188,7 +188,7 @@ void Renderer::RenderLowerScreen(DebugUI* debugUi) {
 		WorldSelect_Render();
 	} else {
 		SpriteBatch_SetScale(2);
-		player->quickSelectBarSlots = Inventory_QuickSelectCalcSlots(160);
+		player->quickSelectBarSlots = Inventory_QuickSelectCalcSlots();
 		Inventory_DrawQuickSelect(160 / 2 - Inventory_QuickSelectCalcWidth(player->quickSelectBarSlots) / 2,
 								  120 - INVENTORY_QUICKSELECT_HEIGHT, player->quickSelectBar, player->quickSelectBarSlots,
 								  &player->quickSelectBarSlot);
