@@ -23,6 +23,14 @@ void ReCraftCore::ReleaseWorld(ChunkWorker* chunkWorker, SaveManager* savemgr, W
 
 void ReCraftCore::Run() {
 
+
+
+
+
+
+    /**
+    * INIT/SETUP CODE
+    */
     GameState gamestate = GameState_SelectWorld;
 	//printf("gfxinit\n");
 	gfxInitDefault();
@@ -75,6 +83,15 @@ void ReCraftCore::Run() {
     savemgr.Init(&player);
     chunkWorker.AddHandler(WorkerItemType_Load, (WorkerFuncObj){SaveManager::LoadChunkCallback, &savemgr, true});
     chunkWorker.AddHandler(WorkerItemType_Save, (WorkerFuncObj){SaveManager::SaveChunkCallback, &savemgr, true});
+
+
+
+
+
+
+    /**
+    * RUN/GAMELOOP CODE
+    */
 
 	uint64_t lastTime = svcGetSystemTick();
 	float dt = 0.f, timeAccum = 0.f, fpsClock = 0.f;
@@ -242,6 +259,18 @@ void ReCraftCore::Run() {
 		}
 		Gui_InputData(inputData);
 	}
+
+
+
+
+
+
+
+
+
+    /**
+     * EXIT/CLEANUP CODE
+     */
 
 	if (gamestate == GameState_Playing)
 	{
