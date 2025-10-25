@@ -13,9 +13,8 @@ extern "C" {
 
 #include <3ds.h>
 
-#define PLATFORM_BUTTONS 23
 
-const char* platform_key_names[PLATFORM_BUTTONS] = {
+const char* platform_key_names[23] = {
     "Not Set", "A", "B", "X", "Y", "L", "R", "Start", "Select",
     "DUp", "DDown", "DLeft", "DRight", "CircUp", "CircDown", "CircLeft",
     "CircRight", "CStickUp", "CStickDown", "CStickLeft", "CStickRight", "ZL", "ZR"
@@ -69,63 +68,92 @@ const PlayerControlScheme n3ds_default_scheme = {
 };
 
 static void convertPlatformInput(InputData* input, float ctrls[], bool keysdown[], bool keysup[]) {
-#define reg_bin_key(i, k) \
-    ctrls[(i)] = (float)((input->keysdown & (k)) || (input->keysheld & (k))); \
-    keysdown[(i)] = input->keysdown & (k); \
-    keysup[(i)] = input->keysup & (k)
-
     ctrls[0] = 0.f;
     keysdown[0] = 0;
     keysup[0] = 0;
 
-    reg_bin_key(K3DS_A, KEY_A);
-    reg_bin_key(K3DS_B, KEY_B);
-    reg_bin_key(K3DS_X, KEY_X);
-    reg_bin_key(K3DS_Y, KEY_Y);
+    // Binary keys
+    const struct {
+        int index;
+        u32 key;
+    } binaryKeys[] = {
+            {K3DS_A, KEY_A},
+            {K3DS_B, KEY_B},
+            {K3DS_X, KEY_X},
+            {K3DS_Y, KEY_Y},
+            {K3DS_L, KEY_L},
+            {K3DS_R, KEY_R},
+            {K3DS_START, KEY_START},
+            {K3DS_SELECT, KEY_SELECT},
+            {K3DS_DUP, KEY_DUP},
+            {K3DS_DDOWN, KEY_DDOWN},
+            {K3DS_DLEFT, KEY_DLEFT},
+            {K3DS_DRIGHT, KEY_DRIGHT},
+            {K3DS_ZL, KEY_ZL},
+            {K3DS_ZR, KEY_ZR}
+    };
 
-    reg_bin_key(K3DS_L, KEY_L);
-    reg_bin_key(K3DS_R, KEY_R);
+    for (int i = 0; i < 14; i++) {
+        int idx = binaryKeys[i].index;
+        u32 key = binaryKeys[i].key;
+        ctrls[idx] = (float)((input->keysdown & key) || (input->keysheld & key));
+        keysdown[idx] = input->keysdown & key;
+        keysup[idx] = input->keysup & key;
+    }
 
-    reg_bin_key(K3DS_START, KEY_START);
-    reg_bin_key(K3DS_SELECT, KEY_SELECT);
-
-    reg_bin_key(K3DS_DUP, KEY_DUP);
-    reg_bin_key(K3DS_DDOWN, KEY_DDOWN);
-    reg_bin_key(K3DS_DLEFT, KEY_DLEFT);
-    reg_bin_key(K3DS_DRIGHT, KEY_DRIGHT);
-
-    reg_bin_key(K3DS_ZL, KEY_ZL);
-    reg_bin_key(K3DS_ZR, KEY_ZR);
-
+    // Circle pad
     float circX = (float)input->circlePadX / 0x9c;
     float circY = (float)input->circlePadY / 0x9c;
 
-#define reg_cpad_key(i, c, k) \
-    ctrls[(i)] = ABS(c) * (float)((input->keysdown & k) || (input->keysheld & k)); \
-    keysdown[(i)] = input->keysdown & (k); \
-    keysup[(i)] = input->keysup & (k)
+    const struct {
+        int index;
+        float value;
+        u32 key;
+    } circlePadKeys[] = {
+            {K3DS_CPAD_UP, circY, KEY_CPAD_UP},
+            {K3DS_CPAD_DOWN, circY, KEY_CPAD_DOWN},
+            {K3DS_CPAD_LEFT, circX, KEY_CPAD_LEFT},
+            {K3DS_CPAD_RIGHT, circX, KEY_CPAD_RIGHT}
+    };
 
-    reg_cpad_key(K3DS_CPAD_UP, circY, KEY_CPAD_UP);
-    reg_cpad_key(K3DS_CPAD_DOWN, circY, KEY_CPAD_DOWN);
-    reg_cpad_key(K3DS_CPAD_LEFT, circX, KEY_CPAD_LEFT);
-    reg_cpad_key(K3DS_CPAD_RIGHT, circX, KEY_CPAD_RIGHT);
+    for (int i = 0; i < 4; i++) {
+        int idx = circlePadKeys[i].index;
+        float val = circlePadKeys[i].value;
+        u32 key = circlePadKeys[i].key;
+        ctrls[idx] = ABS(val) * (float)((input->keysdown & key) || (input->keysheld & key));
+        keysdown[idx] = input->keysdown & key;
+        keysup[idx] = input->keysup & key;
+    }
 
+    // C-stick
     float cstickX = (float)input->cStickX / 0x9c;
     float cstickY = (float)input->cStickY / 0x9c;
 
-    reg_cpad_key(K3DS_CSTICK_UP, cstickY, KEY_CSTICK_UP);
-    reg_cpad_key(K3DS_CSTICK_DOWN, cstickY, KEY_CSTICK_DOWN);
-    reg_cpad_key(K3DS_CSTICK_LEFT, cstickX, KEY_CSTICK_LEFT);
-    reg_cpad_key(K3DS_CSTICK_RIGHT, cstickX, KEY_CSTICK_RIGHT);
+    const struct {
+        int index;
+        float value;
+        u32 key;
+    } cstickKeys[] = {
+            {K3DS_CSTICK_UP, cstickY, KEY_CSTICK_UP},
+            {K3DS_CSTICK_DOWN, cstickY, KEY_CSTICK_DOWN},
+            {K3DS_CSTICK_LEFT, cstickX, KEY_CSTICK_LEFT},
+            {K3DS_CSTICK_RIGHT, cstickX, KEY_CSTICK_RIGHT}
+    };
 
-#undef reg_bin_key
-#undef reg_cpad_key
+    for (int i = 0; i < 4; i++) {
+        int idx = cstickKeys[i].index;
+        float val = cstickKeys[i].value;
+        u32 key = cstickKeys[i].key;
+        ctrls[idx] = ABS(val) * (float)((input->keysdown & key) || (input->keysheld & key));
+        keysdown[idx] = input->keysdown & key;
+        keysup[idx] = input->keysup & key;
+    }
 }
 
 typedef struct {
-    float keys[PLATFORM_BUTTONS];
-    bool keysup[PLATFORM_BUTTONS];
-    bool keysdown[PLATFORM_BUTTONS];
+    float keys[23];
+    bool keysup[23];
+    bool keysdown[23];
 } PlatformAgnosticInput;
 
 
@@ -138,7 +166,6 @@ void PlayerController_Init(PlayerController* ctrl, Player* player) {
     ctrl->breakPlaceTimeout = 0.f;
     ctrl->player = player;
 
-
     bool isNew3ds = false;
     APT_CheckNew3DS(&isNew3ds);
     if (isNew3ds) {
@@ -149,62 +176,84 @@ void PlayerController_Init(PlayerController* ctrl, Player* player) {
         ctrl->player->autoJumpEnabled = true;
     }
 
-
     ctrl->openedCmd = false;
     bool elementMissing = false;
-
 
     const char path[] = "sdmc:/craftus_redesigned/options.ini";
     if (access(path, F_OK) != -1) {
         ini_t* cfg = ini_load(path);
         char buffer[64];
 
-#define loadKey(variable) \
-    if (ini_sget(cfg, "controls", #variable, "%s", buffer)) { \
-        for (int i = 0; i < PLATFORM_BUTTONS; i++) { \
-            if (!strcmp(platform_key_names[i], buffer)) { \
-                ctrl->controlScheme.variable = i; \
-                break; \
-            } \
-        } \
-    } else elementMissing = true;
+        // Load control keys
+        const char* controlKeys[] = {
+                "forward", "backward", "strafeLeft", "strafeRight",
+                "lookLeft", "lookRight", "lookUp", "lookDown",
+                "placeBlock", "breakBlock", "jump", "switchBlockLeft",
+                "switchBlockRight", "openCmd", "crouch"
+        };
 
-        loadKey(forward); loadKey(backward);
-        loadKey(strafeLeft); loadKey(strafeRight);
-        loadKey(lookLeft); loadKey(lookRight);
-        loadKey(lookUp); loadKey(lookDown);
-        loadKey(placeBlock); loadKey(breakBlock);
-        loadKey(jump); loadKey(switchBlockLeft);
-        loadKey(switchBlockRight); loadKey(openCmd);
-        loadKey(crouch);
-#undef loadKey
+        int* controlSchemeKeys[] = {
+                &ctrl->controlScheme.forward, &ctrl->controlScheme.backward,
+                &ctrl->controlScheme.strafeLeft, &ctrl->controlScheme.strafeRight,
+                &ctrl->controlScheme.lookLeft, &ctrl->controlScheme.lookRight,
+                &ctrl->controlScheme.lookUp, &ctrl->controlScheme.lookDown,
+                &ctrl->controlScheme.placeBlock, &ctrl->controlScheme.breakBlock,
+                &ctrl->controlScheme.jump, &ctrl->controlScheme.switchBlockLeft,
+                &ctrl->controlScheme.switchBlockRight, &ctrl->controlScheme.openCmd,
+                &ctrl->controlScheme.crouch
+        };
+
+        for (int k = 0; k < 15; k++) {
+            if (ini_sget(cfg, "controls", controlKeys[k], "%s", buffer)) {
+                for (int i = 0; i < 23; i++) {
+                    if (!strcmp(platform_key_names[i], buffer)) {
+                        *controlSchemeKeys[k] = i;
+                        break;
+                    }
+                }
+            } else {
+                elementMissing = true;
+            }
+        }
 
         if (!ini_sget(cfg, "controls", "auto_jumping", "%d", &ctrl->player->autoJumpEnabled))
             elementMissing = true;
+
         ini_free(cfg);
-    } else elementMissing = true;
+    } else {
+        elementMissing = true;
+    }
 
     if (elementMissing) {
         FILE* f = fopen(path, "w");
         fprintf(f, "[controls]\n");
         fprintf(f, "; The allowed key values are:\n; ");
         int j = 0;
-        for (int i = 0; i < PLATFORM_BUTTONS - 1; i++) {
+        for (int i = 0; i < 23 - 1; i++) {
             fprintf(f, "%s, ", platform_key_names[i]);
-            if (++j == 5) { j = 0; fprintf(f, "\n ; "); }
+            if (++j == 5) {
+                j = 0;
+                fprintf(f, "\n ; ");
+            }
         }
-        fprintf(f, "%s\n\n", platform_key_names[PLATFORM_BUTTONS - 1]);
+        fprintf(f, "%s\n\n", platform_key_names[23 - 1]);
 
-#define writeKey(key) fprintf(f, #key "=%s\n", platform_key_names[ctrl->controlScheme.key]);
-        writeKey(forward); writeKey(backward);
-        writeKey(strafeLeft); writeKey(strafeRight);
-        writeKey(lookLeft); writeKey(lookRight);
-        writeKey(lookUp); writeKey(lookDown);
-        writeKey(placeBlock); writeKey(breakBlock);
-        writeKey(jump); writeKey(switchBlockLeft);
-        writeKey(switchBlockRight); writeKey(openCmd);
-        writeKey(crouch);
-#undef writeKey
+        // Write control keys
+        fprintf(f, "forward=%s\n", platform_key_names[ctrl->controlScheme.forward]);
+        fprintf(f, "backward=%s\n", platform_key_names[ctrl->controlScheme.backward]);
+        fprintf(f, "strafeLeft=%s\n", platform_key_names[ctrl->controlScheme.strafeLeft]);
+        fprintf(f, "strafeRight=%s\n", platform_key_names[ctrl->controlScheme.strafeRight]);
+        fprintf(f, "lookLeft=%s\n", platform_key_names[ctrl->controlScheme.lookLeft]);
+        fprintf(f, "lookRight=%s\n", platform_key_names[ctrl->controlScheme.lookRight]);
+        fprintf(f, "lookUp=%s\n", platform_key_names[ctrl->controlScheme.lookUp]);
+        fprintf(f, "lookDown=%s\n", platform_key_names[ctrl->controlScheme.lookDown]);
+        fprintf(f, "placeBlock=%s\n", platform_key_names[ctrl->controlScheme.placeBlock]);
+        fprintf(f, "breakBlock=%s\n", platform_key_names[ctrl->controlScheme.breakBlock]);
+        fprintf(f, "jump=%s\n", platform_key_names[ctrl->controlScheme.jump]);
+        fprintf(f, "switchBlockLeft=%s\n", platform_key_names[ctrl->controlScheme.switchBlockLeft]);
+        fprintf(f, "switchBlockRight=%s\n", platform_key_names[ctrl->controlScheme.switchBlockRight]);
+        fprintf(f, "openCmd=%s\n", platform_key_names[ctrl->controlScheme.openCmd]);
+        fprintf(f, "crouch=%s\n", platform_key_names[ctrl->controlScheme.crouch]);
 
         fprintf(f, "; 0 = disabled, 1 = enabled (default: 1 for O3DS, 0 for N3DS)\nautojump=%d\n",
                 player->autoJumpEnabled);
