@@ -153,3 +153,12 @@ void MCBridge::backgroundLoop() {
 
     std::cout << "Background loop ended\n";
 }
+
+
+mc::inventory::Slot MCBridge::CTItemStackToMCLIBSlot(ItemStack in){
+    return mc::inventory::Slot(in.block,in.amount,in.meta);
+}
+
+ItemStack MCBridge::MCLIBSlotToCTItemStack(mc::inventory::Slot in){
+    return (ItemStack){in.GetItemId(),in.GetItemDamage(),in.GetItemCount()};
+}

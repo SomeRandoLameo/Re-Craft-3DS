@@ -342,8 +342,10 @@ bool Block_Opaque(Block block, uint8_t metadata) { return block != Block_Air && 
 
 const char* BlockNames[Blocks_Count] = {
 	"Air",
-    "Stone","Dirt",
-    "Grass","Cobblestone",
+    "Stone",
+    "Dirt",
+    "Grass",
+    "Cobblestone",
     "Sand",
     "Log",
     "Leaves",

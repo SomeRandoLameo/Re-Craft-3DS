@@ -180,8 +180,16 @@ void ReCraftCore::Run() {
             if(mcBridge.isConnected()){
                 mcBridge.withClient([&](mc::core::Client* client, mc::protocol::packets::PacketDispatcher* dispatcher) {
 
-                    dimension = client->GetConnection()->GetDimension();
+                    float playerX = client->GetPlayerController()->GetPosition().x;
+                    float playerY = client->GetPlayerController()->GetPosition().y;
+                    float playerZ = client->GetPlayerController()->GetPosition().z;
 
+                    player.position.x = playerX;
+                    player.position.y = playerY;
+                    player.position.z = playerZ;
+
+
+                    dimension = client->GetConnection()->GetDimension();
                     playerCtrl.Update(&debugUI, /*&PlayerSound,*/ inputData, dt);
 
                     //TODO: This is baaaad :D
@@ -190,8 +198,10 @@ void ReCraftCore::Run() {
                             -playerCtrl.movement.y*(0.125/2),
                             -playerCtrl.movement.z*(0.125/2)));
 
-                    client->GetPlayerController()->SetPitch(playerCtrl.player->pitch);
+                    client->GetPlayerController()->SetPitch(-playerCtrl.player->pitch);
                     client->GetPlayerController()->SetYaw(-playerCtrl.player->yaw);
+
+                    player.quickSelectBar[0] = mcBridge.MCLIBSlotToCTItemStack(client->GetHotbar().GetCurrentItem());
                 });
             }
 

@@ -1,11 +1,15 @@
 #pragma once
-
+//MCLIB includes
 #include "../../mclib/common/Common.h"
 #include "../../mclib/core/Client.h"
 #include "../../mclib/util/Forge.h"
 #include "../../mclib/util/Hash.h"
 #include "../../mclib/util/Utility.h"
 #include "../../mclib/util/VersionFetcher.h"
+
+//Craftus includes
+#include "../inventory/ItemStack.h"
+
 #include <memory>
 #include <iostream>
 #include <atomic>
@@ -47,6 +51,11 @@ public:
     mc::core::Client* getClient() { return m_client.get(); }
     void lockClient() { LightLock_Lock(&m_clientMutex); }
     void unlockClient() { LightLock_Unlock(&m_clientMutex); }
+
+
+
+    mc::inventory::Slot CTItemStackToMCLIBSlot(ItemStack in);
+    ItemStack MCLIBSlotToCTItemStack(mc::inventory::Slot in);
 
 private:
     static void threadFunc(void* arg);
