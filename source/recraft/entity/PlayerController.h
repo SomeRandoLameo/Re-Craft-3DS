@@ -1,36 +1,43 @@
-#include "Player.h"
+#pragma once
 
+#include "Player.h"
 #include "../misc/InputData.h"
 #include "../gui/DebugUI.h"
 
-#include <stdbool.h>
-#include <stdint.h>
-//#include "../misc/Sound.h"
+class PlayerControlScheme {
+public:
+    int forward, backward, strafeLeft, strafeRight;
+    int lookLeft, lookRight, lookUp, lookDown;
+    int placeBlock, breakBlock;
+    int jump;
+    int switchBlockLeft;
+    int switchBlockRight;
+    int openCmd;
+    int crouch;
 
-typedef int KeyCombo;
-typedef struct {
-	KeyCombo forward, backward, strafeLeft, strafeRight;
-	KeyCombo lookLeft, lookRight, lookUp, lookDown;
+    PlayerControlScheme();
+    PlayerControlScheme(int fwd, int bwd, int sLeft, int sRight,
+                        int lLeft, int lRight, int lUp, int lDown,
+                        int pBlock, int bBlock, int jmp,
+                        int swLeft, int swRight, int cmd, int crch);
+};
 
-	KeyCombo placeBlock, breakBlock;
-	KeyCombo jump;
+class PlayerController {
+private:
 
-	KeyCombo switchBlockLeft;
-	KeyCombo switchBlockRight;
+    PlayerControlScheme controlScheme;
+    float breakPlaceTimeout;
+    bool openedCmd;
+    float flyTimer;
 
-	KeyCombo openCmd;
+public:
+    Player* player;
+    PlayerController(Player* player);
+    void Update(DebugUI* debugUi, InputData input, float dt);
 
-	KeyCombo crouch;
-} PlayerControlScheme;
-typedef struct {
-	Player* player;
-	PlayerControlScheme controlScheme;
+    // Getter/setter if needed
+    PlayerControlScheme& GetControlScheme() { return controlScheme; }
 
-	float breakPlaceTimeout;
-	bool openedCmd;
 
-	float flyTimer;
-} PlayerController;
-
-void PlayerController_Init(PlayerController* ctrl, Player* player);
-void PlayerController_Update(PlayerController* ctrl,DebugUI* debugUi, /*Sound* sound,*/ InputData input, float dt);
+    float3 movement;
+};

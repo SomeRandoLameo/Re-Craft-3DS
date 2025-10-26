@@ -63,9 +63,7 @@ void ReCraftCore::Run() {
 	//Sound BackgroundSound;
 	//Sound PlayerSound;
 	Player player(world);
-	PlayerController playerCtrl;
-
-	PlayerController_Init(&playerCtrl, &player);
+	PlayerController playerCtrl(&player);
 
 	SuperFlatGen_Init(&flatGen, world);
 	SmeaGen_Init(&smeaGen, world);
@@ -170,28 +168,30 @@ void ReCraftCore::Run() {
 				timeAccum -= 1.f / 20.f;
 			}
 
-			PlayerController_Update(&playerCtrl,&debugUI, /*&PlayerSound,*/ inputData, dt);
+            playerCtrl.Update(&debugUI, /*&PlayerSound,*/ inputData, dt);
 
 			World_UpdateChunkCache(world, WorldToChunkCoord(FastFloor(player.position.x)),
 					       WorldToChunkCoord(FastFloor(player.position.z)));
 		}else if(gamestate == GameState_Playing_OnLine){
 
             //ONLINE LOGIC HERE
-            s32 dimension = 0;
-            char m_InputText[256]  = "Nein";
-            mc::protocol::packets::out::ChatPacket chatPacket(m_InputText);
+            s32 dimension;
 
             if(mcBridge.isConnected()){
                 mcBridge.withClient([&](mc::core::Client* client, mc::protocol::packets::PacketDispatcher* dispatcher) {
 
-                    //current dimension (test for packet read)
                     dimension = client->GetConnection()->GetDimension();
-                   // client->GetPlayerManager()->Ge
 
+                    playerCtrl.Update(&debugUI, /*&PlayerSound,*/ inputData, dt);
 
+                    //TODO: This is baaaad :D
+                    client->GetPlayerController()->Move(mc::Vector3d(
+                            -playerCtrl.movement.x*(0.125/2),
+                            -playerCtrl.movement.y*(0.125/2),
+                            -playerCtrl.movement.z*(0.125/2)));
 
-                    client->GetPlayerController()->Move(mc::Vector3d(0.25,0,0));
-                   //client->GetConnection()->SendPacket(&chatPacket);
+                    client->GetPlayerController()->SetPitch(playerCtrl.player->pitch);
+                    client->GetPlayerController()->SetYaw(-playerCtrl.player->yaw);
                 });
             }
 

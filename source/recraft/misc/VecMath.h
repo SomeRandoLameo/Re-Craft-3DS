@@ -3,7 +3,7 @@
 #include <math.h>
 
 #include "NumberUtils.h"
-
+//TODO: Use MCLIB Vector stuff
 typedef union {
 	float v[3];
 	struct {
