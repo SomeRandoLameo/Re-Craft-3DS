@@ -88,8 +88,6 @@ Renderer::Renderer(World* world_, Player* player_, WorkQueue* queue, GameState* 
 Renderer::~Renderer() {
 	C3D_TexDelete(&logoTex);
 
-	Item_Deinit();
-
 	Block_Deinit();
 
 	PolyGen_Deinit();
