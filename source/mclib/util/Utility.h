@@ -57,7 +57,7 @@ namespace mc {
             std::vector<std::pair<block::BlockPtr, mc::Vector3i>> GetNearbyBlocks(const s32 radius);
 
         public:
-            PlayerController(core::Connection* connection, world::World& world, core::PlayerManager& playerManager);
+                PlayerController(core::Connection* connection, world::World& world, core::PlayerManager& playerManager);
             ~PlayerController();
 
             void OnClientSpawn(core::PlayerPtr player);

@@ -180,14 +180,11 @@ void ReCraftCore::Run() {
             if(mcBridge.isConnected()){
                 mcBridge.withClient([&](mc::core::Client* client, mc::protocol::packets::PacketDispatcher* dispatcher) {
 
-                    float playerX = client->GetPlayerController()->GetPosition().x;
-                    float playerY = client->GetPlayerController()->GetPosition().y;
-                    float playerZ = client->GetPlayerController()->GetPosition().z;
+                    mc::Vector3d playerPos = client->GetPlayerController()->GetPosition();
 
-                    player.position.x = playerX;
-                    player.position.y = playerY;
-                    player.position.z = playerZ;
-
+                    player.position.x = playerPos.x;
+                    player.position.y = playerPos.y;
+                    player.position.z = playerPos.z;
 
                     dimension = client->GetConnection()->GetDimension();
                     playerCtrl.Update(&debugUI, /*&PlayerSound,*/ inputData, dt);

@@ -49,8 +49,8 @@ typedef struct {
 	int weather;
 } World;
 
-inline static int WorldToChunkCoord(int x) { return (x + (int)(x < 0)) / CHUNK_SIZE - (int)(x < 0); }
-inline static int WorldToLocalCoord(int x) { return x - WorldToChunkCoord(x) * CHUNK_SIZE; }
+int WorldToChunkCoord(int x);
+int WorldToLocalCoord(int x);
 
 void World_Init(World* world, WorkQueue* workqueue);
 

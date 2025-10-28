@@ -8,6 +8,9 @@
 #include <limits.h>
 #include <stdint.h>
 
+int WorldToChunkCoord(int x) { return (x + (int)(x < 0)) / CHUNK_SIZE - (int)(x < 0); }
+int WorldToLocalCoord(int x) { return x - WorldToChunkCoord(x) * CHUNK_SIZE; }
+
 void World_Init(World* world, WorkQueue* workqueue) {
 	strcpy(world->name, "TestWelt");
 
