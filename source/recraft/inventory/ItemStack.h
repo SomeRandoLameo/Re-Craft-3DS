@@ -2,6 +2,13 @@
 
 #include <stdbool.h>
 
+#include "../../mclib/common/Common.h"
+#include "../../mclib/core/Client.h"
+#include "../../mclib/util/Forge.h"
+#include "../../mclib/util/Hash.h"
+#include "../../mclib/util/Utility.h"
+#include "../../mclib/util/VersionFetcher.h"
+
 #include "../blocks/CT_Block.h"
 
 #include "../misc/NumberUtils.h"
@@ -13,17 +20,4 @@ typedef struct {
 
 #define ITEMSTACK_MAX (64)
 
-static inline bool ItemStack_Empty(ItemStack stack) { return stack.amount == 0; }
-static inline void ItemStack_Transfer(ItemStack* src, ItemStack* dst) {
-	if ((src->block == dst->block && src->meta == dst->meta) || dst->amount == 0) {
-		int vol = MIN(src->amount, ITEMSTACK_MAX - dst->amount);
-		src->amount -= vol;
-		dst->amount += vol;
-		dst->block = src->block;
-		dst->meta = src->meta;
-	} else {
-		ItemStack tmp = *src;
-		*src = *dst;
-		*dst = tmp;
-	}
-}
+void ItemStack_Transfer(ItemStack* src, ItemStack* dst);
