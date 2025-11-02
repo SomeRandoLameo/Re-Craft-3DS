@@ -198,7 +198,15 @@ void ReCraftCore::Run() {
                     client->GetPlayerController()->SetPitch(-playerCtrl.player->pitch);
                     client->GetPlayerController()->SetYaw(-playerCtrl.player->yaw);
 
-                    player.quickSelectBar[0] = mcBridge.MCLIBSlotToCTItemStack(client->GetHotbar().GetCurrentItem());
+                    // TODO: packet spam prevention... This is enough for now
+                    for (int i = 0; i < 8; i++) {
+
+
+
+                        auto item = mcBridge.MCLIBSlotToCTItemStack(client->GetHotbar().GetItem(i));
+                        player.quickSelectBar[i] = item;
+                        debugUI.Text("%d ",item.block);
+                    }
                 });
             }
 

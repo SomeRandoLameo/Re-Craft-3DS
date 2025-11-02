@@ -18,17 +18,22 @@ static void clickAtStack(ItemStack* stack) {
 	}
 }
 
-void Inventory_DrawQuickSelect(int x, int y, ItemStack* stacks, int count, int* selected) {
+void Inventory_renderHotbar(int x, int y, ItemStack* stacks, int count, int* selected, GameState* gameState) {
 	SpriteBatch_BindGuiTexture(GuiTexture_Widgets);
 	
 	for (int i = 0; i < count; i++) {
-		SpriteBatch_SetScale(1);  // TODO: muss verbessert werden für Ports
+		SpriteBatch_SetScale(1);
 		int rx = (i * 20 + x + 3) * 2;
 		int ry = (y + 3) * 2;
 		if (stacks[i].amount > 0) SpriteBatch_PushIcon(stacks[i].block, stacks[i].meta, rx, ry, 11);
 		if (Gui_EnteredCursorInside(rx - 4, ry - 4, 18 * 2, 18 * 2)) {
 			*selected = i;
 			clickAtStack(&stacks[i]);
+
+            if (*gameState == GameState_Playing_OnLine)
+            {
+               //TODO: client->GetHotbar().SelectSlot(i);
+            }
 		}
 		SpriteBatch_SetScale(2);
 		if (sourceStack == &stacks[i]) {
