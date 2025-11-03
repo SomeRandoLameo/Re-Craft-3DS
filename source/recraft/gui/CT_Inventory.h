@@ -3,7 +3,7 @@
 #include "../inventory/ItemStack.h"
 #include "../GameStates.h"
 #include "../misc/NumberUtils.h"
-#include "../ReCraftCore.h"
+
 
 #define INVENTORY_QUICKSELECT_MAXSLOTS 9
 #define INVENTORY_QUICKSELECT_HEIGHT (22 + 1)

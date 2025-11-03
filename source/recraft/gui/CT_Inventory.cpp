@@ -1,4 +1,5 @@
 #include "CT_Inventory.h"
+#include "../ReCraftCore.h"
 
 #include "Gui.h"
 #include "SpriteBatch.h"
