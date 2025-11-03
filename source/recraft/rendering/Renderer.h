@@ -6,12 +6,12 @@
 #include "../GameStates.h"
 #include "../gui/DebugUI.h"
 #include "WorldRenderer.h"
-
+#include "../ReCraftCore.h"
 #include <citro3d.h>
 
 class Renderer {
 public:
-    Renderer(World* world_, Player* player_, WorkQueue* queue, GameState* gamestate_);
+    Renderer(World* world_, Player* player_, WorkQueue* queue, GameState* gamestate_, ReCraftCore* reCraftCore);
     ~Renderer();
 
     void Render(DebugUI* debugUi);

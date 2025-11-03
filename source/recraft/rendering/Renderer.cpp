@@ -25,16 +25,18 @@ GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
 //TODO: Fix this
 extern bool showDebugInfo;
 
-Renderer::Renderer(World* world_, Player* player_, WorkQueue* queue, GameState* gamestate_)
-		: world_dvlb(nullptr)
-		, gui_dvlb(nullptr)
-		, world(world_)
-		, player(player_)
-		, workqueue(queue)
-		, gamestate(gamestate_)
-		, worldRenderer(nullptr)
-		, world_shader_uLocProjection(0)
-		, gui_shader_uLocProjection(0) {
+Renderer::Renderer(World* world_, Player* player_, WorkQueue* queue, GameState* gamestate_, ReCraftCore* reCraftCore){
+    // i actually prefer this
+    this->world_dvlb = nullptr;
+    this->gui_dvlb = nullptr;
+    this->world = world_;
+    this->player = player_;
+    this->workqueue = queue;
+    this->gamestate = gamestate_;
+    this->worldRenderer = nullptr;
+    this->world_shader_uLocProjection = 0;
+    this->gui_shader_uLocProjection = 0;
+
 
 	renderTargets[0] = nullptr;
 	renderTargets[1] = nullptr;

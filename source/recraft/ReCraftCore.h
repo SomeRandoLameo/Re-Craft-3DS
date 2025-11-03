@@ -26,6 +26,11 @@ class ReCraftCore {
 public:
     ReCraftCore();
     void Run();
+
+    static ReCraftCore* GetInstance() {
+        return theReCraftCore;
+    }
+
 private:
     static ReCraftCore* theReCraftCore;
     void ReleaseWorld(ChunkWorker* chunkWorker, SaveManager* savemgr, World* world);

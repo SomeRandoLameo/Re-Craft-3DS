@@ -68,7 +68,7 @@ void ReCraftCore::Run() {
 	SuperFlatGen_Init(&flatGen, world);
 	SmeaGen_Init(&smeaGen, world);
 
-    Renderer renderer(world, &player, &chunkWorker.GetQueue(), &gamestate);
+    Renderer renderer(world, &player, &chunkWorker.GetQueue(), &gamestate, this);
 
     DebugUI debugUI;
 
@@ -199,10 +199,7 @@ void ReCraftCore::Run() {
                     client->GetPlayerController()->SetYaw(-playerCtrl.player->yaw);
 
                     // TODO: packet spam prevention... This is enough for now
-                    for (int i = 0; i < 8; i++) {
-
-
-
+                    for (int i = 0; i < 9; i++) {
                         auto item = mcBridge.MCLIBSlotToCTItemStack(client->GetHotbar().GetItem(i));
                         player.quickSelectBar[i] = item;
                         debugUI.Text("%d ",item.block);
