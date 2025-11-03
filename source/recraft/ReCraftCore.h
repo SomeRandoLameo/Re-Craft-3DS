@@ -25,13 +25,18 @@ extern "C" {
 class ReCraftCore {
 public:
     ReCraftCore();
-    void Run();
-
     static ReCraftCore* GetInstance() {
         return theReCraftCore;
     }
 
+    void Run();
+
+    GameState* GetGameState() {
+        return &gamestate;
+    }
+
 private:
     static ReCraftCore* theReCraftCore;
+    GameState gamestate;
     void ReleaseWorld(ChunkWorker* chunkWorker, SaveManager* savemgr, World* world);
 };

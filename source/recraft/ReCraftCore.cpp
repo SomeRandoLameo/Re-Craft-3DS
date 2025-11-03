@@ -31,7 +31,7 @@ void ReCraftCore::Run() {
     /**
     * INIT/SETUP CODE
     */
-    GameState gamestate = GameState_SelectWorld;
+    this->gamestate = GameState_SelectWorld;
 	//printf("gfxinit\n");
 	gfxInitDefault();
 
@@ -68,7 +68,7 @@ void ReCraftCore::Run() {
 	SuperFlatGen_Init(&flatGen, world);
 	SmeaGen_Init(&smeaGen, world);
 
-    Renderer renderer(world, &player, &chunkWorker.GetQueue(), &gamestate, this);
+    Renderer renderer(world, &player, &chunkWorker.GetQueue());
 
     DebugUI debugUI;
 
@@ -136,12 +136,12 @@ void ReCraftCore::Run() {
 		hidScanInput();
 		u32 keysheld = hidKeysHeld(), keysdown = hidKeysDown();
 		if (keysdown & KEY_START) {
-			if (gamestate == GameState_SelectWorld)
+			if (this->gamestate == GameState_SelectWorld)
 				break;
-			else if (gamestate == GameState_Playing) {
+			else if (this->gamestate == GameState_Playing) {
 				ReleaseWorld(&chunkWorker, &savemgr, world);
 
-				gamestate = GameState_SelectWorld;
+				this->gamestate = GameState_SelectWorld;
 
 				WorldSelect_ScanWorlds();
 
@@ -161,7 +161,7 @@ void ReCraftCore::Run() {
 		InputData inputData = (InputData){keysheld,    keysdown,    hidKeysUp(),  circlePos.dx, circlePos.dy,
 						  touchPos.px, touchPos.py, cstickPos.dx, cstickPos.dy};
 
-		if (gamestate == GameState_Playing) {
+		if (this->gamestate == GameState_Playing) {
 			while (timeAccum >= 1.f / 20.f) {
 				World_Tick(world);
 
@@ -172,7 +172,7 @@ void ReCraftCore::Run() {
 
 			World_UpdateChunkCache(world, WorldToChunkCoord(FastFloor(player.position.x)),
 					       WorldToChunkCoord(FastFloor(player.position.z)));
-		}else if(gamestate == GameState_Playing_OnLine){
+		}else if(this->gamestate == GameState_Playing_OnLine){
 
             //ONLINE LOGIC HERE
             s32 dimension;
@@ -212,7 +212,7 @@ void ReCraftCore::Run() {
 
 
 
-        } else if (gamestate == GameState_SelectWorld) {
+        } else if (this->gamestate == GameState_SelectWorld) {
 			char path[256];
 			char name[WORLD_NAME_SIZE] = {'\0'};
 			WorldGenType worldType;
@@ -259,13 +259,13 @@ void ReCraftCore::Run() {
                         player.hp=20;
                         player.position.y = (float)highestblock + 0.2f;
                     }
-                    gamestate = GameState_Playing;
+                    this->gamestate = GameState_Playing;
                     lastTime = svcGetSystemTick();  // fix timing
                 } else {
 
                     mcBridge.connect();
                     mcBridge.startBackgroundThread();
-                    gamestate = GameState_Playing_OnLine;
+                    this->gamestate = GameState_Playing_OnLine;
                 }
 			}
 		}
@@ -284,12 +284,12 @@ void ReCraftCore::Run() {
      * EXIT/CLEANUP CODE
      */
 
-	if (gamestate == GameState_Playing)
+	if (this->gamestate == GameState_Playing)
 	{
 		ReleaseWorld(&chunkWorker, &savemgr, world);
 	}
 
-    if (gamestate == GameState_Playing_OnLine)
+    if (this->gamestate == GameState_Playing_OnLine)
 	{
         mcBridge.stopBackgroundThread();
         mcBridge.disconnect();

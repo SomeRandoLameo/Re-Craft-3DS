@@ -25,14 +25,13 @@ GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
 //TODO: Fix this
 extern bool showDebugInfo;
 
-Renderer::Renderer(World* world_, Player* player_, WorkQueue* queue, GameState* gamestate_, ReCraftCore* reCraftCore){
+Renderer::Renderer(World* world_, Player* player_, WorkQueue* queue){
     // i actually prefer this
     this->world_dvlb = nullptr;
     this->gui_dvlb = nullptr;
     this->world = world_;
     this->player = player_;
     this->workqueue = queue;
-    this->gamestate = gamestate_;
     this->worldRenderer = nullptr;
     this->world_shader_uLocProjection = 0;
     this->gui_shader_uLocProjection = 0;
@@ -115,7 +114,7 @@ void Renderer::Render(DebugUI* debugUi) {
 
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 
-	if (*gamestate == GameState_Playing) PolyGen_Harvest(debugUi);
+	if (*ReCraftCore::GetInstance()->GetGameState() == GameState_Playing) PolyGen_Harvest(debugUi);
 
 	for (int i = 0; i < 2; i++) {
 		RenderFrame(i, iod);
@@ -141,14 +140,29 @@ void Renderer::RenderFrame(int eyeIndex, float iod) {
 	C3D_BindProgram(&world_shader);
 	C3D_SetAttrInfo(&world_vertexAttribs);
 
-	if (*gamestate == GameState_Playing) {
+	if (*ReCraftCore::GetInstance()->GetGameState() == GameState_Playing) {
 		C3D_TexBind(0, (C3D_Tex*)Block_GetTextureMap());
 
 		worldRenderer->Render(!eyeIndex ? -iod : iod);
 
 		SpriteBatch_BindGuiTexture(GuiTexture_Widgets);
 		if (iod == 0.f) SpriteBatch_PushQuad(200 / 2 - 16 / 2, 120 / 2 - 16 / 2, 0, 16, 16, 240, 0, 16, 16);
-	} else {
+	} else if (*ReCraftCore::GetInstance()->GetGameState() == GameState_Playing) {
+        C3D_TexBind(0, (C3D_Tex*)Block_GetTextureMap());
+
+        worldRenderer->Render(!eyeIndex ? -iod : iod);
+
+        SpriteBatch_BindGuiTexture(GuiTexture_Widgets);
+        if (iod == 0.f) SpriteBatch_PushQuad(200 / 2 - 16 / 2, 120 / 2 - 16 / 2, 0, 16, 16, 240, 0, 16, 16);
+    } else if (*ReCraftCore::GetInstance()->GetGameState() == GameState_Playing_OnLine) {
+        C3D_TexBind(0, (C3D_Tex*)Block_GetTextureMap());
+
+        //TODO: There needs to be a world to render :D
+        //worldRenderer->Render(!eyeIndex ? -iod : iod);
+
+        SpriteBatch_BindGuiTexture(GuiTexture_Widgets);
+        if (iod == 0.f) SpriteBatch_PushQuad(200 / 2 - 16 / 2, 120 / 2 - 16 / 2, 0, 16, 16, 240, 0, 16, 16);
+    } else {
 		C3D_Mtx projection;
 		Mtx_PerspStereoTilt(&projection, C3D_AngleFromDegrees(90.f), ((400.f) / (240.f)), 0.22f, 4.f * CHUNK_SIZE,
 							!eyeIndex ? -iod : iod, 3.f, false);
@@ -184,14 +198,14 @@ void Renderer::RenderLowerScreen(DebugUI* debugUi) {
 
 	SpriteBatch_StartFrame(320, 240);
 
-	if (*gamestate == GameState_SelectWorld) {
+	if (*ReCraftCore::GetInstance()->GetGameState() == GameState_SelectWorld) {
 		WorldSelect_Render();
 	} else {
 		SpriteBatch_SetScale(2);
 		player->quickSelectBarSlots = Inventory_QuickSelectCalcSlots();
         Inventory_renderHotbar(160 / 2 - Inventory_QuickSelectCalcWidth(player->quickSelectBarSlots) / 2,
                                120 - INVENTORY_QUICKSELECT_HEIGHT, player->quickSelectBar, player->quickSelectBarSlots,
-                               &player->quickSelectBarSlot, gamestate);
+                               &player->quickSelectBarSlot);
 		player->inventorySite = Inventory_Draw(16, 0, 160, player->inventory, sizeof(player->inventory) / sizeof(ItemStack), player->inventorySite);
 
 		if (showDebugInfo) debugUi->Draw();

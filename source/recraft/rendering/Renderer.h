@@ -9,9 +9,11 @@
 #include "../ReCraftCore.h"
 #include <citro3d.h>
 
+class ReCraftCore;
+
 class Renderer {
 public:
-    Renderer(World* world_, Player* player_, WorkQueue* queue, GameState* gamestate_, ReCraftCore* reCraftCore);
+    Renderer(World* world_, Player* player_, WorkQueue* queue);
     ~Renderer();
 
     void Render(DebugUI* debugUi);
@@ -33,8 +35,6 @@ private:
     Player* player;
     WorldRenderer* worldRenderer;
     WorkQueue* workqueue;
-
-    GameState* gamestate;
 
     void RenderFrame(int eyeIndex, float iod);
     void RenderLowerScreen(DebugUI* debugUi);

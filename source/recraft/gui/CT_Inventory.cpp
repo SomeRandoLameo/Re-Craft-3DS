@@ -18,7 +18,7 @@ static void clickAtStack(ItemStack* stack) {
 	}
 }
 
-void Inventory_renderHotbar(int x, int y, ItemStack* stacks, int count, int* selected, GameState* gameState) {
+void Inventory_renderHotbar(int x, int y, ItemStack* stacks, int count, int* selected) {
 	SpriteBatch_BindGuiTexture(GuiTexture_Widgets);
 	
 	for (int i = 0; i < count; i++) {
@@ -30,7 +30,7 @@ void Inventory_renderHotbar(int x, int y, ItemStack* stacks, int count, int* sel
 			*selected = i;
 			clickAtStack(&stacks[i]);
 
-            if (*gameState == GameState_Playing_OnLine)
+            if (*ReCraftCore::GetInstance()->GetGameState() == GameState_Playing_OnLine)
             {
                //TODO: client->GetHotbar().SelectSlot(i);
             }
