@@ -15,6 +15,7 @@ extern "C" {
 #include "rendering/Renderer.h"
 #include "world/ChunkWorker.h"
 #include "world/CT_World.h"
+#include "world/T_World.h"
 #include "world/savegame/SaveManager.h"
 #include "world/savegame/SuperChunk.h"
 #include "world/worldgen/SmeaGen.h"

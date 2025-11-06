@@ -40,6 +40,7 @@ Please dont be annoyed if this crashed on your device, as this is my first prope
 
 ### Credits
 - Network engine bits from [mclib](https://github.com/plushmonkey/mclib)
+- Learned how to utilize mclib from [Terracotta](https://github.com/plushmonkey/Terracotta)
 - Client Engine bits from [craftus](https://github.com/Onixiya/craftus)
 - Audio & Other misc. bits from [QuickLime](https://github.com/syelan34/quicklime) (this may be used in the future)
 

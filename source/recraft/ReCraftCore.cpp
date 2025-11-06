@@ -264,6 +264,9 @@ void ReCraftCore::Run() {
                 } else {
 
                     mcBridge.connect();
+                    terra::T_World world(mcBridge.getClient()->GetDispatcher());
+                    auto mesh_gen = std::make_shared<terra::render::ChunkMeshGenerator>(&world, camera.GetPosition());
+
                     mcBridge.startBackgroundThread();
                     this->gamestate = GameState_Playing_OnLine;
                 }
