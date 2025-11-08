@@ -6,8 +6,8 @@
 #include <stdarg.h>
 #include <stdlib.h>
 
-#define STATUS_LINES (240 / 8 / 2)
-#define LOG_LINES 20
+#define STATUS_LINES (240 / 8)
+#define LOG_LINES 40
 #define LOG_LINE_LENGTH 128
 #define STATUS_LINE_LENGTH 128
 

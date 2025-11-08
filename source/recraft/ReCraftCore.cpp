@@ -204,6 +204,17 @@ void ReCraftCore::Run() {
                         player.quickSelectBar[i] = item;
                         debugUI.Text("%d ",item.block);
                     }
+
+                    debugUI.Text("===============");
+                    auto rndblock = client->GetWorld()->GetChunk(mc::Vector3i(0,0,0))->GetBlock(mc::Vector3i(0,3,0)); //TODO: This crashes on Hardware
+                    debugUI.Text(
+                            "%s,%f at: %s in chunk: %s",
+                            rndblock->GetName().c_str(),
+                            static_cast<float>(rndblock->GetType()),
+                            to_string(mc::Vector3i(0,3,0)).c_str(),
+                            to_string(mc::Vector3i(0,0,0)).c_str()
+                    );
+                    debugUI.Text("===============");
                 });
             }
 
@@ -292,11 +303,11 @@ void ReCraftCore::Run() {
 		ReleaseWorld(&chunkWorker, &savemgr, world);
 	}
 
-    if (this->gamestate == GameState_Playing_OnLine)
-	{
+    if (this->gamestate == GameState_Playing_OnLine) {
+        mcBridge.UnregisterWorldListener();
         mcBridge.stopBackgroundThread();
         mcBridge.disconnect();
-	}
+    }
 
 	savemgr.~SaveManager();
 
