@@ -1,6 +1,7 @@
 #pragma once
 
-#include <stdbool.h>
+#include <cstdint>
+#include <algorithm>
 
 #include "../../mclib/common/Common.h"
 #include "../../mclib/core/Client.h"
@@ -13,11 +14,13 @@
 
 #include "../misc/NumberUtils.h"
 
-typedef struct {
-	Block block;
-	uint8_t meta, amount;
-} ItemStack;
+class ItemStack {
+public:
+    Block block;
+    u8 meta; // ItemDamage
+    u8 amount;
 
-#define ITEMSTACK_MAX (64)
+    static constexpr int MAX = 64;
 
-void ItemStack_Transfer(ItemStack* src, ItemStack* dst);
+    static void Transfer(ItemStack* src, ItemStack* dst);
+};

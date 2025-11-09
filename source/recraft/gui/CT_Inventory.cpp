@@ -14,7 +14,7 @@ static void clickAtStack(ItemStack* stack) {
 		sourceStack = stack;
 		proposedSourceStack = NULL;
 	} else if (sourceStack != NULL) {
-		if (sourceStack != stack) ItemStack_Transfer(sourceStack, stack);
+		if (sourceStack != stack) ItemStack::Transfer(sourceStack, stack);
 		sourceStack = NULL;
 	}
 }
