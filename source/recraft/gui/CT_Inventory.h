@@ -3,18 +3,36 @@
 #include "../inventory/ItemStack.h"
 #include "../GameStates.h"
 #include "../misc/NumberUtils.h"
-
-
-#define INVENTORY_QUICKSELECT_MAXSLOTS 9
-#define INVENTORY_QUICKSELECT_HEIGHT (22 + 1)
-
-#define INVENTORY_MAX_PER_SITE (27)
+#include <cstdint>
 
 class ReCraftCore;
 
-static inline int Inventory_QuickSelectCalcSlots() { return INVENTORY_QUICKSELECT_MAXSLOTS; }
-static inline int Inventory_QuickSelectCalcWidth(int slots) { return 54 + (slots - 2) * 20; }
+class Inventory {
+public:
+    static constexpr int QUICKSELECT_MAX_SLOTS = 9;
+    static constexpr int QUICKSELECT_HEIGHT = 23;  // 22 + 1
+    static constexpr int MAX_PER_SITE = 27;
 
-void Inventory_renderHotbar(int x, int y, ItemStack* stacks, int count, int* selected);
+    // Calculate quickselect dimensions
+    static constexpr int calculateQuickSelectSlots() noexcept {
+        return QUICKSELECT_MAX_SLOTS;
+    }
 
-int Inventory_Draw(int x, int y, int w, ItemStack* stacks, int count, int site);
+    static constexpr int calculateQuickSelectWidth(int slots) noexcept {
+        return 54 + (slots - 2) * 20;
+    }
+
+    // Render the hotbar UI
+    static void renderHotbar(int x, int y, ItemStack* stacks, int count, int& selected);
+
+    // Draw inventory grid, returns current site number
+    static int draw(int x, int y, int width, ItemStack* stacks, int count, int site);
+
+private:
+    // Internal state for drag-and-drop operations
+    static inline ItemStack* sourceStack = nullptr;
+    static inline ItemStack* proposedSourceStack = nullptr;
+
+    // Helper function for click handling
+    static void handleStackClick(ItemStack* stack);
+};

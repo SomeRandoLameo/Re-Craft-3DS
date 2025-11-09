@@ -37,7 +37,7 @@ Player::Player(World* world) {
 
     breakPlaceTimeout = 0.f;
 
-    quickSelectBarSlots = INVENTORY_QUICKSELECT_MAXSLOTS;
+    quickSelectBarSlots = Inventory::calculateQuickSelectSlots();
     quickSelectBarSlot = 0;
     inventorySite = 1;
 
@@ -92,7 +92,7 @@ void Player::InitializeInventory() {
     inventory[l++] = (ItemStack){Block_Emerald_Ore, 0, 1};
     inventory[l++] = (ItemStack){Block_Furnace, 0, 1};
 
-    for (int i = 0; i < INVENTORY_QUICKSELECT_MAXSLOTS; i++)
+    for (int i = 0; i < Inventory::calculateQuickSelectSlots(); i++)
         quickSelectBar[i] = (ItemStack){Block_Air, 0, 0};
 }
 

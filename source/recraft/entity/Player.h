@@ -62,7 +62,7 @@ public:
     int quickSelectBarSlots;
     int quickSelectBarSlot;
     int inventorySite;
-    ItemStack quickSelectBar[INVENTORY_QUICKSELECT_MAXSLOTS];
+    ItemStack quickSelectBar[Inventory::calculateQuickSelectSlots()];
 
     Raycast_Result viewRayCast;
     bool blockInSight, blockInActionRange;
