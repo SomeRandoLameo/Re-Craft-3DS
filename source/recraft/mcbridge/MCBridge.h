@@ -9,32 +9,12 @@
 
 //Craftus includes
 #include "../inventory/ItemStack.h"
-#include "../world/CT_World.h"  // Add this include for World type
-#include "../world/T_World.h"   // Add this for terra::WorldListener
 
 #include <memory>
 #include <iostream>
 #include <atomic>
 #include <functional>
-#include <unordered_map>
 #include <3ds.h>
-
-// Forward declarations
-class MCBridge;
-
-// Declare the listener class BEFORE MCBridge
-class MCBridgeWorldListener : public terra::WorldListener {
-public:
-    MCBridgeWorldListener(World* ctWorld, MCBridge* bridge)
-            : m_ctWorld(ctWorld), m_bridge(bridge) {}
-
-    void OnChunkLoad(terra::ChunkPtr chunk, const terra::ChunkColumnMetadata& meta, u16 yIndex) override;
-    void OnBlockChange(mc::Vector3i position, mc::block::BlockPtr newBlock, mc::block::BlockPtr oldBlock) override;
-
-private:
-    World* m_ctWorld;
-    MCBridge* m_bridge;
-};
 
 class MCBridge {
 public:
@@ -45,18 +25,11 @@ public:
     void disconnect();
     void update();
 
+
     void startBackgroundThread();
     void stopBackgroundThread();
     bool isConnected() const { return m_connected.load(); }
     bool isRunning() const { return m_running.load(); }
-
-    // Sync methods
-    void SyncChunkToCT(World* ctWorld, int chunkX, int chunkZ);
-    Block MCLIBBlockToCT(u32 mcBlockId);
-    void SyncBlockChangeToCT(World* ctWorld, mc::Vector3i pos, mc::block::BlockPtr block);
-
-    void RegisterWorldListener(World* ctWorld);
-    void UnregisterWorldListener();
 
     //clanker suggested whatever the heck this is
     template<typename Func>
@@ -85,7 +58,6 @@ public:
 private:
     static void threadFunc(void* arg);
     void backgroundLoop();
-    void InitBlockMapping();
 
     std::unique_ptr<mc::protocol::packets::PacketDispatcher> m_dispatcher;
     std::unique_ptr<mc::core::Client> m_client;
@@ -97,13 +69,6 @@ private:
     std::atomic<bool> m_running;
     std::atomic<bool> m_connected;
     std::atomic<bool> m_shouldStop;
-
-    // Block mapping
-    std::unordered_map<u32, Block> m_blockMapping;
-
-    // World listener
-    std::unique_ptr<MCBridgeWorldListener> m_worldListener;
-    World* m_syncedWorld;
 
     static constexpr size_t THREAD_STACK_SIZE = 64 * 1024;
     static constexpr int THREAD_PRIORITY = 0x30;
