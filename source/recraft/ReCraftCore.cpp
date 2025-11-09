@@ -204,7 +204,7 @@ void ReCraftCore::Run() {
                         player.quickSelectBar[i] = item;
                         debugUI.Text("%d ",item.block);
                     }
-
+/*
                     debugUI.Text("===============");
                     auto rndblock = client->GetWorld()->GetChunk(mc::Vector3i(0,0,0))->GetBlock(mc::Vector3i(0,3,0)); //TODO: This crashes on Hardware
                     debugUI.Text(
@@ -215,6 +215,7 @@ void ReCraftCore::Run() {
                             to_string(mc::Vector3i(0,0,0)).c_str()
                     );
                     debugUI.Text("===============");
+                    */
                 });
             }
 
@@ -276,7 +277,7 @@ void ReCraftCore::Run() {
 
                     mcBridge.connect();
                     terra::T_World world(mcBridge.getClient()->GetDispatcher());
-                    auto mesh_gen = std::make_shared<terra::render::ChunkMeshGenerator>(&world, camera.GetPosition());
+                   // auto mesh_gen = std::make_shared<terra::render::ChunkMeshGenerator>(&world, camera.GetPosition());
 
                     mcBridge.startBackgroundThread();
                     this->gamestate = GameState_Playing_OnLine;
@@ -304,7 +305,6 @@ void ReCraftCore::Run() {
 	}
 
     if (this->gamestate == GameState_Playing_OnLine) {
-        mcBridge.UnregisterWorldListener();
         mcBridge.stopBackgroundThread();
         mcBridge.disconnect();
     }
