@@ -1,6 +1,6 @@
 #include "TextureMap.h"
 
-#include "../../../include/lodepng/lodepng.h"
+#include <lodepng.h>
 
 #include <3ds.h>
 #include <citro3d.h>
