@@ -9,6 +9,30 @@
 #include "../ReCraftCore.h"
 #include <citro3d.h>
 
+//TODO: Organize
+#include <3ds.h>
+#include <citro3d.h>
+#include <tex3ds.h>
+
+#include <fstream>
+#include <functional>
+#include <iostream>
+#include <map>
+#include <vector>
+
+// Enable Npi Assert to write Errors to file
+#define IMGUI_IMPL_CITRO3D_USE_NPI_ASSERT
+#define IMGUI_IMPL_CIR_USE_NPI_ASSERT
+
+#include "../../imgui/imgui.h"
+#include "../../imgui-impl/imgui_impl_citro3d.h"
+#include "../../imgui-impl/imgui_impl_ctr.h"
+
+struct NpiEasyTex {
+    C3D_Tex* tex = NULL;
+    Tex3DS_Texture t3x;
+};
+
 class ReCraftCore;
 
 class Renderer {
@@ -35,6 +59,10 @@ private:
     Player* player;
     WorldRenderer* worldRenderer;
     WorkQueue* workqueue;
+
+    ImGuiIO* io;
+    NpiEasyTex ntex;
+    bool show_demo_window;
 
     void RenderFrame(int eyeIndex, float iod);
     void RenderLowerScreen(DebugUI* debugUi);
