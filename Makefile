@@ -33,9 +33,9 @@ include $(DEVKITARM)/3ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
-SOURCES		:=	source
+SOURCES		:=	source imgui ../impl
 DATA		:=	data
-INCLUDES	:=	include
+INCLUDES	:=	imgui ../impl include
 GRAPHICS	:=	gfx
 GFXBUILD	:=	$(BUILD)
 ROMFS		:=	romfs
@@ -52,15 +52,17 @@ endif
 #---------------------------------------------------------------------------------
 ARCH	:=	-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 
-CFLAGS	:=	-g -Wall -O2 -mword-relocations \
-			-ffunction-sections \
+CFLAGS	:=	-g -Wall -Wno-psabi -O2 -mword-relocations \
+			-DV_STRING=\"$(GIT_VER)\" \
+			-DV_TIME=\"$(TIME_TIME)\" \
+			-fomit-frame-pointer -ffunction-sections \
 			$(ARCH)
 
 CFLAGS   += $(INCLUDE) -D__3DS__ -DUSE_CURL -D_3DS=1 -g -O0
-CXXFLAGS := $(CFLAGS) -Wno-changes-meaning -fexceptions -std=gnu++14 -g -O0 # removed: -fno-rtti
+CXXFLAGS := $(CFLAGS) -Wno-changes-meaning -fexceptions -std=gnu++20 -g -O0 # removed: -fno-rtti
 
-ASFLAGS :=  -g $(ARCH)
-LDFLAGS =  -specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
+ASFLAGS	:=	-g $(ARCH)
+LDFLAGS	=	-specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
 LIBS	:= -lz -lcurl -lmbedtls -lmbedx509 -lmbedcrypto -lcitro3d -lctru -lm -lopusfile -logg -lopus
 
@@ -84,7 +86,6 @@ ifneq ($(BUILD),$(notdir $(CURDIR)))
 export OUTPUT	:=	$(CURDIR)/$(TARGET)
 export TOPDIR	:=	$(CURDIR)
 
-# Recursively find all source directories
 SOURCES_ALL := $(shell find $(SOURCES) -type d 2>/dev/null)
 SOURCES_ALL += $(shell find $(INCLUDES) -type d 2>/dev/null)
 

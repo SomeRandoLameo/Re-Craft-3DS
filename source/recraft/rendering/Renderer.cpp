@@ -14,6 +14,85 @@
 #include <gui_shbin.h>
 #include <world_shbin.h>
 
+const auto CLEAR_COLOR = 0x1a2529FF;
+const auto SCREEN_WIDTH = 400.0f;
+const auto SCREEN_HEIGHT = 480.0f;
+const auto TRANSFER_SCALING = GX_TRANSFER_SCALE_NO;
+const auto FB_SCALE = 1.0f;
+const auto FB_WIDTH = SCREEN_WIDTH * FB_SCALE;
+const auto FB_HEIGHT = SCREEN_HEIGHT * FB_SCALE;
+
+const auto DISPLAY_TRANSFER_FLAGS =
+        GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) |
+        GX_TRANSFER_RAW_COPY(0) | GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGBA8) |
+        GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB8) |
+        GX_TRANSFER_SCALING(TRANSFER_SCALING);
+
+C3D_RenderTarget* Top;
+C3D_RenderTarget* Bottom;
+
+#define rev_void(x) reinterpret_cast<void*>(x)
+
+
+
+bool loadet_s = false;
+
+void NpiEasyTexLoad(NpiEasyTex& texture, const std::string& path) {
+    if (texture.tex) C3D_TexDelete(texture.tex);
+    texture.tex = new C3D_Tex;
+    FILE* fp = fopen(path.c_str(), "rb");
+    if (!fp) {
+        fclose(fp);
+        delete texture.tex;
+        return;
+    }
+    texture.t3x = Tex3DS_TextureImportStdio(fp, texture.tex, nullptr, true);
+    C3D_TexSetFilter(texture.tex, GPU_LINEAR, GPU_LINEAR);
+    fclose(fp);
+    loadet_s = true;
+}
+
+void NpiImGuiImage(NpiEasyTex texture, size_t index,
+                   const ImVec4& tint_col = ImVec4(1, 1, 1, 1),
+                   const ImVec4& border_col = ImVec4(0, 0, 0, 0)) {
+    const auto sub = Tex3DS_GetSubTexture(texture.t3x, index);
+    ImGui::Image(texture.tex, ImVec2(sub->width, sub->height),
+                 ImVec2(sub->left, sub->top), ImVec2(sub->right, sub->bottom),
+                 tint_col, border_col);
+}
+
+void NpiImGuiImageButton(NpiEasyTex texture, size_t index,
+                         int frame_padding = -1,
+                         const ImVec4& bg_col = ImVec4(0, 0, 0, 0),
+                         const ImVec4& tint_col = ImVec4(1, 1, 1, 1)) {
+    const auto sub = Tex3DS_GetSubTexture(texture.t3x, index);
+    ImGui::ImageButton(
+            texture.tex, ImVec2(sub->width, sub->height), ImVec2(sub->left, sub->top),
+            ImVec2(sub->right, sub->bottom), frame_padding, bg_col, tint_col);
+}
+
+// clang-format off
+std::vector<std::string> styles = {
+        "ImGui Light",
+        "ImGui Dark",
+        "ImGui Classic",
+};
+// clang-format on
+
+std::string cstyle = styles[1];
+
+void LoadStyle() {
+    if (cstyle == styles[0])
+        ImGui::StyleColorsLight();
+    else if (cstyle == styles[1])
+        ImGui::StyleColorsDark();
+    else if (cstyle == styles[2])
+        ImGui::StyleColorsClassic();
+    else
+        ImGui::StyleColorsDark();
+}
+
+
 #define DISPLAY_TRANSFER_FLAGS																										  \
 	(GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) | GX_TRANSFER_RAW_COPY(0) | GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGBA8) | \
 	 GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB8) | \
@@ -51,6 +130,9 @@ Renderer::Renderer(World* world_, Player* player_, WorkQueue* queue){
 	lowerScreen = C3D_RenderTargetCreate(240, 320, GPU_RB_RGBA8, GPU_RB_DEPTH16);
 	C3D_RenderTargetSetOutput(lowerScreen, GFX_BOTTOM, GFX_LEFT, DISPLAY_TRANSFER_FLAGS);
 
+    Top = renderTargets[0];
+    Bottom = lowerScreen;
+
 	world_dvlb = DVLB_ParseFile((u32*)world_shbin, world_shbin_size);
 	shaderProgramInit(&world_shader);
 	shaderProgramSetVsh(&world_shader, &world_dvlb->DVLE[0]);
@@ -84,6 +166,21 @@ Renderer::Renderer(World* world_, Player* player_, WorkQueue* queue){
 	Block_Init();
 
 	Texture_Load(&logoTex, "romfs:/assets/textures/gui/title/craftus.png");
+
+    ImGui::CreateContext();
+    LoadStyle();
+
+    ImGuiIO& io = ImGui::GetIO();
+    ImGuiStyle& style = ImGui::GetStyle();
+    style.ScaleAllSizes(0.5f);
+    io.IniFilename = nullptr;
+
+    ImGui_ImplCtr_Init();
+    ImGui_ImplCitro3D_Init();
+
+    NpiEasyTexLoad(ntex, "romfs:/gfx/test.t3x");
+
+    show_demo_window = false;
 }
 
 Renderer::~Renderer() {
@@ -106,25 +203,79 @@ Renderer::~Renderer() {
 	shaderProgramFree(&world_shader);
 	if (world_dvlb) DVLB_Free(world_dvlb);
 
+    ImGui_ImplCitro3D_Shutdown();
+    ImGui_ImplCtr_Shutdown();
+
 	C3D_Fini();
 }
 
 void Renderer::Render(DebugUI* debugUi) {
-	float iod = osGet3DSliderState() * PLAYER_HALFEYEDIFF;
+    float iod = osGet3DSliderState() * PLAYER_HALFEYEDIFF;
 
-	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+    C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 
-	if (*ReCraftCore::GetInstance()->GetGameState() == GameState_Playing) PolyGen_Harvest(debugUi);
+    if (*ReCraftCore::GetInstance()->GetGameState() == GameState_Playing)
+        PolyGen_Harvest(debugUi);
 
-	for (int i = 0; i < 2; i++) {
-		RenderFrame(i, iod);
-		if (iod <= 0.f) break;
-	}
+    for (int i = 0; i < 2; i++) {
+        RenderFrame(i, iod);
+        if (iod <= 0.f) break;
+    }
 
-	RenderLowerScreen(debugUi);
+    RenderLowerScreen(debugUi);
 
-	C3D_FrameEnd(0);
+    ImGuiIO& io = ImGui::GetIO();
+    io.DisplaySize = ImVec2(SCREEN_WIDTH, SCREEN_HEIGHT);
+    io.DisplayFramebufferScale = ImVec2(FB_SCALE, FB_SCALE);
+
+    ImGui_ImplCitro3D_NewFrame();
+    ImGui_ImplCtr_NewFrame();
+    ImGui::NewFrame();
+
+    ImGui::Begin("Test");
+    ImGui::Text("Hold Y and use CIRCLEPAD to Move\nThe Window f.e. to Bottom Screen!");
+    NpiImGuiImage(ntex, 0);
+    ImGui::SameLine();
+    NpiImGuiImage(ntex, 1);
+    ImGui::SameLine();
+    NpiImGuiImage(ntex, 2);
+
+    if (ImGui::BeginCombo("##StyleSelect", cstyle.c_str())) {
+        for (size_t n = 0; n < styles.size(); n++) {
+            bool is_selected = (cstyle.c_str() == styles[n]);
+            if (ImGui::Selectable(styles[n].c_str(), is_selected)) {
+                cstyle = styles[n];
+                LoadStyle();
+            }
+            if (is_selected) ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
+    }
+
+    ImGui::Checkbox("Show Demo Window", &show_demo_window);
+    ImGui::End();
+
+    if (show_demo_window) {
+        ImGui::ShowDemoWindow(&show_demo_window);
+    }
+
+    ImGui::Render();
+
+    C3D_FrameDrawOn(Top);
+    C3D_FrameDrawOn(Bottom);
+
+    ImGui_ImplCitro3D_RenderDrawData(ImGui::GetDrawData(), rev_void(Top),
+                                     rev_void(Bottom));
+
+    C3D_DepthTest(true, GPU_GREATER, GPU_WRITE_ALL);
+    C3D_CullFace(GPU_CULL_BACK_CCW);
+
+    C3D_BindProgram(&world_shader);
+    C3D_SetAttrInfo(&world_vertexAttribs);
+
+    C3D_FrameEnd(0);
 }
+
 
 void Renderer::RenderFrame(int eyeIndex, float iod) {
 	C3D_RenderTargetClear(renderTargets[eyeIndex], C3D_CLEAR_ALL, CLEAR_COLOR_SKY, 0);
