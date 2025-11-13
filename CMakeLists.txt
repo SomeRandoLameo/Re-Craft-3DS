@@ -162,7 +162,6 @@ add_executable(${PROJECT_NAME}
     source/imgui-impl/imgui_impl_ctr.cpp
 )
 target_include_directories(${PROJECT_NAME} PUBLIC
-    include
     source
     ${DEVKITPRO}/portlibs/3ds/include
     ${DEVKITPRO}/portlibs/3ds/include/opus
@@ -202,8 +201,34 @@ ctr_generate_smdh(
 )
 ctr_create_3dsx(
     ${PROJECT_NAME}
-    OUTPUT "${CMAKE_SOURCE_DIR}/${PROJECT_NAME}.3dsx"
+    OUTPUT "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.3dsx"
     SMDH "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.smdh"
     ROMFS "${APP_ROMFS}"
     DEPENDS create_resources
+)
+
+# 1.12 server stuff for ease of use
+
+set(SERVER_DIR "${CMAKE_SOURCE_DIR}/server")
+set(SERVER_JAR "${SERVER_DIR}/server.jar")
+set(SERVER_URL "https://piston-data.mojang.com/v1/objects/8494e844e911ea0d63878f64da9dcc21f53a3463/server.jar")
+
+# Custom target: download-server
+add_custom_target(download-server
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${SERVER_DIR}"
+    COMMAND ${CMAKE_COMMAND} -E echo "Downloading Minecraft server JAR..."
+    COMMAND curl -L "${SERVER_URL}" -o "${SERVER_JAR}"
+    COMMAND ${CMAKE_COMMAND} -E echo "Download complete: ${SERVER_JAR}"
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    COMMENT "Downloading Minecraft server JAR"
+)
+
+# Custom target: start-server
+add_custom_target(start-server
+    COMMAND ${CMAKE_COMMAND} -E echo "Checking for Java..."
+    COMMAND bash -c "command -v java >/dev/null 2>&1 || { echo >&2 'Error: Java is not installed or not in your PATH.'; echo >&2 'Please install Java 17 or newer and try again.'; exit 1; }"
+    COMMAND ${CMAKE_COMMAND} -E echo "Starting Minecraft server..."
+    COMMAND bash -c "cd '${SERVER_DIR}' && java -Xmx1024M -Xms1024M -jar server.jar"
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    COMMENT "Starting Minecraft server"
 )
