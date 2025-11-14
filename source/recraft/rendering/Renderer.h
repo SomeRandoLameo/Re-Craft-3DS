@@ -24,9 +24,9 @@
 #define IMGUI_IMPL_CITRO3D_USE_NPI_ASSERT
 #define IMGUI_IMPL_CIR_USE_NPI_ASSERT
 
-#include "../../imgui/imgui.h"
-#include "../../imgui-impl/imgui_impl_citro3d.h"
-#include "../../imgui-impl/imgui_impl_ctr.h"
+#include "imgui.h"
+#include "imgui_impl_citro3d.h"
+#include "imgui_impl_ctr.h"
 
 struct NpiEasyTex {
     C3D_Tex* tex = NULL;

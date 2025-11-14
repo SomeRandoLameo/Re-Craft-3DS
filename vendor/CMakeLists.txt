@@ -17,3 +17,5 @@ target_include_directories(sino PUBLIC .)
 
 add_library(vec STATIC vec/vec.c)
 target_include_directories(vec PUBLIC vec)
+
+add_subdirectory(imgui-ctr)

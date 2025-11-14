@@ -28,7 +28,6 @@ endfunction()
 
 make_shader("${CMAKE_SOURCE_DIR}/source/recraft/rendering/world.v.pica" "world")
 make_shader("${CMAKE_SOURCE_DIR}/source/recraft/rendering/gui.v.pica" "gui")
-make_shader("${CMAKE_SOURCE_DIR}/source/imgui-impl/imgui_impl_c3d.v.pica" "imgui_impl_c3d")
 
 add_subdirectory(vendor)
 
@@ -152,14 +151,6 @@ add_executable(${PROJECT_NAME}
     source/recraft/world/WorkQueue.cpp
     source/recraft/world/worldgen/SmeaGen.cpp
     source/recraft/world/worldgen/SuperFlatGen.cpp
-
-    source/imgui/imgui.cpp
-    source/imgui/imgui_demo.cpp
-    source/imgui/imgui_draw.cpp
-    source/imgui/imgui_tables.cpp
-    source/imgui/imgui_widgets.cpp
-    source/imgui-impl/imgui_impl_citro3d.cpp
-    source/imgui-impl/imgui_impl_ctr.cpp
 )
 target_include_directories(${PROJECT_NAME} PUBLIC
     source
@@ -185,9 +176,9 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     lodepng
     mpack
     miniz
+    imgui-ctr
     world_asm # World Shader
     gui_asm # gui shader
-    imgui_impl_c3d_asm # ImGui Shader
 )
 add_dependencies(${PROJECT_NAME} world_asm gui_asm imgui_impl_c3d_asm)
 
