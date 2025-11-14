@@ -1,9 +1,9 @@
-#include "SpriteBatch.h"
+#include "gui/SpriteBatch.h"
 
-#include "DebugUI.h"
-#include "FontLoader.h"
-#include "../rendering/TextureMap.h"
-#include "../rendering/VertexFmt.h"
+#include "gui/DebugUI.h"
+#include "gui/FontLoader.h"
+#include "rendering/TextureMap.h"
+#include "rendering/VertexFmt.h"
 
 #include <stdarg.h>
 extern "C" {

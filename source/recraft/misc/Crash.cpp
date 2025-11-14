@@ -4,7 +4,7 @@
 
 #include <3ds.h>
 
-#include "Crash.h"
+#include "misc/Crash.h"
 
 void Crash(const char* reason, ...) {
 	consoleInit(GFX_TOP, NULL);

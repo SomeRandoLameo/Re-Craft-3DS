@@ -1,7 +1,7 @@
 #include "Player.h"
-#include "../misc/Collision.h"
-#include "Damage.h"
-#include "../gui/DebugUI.h"
+#include "misc/Collision.h"
+#include "entity/Damage.h"
+#include "gui/DebugUI.h"
 
 const float MaxWalkVelocity = 4.3f;
 const float MaxFallVelocity = -50.f;
@@ -96,7 +96,7 @@ void Player::InitializeInventory() {
         quickSelectBar[i] = (ItemStack){Block_Air, 0, 0};
 }
 
-void Player::Update(Damage* dmg) {
+void Player::Update(void* dmg) {
     view = f3_new(-sinf(yaw) * cosf(pitch), sinf(pitch), -cosf(yaw) * cosf(pitch));
     blockInSight = Raycast_Cast(world, f3_new(position.x, position.y + PLAYER_EYEHEIGHT, position.z), view, &viewRayCast);
     blockInActionRange = blockInSight && viewRayCast.distSqr < 3.5f * 3.5f * 3.5f;
@@ -140,7 +140,9 @@ void Player::HandleHunger() {
     }
 }
 
-void Player::HandleRespawn(Damage* dmg) {
+void Player::HandleRespawn(void* arg1) {
+    // Stupid patch (need to get rid of that)
+    Damage* dmg = (Damage*)arg1;
     if (hp <= 0) {
         if (difficulty != 4) {
             if (spawnset == 0) {

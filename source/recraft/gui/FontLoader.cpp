@@ -1,6 +1,6 @@
-#include "FontLoader.h"
+#include "gui/FontLoader.h"
 
-#include "../misc/Crash.h"
+#include "misc/Crash.h"
 
 #include <lodepng/lodepng.h>
 

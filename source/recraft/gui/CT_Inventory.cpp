@@ -1,8 +1,8 @@
-#include "CT_Inventory.h"
-#include "../ReCraftCore.h"
-#include "Gui.h"
-#include "SpriteBatch.h"
-#include "../rendering/VertexFmt.h"
+#include "gui/CT_Inventory.h"
+#include "ReCraftCore.h"
+#include "gui/Gui.h"
+#include "gui/SpriteBatch.h"
+#include "rendering/VertexFmt.h"
 #include <algorithm>
 
 void Inventory::handleStackClick(ItemStack* stack) {

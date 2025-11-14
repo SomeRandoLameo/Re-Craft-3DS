@@ -1,3 +1,6 @@
 [submodule "vendor/imgui-ctr"]
 	path = vendor/imgui-ctr
 	url = https://github.com/npid7/imgui-impl-ctr.git
+[submodule "vendor/stb"]
+	path = vendor/stb
+	url = https://github.com/nothings/stb

@@ -1,8 +1,8 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
-#include "Player.h"
-#include "Damage.h"
+#include "entity/Player.h"
+#include "entity/Damage.h"
 
 void OvertimeDamage(char* cause, int time) {
     Player* player;

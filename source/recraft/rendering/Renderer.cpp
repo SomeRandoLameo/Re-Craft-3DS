@@ -1,15 +1,15 @@
-#include "Renderer.h"
+#include "rendering/Renderer.h"
 
-#include "../blocks/CT_Block.h"
-#include "../gui/Gui.h"
-#include "../gui/CT_Inventory.h"
-#include "../gui/SpriteBatch.h"
-#include "../gui/WorldSelect.h"
-#include "Camera.h"
-#include "Clouds.h"
-#include "Cursor.h"
-#include "PolyGen.h"
-#include "TextureMap.h"
+#include "blocks/CT_Block.h"
+#include "gui/Gui.h"
+#include "gui/CT_Inventory.h"
+#include "gui/SpriteBatch.h"
+#include "gui/WorldSelect.h"
+#include "rendering/Camera.h"
+#include "rendering/Clouds.h"
+#include "rendering/Cursor.h"
+#include "rendering/PolyGen.h"
+#include "rendering/TextureMap.h"
 
 #include <gui_shbin.h>
 #include <world_shbin.h>

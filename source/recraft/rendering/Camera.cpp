@@ -1,8 +1,8 @@
-#include "Camera.h"
+#include "rendering/Camera.h"
 
-#include "../world/CT_Chunk.h"
+#include "world/CT_Chunk.h"
 
-#include "../gui/DebugUI.h"
+#include "gui/DebugUI.h"
 
 Camera::Camera() {
 	Mtx_Identity(&view);

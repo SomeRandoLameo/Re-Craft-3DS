@@ -1,29 +1,24 @@
-#include "WorldSelect.h"
+#include "gui/WorldSelect.h"
 
-#include "Gui.h"
-#include "SpriteBatch.h"
+#include "gui/Gui.h"
+#include "gui/SpriteBatch.h"
 
 extern "C" {
     #include <vec/vec.h>
 }
 
-#include "../rendering/VertexFmt.h"
+#include "rendering/VertexFmt.h"
 
 #include <dirent.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 
-#include "../entity/Player.h"
+#include "entity/Player.h"
 
+#include <mpack/mpack.h>
 
-    #include <mpack/mpack.h>
-
-extern "C" {
-    #include <3ds.h>
-}
-
-
+#include <3ds.h>
 
 typedef struct {
 	uint32_t lastPlayed;

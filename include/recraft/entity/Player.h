@@ -1,12 +1,12 @@
 ﻿#pragma once
 
 #include <stdbool.h>
-#include "../world/CT_World.h"
-#include "../gui/CT_Inventory.h"
-#include "../inventory/ItemStack.h"
-#include "Damage.h"
-#include "../misc/Raycast.h"
-#include "../misc/VecMath.h"
+#include "world/CT_World.h"
+#include "gui/CT_Inventory.h"
+#include "inventory/ItemStack.h"
+#include "entity/Damage.h"
+#include "misc/Raycast.h"
+#include "misc/VecMath.h"
 
 #define PLAYER_EYEHEIGHT (1.65f)
 #define PLAYER_HEIGHT (1.8f)
@@ -21,7 +21,7 @@ public:
     ~Player() = default;
 
     // Public methods
-    void Update(Damage* dmg);
+    void Update(void* dmg);
     void Move(float dt, float3 accl);
     void PlaceBlock();
     void BreakBlock();
@@ -74,5 +74,5 @@ private:
     void HandleFallDamage();
     void HandleFireDamage();
     void HandleHunger();
-    void HandleRespawn(Damage* dmg);
+    void HandleRespawn(void* dmg);
 };

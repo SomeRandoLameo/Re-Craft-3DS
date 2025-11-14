@@ -1,4 +1,4 @@
-#include "SaveManager.h"
+#include "world/savegame/SaveManager.h"
 
 #include <dirent.h>
 #include <string.h>
@@ -6,8 +6,8 @@
 
 #include <mpack/mpack.h>
 
-#include "../../gui/DebugUI.h"
-#include "../../misc/Crash.h"
+#include "gui/DebugUI.h"
+#include "misc/Crash.h"
 
 #define mkdirFlags S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH
 

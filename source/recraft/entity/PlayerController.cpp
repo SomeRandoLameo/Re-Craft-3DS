@@ -1,7 +1,7 @@
-#include "PlayerController.h"
+#include "entity/PlayerController.h"
 
-#include "../misc/CommandLine.h"
-#include "../misc/NumberUtils.h"
+#include "misc/CommandLine.h"
+#include "misc/NumberUtils.h"
 
 #include <unistd.h>
 

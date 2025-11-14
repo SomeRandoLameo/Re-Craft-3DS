@@ -1,11 +1,11 @@
-#include "SuperChunk.h"
+#include "world/savegame/SuperChunk.h"
 
 #include <miniz/miniz.h>
 #include <mpack/mpack.h>
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "../../misc/Crash.h"
+#include "misc/Crash.h"
 
 static const int SectorSize = 2048;
 static mpack_node_data_t* nodeDataPool = NULL;
