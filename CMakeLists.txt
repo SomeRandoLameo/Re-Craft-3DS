@@ -95,10 +95,10 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     sino
     ini
     vec
-    lodepng
     mpack
     miniz
     imgui-ctr
+    stb
     world_asm # World Shader
     gui_asm # gui shader
 )

@@ -4,10 +4,6 @@ cmake_minimum_required(VERSION 3.22)
 add_library(ini STATIC ini/ini.c)
 target_include_directories(ini PUBLIC ini)
 
-# Lodepng
-add_library(lodepng STATIC lodepng/lodepng.cpp)
-target_include_directories(lodepng PUBLIC lodepng)
-
 # Miniz
 add_library(miniz STATIC miniz/miniz.c)
 target_include_directories(miniz PUBLIC miniz)
@@ -28,7 +24,8 @@ target_include_directories(vec PUBLIC vec)
 add_subdirectory(imgui-ctr)
 
 # STB Libraries
-include_directories(stb)
+add_library(stb INTERFACE)
+target_include_directories(stb INTERFACE stb)
 
 # MCLIB
 add_subdirectory(mclib)
