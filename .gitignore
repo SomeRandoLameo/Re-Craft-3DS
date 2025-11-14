@@ -38,3 +38,4 @@ build/*
 /server/server.jar
 /server/usercache.json
 /server/whitelist.json
+.vscode

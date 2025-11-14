@@ -1,7 +1,7 @@
 //
 // Created by elias on 29.10.25.
 //
-#include "ItemStack.h"
+#include "inventory/ItemStack.h"
 
 void ItemStack::Transfer(ItemStack* src, ItemStack* dst) {
     if ((src->block == dst->block && src->meta == dst->meta) || dst->amount == 0) {

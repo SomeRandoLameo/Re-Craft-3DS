@@ -1,6 +1,6 @@
-#include "TextureMap.h"
+#include "rendering/TextureMap.h"
 
-#include <lodepng.h>
+#include <stb_image.h>
 
 #include <3ds.h>
 #include <citro3d.h>
@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../misc/Crash.h"
+#include "misc/Crash.h"
 
 uint32_t hash(char* str) {
 	unsigned long hash = 5381;
@@ -21,10 +21,9 @@ uint32_t hash(char* str) {
 void tileImage32(u32* src, u8* dst, int sizex, int sizez);
 
 void Texture_Load(C3D_Tex* result, char* filename) {
-    unsigned char* image = NULL;
-    unsigned width = 0, height = 0;
-    unsigned error = lodepng_decode32_file(&image, &width, &height, filename);
-    if (error == 0 && image != NULL) {
+    int width = 0, height = 0, c = 0;
+    unsigned char* image = stbi_load(filename, &width, &height, &c, 4);
+    if (image != NULL) {
         uint32_t* imgInLinRam = (uint32_t*)linearAlloc(width * height * sizeof(uint32_t));
 
         if (width < 64 || height < 64) {
@@ -67,7 +66,7 @@ void Texture_Load(C3D_Tex* result, char* filename) {
 
         linearFree(imgInLinRam);
     } else {
-        Crash("Failed to load texture %s (lodepng error %u)\n", filename, error);
+        Crash("Failed to load texture %s\n", filename);
     }
 }
 
@@ -146,11 +145,10 @@ void Texture_MapInit(Texture_Map* map, const char** files, int num_files) {
     const char* filename = files[filei];
     int c = 0;
     while (filename != NULL && c < (TEXTURE_MAPTILES * TEXTURE_MAPTILES) && filei < num_files) {
-        unsigned char* image = NULL;
-        unsigned w = 0, h = 0;
-        unsigned error = lodepng_decode32_file(&image, &w, &h, filename);
+        int w = 0, h = 0, c1 = 0;
+        unsigned char* image = stbi_load(filename, &w, &h, &c1, 4);
 
-        if (!error && image != NULL && w == TEXTURE_TILESIZE && h == TEXTURE_TILESIZE) {
+        if (image != NULL && w == TEXTURE_TILESIZE && h == TEXTURE_TILESIZE) {
             /* image is a byte buffer with 4 bytes per pixel (RGBA). Convert per-pixel to u32 then store swapped. */
             for (int x = 0; x < TEXTURE_TILESIZE; x++) {
                 for (int y = 0; y < TEXTURE_TILESIZE; y++) {
@@ -173,7 +171,7 @@ void Texture_MapInit(Texture_Map* map, const char** files, int num_files) {
         } else {
             printf("Image size(%u, %u) doesn't match or ptr null(internal error) for '%s'\n", w, h, filename ? filename : "(null)");
         }
-        free(image);
+        stbi_image_free(image);
         filename = files[++filei];
         c++;
     }

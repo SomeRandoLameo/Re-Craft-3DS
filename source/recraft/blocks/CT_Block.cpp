@@ -1,7 +1,7 @@
-#include "CT_Block.h"
+#include "blocks/CT_Block.h"
 
-#include "../rendering/TextureMap.h"
-#include "../rendering/VertexFmt.h"
+#include "rendering/TextureMap.h"
+#include "rendering/VertexFmt.h"
 
 static Texture_Map textureMap;
 

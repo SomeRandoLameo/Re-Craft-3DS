@@ -1,5 +1,5 @@
-#include "CommandLine.h"
-#include "../world/savegame/SaveManager.h"
+#include "misc/CommandLine.h"
+#include "world/savegame/SaveManager.h"
 
 #include <3ds.h>
 

@@ -1,4 +1,4 @@
-#include "WorkQueue.h"
+#include "world/WorkQueue.h"
 
 void WorkQueue_Init(WorkQueue* queue) {
     vec_init(&queue->queue);

@@ -9,7 +9,7 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "Sound.h"
+#include "misc/Sound.h"
 //#include "../gui/DebugUI.h"
 
 static const int SAMPLE_RATE = 48000;

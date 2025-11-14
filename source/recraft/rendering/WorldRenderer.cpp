@@ -1,9 +1,9 @@
-#include "WorldRenderer.h"
-#include "VertexFmt.h"
-#include "../blocks/CT_Block.h"
-#include "../gui/DebugUI.h"
-#include "Clouds.h"
-#include "Hand.h"
+#include "rendering/WorldRenderer.h"
+#include "rendering/VertexFmt.h"
+#include "blocks/CT_Block.h"
+#include "gui/DebugUI.h"
+#include "rendering/Clouds.h"
+#include "rendering/Hand.h"
 
 #include <citro3d.h>
 #include <stdio.h>

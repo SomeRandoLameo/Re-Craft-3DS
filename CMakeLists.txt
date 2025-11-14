@@ -20,7 +20,6 @@ function(make_shader arg1 arg2)
     # Need to build shaders during config stage :(
     execute_process(
         COMMAND ${PICASSO} -o "${CMAKE_BINARY_DIR}/${__NAME}.shbin" "${__FILE}"
-        RESULT_VARIABLE WORLD_RESULT
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     )
     dkp_add_embedded_binary_library(${__NAME}_asm "${CMAKE_BINARY_DIR}/${__NAME}.shbin")
@@ -28,86 +27,8 @@ endfunction()
 
 make_shader("${CMAKE_SOURCE_DIR}/source/recraft/rendering/world.v.pica" "world")
 make_shader("${CMAKE_SOURCE_DIR}/source/recraft/rendering/gui.v.pica" "gui")
-make_shader("${CMAKE_SOURCE_DIR}/source/imgui-impl/imgui_impl_c3d.v.pica" "imgui_impl_c3d")
 
 add_subdirectory(vendor)
-
-add_library(mclib STATIC
-    source/mclib/block/Banner.cpp
-    source/mclib/block/Beacon.cpp
-    source/mclib/block/Bed.cpp
-    source/mclib/block/Block.cpp
-    source/mclib/block/BlockEntity.cpp
-    source/mclib/block/BrewingStand.cpp
-    source/mclib/block/Chest.cpp
-    source/mclib/block/Dispenser.cpp
-    source/mclib/block/Dropper.cpp
-    source/mclib/block/EnchantmentTable.cpp
-    source/mclib/block/EndGateway.cpp
-    source/mclib/block/FlowerPot.cpp
-    source/mclib/block/Furnace.cpp
-    source/mclib/block/Hopper.cpp
-    source/mclib/block/InventoryBlock.cpp
-    source/mclib/block/Jukebox.cpp
-    source/mclib/block/MonsterSpawner.cpp
-    source/mclib/block/NoteBlock.cpp
-    source/mclib/block/Piston.cpp
-    source/mclib/block/RedstoneComparator.cpp
-    source/mclib/block/ShulkerBox.cpp
-    source/mclib/block/Sign.cpp
-    source/mclib/block/Skull.cpp
-    source/mclib/common/DataBuffer.cpp
-    source/mclib/common/DyeColor.cpp
-    source/mclib/common/MCString.cpp
-    source/mclib/common/Position.cpp
-    source/mclib/common/UUID.cpp
-    source/mclib/common/VarInt.cpp
-    source/mclib/core/AuthToken.cpp
-    source/mclib/core/Client.cpp
-    source/mclib/core/ClientSettings.cpp
-    source/mclib/core/Compression.cpp
-    source/mclib/core/Connection.cpp
-    source/mclib/core/Encryption.cpp
-    source/mclib/core/PlayerManager.cpp
-    source/mclib/entity/EntityManager.cpp
-    source/mclib/entity/Metadata.cpp
-    source/mclib/inventory/Hotbar.cpp
-    source/mclib/inventory/Inventory.cpp
-    source/mclib/inventory/Slot.cpp
-    source/mclib/nbt/NBT.cpp
-    source/mclib/nbt/Tag.cpp
-    source/mclib/network/IPAddress.cpp
-    source/mclib/network/Network.cpp
-    source/mclib/network/Socket.cpp
-    source/mclib/network/TCPSocket.cpp
-    source/mclib/network/UDPSocket.cpp
-    source/mclib/protocol/Protocol.cpp
-    source/mclib/protocol/packets/Packet.cpp
-    source/mclib/protocol/packets/PacketDispatcher.cpp
-    source/mclib/protocol/packets/PacketFactory.cpp
-    source/mclib/protocol/packets/PacketHandler.cpp
-    source/mclib/util/Forge.cpp
-    source/mclib/util/Hash.cpp
-    source/mclib/util/HTTPClient.cpp
-    source/mclib/util/Utility.cpp
-    source/mclib/util/VersionFetcher.cpp
-    source/mclib/util/Yggdrasil.cpp
-    source/mclib/world/Chunk.cpp
-    source/mclib/world/World.cpp
-)
-
-target_include_directories(mclib PUBLIC
-    include
-    ${DEVKITPRO}/portlibs/3ds/include
-)
-target_compile_definitions(mclib PUBLIC
-    USE_CURL
-    _3DS
-)
-target_compile_options(mclib PUBLIC
-    -Wno-changes-meaning
-)
-target_link_libraries(mclib PUBLIC z curl mbedtls mbedx509 mbedcrypto)
 
 add_executable(${PROJECT_NAME}
     source/main.cpp
@@ -152,17 +73,9 @@ add_executable(${PROJECT_NAME}
     source/recraft/world/WorkQueue.cpp
     source/recraft/world/worldgen/SmeaGen.cpp
     source/recraft/world/worldgen/SuperFlatGen.cpp
-
-    source/imgui/imgui.cpp
-    source/imgui/imgui_demo.cpp
-    source/imgui/imgui_draw.cpp
-    source/imgui/imgui_tables.cpp
-    source/imgui/imgui_widgets.cpp
-    source/imgui-impl/imgui_impl_citro3d.cpp
-    source/imgui-impl/imgui_impl_ctr.cpp
 )
 target_include_directories(${PROJECT_NAME} PUBLIC
-    source
+    include/recraft
     ${DEVKITPRO}/portlibs/3ds/include
     ${DEVKITPRO}/portlibs/3ds/include/opus
 )
@@ -182,12 +95,12 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     sino
     ini
     vec
-    lodepng
     mpack
     miniz
+    imgui-ctr
+    stb
     world_asm # World Shader
     gui_asm # gui shader
-    imgui_impl_c3d_asm # ImGui Shader
 )
 add_dependencies(${PROJECT_NAME} world_asm gui_asm imgui_impl_c3d_asm)
 

@@ -1,4 +1,4 @@
-#include "VertexFmt.h"
+#include "rendering/VertexFmt.h"
 
 #define HUE_DEGREE 512
 

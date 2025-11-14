@@ -1,6 +1,6 @@
-#include "SuperFlatGen.h"
+#include "world/worldgen/SuperFlatGen.h"
 
-#include "../../misc/NumberUtils.h"
+#include "misc/NumberUtils.h"
 
 void SuperFlatGen_Init(SuperFlatGen* gen, World* world) {}
 

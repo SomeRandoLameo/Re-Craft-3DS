@@ -1,10 +1,10 @@
-#include "PolyGen.h"
+#include "rendering/PolyGen.h"
 
 
-#include "VBOCache.h"
-#include "../world/Direction.h"
+#include "rendering/VBOCache.h"
+#include "world/Direction.h"
 
-#include "../entity/Player.h"
+#include "entity/Player.h"
 
 #include <stdbool.h>
 extern "C" {

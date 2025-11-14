@@ -1,10 +1,10 @@
-#include "Gui.h"
+#include "gui/Gui.h"
 
 #include <stdarg.h>
 
-#include "SpriteBatch.h"
-#include "../misc/NumberUtils.h"
-#include "../rendering/VertexFmt.h"
+#include "gui/SpriteBatch.h"
+#include "misc/NumberUtils.h"
+#include "rendering/VertexFmt.h"
 
 static InputData oldInput;
 static InputData input;

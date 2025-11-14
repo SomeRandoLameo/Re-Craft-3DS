@@ -1,5 +1,5 @@
-#include "ChunkWorker.h"
-#include "../misc/Crash.h"
+#include "world/ChunkWorker.h"
+#include "misc/Crash.h"
 #include <stdio.h>
 
 ChunkWorker::ChunkWorker() : thread(nullptr), working(false), shouldStop(false) {

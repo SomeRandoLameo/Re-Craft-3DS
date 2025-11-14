@@ -1,15 +1,15 @@
-#include "Renderer.h"
+#include "rendering/Renderer.h"
 
-#include "../blocks/CT_Block.h"
-#include "../gui/Gui.h"
-#include "../gui/CT_Inventory.h"
-#include "../gui/SpriteBatch.h"
-#include "../gui/WorldSelect.h"
-#include "Camera.h"
-#include "Clouds.h"
-#include "Cursor.h"
-#include "PolyGen.h"
-#include "TextureMap.h"
+#include "blocks/CT_Block.h"
+#include "gui/Gui.h"
+#include "gui/CT_Inventory.h"
+#include "gui/SpriteBatch.h"
+#include "gui/WorldSelect.h"
+#include "rendering/Camera.h"
+#include "rendering/Clouds.h"
+#include "rendering/Cursor.h"
+#include "rendering/PolyGen.h"
+#include "rendering/TextureMap.h"
 
 #include <gui_shbin.h>
 #include <world_shbin.h>
@@ -32,44 +32,6 @@ C3D_RenderTarget* Top;
 C3D_RenderTarget* Bottom;
 
 #define rev_void(x) reinterpret_cast<void*>(x)
-
-
-
-bool loadet_s = false;
-
-void NpiEasyTexLoad(NpiEasyTex& texture, const std::string& path) {
-    if (texture.tex) C3D_TexDelete(texture.tex);
-    texture.tex = new C3D_Tex;
-    FILE* fp = fopen(path.c_str(), "rb");
-    if (!fp) {
-        fclose(fp);
-        delete texture.tex;
-        return;
-    }
-    texture.t3x = Tex3DS_TextureImportStdio(fp, texture.tex, nullptr, true);
-    C3D_TexSetFilter(texture.tex, GPU_LINEAR, GPU_LINEAR);
-    fclose(fp);
-    loadet_s = true;
-}
-
-void NpiImGuiImage(NpiEasyTex texture, size_t index,
-                   const ImVec4& tint_col = ImVec4(1, 1, 1, 1),
-                   const ImVec4& border_col = ImVec4(0, 0, 0, 0)) {
-    const auto sub = Tex3DS_GetSubTexture(texture.t3x, index);
-    ImGui::Image(texture.tex, ImVec2(sub->width, sub->height),
-                 ImVec2(sub->left, sub->top), ImVec2(sub->right, sub->bottom),
-                 tint_col, border_col);
-}
-
-void NpiImGuiImageButton(NpiEasyTex texture, size_t index,
-                         int frame_padding = -1,
-                         const ImVec4& bg_col = ImVec4(0, 0, 0, 0),
-                         const ImVec4& tint_col = ImVec4(1, 1, 1, 1)) {
-    const auto sub = Tex3DS_GetSubTexture(texture.t3x, index);
-    ImGui::ImageButton(
-            texture.tex, ImVec2(sub->width, sub->height), ImVec2(sub->left, sub->top),
-            ImVec2(sub->right, sub->bottom), frame_padding, bg_col, tint_col);
-}
 
 // clang-format off
 std::vector<std::string> styles = {
@@ -178,8 +140,6 @@ Renderer::Renderer(World* world_, Player* player_, WorkQueue* queue){
     ImGui_ImplCtr_Init();
     ImGui_ImplCitro3D_Init();
 
-    NpiEasyTexLoad(ntex, "romfs:/gfx/test.t3x");
-
     show_demo_window = false;
 }
 
@@ -234,11 +194,6 @@ void Renderer::Render(DebugUI* debugUi) {
 
     ImGui::Begin("Test");
     ImGui::Text("Hold Y and use CIRCLEPAD to Move\nThe Window f.e. to Bottom Screen!");
-    NpiImGuiImage(ntex, 0);
-    ImGui::SameLine();
-    NpiImGuiImage(ntex, 1);
-    ImGui::SameLine();
-    NpiImGuiImage(ntex, 2);
 
     if (ImGui::BeginCombo("##StyleSelect", cstyle.c_str())) {
         for (size_t n = 0; n < styles.size(); n++) {

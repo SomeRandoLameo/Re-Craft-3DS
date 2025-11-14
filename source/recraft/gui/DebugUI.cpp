@@ -1,7 +1,7 @@
-#include "SpriteBatch.h"
-#include "../rendering/VertexFmt.h"
+#include "gui/SpriteBatch.h"
+#include "rendering/VertexFmt.h"
 
-#include "DebugUI.h"
+#include "gui/DebugUI.h"
 
 #include <stdarg.h>
 #include <stdlib.h>

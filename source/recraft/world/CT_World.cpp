@@ -1,6 +1,6 @@
-#include "CT_World.h"
+#include "world/CT_World.h"
 
-#include "../blocks/BlockEvents.h"
+#include "blocks/BlockEvents.h"
 
 #include <string.h>
 
