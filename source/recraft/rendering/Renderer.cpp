@@ -133,6 +133,7 @@ Renderer::Renderer(World* world_, Player* player_, WorkQueue* queue){
     LoadStyle();
 
     ImGuiIO& io = ImGui::GetIO();
+    io.FontGlobalScale = 0.9f;
     ImGuiStyle& style = ImGui::GetStyle();
     style.ScaleAllSizes(0.5f);
     io.IniFilename = nullptr;
