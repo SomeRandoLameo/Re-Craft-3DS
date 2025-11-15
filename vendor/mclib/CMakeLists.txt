@@ -82,10 +82,7 @@ target_include_directories(mclib PUBLIC
     include/mclib/world
     ${DEVKITPRO}/portlibs/3ds/include
 )
-target_compile_definitions(mclib PUBLIC
-    USE_CURL
-    _3DS
-)
+
 target_compile_options(mclib PUBLIC
     -Wno-changes-meaning
 )

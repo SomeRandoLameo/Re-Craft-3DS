@@ -79,10 +79,6 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     ${DEVKITPRO}/portlibs/3ds/include
     ${DEVKITPRO}/portlibs/3ds/include/opus
 )
-target_compile_definitions(${PROJECT_NAME} PUBLIC
-    USE_CURL
-    _3DS
-)
 target_compile_options(${PROJECT_NAME} PUBLIC
     -Wno-changes-meaning
 )
