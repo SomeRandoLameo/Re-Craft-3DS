@@ -134,10 +134,9 @@ add_custom_target(download-server
 
 # Custom target: start-server
 add_custom_target(start-server
-    COMMAND ${CMAKE_COMMAND} -E echo "Checking for Java..."
-    COMMAND bash -c "command -v java >/dev/null 2>&1 || { echo >&2 'Error: Java is not installed or not in your PATH.'; echo >&2 'Please install Java 17 or newer and try again.'; exit 1; }"
-    COMMAND ${CMAKE_COMMAND} -E echo "Starting Minecraft server..."
-    COMMAND bash -c "cd '${SERVER_DIR}' && java -Xmx1024M -Xms1024M -jar server.jar"
-    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
-    COMMENT "Starting Minecraft server"
+        COMMAND ${CMAKE_COMMAND} -E echo "Starting Minecraft server..."
+        COMMAND java -Xmx1024M -Xms1024M -jar server.jar
+        WORKING_DIRECTORY "${SERVER_DIR}"
+        COMMENT "Starting Minecraft server"
+        USES_TERMINAL
 )
