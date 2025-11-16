@@ -23,11 +23,6 @@ void ReCraftCore::ReleaseWorld(ChunkWorker* chunkWorker, SaveManager* savemgr, W
 
 void ReCraftCore::Run() {
 
-
-
-
-
-
     /**
     * INIT/SETUP CODE
     */
@@ -113,10 +108,11 @@ void ReCraftCore::Run() {
         debugUI.Text("HP: %i",player.hp);
         debugUI.Text("velocity: %f rndy: %f",player.velocity.y,player.rndy);
 		//debugUI.Text("Time: %i Cause: %c",dmg.time,dmg.cause);
-        debugUI.Text("SX: %f SY: %f SZ: %f",player.spawnx,player.spawny,player.spawnz);
+        debugUI.Text("SX: %f SY: %f SZ: %f",player.spawnPos.x,player.spawnPos.y,player.spawnPos.z);
         debugUI.Text("Hunger: %i Hungertimer: %i",player.hunger,player.hungertimer);
         debugUI.Text("Gamemode: %i",player.gamemode);
         debugUI.Text("quickbar %i",player.quickSelectBarSlot);
+
 
 		renderer.Render(&debugUI);
 
@@ -182,9 +178,7 @@ void ReCraftCore::Run() {
 
                     mc::Vector3d playerPos = client->GetPlayerController()->GetPosition();
 
-                    player.position.x = playerPos.x;
-                    player.position.y = playerPos.y;
-                    player.position.z = playerPos.z;
+                    player.position = playerPos;
 
                     dimension = client->GetConnection()->GetDimension();
                     playerCtrl.Update(&debugUI, /*&PlayerSound,*/ inputData, dt);

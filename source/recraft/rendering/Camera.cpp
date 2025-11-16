@@ -45,7 +45,7 @@ void Camera::Update(Player* player, float iod) {
 	frustumPlanes[Frustum_Bottom] = FVec4_Normalize(FVec4_Subtract(rowW, rowY));
 	frustumPlanes[Frustum_Far] = FVec4_Normalize(FVec4_Add(rowW, rowZ));
 
-	float3 forward = player->view;
+	float3 forward = f3_new(player->view.x,player->view.y,player->view.z);
 	float3 right = f3_crs(f3_new(0, 1, 0), f3_new(sinf(player->yaw), 0.f, cosf(player->yaw)));
 	float3 up = f3_crs(forward, right);
 

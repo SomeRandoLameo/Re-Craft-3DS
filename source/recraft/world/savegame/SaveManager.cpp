@@ -61,16 +61,17 @@ void SaveManager::Load(char* path) {
 
         mpack_node_t playerNode = mpack_node_array_at(mpack_node_map_cstr(root, "players"), 0);
 
-        player->position.x = mpack_node_float(mpack_node_map_cstr(playerNode, "x"));
-        player->position.y = mpack_node_float(mpack_node_map_cstr(playerNode, "y")) + 0.1f;
-        player->position.z = mpack_node_float(mpack_node_map_cstr(playerNode, "z"));
-        /*	player->spawnset = mpack_node_int(mpack_node_map_cstr(playerNode,"ss"));
-            if (mpack_node_int(mpack_node_map_cstr(playerNode,"ss"))==1){
-                player->spawnx = mpack_node_float(mpack_node_map_cstr(playerNode, "sx"));
-                player->spawny = mpack_node_float(mpack_node_map_cstr(playerNode, "sy"));
-                player->spawnz = mpack_node_float(mpack_node_map_cstr(playerNode, "sz"));
-                player->spawnset = mpack_node_int(mpack_node_map_cstr(playerNode,"ss"));
-            }*/
+        player->position.x = mpack_node_double(mpack_node_map_cstr(playerNode, "x"));
+        player->position.y = mpack_node_double(mpack_node_map_cstr(playerNode, "y")) + 0.1f;
+        player->position.z = mpack_node_double(mpack_node_map_cstr(playerNode, "z"));
+
+        player->spawnset = mpack_node_bool(mpack_node_map_cstr(playerNode,"ss"));
+        if (mpack_node_bool(mpack_node_map_cstr(playerNode, "ss"))){
+            player->spawnPos.x = mpack_node_double(mpack_node_map_cstr(playerNode, "sx"));
+            player->spawnPos.y = mpack_node_double(mpack_node_map_cstr(playerNode, "sy"));
+            player->spawnPos.z = mpack_node_double(mpack_node_map_cstr(playerNode, "sz"));
+            player->spawnset = mpack_node_bool(mpack_node_map_cstr(playerNode,"ss"));
+        }
 
         //player->gamemode=mpack_node_int(mpack_node_map_cstr(playerNode,"gamemode"));
         //use this optional part for "old" version of saved worlds
@@ -111,45 +112,66 @@ void SaveManager::Unload() {
     mpack_writer_init_file(&writer, "level.mp");
     mpack_start_map(&writer, 3);
 
-    mpack_write_cstr(&writer, "name");
-    mpack_write_cstr(&writer, world->name);
+        mpack_write_cstr(&writer, "name");
+        mpack_write_cstr(&writer, world->name);
 
-    mpack_write_cstr(&writer, "players");
-    mpack_start_array(&writer, 1);
-    mpack_start_map(&writer, 9);
+        mpack_write_cstr(&writer, "players");
+        mpack_start_array(&writer, 1);
+            mpack_start_map(&writer, 13);
 
-    mpack_write_cstr(&writer, "x");
-    mpack_write_float(&writer, player->position.x);
-    mpack_write_cstr(&writer, "y");
-    mpack_write_float(&writer, player->position.y);
-    mpack_write_cstr(&writer, "z");
-    mpack_write_float(&writer, player->position.z);
-    mpack_write_cstr(&writer, "hp");
-    mpack_write_int(&writer, player->hp);
-    mpack_write_cstr(&writer, "hunger");
-    mpack_write_int(&writer, player->hunger);
 
-    /*mpack_write_cstr(&writer, "gamemode");
-    mpack_write_int(&writer, player->gamemode);
-    mpack_write_cstr(&writer, "cheats");
-    mpack_write_bool(&writer, player->cheats);*/
+                mpack_write_cstr(&writer, "x");
+                mpack_write_double(&writer, player->position.x);
 
-    mpack_write_cstr(&writer, "pitch");
-    mpack_write_float(&writer, player->pitch);
-    mpack_write_cstr(&writer, "yaw");
-    mpack_write_float(&writer, player->yaw);
+                mpack_write_cstr(&writer, "y");
+                mpack_write_double(&writer, player->position.y);
 
-    mpack_write_cstr(&writer, "flying");
-    mpack_write_bool(&writer, player->flying);
+                mpack_write_cstr(&writer, "z");
+                mpack_write_double(&writer, player->position.z);
 
-    mpack_write_cstr(&writer, "crouching");
-    mpack_write_bool(&writer, player->crouching);
+                mpack_write_cstr(&writer, "sx");
+                mpack_write_double(&writer,player->spawnPos.x);
+
+                mpack_write_cstr(&writer, "sy");
+                mpack_write_double(&writer,player->spawnPos.y);
+
+                mpack_write_cstr(&writer, "sz");
+                mpack_write_double(&writer,player->spawnPos.z);
+
+                mpack_write_cstr(&writer, "ss");
+                mpack_write_bool(&writer,player->spawnset);
+
+
+                mpack_write_cstr(&writer, "hp");
+                mpack_write_int(&writer, player->hp);
+
+                mpack_write_cstr(&writer, "hunger");
+                mpack_write_int(&writer, player->hunger);
+
+                /*mpack_write_cstr(&writer, "gamemode");
+                mpack_write_int(&writer, player->gamemode);
+                mpack_write_cstr(&writer, "cheats");
+                mpack_write_bool(&writer, player->cheats);*/
+
+                mpack_write_cstr(&writer, "pitch");
+                mpack_write_float(&writer, player->pitch);
+
+                mpack_write_cstr(&writer, "yaw");
+                mpack_write_float(&writer, player->yaw);
+
+                mpack_write_cstr(&writer, "flying");
+                mpack_write_bool(&writer, player->flying);
+
+                mpack_write_cstr(&writer, "crouching");
+                mpack_write_bool(&writer, player->crouching);
+
+            mpack_finish_map(&writer);
+        mpack_finish_array(&writer);
+
+        mpack_write_cstr(&writer, "worldType");
+        mpack_write_uint(&writer, world->genSettings.type);
 
     mpack_finish_map(&writer);
-    mpack_finish_array(&writer);
-
-    mpack_write_cstr(&writer, "worldType");
-    mpack_write_uint(&writer, world->genSettings.type);
 
     mpack_error_t err = mpack_writer_destroy(&writer);
     if (err != mpack_ok) {

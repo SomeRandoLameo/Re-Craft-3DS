@@ -334,7 +334,7 @@ void PlayerController::Update(DebugUI* debugUi, InputData input, float dt) {
     if (placeBlock > 0.f) player->PlaceBlock();
     if (breakBlock > 0.f) player->BreakBlock();
 
-    if (jump > 0.f) player->Jump(movement);
+    if (jump > 0.f) player->Jump(mc::Vector3d(movement.x, movement.y, movement.z));
 
     bool releasedJump = WasKeyReleased(controlScheme.jump, &agnosticInput);
     if (flyTimer >= 0.f) {
@@ -367,6 +367,6 @@ void PlayerController::Update(DebugUI* debugUi, InputData input, float dt) {
         openedCmd = true;
     }
 
-    player->Move(dt, movement);
+    player->Move(dt, mc::Vector3d(movement.x,movement.y,movement.z));
     player->Update(dmg);
 }

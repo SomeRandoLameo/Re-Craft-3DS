@@ -49,21 +49,21 @@ void CommandLine_Execute(World* world, Player* player, DebugUI* debugUi, const c
                 debugUi->Log("Cannot set hp to %i",hp);
 			}
 		}
-		float sx,sy,sz;
-		if (sscanf(&text[1], "ws %f %f %f", &sx, &sy, &sz) == 3) {
-			player->spawnx = sx;
-			player->spawny = sy;
-			player->spawnz = sz;
-			player->spawnset=1;
+		double sx,sy,sz;
+		if (sscanf(&text[1], "ws %d %d %d", &sx, &sy, &sz) == 3) {
+			player->spawnPos.x = sx;
+			player->spawnPos.y = sy;
+			player->spawnPos.z = sz;
+			player->spawnset=true;
 			mpack_write_cstr(&writer, "sx");
-			mpack_write_float(&writer,player->spawnx);
+			mpack_write_double(&writer,player->spawnPos.x);
 			mpack_write_cstr(&writer, "sy");
-			mpack_write_float(&writer,player->spawny);
+			mpack_write_double(&writer,player->spawnPos.y);
 			mpack_write_cstr(&writer, "sz");
-			mpack_write_float(&writer,player->spawnz);
+			mpack_write_double(&writer,player->spawnPos.z);
 			mpack_write_cstr(&writer, "ss");
-			mpack_write_int(&writer,player->spawnset);
-            debugUi->Log("Set spawn to %f, %f %f", sx, sy, sz);
+			mpack_write_bool(&writer,player->spawnset);
+            debugUi->Log("Set spawn to %d, %d %d", sx, sy, sz);
 			if (err != mpack_ok) {
                 debugUi->Log("Mpack error %d while saving world manifest", err);
                 debugUi->Log("Save file possibly corrupted, don't hit me plz");

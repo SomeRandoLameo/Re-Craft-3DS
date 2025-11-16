@@ -1,6 +1,10 @@
 ﻿#pragma once
 
 #include <stdbool.h>
+
+//mclib
+#include <common/Vector.h>
+
 #include "world/CT_World.h"
 #include "gui/CT_Inventory.h"
 #include "inventory/ItemStack.h"
@@ -22,50 +26,58 @@ public:
 
     // Public methods
     void Update(void* dmg);
-    void Move(float dt, float3 accl);
+    void Move(float dt, mc::Vector3d accl);
     void PlaceBlock();
     void BreakBlock();
-    void Jump(float3 accl);
-    bool CanMove(float3 newVec);
+    void Jump(mc::Vector3d accl);
+    bool CanMove(mc::Vector3d newVec);
 
-    // Public member variables (for compatibility with existing code)
-    float3 position;
-    float pitch, yaw;
-    float bobbing, fovAdd, crouchAdd;
-    bool grounded, jumped, sprinting, flying, crouching;
-    World* world;
+    mc::Vector3d position = mc::Vector3d(0.f, 0.f, 0.f);
+    float pitch = 0.f;
+    float yaw = 0.f;
+    float bobbing = 0.f;
+    float fovAdd = 0.f;
+    float crouchAdd = 0.f;
+    bool grounded = false;
+    bool jumped = false;
+    bool sprinting = false;
+    bool flying = false;
+    bool crouching = false;
+    World* world = nullptr;
 
-    float3 view;
-    bool autoJumpEnabled;
+    mc::Vector3d view = mc::Vector3d(0, 0, -1);
+    bool autoJumpEnabled = true;
 
-    float3 velocity;
-    float simStepAccum;
+    mc::Vector3d velocity = mc::Vector3d(0, 0, 0);
+    float simStepAccum = 0.f;
 
-    float breakPlaceTimeout;
-    int hungertimer;
+    float breakPlaceTimeout = 0.f;
+    int hungertimer = 0;
 
-    int hp;
-    int armour;
-    int oxygen;
-    int hunger;
-    int difficulty;
-    float rndy;
+    int hp = 20;
+    int armour = 0;
+    int oxygen = 0;
+    int hunger = 20;
 
-    float spawnx;
-    float spawny;
-    float spawnz;
-    int spawnset;
+    int difficulty = 1;
 
-    int gamemode;
-    bool cheats;
+    float rndy = 0.f;
 
-    int quickSelectBarSlots;
-    int quickSelectBarSlot;
-    int inventorySite;
+    mc::Vector3d spawnPos = mc::Vector3d(0, 0, 0);
+
+    bool spawnset = false;
+
+    int gamemode = 0;
+    bool cheats = false;
+
+    int quickSelectBarSlots = Inventory::calculateQuickSelectSlots();
+    int quickSelectBarSlot = 0;
+    int inventorySite = 1;
     ItemStack quickSelectBar[Inventory::calculateQuickSelectSlots()];
 
     Raycast_Result viewRayCast;
-    bool blockInSight, blockInActionRange;
+    bool blockInSight = false;
+    bool blockInActionRange = false;
     ItemStack inventory[64];
 
 private:

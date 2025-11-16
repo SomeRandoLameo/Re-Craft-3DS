@@ -68,7 +68,7 @@ void WorldRenderer::RenderWorld() {
 	ClusterRenderedRef(CHUNKCACHE_SIZE / 2 + world->cacheTranslationX, pY,
 					   CHUNKCACHE_SIZE / 2 + world->cacheTranslationZ) = 1;
 
-	float3 playerPos = player->position;
+	float3 playerPos = f3_new(player->position.x, player->position.y, player->position.z);
 
 	while (renderingQueue.length > 0) {
 		RenderStep step = vec_pop(&renderingQueue);
