@@ -5,6 +5,8 @@ project(Re-Craft-3DS)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 
+set(3DS_IP "" CACHE STRING "3ds IP (make send)")
+
 set(APP_NAME "Re-Craft-3DS")
 set(APP_DESC "a Minecraft 1.10.x - 1.12.x client implemented on the 3DS (and new 3DS)")
 set(APP_AUTHOR "SomeRandoLameo")
@@ -114,6 +116,12 @@ ctr_create_3dsx(
     SMDH "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.smdh"
     ROMFS "${APP_ROMFS}"
     DEPENDS create_resources
+)
+
+# Command to send to console (make send)
+add_custom_target(
+    send
+    COMMAND 3dslink -a "${3DS_IP}" "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.3dsx"
 )
 
 # 1.12 server stuff for ease of use
