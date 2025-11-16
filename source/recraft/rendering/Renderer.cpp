@@ -14,45 +14,12 @@
 #include <gui_shbin.h>
 #include <world_shbin.h>
 
-const auto CLEAR_COLOR = 0x1a2529FF;
 const auto SCREEN_WIDTH = 400.0f;
 const auto SCREEN_HEIGHT = 480.0f;
-const auto TRANSFER_SCALING = GX_TRANSFER_SCALE_NO;
 const auto FB_SCALE = 1.0f;
-const auto FB_WIDTH = SCREEN_WIDTH * FB_SCALE;
-const auto FB_HEIGHT = SCREEN_HEIGHT * FB_SCALE;
-
-const auto DISPLAY_TRANSFER_FLAGS =
-        GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) |
-        GX_TRANSFER_RAW_COPY(0) | GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGBA8) |
-        GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB8) |
-        GX_TRANSFER_SCALING(TRANSFER_SCALING);
 
 C3D_RenderTarget* Top;
 C3D_RenderTarget* Bottom;
-
-#define rev_void(x) reinterpret_cast<void*>(x)
-
-// clang-format off
-std::vector<std::string> styles = {
-        "ImGui Light",
-        "ImGui Dark",
-        "ImGui Classic",
-};
-// clang-format on
-
-std::string cstyle = styles[1];
-
-void LoadStyle() {
-    if (cstyle == styles[0])
-        ImGui::StyleColorsLight();
-    else if (cstyle == styles[1])
-        ImGui::StyleColorsDark();
-    else if (cstyle == styles[2])
-        ImGui::StyleColorsClassic();
-    else
-        ImGui::StyleColorsDark();
-}
 
 
 #define DISPLAY_TRANSFER_FLAGS																										  \
@@ -129,17 +96,7 @@ Renderer::Renderer(World* world_, Player* player_, WorkQueue* queue){
 
 	Texture_Load(&logoTex, "romfs:/assets/textures/gui/title/craftus.png");
 
-    ImGui::CreateContext();
-    LoadStyle();
-
-    ImGuiIO& io = ImGui::GetIO();
-    io.FontGlobalScale = 0.9f;
-    ImGuiStyle& style = ImGui::GetStyle();
-    style.ScaleAllSizes(0.5f);
-    io.IniFilename = nullptr;
-
-    ImGui_ImplCtr_Init();
-    ImGui_ImplCitro3D_Init();
+    ImGuiManager::GetInstance()->Initialize();
 
     show_demo_window = false;
 }
@@ -164,11 +121,9 @@ Renderer::~Renderer() {
 	shaderProgramFree(&world_shader);
 	if (world_dvlb) DVLB_Free(world_dvlb);
 
-    ImGui_ImplCitro3D_Shutdown();
-    ImGui_ImplCtr_Shutdown();
-
 	C3D_Fini();
 }
+
 
 void Renderer::Render(DebugUI* debugUi) {
     float iod = osGet3DSliderState() * PLAYER_HALFEYEDIFF;
@@ -189,39 +144,17 @@ void Renderer::Render(DebugUI* debugUi) {
     io.DisplaySize = ImVec2(SCREEN_WIDTH, SCREEN_HEIGHT);
     io.DisplayFramebufferScale = ImVec2(FB_SCALE, FB_SCALE);
 
-    ImGui_ImplCitro3D_NewFrame();
-    ImGui_ImplCtr_NewFrame();
-    ImGui::NewFrame();
+    ImGuiManager::GetInstance()->BeginFrame();
 
-    ImGui::Begin("Test");
-    ImGui::Text("Hold Y and use CIRCLEPAD to Move\nThe Window f.e. to Bottom Screen!");
+    ImGuiManager::GetInstance()->ExecuteCallbacks();
 
-    if (ImGui::BeginCombo("##StyleSelect", cstyle.c_str())) {
-        for (size_t n = 0; n < styles.size(); n++) {
-            bool is_selected = (cstyle.c_str() == styles[n]);
-            if (ImGui::Selectable(styles[n].c_str(), is_selected)) {
-                cstyle = styles[n];
-                LoadStyle();
-            }
-            if (is_selected) ImGui::SetItemDefaultFocus();
-        }
-        ImGui::EndCombo();
-    }
+    C3D_FrameDrawOn(renderTargets[0]);
+    C3D_FrameDrawOn(lowerScreen);
 
-    ImGui::Checkbox("Show Demo Window", &show_demo_window);
-    ImGui::End();
-
-    if (show_demo_window) {
-        ImGui::ShowDemoWindow(&show_demo_window);
-    }
-
-    ImGui::Render();
-
-    C3D_FrameDrawOn(Top);
-    C3D_FrameDrawOn(Bottom);
-
-    ImGui_ImplCitro3D_RenderDrawData(ImGui::GetDrawData(), rev_void(Top),
-                                     rev_void(Bottom));
+    ImGuiManager::GetInstance()->EndFrame(
+            reinterpret_cast<void*>(renderTargets[0]),
+            reinterpret_cast<void*>(lowerScreen)
+    );
 
     C3D_DepthTest(true, GPU_GREATER, GPU_WRITE_ALL);
     C3D_CullFace(GPU_CULL_BACK_CCW);

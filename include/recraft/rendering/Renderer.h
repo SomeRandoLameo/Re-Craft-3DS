@@ -7,6 +7,8 @@
 #include "../gui/DebugUI.h"
 #include "WorldRenderer.h"
 #include "../ReCraftCore.h"
+#include "gui/ImGuiManager.h"
+
 #include <citro3d.h>
 
 //TODO: Organize
@@ -42,6 +44,8 @@ public:
 
     void Render(DebugUI* debugUi);
 
+    C3D_RenderTarget* GetTopTarget() const { return renderTargets[0]; }
+    C3D_RenderTarget* GetBottomTarget() const { return lowerScreen; }
 private:
     C3D_RenderTarget* renderTargets[2];
     C3D_RenderTarget* lowerScreen;
@@ -63,7 +67,10 @@ private:
     ImGuiIO* io;
     NpiEasyTex ntex;
     bool show_demo_window;
+    std::string cstyle;
+    std::vector<std::string> styles;
 
     void RenderFrame(int eyeIndex, float iod);
     void RenderLowerScreen(DebugUI* debugUi);
+    void RenderImGui();
 };

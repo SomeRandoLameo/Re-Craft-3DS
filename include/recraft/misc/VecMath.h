@@ -21,7 +21,6 @@ static inline float3 f3_sub(float3 a, float3 b) { return f3_new(a.x - b.x, a.y -
 //TODO: BIG FAT TODO HERE
 static inline float3 f3_scl(float3 a, float b) { return f3_new(a.x * b, a.y * b, a.z * b); }
 
-static inline mc::Vector3f Vector3f_Scale(mc::Vector3f a, float b) { return mc::Vector3f(a.x * b, a.y * b, a.z * b); }
 static inline mc::Vector3d Vector3d_Scale(mc::Vector3d a, float b) { return mc::Vector3d(a.x * b, a.y * b, a.z * b); }
 
 static inline float f3_dot(float3 a, float3 b) { return a.x * b.x + a.y * b.y + a.z * b.z; }
@@ -34,13 +33,5 @@ static inline float3 f3_nrm(float3 vec) {
 	return f3_new(vec.x / m, vec.y / m, vec.z / m);
 }
 
-static inline float f3_dst(float3 a, float3 b) { return f3_mag(f3_sub(a, b)); }
-
-static inline float3 f3_min(float3 a, float3 b) { return f3_new(MIN(a.x, b.x), MIN(a.y, b.y), MIN(a.z, b.z)); }
-static inline float3 f3_max(float3 a, float3 b) { return f3_new(MAX(a.x, b.x), MAX(a.y, b.y), MAX(a.z, b.z)); }
-
-static inline float3 f3_clamp(float3 a, float3 min, float3 max) { return f3_min(f3_max(a, min), max); }
-
-static inline float3 f3_neg(float3 vec) { return f3_new(-vec.x, -vec.y, -vec.z); }
 
 #define f3_unpack(v) (v).x, (v).y, (v).z

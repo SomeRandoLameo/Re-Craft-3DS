@@ -75,6 +75,8 @@ add_executable(${PROJECT_NAME}
     source/recraft/world/WorkQueue.cpp
     source/recraft/world/worldgen/SmeaGen.cpp
     source/recraft/world/worldgen/SuperFlatGen.cpp
+        include/recraft/gui/ImGuiManager.h
+        source/recraft/gui/ImGuiManager.cpp
 )
 target_include_directories(${PROJECT_NAME} PUBLIC
     include/recraft

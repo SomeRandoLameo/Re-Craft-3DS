@@ -1,5 +1,5 @@
 #include "ReCraftCore.h"
-
+#include "gui/ImGuiManager.h"
 
 bool showDebugInfo = true;
 
@@ -102,19 +102,37 @@ void ReCraftCore::Run() {
 		//	playopus(&BackgroundSound);
 		//}
 
-		debugUI.Text("%d FPS  Usage: CPU: %5.2f%% GPU: %5.2f%% Buf: %5.2f%% Lin: %d", fps, C3D_GetProcessingTime() * 6.f,
-		C3D_GetDrawingTime() * 6.f, C3D_GetCmdBufUsage() * 100.f, linearSpaceFree());
-        debugUI.Text("X: %f, Y: %f, Z: %f", f3_unpack(player.position));
-        debugUI.Text("HP: %i",player.hp);
-        debugUI.Text("velocity: %f rndy: %f",player.velocity.y,player.rndy);
-		//debugUI.Text("Time: %i Cause: %c",dmg.time,dmg.cause);
-        debugUI.Text("SX: %f SY: %f SZ: %f",player.spawnPos.x,player.spawnPos.y,player.spawnPos.z);
-        debugUI.Text("Hunger: %i Hungertimer: %i",player.hunger,player.hungertimer);
-        debugUI.Text("Gamemode: %i",player.gamemode);
-        debugUI.Text("quickbar %i",player.quickSelectBarSlot);
+        ImGuiManager::GetInstance()->RegisterCallback("DebugUI", [&]() {
+            ImGui::Begin("Debug Info");
 
+            ImGui::Text("Performance");
+            ImGui::Spacing();
+            ImGui::Text("FPS: %d", fps);
+            ImGui::Text("CPU: %5.2f%%", C3D_GetProcessingTime() * 6.f);
+            ImGui::Text("GPU: %5.2f%%", C3D_GetDrawingTime() * 6.f);
+            ImGui::Text("Buffer: %5.2f%%", C3D_GetCmdBufUsage() * 100.f);
+            ImGui::Text("Linear Memory: %lu", linearSpaceFree());
+            ImGui::Separator();
+            ImGui::Text("Player");
+            ImGui::Spacing();
+            ImGui::Text("Position: %.2f, %.2f, %.2f", f3_unpack(player.position));
+            ImGui::Text("Spawn: %.2f, %.2f, %.2f", player.spawnPos.x, player.spawnPos.y, player.spawnPos.z);
+            ImGui::Text("HP: %i", player.hp);
+            ImGui::Text("Hunger: %i (Timer: %i)", player.hunger, player.hungertimer);
+            ImGui::Text("Velocity Y: %.3f, RndY: %.3f", player.velocity.y, player.rndy);
+            ImGui::Separator();
+            ImGui::Text("Inventory");
+            ImGui::Spacing();
+            ImGui::Text("Gamemode: %i", player.gamemode);
+            ImGui::Text("Quickbar Slot: %i", player.quickSelectBarSlot);
+
+            ImGui::End();
+        });
 
 		renderer.Render(&debugUI);
+
+        // i want to use imgui anywhere
+
 
 		uint64_t currentTime = svcGetSystemTick();
 		dt = ((float)(currentTime / (float)CPU_TICKS_PER_MSEC) - (float)(lastTime / (float)CPU_TICKS_PER_MSEC)) / 1000.f;
@@ -292,6 +310,8 @@ void ReCraftCore::Run() {
     /**
      * EXIT/CLEANUP CODE
      */
+
+    ImGuiManager::GetInstance()->UnregisterCallback("DebugUI");
 
 	if (this->gamestate == GameState_Playing)
 	{
