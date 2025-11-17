@@ -3,6 +3,8 @@
 #include "Player.h"
 #include "../misc/InputData.h"
 #include "../gui/DebugUI.h"
+//mclib
+#include <common/Vector.h>
 
 class PlayerControlScheme {
 public:
@@ -39,5 +41,5 @@ public:
     PlayerControlScheme& GetControlScheme() { return controlScheme; }
 
 
-    float3 movement;
+    mc::Vector3d movement;
 };

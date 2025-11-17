@@ -299,24 +299,25 @@ void PlayerController::Update(DebugUI* debugUi, InputData input, float dt) {
     float strafeLeft = IsKeyDown(controlScheme.strafeLeft, &agnosticInput);
     float strafeRight = IsKeyDown(controlScheme.strafeRight, &agnosticInput);
 
-    float3 forwardVec = f3_new(-sinf(player->yaw), 0.f, -cosf(player->yaw));
-    float3 rightVec = f3_crs(forwardVec, f3_new(0, 1, 0));
+    mc::Vector3d forwardVec(-sinf(player->yaw), 0.f, -cosf(player->yaw));
+    mc::Vector3d rightVec = Vector3d_crs(forwardVec, mc::Vector3d(0, 1, 0));
 
-    movement = f3_new(0, 0, 0);
-    movement = f3_add(movement, f3_scl(forwardVec, forward));
-    movement = f3_sub(movement, f3_scl(forwardVec, backward));
-    movement = f3_add(movement, f3_scl(rightVec, strafeRight));
-    movement = f3_sub(movement, f3_scl(rightVec, strafeLeft));
+    movement = mc::Vector3d(0, 0, 0);
+    movement = movement + Vector3d_Scale(forwardVec, forward);
+    movement = movement - Vector3d_Scale(forwardVec, backward);
+    movement = movement + Vector3d_Scale(rightVec, strafeRight);
+    movement = movement - Vector3d_Scale(rightVec, strafeLeft);
 
     if (player->flying) {
-        movement = f3_add(movement, f3_new(0.f, jump, 0.f));
-        movement = f3_sub(movement, f3_new(0.f, crouch, 0.f));
+        movement = movement + mc::Vector3d(0.f, jump, 0.f);
+        movement = movement + mc::Vector3d(0.f, crouch, 0.f);
     }
 
-    if (f3_magSqr(movement) > 0.f) {
-        float speed = 4.3f * f3_mag(f3_new(-strafeLeft + strafeRight, -crouch + jump, -forward + backward));
+    if (Vector3d_MagSqr(movement) > 0.f) {
+        float speed = 4.3f * Vector3d_mag(mc::Vector3d(-strafeLeft + strafeRight, -crouch + jump, -forward + backward));
         player->bobbing += speed * 1.5f * dt;
-        movement = f3_scl(f3_nrm(movement), speed);
+        movement.Normalize();
+        movement = Vector3d_Scale(movement, speed);
     }
 
     float lookLeft = IsKeyDown(controlScheme.lookLeft, &agnosticInput);

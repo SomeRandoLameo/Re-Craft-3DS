@@ -2,7 +2,9 @@
 
 #include "../world/CT_World.h"
 
-#include "VecMath.h"
+
+//mclib
+#include <common/Vector.h>
 
 typedef struct {
 	int x, y, z;
@@ -10,4 +12,4 @@ typedef struct {
 	Direction direction;
 } Raycast_Result;
 
-bool Raycast_Cast(World* world, float3 inpos, float3 raydir, Raycast_Result* out);
+bool Raycast_Cast(World* world, mc::Vector3d inpos, mc::Vector3d raydir, Raycast_Result* out);

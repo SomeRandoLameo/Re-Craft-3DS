@@ -1,4 +1,5 @@
 #include "misc/Raycast.h"
+#include "misc/VecMath.h"
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -8,57 +9,65 @@
 
 #define INF (CHUNKCACHE_SIZE / 2 * CHUNK_SIZE)
 
-bool Raycast_Cast(World* world, float3 inpos, float3 raydir, Raycast_Result* out) {
-	int mapX = FastFloor(inpos.x), mapY = FastFloor(inpos.y), mapZ = FastFloor(inpos.z);
+bool Raycast_Cast(World* world, mc::Vector3d inpos, mc::Vector3d raydir, Raycast_Result* out) {
+    mc::Vector3d map = mc::Vector3d(
+            FastFloor(inpos.x),
+            FastFloor(inpos.y),
+            FastFloor(inpos.z)
+            );
 
-	float xSqr = raydir.x * raydir.x;
-	float ySqr = raydir.y * raydir.y;
-	float zSqr = raydir.z * raydir.z;
+    mc::Vector3d square = mc::Vector3d(
+            raydir.x * raydir.x,
+            raydir.y * raydir.y,
+            raydir.z * raydir.z
+            );
 
-	float deltaDistX = sqrtf(1.f + (ySqr + zSqr) / xSqr);
-	float deltaDistY = sqrtf(1.f + (xSqr + zSqr) / ySqr);
-	float deltaDistZ = sqrtf(1.f + (xSqr + ySqr) / zSqr);
+    mc::Vector3d deltaDist = mc::Vector3d(
+            sqrtf(1.f + (square.y + square.z) / square.x),
+            sqrtf(1.f + (square.x + square.z) / square.y),
+            sqrtf(1.f + (square.x + square.y) / square.z)
+            );
 
-	int stepX, stepY, stepZ;
-	float sideDistX, sideDistY, sideDistZ;
+    mc::Vector3d step = mc::Vector3d(0,0,0);
+    mc::Vector3d sideDist = mc::Vector3d(0,0,0);
 	if (raydir.x < 0) {
-		stepX = -1;
-		sideDistX = (inpos.x - mapX) * deltaDistX;
+		step.x = -1;
+		sideDist.x = (inpos.x - map.x) * deltaDist.x;
 	} else {
-		stepX = 1;
-		sideDistX = (mapX + 1.f - inpos.x) * deltaDistX;
+		step.x = 1;
+		sideDist.x = (map.x + 1.f - inpos.x) * deltaDist.x;
 	}
 	if (raydir.y < 0) {
-		stepY = -1;
-		sideDistY = (inpos.y - mapY) * deltaDistY;
+		step.y = -1;
+		sideDist.y = (inpos.y - map.y) * deltaDist.y;
 	} else {
-		stepY = 1;
-		sideDistY = (mapY + 1.f - inpos.y) * deltaDistY;
+		step.y = 1;
+		sideDist.y = (map.y + 1.f - inpos.y) * deltaDist.y;
 	}
 	if (raydir.z < 0) {
-		stepZ = -1;
-		sideDistZ = (inpos.z - mapZ) * deltaDistZ;
+		step.z = -1;
+		sideDist.z = (inpos.z - map.z) * deltaDist.z;
 	} else {
-		stepZ = 1;
-		sideDistZ = (mapZ + 1.f - inpos.z) * deltaDistZ;
+		step.z = 1;
+		sideDist.z = (map.z + 1.f - inpos.z) * deltaDist.z;
 	}
 
 	int hit = 0, side = 0, steps = 0;
 	while (hit == 0) {
-		if (sideDistX < sideDistY && sideDistX < sideDistZ) {
-			sideDistX += deltaDistX;
-			mapX += stepX;
+		if (sideDist.x < sideDist.y && sideDist.x < sideDist.z) {
+			sideDist.x += deltaDist.x;
+			map.x += step.x;
 			side = 0;
-		} else if (sideDistY < sideDistZ) {
-			sideDistY += deltaDistY;
-			mapY += stepY;
+		} else if (sideDist.y < sideDist.z) {
+			sideDist.y += deltaDist.y;
+			map.y += step.y;
 			side = 1;
 		} else {
-			sideDistZ += deltaDistZ;
-			mapZ += stepZ;
+			sideDist.z += deltaDist.z;
+			map.z += step.z;
 			side = 2;
 		}
-		if (World_GetBlock(world, mapX, mapY, mapZ) != Block_Air || World_GetBlock(world, mapX, mapY, mapZ) == Block_Lava) hit = 1;
+		if (World_GetBlock(world, map.x, map.y, map.z) != Block_Air || World_GetBlock(world, map.x, map.y, map.z) == Block_Lava) hit = 1;
 		// if (world->errFlags & World_ErrUnloadedBlockRequested) break;
 
 		if (steps++ > INF) break;
@@ -88,11 +97,11 @@ bool Raycast_Cast(World* world, float3 inpos, float3 raydir, Raycast_Result* out
 			break;
 	}
 
-	float3 dist = f3_sub(f3_new(mapX, mapY, mapZ), inpos);
-	out->distSqr = f3_magSqr(dist);
-	out->x = mapX;
-	out->y = mapY;
-	out->z = mapZ;
+	mc::Vector3d dist = map - inpos;
+	out->distSqr = Vector3d_MagSqr(dist);
+	out->x = map.x;
+	out->y = map.y;
+	out->z = map.z;
 
 	return hit;
 }

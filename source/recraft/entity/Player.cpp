@@ -64,7 +64,7 @@ void Player::Update(void* dmg) {
     view.y = sinf(pitch);
     view.z = -cosf(yaw) * cosf(pitch);
 
-    blockInSight = Raycast_Cast(world, f3_new(position.x, position.y + PLAYER_EYEHEIGHT, position.z), f3_new(view.x,view.y,view.z), &viewRayCast);
+    blockInSight = Raycast_Cast(world, position + mc::Vector3d(0,PLAYER_EYEHEIGHT,0), view, &viewRayCast);
     blockInActionRange = blockInSight && viewRayCast.distSqr < 3.5f * 3.5f * 3.5f;
 
     HandleFallDamage();
@@ -84,7 +84,7 @@ void Player::HandleFallDamage() {
 }
 
 void Player::HandleFireDamage() {
-    if (World_GetBlock(world, f3_unpack(position)) == Block_Lava) {
+    if (World_GetBlock(world, position.x, position.y, position.z) == Block_Lava) {
       //  DebugUI_Log("ur burning lol");
         OvertimeDamage("Fire", 10);
     }
@@ -224,7 +224,9 @@ void Player::Move(float dt, mc::Vector3d accl) {
                     axisStep.x - PLAYER_COLLISIONBOX_SIZE / 2.f,
                     axisStep.y,
                     axisStep.z - PLAYER_COLLISIONBOX_SIZE / 2.f,
-                    PLAYER_COLLISIONBOX_SIZE, PLAYER_HEIGHT, PLAYER_COLLISIONBOX_SIZE
+                    PLAYER_COLLISIONBOX_SIZE,
+                    PLAYER_HEIGHT,
+                    PLAYER_COLLISIONBOX_SIZE
             );
 
             for (int x = -1; x < 2; x++) {
@@ -239,8 +241,7 @@ void Player::Move(float dt, mc::Vector3d accl) {
                             World_GetBlock(world, pX, pY, pZ) != Block_Water) {
                             Box blockBox = Box_Create(pX, pY, pZ, 1, 1, 1);
 
-                            //TODO: Change once CollisionBox was changed
-                            float3 normal = f3_new(0.f, 0.f, 0.f);
+                            mc::Vector3d normal(0.f, 0.f, 0.f);
                             float depth = 0.f;
                             int face = 0;
 

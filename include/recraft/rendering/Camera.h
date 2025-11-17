@@ -4,6 +4,9 @@
 #include <stdbool.h> // if really needed
 #include <citro3d.h>
 
+//mclib
+#include <common/Vector.h>
+
 enum FrustumPlanes {
 	Frustum_Near = 0,
 	Frustum_Right,
@@ -44,7 +47,7 @@ public:
 private:
     C3D_Mtx projection, view, vp;
     C3D_FVec frustumPlanes[FrustumPlanes_Count];
-    float3 frustumCorners[FrustumCorners_Count];
+    mc::Vector3d frustumCorners[FrustumCorners_Count];
 
     float near, far, fov;
 };

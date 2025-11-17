@@ -68,7 +68,7 @@ void WorldRenderer::RenderWorld() {
 	ClusterRenderedRef(CHUNKCACHE_SIZE / 2 + world->cacheTranslationX, pY,
 					   CHUNKCACHE_SIZE / 2 + world->cacheTranslationZ) = 1;
 
-	float3 playerPos = f3_new(player->position.x, player->position.y, player->position.z);
+	mc::Vector3d playerPos = player->position;
 
 	while (renderingQueue.length > 0) {
 		RenderStep step = vec_pop(&renderingQueue);
@@ -102,11 +102,13 @@ void WorldRenderer::RenderWorld() {
 				newZ > world->cacheTranslationZ + CHUNKCACHE_SIZE / 2 - 1 ||
 				newY < 0 || newY >= CLUSTER_PER_CHUNK)
 				continue;
-			float3 dist = f3_sub(f3_new(newX * CHUNK_SIZE + CHUNK_SIZE / 2,
-										newY * CHUNK_SIZE + CHUNK_SIZE / 2,
-										newZ * CHUNK_SIZE + CHUNK_SIZE / 2),
-								 playerPos);
-			if (f3_dot(dist, dist) > (3.f * CHUNK_SIZE) * (3.f * CHUNK_SIZE)) {
+
+			mc::Vector3d dist = mc::Vector3d(
+                    newX * CHUNK_SIZE + CHUNK_SIZE / 2,
+                    newY * CHUNK_SIZE + CHUNK_SIZE / 2,
+                    newZ * CHUNK_SIZE + CHUNK_SIZE / 2
+                    ) - playerPos;
+			if (Vector3d_dot(dist, dist) > (3.f * CHUNK_SIZE) * (3.f * CHUNK_SIZE)) {
 				continue;
 			}
 

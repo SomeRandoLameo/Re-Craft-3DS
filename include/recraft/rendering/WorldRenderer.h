@@ -8,6 +8,10 @@
 #include <citro3d.h>
 #include <vec.h>
 
+//mclib
+#include <common/Vector.h>
+
+
 struct RenderStep {
 	Cluster* cluster;
 	Chunk* chunk;
