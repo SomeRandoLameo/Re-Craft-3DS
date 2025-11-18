@@ -4,3 +4,6 @@
 [submodule "vendor/stb"]
 	path = vendor/stb
 	url = https://github.com/nothings/stb
+[submodule "vendor/mclib"]
+	path = vendor/mclib
+	url = https://github.com/SomeRandoLameo/mclib-3ds.git
