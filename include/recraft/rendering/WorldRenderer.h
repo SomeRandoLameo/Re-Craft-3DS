@@ -3,6 +3,7 @@
 #include "../world/CT_World.h"
 #include "../entity/Player.h"
 #include "../world/WorkQueue.h"
+#include "../mcbridge/MCBridge.h"
 #include "Camera.h"
 #include "Cursor.h"
 #include <citro3d.h>
@@ -10,6 +11,8 @@
 
 //mclib
 #include <common/Vector.h>
+
+
 
 
 struct RenderStep {

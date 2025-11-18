@@ -173,6 +173,7 @@ void WorldRenderer::Render(float iod) {
 
 	Hand_Draw(projectionUniform, cam.GetProjection(),
 			  player->quickSelectBar[player->quickSelectBarSlot], player);
+
 	C3D_TexBind(0, (C3D_Tex*)Block_GetTextureMap());
 
 	C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, projectionUniform, cam.GetVP());

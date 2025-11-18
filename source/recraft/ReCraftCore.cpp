@@ -212,9 +212,9 @@ void ReCraftCore::Run() {
 
                     // TODO: packet spam prevention... This is enough for now
                     for (int i = 0; i < 9; i++) {
-                        auto item = mcBridge.MCLIBSlotToCTItemStack(client->GetHotbar().GetItem(i));
+                        auto item = client->GetHotbar().GetItem(i);
                         player.quickSelectBar[i] = item;
-                        debugUI.Text("%d ",item.block);
+                        debugUI.Text("%d ",item.GetItemId());
                     }
 /*
                     debugUI.Text("===============");

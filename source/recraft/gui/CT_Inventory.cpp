@@ -5,7 +5,7 @@
 #include "rendering/VertexFmt.h"
 #include <algorithm>
 
-void Inventory::handleStackClick(ItemStack* stack) {
+void Inventory::handleStackClick(mc::inventory::Slot* stack) {
     if (sourceStack == nullptr && stack != proposedSourceStack) {
         proposedSourceStack = stack;
     }
@@ -15,13 +15,22 @@ void Inventory::handleStackClick(ItemStack* stack) {
     }
     else if (sourceStack != nullptr) {
         if (sourceStack != stack) {
-            ItemStack::Transfer(sourceStack, stack);
+            // Convert to ItemStack
+            ItemStack sourceItemStack = MCBridge::MCLIBSlotToCTItemStack(*sourceStack);
+            ItemStack destItemStack = MCBridge::MCLIBSlotToCTItemStack(*stack);
+
+            // Perform the transfer
+            Inventory::Transfer(&sourceItemStack, &destItemStack);
+
+            // Convert back and write to the original slots
+            *sourceStack = MCBridge::CTItemStackToMCLIBSlot(sourceItemStack);
+            *stack = MCBridge::CTItemStackToMCLIBSlot(destItemStack);
         }
         sourceStack = nullptr;
     }
 }
 
-void Inventory::renderHotbar(int x, int y, ItemStack* stacks, int count, int& selected) {
+void Inventory::renderHotbar(int x, int y, mc::inventory::Slot* stacks, int count, int& selected) {
     SpriteBatch_BindGuiTexture(GuiTexture_Widgets);
 
     for (int i = 0; i < count; ++i) {
@@ -31,8 +40,8 @@ void Inventory::renderHotbar(int x, int y, ItemStack* stacks, int count, int& se
         const int ry = (y + 3) * 2;
 
         // Render item icon if stack has items
-        if (stacks[i].amount > 0) {
-            SpriteBatch_PushIcon(stacks[i].block, stacks[i].meta, rx, ry, 11);
+        if (MCBridge::MCLIBSlotToCTItemStack(stacks[i]).amount > 0) {
+            SpriteBatch_PushIcon(stacks[i], rx, ry, 11);
         }
 
         // Handle cursor interaction
@@ -72,7 +81,7 @@ void Inventory::renderHotbar(int x, int y, ItemStack* stacks, int count, int& se
     SpriteBatch_PushQuad(x + selected * 20 - 1, y - 1, 14, 24, 24, 0, 22, 24, 24);
 }
 
-int Inventory::draw(int x, int y, int width, ItemStack* stacks, int count, int site) {
+int Inventory::draw(int x, int y, int width, mc::inventory::Slot* stacks, int count, int site) {
     SpriteBatch_SetScale(1);
 
     int headX = x;
@@ -104,7 +113,7 @@ int Inventory::draw(int x, int y, int width, ItemStack* stacks, int count, int s
 
     for (int i = startIndex; i < endIndex; ++i) {
         // Only draw valid inventory items
-        if (!stacks[i].block || stacks[i].amount <= 0) {
+        if (!stacks[i].GetItemId() || stacks[i].GetItemCount() <= 0) {
             continue;
         }
 
@@ -118,7 +127,7 @@ int Inventory::draw(int x, int y, int width, ItemStack* stacks, int count, int s
         }
 
         // Draw item icon
-        SpriteBatch_PushIcon(stacks[i].block, stacks[i].meta, headX * 2, headY * 2, 10);
+        SpriteBatch_PushIcon(stacks[i], headX * 2, headY * 2, 10);
 
         // Handle cursor interaction
         if (Gui_EnteredCursorInside(headX * 2, headY * 2, 16 * 2, 16 * 2)) {
@@ -150,4 +159,18 @@ int Inventory::draw(int x, int y, int width, ItemStack* stacks, int count, int s
 
     SpriteBatch_SetScale(2);
     return currentSite;
+}
+
+void Inventory::Transfer(ItemStack* src, ItemStack* dst) {
+    if ((src->block == dst->block && src->meta == dst->meta) || dst->amount == 0) {
+        int vol = std::min(static_cast<int>(src->amount), ItemStack::MAX - static_cast<int>(dst->amount));
+        src->amount -= vol;
+        dst->amount += vol;
+        dst->block = src->block;
+        dst->meta = src->meta;
+    } else {
+        ItemStack tmp = *src;
+        *src = *dst;
+        *dst = tmp;
+    }
 }

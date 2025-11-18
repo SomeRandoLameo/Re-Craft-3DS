@@ -5,8 +5,11 @@
 
 #include "../world/Direction.h"
 
-typedef uint8_t Block;
+#include "block/Block.h"
+#include "Slot.h"
 
+typedef uint8_t Block;
+//TODO: Instead of ENUM IDs, use the "flattened" strings
 enum { Block_Air,
     Block_Stone,
     Block_Dirt,
@@ -54,7 +57,7 @@ void Block_Deinit();
 
 void* Block_GetTextureMap();
 
-void Block_GetTexture(Block block, Direction direction, uint8_t metadata, int16_t* out_uv);
+void Block_GetTexture(mc::inventory::Slot block, Direction direction, int16_t* out_uv);
 
 void Block_GetColor(Block block, uint8_t metadata, Direction direction, uint8_t out_rgb[]);
 
