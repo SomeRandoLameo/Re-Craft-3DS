@@ -115,7 +115,7 @@ void ReCraftCore::Run() {
             ImGui::Separator();
             ImGui::Text("Player");
             ImGui::Spacing();
-            ImGui::Text("Position: %.2f, %.2f, %.2f", f3_unpack(player.position));
+            ImGui::Text("Position: %.2f, %.2f, %.2f", player.position.x, player.position.y, player.position.z);
             ImGui::Text("Spawn: %.2f, %.2f, %.2f", player.spawnPos.x, player.spawnPos.y, player.spawnPos.z);
             ImGui::Text("HP: %i", player.hp);
             ImGui::Text("Hunger: %i (Timer: %i)", player.hunger, player.hungertimer);
@@ -212,9 +212,9 @@ void ReCraftCore::Run() {
 
                     // TODO: packet spam prevention... This is enough for now
                     for (int i = 0; i < 9; i++) {
-                        auto item = mcBridge.MCLIBSlotToCTItemStack(client->GetHotbar().GetItem(i));
+                        auto item = client->GetHotbar().GetItem(i);
                         player.quickSelectBar[i] = item;
-                        debugUI.Text("%d ",item.block);
+                        debugUI.Text("%d ",item.GetItemId());
                     }
 /*
                     debugUI.Text("===============");

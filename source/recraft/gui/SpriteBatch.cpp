@@ -4,6 +4,7 @@
 #include "gui/FontLoader.h"
 #include "rendering/TextureMap.h"
 #include "rendering/VertexFmt.h"
+#include "mcbridge/MCBridge.h"
 
 #include <stdarg.h>
 extern "C" {
@@ -112,19 +113,19 @@ void SpriteBatch_PushQuadColor(int x, int y, int z, int w, int h, int rx, int ry
 static float rot = 0.f;
 
 
-void SpriteBatch_PushIcon(Block block, uint8_t metadata, int x, int y, int z) {
+void SpriteBatch_PushIcon(mc::inventory::Slot block, int x, int y, int z) {
 	WorldVertex vertices[6 * 6];
 	memcpy(vertices, cube_sides_lut, sizeof(cube_sides_lut));
 	for (int i = 0; i < 6; i++) {
 		if (i != Direction_Top && i != Direction_South && i != Direction_West) continue;
 		int16_t iconUV[2];
-		Block_GetTexture(block, (Direction)i, metadata, iconUV);
+		Block_GetTexture(block, (Direction)i,  iconUV);
 
 #define oneDivIconsPerRow (32768 / 8)
 #define halfTexel (6)
 
 		uint8_t color[3];
-		Block_GetColor(block, metadata, (Direction)i, color);
+		Block_GetColor(MCBridge::MCLIBSlotToCTItemStack(block).block, MCBridge::MCLIBSlotToCTItemStack(block).meta, (Direction)i, color);
 
 		for (int j = 0; j < 5; j++) {
 			int k = i * 6 + j;

@@ -52,8 +52,8 @@ public:
     void lockClient() { LightLock_Lock(&m_clientMutex); }
     void unlockClient() { LightLock_Unlock(&m_clientMutex); }
 
-    mc::inventory::Slot CTItemStackToMCLIBSlot(ItemStack in);
-    ItemStack MCLIBSlotToCTItemStack(mc::inventory::Slot in);
+    static mc::inventory::Slot CTItemStackToMCLIBSlot(ItemStack in);
+    static ItemStack MCLIBSlotToCTItemStack(mc::inventory::Slot in);
 
 private:
     static void threadFunc(void* arg);

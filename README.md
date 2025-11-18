@@ -3,8 +3,9 @@ a Minecraft (1.10.x - 1.12.x) client implemented on the 3DS (and new 3DS)
 
 ### Other informations
 This is a hobby project. I cannot tell how far this will go in the future but for now this will stay active for a longer amount of time.
-I wish for other devs that may code with me, so this project can become bigger, like up to recent minecraft versions, proper authentications and more
-Please dont be annoyed if this crashed on your device, as this is my first proper c++ lang and 3DS hardware project
+Please dont be annoyed if this crashed on your device, as this is my first proper c++ lang and 3DS hardware project.
+Also. I, personally DO NOT own an O3DS. The current roms are built with focus on the N3DS, since i cannot test O3DS compatability.
+The game should run in theory. If not: create an issue and steps to recreate it. We will greatly appreciate this!
 
 ### Additional libraries (you need to install them in order to build this project)
 - 3ds-zlib
@@ -59,6 +60,9 @@ Please dont be annoyed if this crashed on your device, as this is my first prope
 - Dear IMGUI [imgui](https://github.com/ocornut/imgui/tree/1362fc0c56d8742167379661a353d8342f7c4a86)
 - 3DS Compatability layer for IMGUI [imgui-impl-ctr](https://github.com/npid7/imgui-impl-ctr)
 - Audio & Other misc. bits from [QuickLime](https://github.com/syelan34/quicklime) (this may be used in the future)
+
+### Special thanks goes out to: 
+- Tobid7
 
 ### Licensing
 - All external snippets must respect their original licenses

@@ -73,12 +73,12 @@ public:
     int quickSelectBarSlots = Inventory::calculateQuickSelectSlots();
     int quickSelectBarSlot = 0;
     int inventorySite = 1;
-    ItemStack quickSelectBar[Inventory::calculateQuickSelectSlots()];
+    mc::inventory::Slot quickSelectBar[Inventory::calculateQuickSelectSlots()];
 
     Raycast_Result viewRayCast;
     bool blockInSight = false;
     bool blockInActionRange = false;
-    ItemStack inventory[64];
+    mc::inventory::Slot inventory[64];
 
 private:
     // Private methods

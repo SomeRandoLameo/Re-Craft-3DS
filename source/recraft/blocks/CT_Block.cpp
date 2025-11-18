@@ -119,9 +119,10 @@ void Block_Deinit() { C3D_TexDelete(&textureMap.texture); }
 
 void* Block_GetTextureMap() { return &textureMap.texture; }
 
-void Block_GetTexture(Block block, Direction direction, uint8_t metadata, int16_t* out_uv) {
+//TODO: Blocks are all blocks, not inventory blocks (slots), but for now this works...
+void Block_GetTexture(mc::inventory::Slot block, Direction direction, int16_t* out_uv) {
 	Texture_MapIcon i = {0, 0, 0};
-	switch (block) {
+	switch (block.GetItemId()) {
 		case Block_Air:
 			return;
 		case Block_Dirt:

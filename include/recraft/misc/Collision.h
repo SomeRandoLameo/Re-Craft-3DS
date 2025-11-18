@@ -3,12 +3,13 @@
 #include <stdbool.h>
 
 #include "VecMath.h"
+//mclib
+#include <common/Vector.h>
 
-typedef struct { float3 min, max; } Box;
+typedef struct { mc::Vector3d min, max; } Box;
 
-static inline Box Box_Create(float x, float y, float z, float w, float h, float d) { return (Box){f3_new(x, y, z), f3_new(x + w, y + h, z + d)}; }
-static inline bool Box_Contains(Box box, float x, float y, float z) {
-	return box.min.x <= x && box.min.y <= y && box.min.z <= z && box.max.x > x && box.max.y > y && box.max.z > z;
-}
+Box Box_Create(float x, float y, float z, float w, float h, float d);
 
-bool Collision_BoxIntersect(Box a, Box b, int ignore_faces, float3* ncoll,float* dcoll,int* fcoll);
+bool Box_Contains(Box box, float x, float y, float z);
+
+bool Collision_BoxIntersect(Box a, Box b, int ignore_faces, mc::Vector3d* ncoll,float* dcoll,int* fcoll);

@@ -23,16 +23,18 @@ public:
     }
 
     // Render the hotbar UI
-    static void renderHotbar(int x, int y, ItemStack* stacks, int count, int& selected);
+    static void renderHotbar(int x, int y, mc::inventory::Slot* stacks, int count, int& selected);
 
     // Draw inventory grid, returns current site number
-    static int draw(int x, int y, int width, ItemStack* stacks, int count, int site);
+    static int draw(int x, int y, int width, mc::inventory::Slot* stacks, int count, int site);
 
+    // Transfer itemStacks
+    static void Transfer(ItemStack* src, ItemStack* dst);
 private:
     // Internal state for drag-and-drop operations
-    static inline ItemStack* sourceStack = nullptr;
-    static inline ItemStack* proposedSourceStack = nullptr;
+    static inline mc::inventory::Slot* sourceStack = nullptr;
+    static inline mc::inventory::Slot* proposedSourceStack = nullptr;
 
     // Helper function for click handling
-    static void handleStackClick(ItemStack* stack);
+    static void handleStackClick(mc::inventory::Slot* stack);
 };

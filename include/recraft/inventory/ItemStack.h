@@ -21,6 +21,4 @@ public:
     u8 amount;
 
     static constexpr int MAX = 64;
-
-    static void Transfer(ItemStack* src, ItemStack* dst);
 };

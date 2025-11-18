@@ -5,23 +5,23 @@
 #include "misc/NumberUtils.h"
 
 bool Collision_BoxIntersect(Box a, Box b, int ignore_faces,
-			    float3* ncoll,  // normal of collision.
+                            mc::Vector3d* ncoll,  // normal of collision.
 			    float* dcoll,   // depth of intersection.
 			    int* fcoll)     // face intersected.
 
 {
 	// the normal of each face.
-	static const float3 faces[6] = {
-	    {{-1, 0, 0}},  // 'left' face normal (-x direction)
-	    {{1, 0, 0}},   // 'right' face normal (+x direction)
-	    {{0, -1, 0}},  // 'bottom' face normal (-y direction)
-	    {{0, 1, 0}},   // 'top' face normal (+y direction)
-	    {{0, 0, -1}},  // 'far' face normal (-z direction)
-	    {{0, 0, 1}},   // 'near' face normal (+z direction)
-	};
+	static const mc::Vector3d faces[6] = {
+        mc::Vector3d(-1, 0, 0),  // 'left' face normal (-x direction)
+        mc::Vector3d(1, 0, 0),   // 'right' face normal (+x direction)
+        mc::Vector3d(0, -1, 0),  // 'bottom' face normal (-y direction)
+        mc::Vector3d(0, 1, 0),   // 'top' face normal (+y direction)
+        mc::Vector3d(0, 0, -1),  // 'far' face normal (-z direction)
+        mc::Vector3d(0, 0, 1),   // 'near' face normal (+z direction)
+    };
 
 	// distance of collided box to the face.
-	float distances[6] = {
+	double distances[6] = {
 	    (b.max.x - a.min.x),  // distance of box 'b' to face on 'left' side of 'a'.
 	    (a.max.x - b.min.x),  // distance of box 'b' to face on 'right' side of 'a'.
 	    (b.max.y - a.min.y),  // distance of box 'b' to face on 'bottom' side of 'a'.
@@ -53,4 +53,12 @@ bool Collision_BoxIntersect(Box a, Box b, int ignore_faces,
 	}
 
 	return true;
+}
+
+Box Box_Create(float x, float y, float z, float w, float h, float d) {
+    return (Box){mc::Vector3d(x, y, z), mc::Vector3d(x + w, y + h, z + d)};
+}
+
+bool Box_Contains(Box box, float x, float y, float z) {
+    return box.min.x <= x && box.min.y <= y && box.min.z <= z && box.max.x > x && box.max.y > y && box.max.z > z;
 }
