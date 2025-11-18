@@ -3,7 +3,7 @@
 #include <stdbool.h>
 
 //mclib
-#include <common/Vector.h>
+#include <mclib/common/Vector.h>
 
 #include "world/CT_World.h"
 #include "gui/CT_Inventory.h"

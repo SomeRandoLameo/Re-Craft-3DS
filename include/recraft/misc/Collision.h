@@ -4,7 +4,7 @@
 
 #include "VecMath.h"
 //mclib
-#include <common/Vector.h>
+#include <mclib/common/Vector.h>
 
 typedef struct { mc::Vector3d min, max; } Box;
 

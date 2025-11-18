@@ -4,7 +4,7 @@
 #include "../misc/InputData.h"
 #include "../gui/DebugUI.h"
 //mclib
-#include <common/Vector.h>
+#include <mclib/common/Vector.h>
 
 class PlayerControlScheme {
 public:

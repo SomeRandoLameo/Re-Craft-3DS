@@ -8,7 +8,7 @@
 #include "../misc/InputData.h"
 #include "../world/CT_World.h"
 
-#include "Slot.h"
+#include "mclib/inventory/Slot.h"
 
 
 #include <citro3d.h>

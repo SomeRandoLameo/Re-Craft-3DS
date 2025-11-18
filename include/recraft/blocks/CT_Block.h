@@ -5,8 +5,8 @@
 
 #include "../world/Direction.h"
 
-#include "block/Block.h"
-#include "Slot.h"
+#include "mclib/block/Block.h"
+#include "mclib/inventory/Slot.h"
 
 typedef uint8_t Block;
 //TODO: Instead of ENUM IDs, use the "flattened" strings

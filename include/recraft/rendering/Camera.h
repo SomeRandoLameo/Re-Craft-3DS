@@ -5,7 +5,7 @@
 #include <citro3d.h>
 
 //mclib
-#include <common/Vector.h>
+#include <mclib/common/Vector.h>
 
 enum FrustumPlanes {
 	Frustum_Near = 0,

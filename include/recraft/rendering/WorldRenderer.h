@@ -10,7 +10,7 @@
 #include <vec.h>
 
 //mclib
-#include <common/Vector.h>
+#include <mclib/common/Vector.h>
 
 
 

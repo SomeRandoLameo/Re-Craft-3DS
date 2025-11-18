@@ -3,7 +3,7 @@
 #include "../world/CT_World.h"
 
 //mclib
-#include <common/Vector.h>
+#include <mclib/common/Vector.h>
 
 typedef struct {
 	int x, y, z;
