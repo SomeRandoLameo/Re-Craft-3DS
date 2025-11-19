@@ -1,7 +1,6 @@
 #include "world/savegame/SaveManager.h"
 
 #include <dirent.h>
-#include <string.h>
 #include <unistd.h>
 
 #include <mpack/mpack.h>
@@ -9,13 +8,12 @@
 #include "gui/DebugUI.h"
 #include "misc/Crash.h"
 
-#define mkdirFlags S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH
+#define mkdirFlags (S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH)
 
 #define mpack_elvis(node, key, typ, default_) \
 	((mpack_node_type(mpack_node_map_cstr_optional((node), (key))) != mpack_type_nil) ? mpack_node_ ## typ (mpack_node_map_cstr_optional((node), (key))) : (default_))
 
 SaveManager::SaveManager() : player(nullptr), world(nullptr) {
-    vec_init(&superchunks);
 }
 
 SaveManager::~SaveManager() {
@@ -30,11 +28,9 @@ void SaveManager::InitFileSystem() {
 void SaveManager::Init(Player* player_) {
     player = player_;
     world = player->world;
-    vec_init(&superchunks);
 }
 
 void SaveManager::Deinit() {
-    vec_deinit(&superchunks);
 }
 
 void SaveManager::Load(char* path) {
@@ -178,22 +174,22 @@ void SaveManager::Unload() {
         Crash("Mpack error %d while saving world manifest", err);
     }
 
-    for (int i = 0; i < superchunks.length; i++) {
-        SuperChunk_Deinit(superchunks.data[i]);
-        free(superchunks.data[i]);
+    for (auto & superchunk : superchunks) {
+        SuperChunk_Deinit(superchunk);
+        free(superchunk);
     }
-    vec_clear(&superchunks);
+    superchunks.clear();
 }
 
 SuperChunk* SaveManager::FetchSuperChunk(int x, int z) {
-    for (int i = 0; i < superchunks.length; i++) {
-        if (superchunks.data[i]->x == x && superchunks.data[i]->z == z) {
-            return superchunks.data[i];
+    for (int i = 0; i < superchunks.size(); i++) {
+        if (superchunks[i]->x == x && superchunks[i]->z == z) {
+            return superchunks[i];
         }
     }
-    SuperChunk* superchunk = (SuperChunk*)malloc(sizeof(SuperChunk));
+    auto* superchunk = (SuperChunk*)malloc(sizeof(SuperChunk));
     SuperChunk_Init(superchunk, x, z);
-    vec_push(&superchunks, superchunk);
+    superchunks.push_back(superchunk);
     svcSleepThread(50000);
     return superchunk;
 }
@@ -217,11 +213,11 @@ void SaveManager::SaveChunk(WorkQueue* queue, WorkerItem item) {
 
 // Static callback wrappers for WorkQueue
 void SaveManager::LoadChunkCallback(WorkQueue* queue, WorkerItem item, void* context) {
-    SaveManager* mgr = static_cast<SaveManager*>(context);
+    auto* mgr = static_cast<SaveManager*>(context);
     mgr->LoadChunk(queue, item);
 }
 
 void SaveManager::SaveChunkCallback(WorkQueue* queue, WorkerItem item, void* context) {
-    SaveManager* mgr = static_cast<SaveManager*>(context);
+    auto* mgr = static_cast<SaveManager*>(context);
     mgr->SaveChunk(queue, item);
 }

@@ -1,9 +1,6 @@
 #pragma once
 
 #include <cstdio>
-extern "C" {
-#include <vec/vec.h>
-}
 #include "../../entity/Player.h"
 #include "SuperChunk.h"
 
@@ -34,7 +31,7 @@ public:
 private:
     Player* player;
     World* world;
-    vec_t(SuperChunk*) superchunks;
+    std::vector<SuperChunk*> superchunks;
 
     SuperChunk* FetchSuperChunk(int x, int z);
 };
