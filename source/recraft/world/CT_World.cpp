@@ -19,7 +19,7 @@ void World_Init(World* world, WorkQueue* workqueue) {
 	world->genSettings.seed = 28112000;
 	world->genSettings.type = WorldGen_SuperFlat;
 
-	vec_init(&world->freeChunks);
+	world->freeChunks.clear();
 
 	World_Reset(world);
 }
@@ -28,32 +28,32 @@ void World_Reset(World* world) {
 	world->cacheTranslationX = 0;
 	world->cacheTranslationZ = 0;
 
-	vec_clear(&world->freeChunks);
+	world->freeChunks.clear();
 
 	for (size_t i = 0; i < CHUNKPOOL_SIZE; i++) {
 		world->chunkPool[i].x = INT_MAX;
 		world->chunkPool[i].z = INT_MAX;
-		vec_push(&world->freeChunks, &world->chunkPool[i]);
+		world->freeChunks.push_back(&world->chunkPool[i]);
 	}
 
 	world->randomTickGen = Xorshift32_New();
 }
 
 Chunk* World_LoadChunk(World* world, int x, int z) {
-	for (int i = 0; i < world->freeChunks.length; i++) {
-		if (world->freeChunks.data[i]->x == x && world->freeChunks.data[i]->z == z) {
-			Chunk* chunk = world->freeChunks.data[i];
-			vec_splice(&world->freeChunks, i, 1);
+	for (int i = 0; i < world->freeChunks.size(); i++) {
+		if (world->freeChunks[i]->x == x && world->freeChunks[i]->z == z) {
+			Chunk* chunk = world->freeChunks[i];
+            world->freeChunks.erase(world->freeChunks.begin() + i);
 
 			chunk->references++;
 			return chunk;
 		}
 	}
 
-	for (int i = 0; i < world->freeChunks.length; i++) {
-		if (!world->freeChunks.data[i]->tasksRunning) {
-			Chunk* chunk = world->freeChunks.data[i];
-			vec_splice(&world->freeChunks, i, 1);
+	for (int i = 0; i < world->freeChunks.size(); i++) {
+		if (!world->freeChunks[i]->tasksRunning) {
+			Chunk* chunk = world->freeChunks[i];
+            world->freeChunks.erase(world->freeChunks.begin() + i);
 
 			Chunk_Init(chunk, x, z);
 			WorkQueue_AddItem(world->workqueue, (WorkerItem){WorkerItemType_Load, chunk});
@@ -65,9 +65,10 @@ Chunk* World_LoadChunk(World* world, int x, int z) {
 
 	return NULL;
 }
+
 void World_UnloadChunk(World* world, Chunk* chunk) {
 	WorkQueue_AddItem(world->workqueue, (WorkerItem){WorkerItemType_Save, chunk});
-	vec_push(&world->freeChunks, chunk);
+	world->freeChunks.push_back(chunk);
 	chunk->references--;
 }
 

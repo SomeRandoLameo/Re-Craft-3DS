@@ -5,9 +5,7 @@
 
 #include "../misc/NumberUtils.h"
 #include "../misc/Xorshift.h"
-extern "C" {
-#include <vec/vec.h>
-}
+
 
 #define CHUNKCACHE_SIZE (9)
 
@@ -40,7 +38,7 @@ typedef struct {
 
 	Chunk chunkPool[CHUNKPOOL_SIZE];
 	Chunk* chunkCache[CHUNKCACHE_SIZE][CHUNKCACHE_SIZE];
-	vec_t(Chunk*) freeChunks;
+	std::vector<Chunk*> freeChunks;
 
 	WorkQueue* workqueue;
 

@@ -3,10 +3,6 @@
 #include "gui/Gui.h"
 #include "gui/SpriteBatch.h"
 
-extern "C" {
-    #include <vec/vec.h>
-}
-
 #include "rendering/VertexFmt.h"
 
 #include <dirent.h>
@@ -26,10 +22,10 @@ typedef struct {
 	char path[256];
 } WorldInfo;
 
-static vec_t(WorldInfo) worlds;
+static std::vector<WorldInfo> worlds;
 
 void WorldSelect_ScanWorlds() {
-	vec_clear(&worlds);
+	worlds.clear();
 
 	DIR* directory = opendir("sdmc:/craftus_redesigned/saves");
 
@@ -56,7 +52,7 @@ void WorldSelect_ScanWorlds() {
 			info.lastPlayed = 0;
 			strcpy(info.path, entry->d_name);
 
-			vec_push(&worlds, info);
+			worlds.push_back( info);
 		}
 	}
 
@@ -89,12 +85,12 @@ static void delete_folder(const char* path) {
 }
 
 void WorldSelect_Init() {
-	vec_init(&worlds);
+	worlds.clear();
 
 	WorldSelect_ScanWorlds();
 }
 
-void WorldSelect_Deinit() { vec_deinit(&worlds); }
+void WorldSelect_Deinit() { worlds.clear(); }
 
 typedef enum { MenuState_SelectWorld, MenuState_ConfirmDeletion, MenuState_WorldOptions } MenuState;
 
@@ -148,25 +144,25 @@ void WorldSelect_Render() {
 		velocity *= 0.75f;
 		if (ABS(velocity) < 0.001f) velocity = 0.f;
 
-		int maximumSize = CHAR_HEIGHT * 2 * worlds.length;
+		int maximumSize = CHAR_HEIGHT * 2 * worlds.size();
 		if (scroll < -maximumSize) scroll = -maximumSize;
 		if (scroll > 0) scroll = 0;
 
-		WorldInfo info;
-		int i = 0;
-		vec_foreach (&worlds, info, i) {
+		for (size_t i = 0; i < worlds.size(); i++) {
+			WorldInfo& info = worlds[i];
 			int y = i * (CHAR_HEIGHT + CHAR_HEIGHT) + 10 + scroll;
-			if (selectedWorld == i) {
+			if (selectedWorld == (int)i) {
 				SpriteBatch_PushSingleColorQuad(10, y - 3, -7, 140, 1, SHADER_RGB(20, 20, 20));
 				SpriteBatch_PushSingleColorQuad(10, y + CHAR_HEIGHT + 2, -7, 140, 1, SHADER_RGB(20, 20, 20));
 				SpriteBatch_PushSingleColorQuad(10, y - 3, -7, 1, CHAR_HEIGHT + 6, SHADER_RGB(20, 20, 20));
 				SpriteBatch_PushSingleColorQuad(10 + 140, y - 3, -7, 1, CHAR_HEIGHT + 6, SHADER_RGB(20, 20, 20));
 			}
 			if (Gui_EnteredCursorInside(10, y - 3, 140, CHAR_HEIGHT + 6) && y < 32 * 2) {
-				selectedWorld = i;
+				selectedWorld = (int)i;
 			}
-			SpriteBatch_PushText(20, y, -6, INT16_MAX, true, INT_MAX, NULL, "%s", info.name, movementY);
+			SpriteBatch_PushText(20, y, -6, INT16_MAX, true, INT_MAX, nullptr, "%s", info.name, movementY);
 		}
+
 
 		Gui_Offset(0, 2 * 32 + 5 + BUTTON_TEXT_PADDING);
 		Gui_BeginRowCenter(Gui_RelativeWidth(0.95f), 1);
@@ -175,7 +171,7 @@ void WorldSelect_Render() {
 		Gui_BeginRowCenter(Gui_RelativeWidth(0.95f), 2);
 		clicked_new_world = Gui_Button(0.333f, "New Wrld");
 		clicked_delete_world = Gui_Button(0.333f, "Del Wrld");
-        clicked_mp_connect = Gui_Button(0.333f, "MP CON");
+		clicked_mp_connect = Gui_Button(0.333f, "MP CON");
 		Gui_EndRow();
 	} else if (menustate == MenuState_ConfirmDeletion) {
 		Gui_Offset(0, 10);
@@ -194,9 +190,9 @@ void WorldSelect_Render() {
 		Gui_Label(0.45f, true, INT16_MAX, false, "World type:");
 		Gui_Space(0.1f);
 		if (Gui_Button(0.45f, "%s", worldGenTypesStr[worldGenType])) {
-            worldGenType = static_cast<WorldGenType>(static_cast<int>(worldGenType) + 1);
-            if (worldGenType == WorldGenTypes_Count)
-                worldGenType = static_cast<WorldGenType>(0);
+			worldGenType = static_cast<WorldGenType>(static_cast<int>(worldGenType) + 1);
+			if (worldGenType == WorldGenTypes_Count)
+				worldGenType = static_cast<WorldGenType>(0);
 		}
 		Gui_EndRow();
 
@@ -224,13 +220,13 @@ bool WorldSelect_Update(char* out_worldpath, char* out_name, WorldGenType* world
 		clicked_new_world = false;
 		menustate = MenuState_WorldOptions;
 	}
-    if(clicked_mp_connect){
-        *isMP = true;
-        *newWorld = false;
-        menustate = MenuState_SelectWorld;
-        return true;
-        //Crazy shit happens here :D
-    }
+	if(clicked_mp_connect){
+		*isMP = true;
+		*newWorld = false;
+		menustate = MenuState_SelectWorld;
+		return true;
+		//Crazy shit happens here :D
+	}
 	if (confirmed_world_options) {
 		confirmed_world_options = false;
 		*worldType = worldGenType;
@@ -259,18 +255,18 @@ bool WorldSelect_Update(char* out_worldpath, char* out_name, WorldGenType* world
 
 			for (int i = 0; i < length; i++) {
 				if (out_worldpath[i] == '/' || out_worldpath[i] == '\\' || out_worldpath[i] == '?' ||
-				    out_worldpath[i] == ':' || out_worldpath[i] == '|' || out_worldpath[i] == '<' ||
-				    out_worldpath[i] == '>')
+					out_worldpath[i] == ':' || out_worldpath[i] == '|' || out_worldpath[i] == '<' ||
+					out_worldpath[i] == '>')
 					out_worldpath[i] = '_';
 			}
 
 			while (true) {
-				int i;
-				WorldInfo* info;
 				bool alreadyExisting = false;
-				vec_foreach_ptr(&worlds, info, i) if (!strcmp(out_worldpath, info->path)) {
-					alreadyExisting = true;
-					break;
+				for (const auto& info : worlds) {
+					if (!strcmp(out_worldpath, info.path)) {
+						alreadyExisting = true;
+						break;
+					}
 				}
 				if (!alreadyExisting) break;
 
@@ -279,6 +275,7 @@ bool WorldSelect_Update(char* out_worldpath, char* out_name, WorldGenType* world
 				++length;
 			}
 
+
 			*newWorld = true;
 
 			return true;
@@ -286,8 +283,8 @@ bool WorldSelect_Update(char* out_worldpath, char* out_name, WorldGenType* world
 	}
 	if (clicked_play && selectedWorld != -1) {
 		clicked_play = false;
-		strcpy(out_name, worlds.data[selectedWorld].name);
-		strcpy(out_worldpath, worlds.data[selectedWorld].path);
+		strcpy(out_name, worlds[selectedWorld].name);
+		strcpy(out_worldpath, worlds[selectedWorld].path);
 		*isMP = false;
 
 		*newWorld = false;
@@ -301,7 +298,7 @@ bool WorldSelect_Update(char* out_worldpath, char* out_name, WorldGenType* world
 	if (confirmed_deletion) {
 		confirmed_deletion = false;
 		char buffer[512];
-		sprintf(buffer, "sdmc:/craftus_redesigned/saves/%s", worlds.data[selectedWorld].path);
+		sprintf(buffer, "sdmc:/craftus_redesigned/saves/%s", worlds[selectedWorld].path);
 		delete_folder(buffer);
 
 		WorldSelect_ScanWorlds();

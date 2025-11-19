@@ -7,9 +7,7 @@
 #include "entity/Player.h"
 
 #include <stdbool.h>
-extern "C" {
-#include <vec/vec.h>
-}
+
 #include <3ds.h>
 
 const WorldVertex cube_sides_lut[] = {
@@ -77,7 +75,7 @@ typedef struct {
 	uint16_t visibility;
 } VBOUpdate;
 
-static vec_t(VBOUpdate) vboUpdates;
+static std::vector<VBOUpdate> vboUpdates;
 
 #define MAX_FACES_PER_CLUSTER (CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE / 2 * 6)
 
@@ -107,7 +105,7 @@ static Player* player;
 
 typedef struct { int8_t x, y, z; } QueueElement;
 
-static vec_t(QueueElement) floodfill_queue;
+static std::vector<QueueElement> floodfill_queue;
 
 static LightLock updateLock;
 
@@ -118,30 +116,32 @@ void PolyGen_Init(World* world_, Player* player_) {
 	player = player_;
 
 
-	vec_init(&floodfill_queue);
+	floodfill_queue.clear();
 
 	LightLock_Init(&updateLock);
 
-	vec_init(&vboUpdates);
+	vboUpdates.clear();
 }
 
 void PolyGen_Deinit() {
-	vec_deinit(&vboUpdates);
+    vboUpdates.clear();
 
 	vboCache.~VBOCache();
 
-	vec_deinit(&floodfill_queue);
+    floodfill_queue.clear();
 }
 
 void PolyGen_Harvest(DebugUI* debugUi) {
 	if (LightLock_TryLock(&updateLock) == 0) {
-        debugUi->Text("VBOUpdates %d", vboUpdates.length);
-		if (vboUpdates.length > 0) {
-			if (vboUpdates.data[0].delay++ > 2)
-				while (vboUpdates.length > 0) {
-					VBOUpdate update = vec_pop(&vboUpdates);
+        debugUi->Text("VBOUpdates %d", vboUpdates.size());
+		if (vboUpdates.size() > 0) {
+			if (vboUpdates[0].delay++ > 2)
+				while (vboUpdates.size() > 0) {
+                    VBOUpdate update = vboUpdates.back();
+                    vboUpdates.pop_back();
 
-					Chunk* chunk = World_GetChunk(world, update.x, update.z);
+
+                    Chunk* chunk = World_GetChunk(world, update.x, update.z);
 					if (chunk) {
 						if (chunk->clusters[update.y].vertices > 0) vboCache.Free(chunk->clusters[update.y].vbo);
 						if (chunk->clusters[update.y].transparentVertices > 0)
@@ -166,7 +166,7 @@ static uint8_t floodfill_visited[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
 
 static inline void addFace(int x, int y, int z, Direction dir, Block block, uint8_t metadata, int ao, bool transparent) {
 	if (x >= 0 && y >= 0 && z >= 0 && x < CHUNK_SIZE && y < CHUNK_SIZE && z < CHUNK_SIZE) {
-		faceBuffer[currentFace++] = (Face){x, y, z, dir, block, ao, metadata, transparent};
+		faceBuffer[currentFace++] = Face{static_cast<int8_t>(x), static_cast<int8_t>(y), static_cast<int8_t>(z), dir, block, static_cast<int8_t>(ao), metadata, transparent};
 		transparentFaces += transparent;
 	}
 }
@@ -177,13 +177,15 @@ static uint16_t floodFill(World* world, Chunk* chunk, Cluster* cluster, int x, i
 	if (entrySide0 != Direction_Invalid) exitPoints[entrySide0] = true;
 	if (entrySide1 != Direction_Invalid) exitPoints[entrySide1] = true;
 	if (entrySide2 != Direction_Invalid) exitPoints[entrySide2] = true;
-	vec_clear(&floodfill_queue);
-	vec_push(&floodfill_queue, ((QueueElement){x, y, z}));
+    floodfill_queue.clear();
+	floodfill_queue.push_back(QueueElement{static_cast<int8_t>(x), static_cast<int8_t>(y), static_cast<int8_t>(z)});
 
-	while (floodfill_queue.length > 0) {
-		QueueElement item = vec_pop(&floodfill_queue);
+	while (floodfill_queue.size() > 0) {
+        QueueElement item = floodfill_queue.back();
+        floodfill_queue.pop_back();
 
-		for (int i = 0; i < 6; i++) {
+
+        for (int i = 0; i < 6; i++) {
 			const int* offset = DirectionToOffset[i];
 			int x = item.x + offset[0], y = item.y + offset[1], z = item.z + offset[2];
 			if (x < 0 || y < 0 || z < 0 || x >= CHUNK_SIZE || y >= CHUNK_SIZE || z >= CHUNK_SIZE) {
@@ -192,7 +194,7 @@ static uint16_t floodFill(World* world, Chunk* chunk, Cluster* cluster, int x, i
 				if (!Block_Opaque(cluster->blocks[x][y][z], cluster->metadataLight[x][y][z] & 0xf) &&
 				    !(floodfill_visited[x][y][z] & 1)) {
 					floodfill_visited[x][y][z] |= 1;
-					vec_push(&floodfill_queue, ((QueueElement){x, y, z}));
+					floodfill_queue.push_back((QueueElement){static_cast<int8_t>(x), static_cast<int8_t>(y), static_cast<int8_t>(z)});
 				}
 				if ((cluster->blocks[item.x][item.y][item.z] == Block_Air ||
 				     Block_Opaque(cluster->blocks[x][y][z], cluster->metadataLight[x][y][z] & 0xf)) &&
@@ -378,7 +380,7 @@ void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context) 
 			update.transparentVertices = transparentVertices;
 
 			LightLock_Lock(&updateLock);
-			vec_push(&vboUpdates, update);
+			vboUpdates.push_back(update);
 			LightLock_Unlock(&updateLock);
 		}
 	}
