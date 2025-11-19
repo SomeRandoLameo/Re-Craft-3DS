@@ -9,10 +9,6 @@ ChunkWorker::ChunkWorker() : thread(nullptr), working(false), shouldStop(false) 
 		Crash("Couldn't set AppCpuTimeLimit");
 	}
 
-	for (int i = 0; i < WorkerItemTypes_Count; i++) {
-		vec_init(&handler[i]);
-	}
-
 	s32 prio;
 	bool isNew3ds = false;
 	APT_CheckNew3DS(&isNew3ds);
@@ -35,26 +31,23 @@ ChunkWorker::~ChunkWorker() {
 
 	WorkQueue_Deinit(&queue);
 
-	for (int i = 0; i < WorkerItemTypes_Count; i++) {
-		vec_deinit(&handler[i]);
-	}
 }
 
 void ChunkWorker::Finish() {
 	LightEvent_Signal(&queue.itemAddedEvent);
-	while (working || queue.queue.length > 0) {
+	while (working || queue.queue.size() > 0) {
 		svcSleepThread(1000000);
 	}
 }
 
 void ChunkWorker::AddHandler(WorkerItemType type, WorkerFuncObj obj) {
-	vec_push(&handler[type], obj);
+	handler[type].push_back(obj);
 }
 
 void ChunkWorker::SetHandlerActive(WorkerItemType type, void* context, bool active) {
-	for (size_t i = 0; i < handler[type].length; i++) {
-		if (handler[type].data[i].context == context) {
-			handler[type].data[i].active = active;
+	for (auto& h : handler[type]) {
+		if (h.context == context) {
+			h.active = active;
 			return;
 		}
 	}
@@ -66,10 +59,10 @@ void ChunkWorker::MainloopWrapper(void* context) {
 }
 
 void ChunkWorker::Mainloop() {
-	vec_t(WorkerItem) privateQueue;
-	vec_init(&privateQueue);
+	std::vector<WorkerItem> privateQueue;
+	privateQueue.clear();
 
-	while (!shouldStop || queue.queue.length > 0) {
+	while (!shouldStop || queue.queue.size() > 0) {
 		working = false;
 
 		LightEvent_Wait(&queue.itemAddedEvent);
@@ -77,19 +70,28 @@ void ChunkWorker::Mainloop() {
 
 		working = true;
 
+		// Move queue items into private queue
 		LightLock_Lock(&queue.listInUse);
-		vec_pusharr(&privateQueue, queue.queue.data, queue.queue.length);
-		vec_clear(&queue.queue);
+
+		privateQueue.insert(
+				privateQueue.end(),
+				queue.queue.begin(),
+				queue.queue.end()
+		);
+		queue.queue.clear();
+
 		LightLock_Unlock(&queue.listInUse);
 
-		while (privateQueue.length > 0) {
-			WorkerItem item = vec_pop(&privateQueue);
+		// Process private queue
+		while (!privateQueue.empty()) {
+			WorkerItem item = privateQueue.back();
+			privateQueue.pop_back();
 
 			if (item.uuid == item.chunk->uuid) {
-				for (int i = 0; i < handler[item.type].length; i++) {
-					if (handler[item.type].data[i].active) {
-						handler[item.type].data[i].func(&queue, item,
-														handler[item.type].data[i].context);
+
+				for (auto& h : handler[item.type]) {
+					if (h.active) {
+						h.func(&queue, item, h.context);
 					}
 					svcSleepThread(7000);
 				}
@@ -114,6 +116,4 @@ void ChunkWorker::Mainloop() {
 			}
 		}
 	}
-
-	vec_deinit(&privateQueue);
 }

@@ -216,18 +216,18 @@ void ReCraftCore::Run() {
                         player.quickSelectBar[i] = item;
                         debugUI.Text("%d ",item.GetItemId());
                     }
-/*
+
                     debugUI.Text("===============");
                     auto rndblock = client->GetWorld()->GetChunk(mc::Vector3i(0,0,0))->GetBlock(mc::Vector3i(0,3,0)); //TODO: This crashes on Hardware
                     debugUI.Text(
-                            "%s,%f at: %s in chunk: %s",
+                            "%s %d,%f at: %s in chunk: %s",
                             rndblock->GetName().c_str(),
+                            rndblock->GetType(),
                             static_cast<float>(rndblock->GetType()),
                             to_string(mc::Vector3i(0,3,0)).c_str(),
                             to_string(mc::Vector3i(0,0,0)).c_str()
                     );
                     debugUI.Text("===============");
-                    */
                 });
             }
 
@@ -265,7 +265,7 @@ void ReCraftCore::Run() {
                     }
 
                     for (int i = 0; i < 3; i++) {
-                        while (chunkWorker.IsWorking() || chunkWorker.GetQueue().queue.length > 0) {
+                        while (chunkWorker.IsWorking() || !chunkWorker.GetQueue().queue.empty()) {
                             svcSleepThread(50000000);  // 1 Tick
                         }
                         World_Tick(world);

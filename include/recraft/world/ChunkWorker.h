@@ -1,7 +1,7 @@
 #pragma once
 
 #include <3ds.h>
-
+#include <vector>
 #include "WorkQueue.h"
 
 #define CHUNKWORKER_THREAD_STACKSIZE (16 * 1024)
@@ -36,7 +36,7 @@ private:
 
 	Thread thread;
 	WorkQueue queue;
-	vec_t(WorkerFuncObj) handler[WorkerItemTypes_Count];
+    std::vector<WorkerFuncObj> handler[WorkerItemTypes_Count];
 	volatile bool working;
 	volatile bool shouldStop;
 };

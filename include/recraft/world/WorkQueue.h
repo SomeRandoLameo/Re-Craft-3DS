@@ -1,14 +1,11 @@
 #pragma once
 
-extern "C" {
-    #include <vec/vec.h>
-}
-#include "CT_Chunk.h"
 
+#include "CT_Chunk.h"
 #include "../misc/Xorshift.h"
 
 #include <stdbool.h>
-
+#include <vector>
 #include <3ds.h>
 
 typedef enum {
@@ -27,7 +24,7 @@ typedef struct {
 } WorkerItem;
 
 typedef struct {
-	vec_t(WorkerItem) queue;
+    std::vector<WorkerItem> queue;
 
 	LightEvent itemAddedEvent;
 	LightLock listInUse;
