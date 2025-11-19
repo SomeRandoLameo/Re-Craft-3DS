@@ -7,10 +7,6 @@
 #include "mcbridge/MCBridge.h"
 
 #include <stdarg.h>
-extern "C" {
-#include <vec/vec.h>
-}
-
 
 typedef struct {
 	int depth;
@@ -21,7 +17,7 @@ typedef struct {
 	int16_t color;
 } Sprite;
 
-static vec_t(Sprite) cmdList;
+static std::vector<Sprite> cmdList;
 static C3D_Tex* currentTexture = NULL;
 static GuiVertex* vertexList[2];
 static int projUniform;
@@ -38,8 +34,6 @@ static int screenWidth = 0, screenHeight = 0;
 static int guiScale = 2;
 
 void SpriteBatch_Init(int projUniform_) {
-	vec_init(&cmdList);
-
 	vertexList[0] = (GuiVertex*)linearAlloc(sizeof(GuiVertex) * 256);
 	vertexList[1] = (GuiVertex*)linearAlloc(sizeof(GuiVertex) * 2 * (4096 + 1024));
 
@@ -63,8 +57,9 @@ void SpriteBatch_Init(int projUniform_) {
 	Mtx_RotateX(&iconModelMtx, M_PI / 6.f, false);
 }
 void SpriteBatch_Deinit() {
-	vec_deinit(&cmdList);
-	linearFree(vertexList[0]);
+    cmdList.clear();
+    cmdList.shrink_to_fit();
+    linearFree(vertexList[0]);
 	linearFree(vertexList[1]);
 
 	C3D_TexDelete(&font->texture);
@@ -106,8 +101,25 @@ void SpriteBatch_PushQuad(int x, int y, int z, int w, int h, int rx, int ry, int
 	SpriteBatch_PushQuadColor(x, y, z, w, h, rx, ry, rw, rh, INT16_MAX);
 }
 void SpriteBatch_PushQuadColor(int x, int y, int z, int w, int h, int rx, int ry, int rw, int rh, int16_t color) {
-	vec_push(&cmdList, ((Sprite){z, currentTexture, x * guiScale, y * guiScale, (x + w) * guiScale, y * guiScale, x * guiScale,
-				     (y + h) * guiScale, (x + w) * guiScale, (y + h) * guiScale, rx, ry, rx + rw, ry + rh, color}));
+    cmdList.push_back(
+        Sprite {
+            z,
+            currentTexture,
+            static_cast<int16_t>(x * guiScale),
+            static_cast<int16_t>(y * guiScale),
+            static_cast<int16_t>((x + w) * guiScale),
+            static_cast<int16_t>(y * guiScale),
+            static_cast<int16_t>(x * guiScale),
+            static_cast<int16_t>((y + h) * guiScale),
+            static_cast<int16_t>((x + w) * guiScale),
+            static_cast<int16_t>((y + h) * guiScale),
+            static_cast<int16_t>(rx),
+            static_cast<int16_t>(ry),
+            static_cast<int16_t>(rx + rw),
+            static_cast<int16_t>(ry + rh),
+            color
+        }
+    );
 }
 
 static float rot = 0.f;
@@ -148,9 +160,21 @@ void SpriteBatch_PushIcon(mc::inventory::Slot block, int x, int y, int z) {
 		else if(i == Direction_West) color16 = SHADER_RGB_DARKEN(color16, 10);
 
 #define unpackP(x) (x).xyz[0], (x).xyz[1]
-		vec_push(&cmdList, ((Sprite){z, texture, unpackP(topLeft), unpackP(topRight), unpackP(bottomLeft), unpackP(bottomRight),
-					     iconUV[0] / 256, iconUV[1] / 256 + TEXTURE_TILESIZE, iconUV[0] / 256 + TEXTURE_TILESIZE,
-					     iconUV[1] / 256, color16}));
+        cmdList.push_back(
+                Sprite {
+                    z,
+                    texture,
+                    unpackP(topLeft),
+                    unpackP(topRight),
+                    unpackP(bottomLeft),
+                    unpackP(bottomRight),
+                    static_cast<int16_t>(iconUV[0] / 256),
+                    static_cast<int16_t>(iconUV[1] / 256 + TEXTURE_TILESIZE),
+                    static_cast<int16_t>(iconUV[0] / 256 + TEXTURE_TILESIZE),
+                    static_cast<int16_t>(iconUV[1] / 256),
+                    color16
+                }
+        );
 
 #undef unpackP
 	}
@@ -258,7 +282,12 @@ void SpriteBatch_StartFrame(int width, int height) {
 
 void SpriteBatch_Render(gfxScreen_t screen) {
 	rot += M_PI / 60.f;
-	vec_sort(&cmdList, &compareDrawCommands);
+
+	// sort
+	std::sort(cmdList.begin(), cmdList.end(),
+			  [](const Sprite& a, const Sprite& b) {
+				  return compareDrawCommands(&a, &b) < 0;
+			  });
 
 	C3D_Mtx projMtx;
 	Mtx_OrthoTilt(&projMtx, 0.f, screenWidth, screenHeight, 0.f, 1.f, -1.f, false);
@@ -277,26 +306,31 @@ void SpriteBatch_Render(gfxScreen_t screen) {
 	int verticesTotal = 0;
 
 	size_t vtx = 0;
-	while (cmdList.length > 0) {
+	while (!cmdList.empty()) {
 		size_t vtxStart = vtx;
 
-		C3D_Tex* texture = vec_last(&cmdList).texture;
-		float divW = 1.f / texture->width * INT16_MAX, divH = 1.f / texture->height * INT16_MAX;
+		C3D_Tex* texture = cmdList.back().texture;
+		float divW = 1.f / texture->width * INT16_MAX;
+		float divH = 1.f / texture->height * INT16_MAX;
 
-		while (cmdList.length > 0 && vec_last(&cmdList).texture == texture) {
-			Sprite cmd = vec_pop(&cmdList);
+		while (!cmdList.empty() && cmdList.back().texture == texture) {
+			Sprite cmd = cmdList.back();
+			cmdList.pop_back();
+
 			int16_t color = cmd.color;
 
-			int16_t u0 = (int16_t)((float)cmd.u0 * divW), v0 = (int16_t)((float)cmd.v0 * divH);
-			int16_t u1 = (int16_t)((float)cmd.u1 * divW), v1 = (int16_t)((float)cmd.v1 * divH);
+			int16_t u0 = (int16_t)(cmd.u0 * divW);
+			int16_t v0 = (int16_t)(cmd.v0 * divH);
+			int16_t u1 = (int16_t)(cmd.u1 * divW);
+			int16_t v1 = (int16_t)(cmd.v1 * divH);
 
-			usedVertexList[vtx++] = (GuiVertex){{cmd.x3, cmd.y3, 0}, {u1, v1, color}};
-			usedVertexList[vtx++] = (GuiVertex){{cmd.x1, cmd.y1, 0}, {u1, v0, color}};
-			usedVertexList[vtx++] = (GuiVertex){{cmd.x0, cmd.y0, 0}, {u0, v0, color}};
+			usedVertexList[vtx++] = {{cmd.x3, cmd.y3, 0}, {u1, v1, color}};
+			usedVertexList[vtx++] = {{cmd.x1, cmd.y1, 0}, {u1, v0, color}};
+			usedVertexList[vtx++] = {{cmd.x0, cmd.y0, 0}, {u0, v0, color}};
 
-			usedVertexList[vtx++] = (GuiVertex){{cmd.x0, cmd.y0, 0}, {u0, v0, color}};
-			usedVertexList[vtx++] = (GuiVertex){{cmd.x2, cmd.y2, 0}, {u0, v1, color}};
-			usedVertexList[vtx++] = (GuiVertex){{cmd.x3, cmd.y3, 0}, {u1, v1, color}};
+			usedVertexList[vtx++] = {{cmd.x0, cmd.y0, 0}, {u0, v0, color}};
+			usedVertexList[vtx++] = {{cmd.x2, cmd.y2, 0}, {u0, v1, color}};
+			usedVertexList[vtx++] = {{cmd.x3, cmd.y3, 0}, {u1, v1, color}};
 		}
 
 		C3D_TexBind(0, texture);

@@ -1,37 +1,39 @@
 #include "rendering/VBOCache.h"
-extern "C" {
-#include <vec/vec.h>
-}
 #include <3ds.h>
+#include <vector>
+#include <algorithm>
 
-static vec_t(VBO_Block) freedBlocks;
+static std::vector<VBO_Block> freedBlocks;
 
 static LightLock lock;
 
 VBOCache::VBOCache() {
-	vec_init(&freedBlocks);
+	freedBlocks.clear();
 	LightLock_Init(&lock);
 }
 VBOCache::~VBOCache() {
-	VBO_Block block;
-	int i;
-	vec_foreach (&freedBlocks, block, i) { linearFree(block.memory); }
-	vec_deinit(&freedBlocks);
+	for (auto& block : freedBlocks) {
+		linearFree(block.memory);
+	}
+	freedBlocks.clear();
 }
 
 VBO_Block VBOCache::Alloc(size_t size) {
 	LightLock_Lock(&lock);
-	if (freedBlocks.length > 0) {
-		VBO_Block block;
-		int i;
-		vec_foreach (&freedBlocks, block, i) {
-			if (size <= block.size && block.size - size <= 2048) {
-				vec_splice(&freedBlocks, i, 1);
-				LightLock_Unlock(&lock);
-				return block;
-			}
+
+	for (size_t i = 0; i < freedBlocks.size(); ++i) {
+		VBO_Block& block = freedBlocks[i];
+
+		if (size <= block.size && block.size - size <= 2048) {
+			VBO_Block result = block;
+
+			freedBlocks.erase(freedBlocks.begin() + i);
+
+			LightLock_Unlock(&lock);
+			return result;
 		}
 	}
+
 	VBO_Block block;
 	block.memory = linearAlloc(size);
 	block.size = size;
@@ -46,8 +48,17 @@ int VBOCache::SortBySize(const void* a, const void* b) {
 void VBOCache::Free(VBO_Block block) {
 	if (block.size > 0 && block.memory != NULL) {
 		LightLock_Lock(&lock);
-		vec_push(&freedBlocks, block);
-		vec_sort(&freedBlocks, &SortBySize);
+
+		freedBlocks.push_back(block);
+
+		std::sort(
+				freedBlocks.begin(),
+				freedBlocks.end(),
+				[](const VBO_Block& a, const VBO_Block& b) {
+					return b.size < a.size;
+				}
+		);
+
 		LightLock_Unlock(&lock);
 	}
 }
