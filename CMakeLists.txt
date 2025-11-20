@@ -94,7 +94,6 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     mclib
     sino
     ini
-    vec
     mpack
     miniz
     imgui-ctr

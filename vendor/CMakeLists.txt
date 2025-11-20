@@ -16,10 +16,6 @@ target_include_directories(mpack PUBLIC mpack)
 add_library(sino STATIC sino/sino.c)
 target_include_directories(sino PUBLIC .)
 
-# Vec
-add_library(vec STATIC vec/vec.c)
-target_include_directories(vec PUBLIC vec)
-
 # ImGui
 add_subdirectory(imgui-ctr)
 
