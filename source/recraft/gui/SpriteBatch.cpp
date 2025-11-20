@@ -58,7 +58,6 @@ void SpriteBatch_Init(int projUniform_) {
 }
 void SpriteBatch_Deinit() {
     cmdList.clear();
-    cmdList.shrink_to_fit();
     linearFree(vertexList[0]);
 	linearFree(vertexList[1]);
 

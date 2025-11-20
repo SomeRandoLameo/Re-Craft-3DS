@@ -30,7 +30,7 @@ void SuperChunk_Init(SuperChunk* superchunk, int x, int z) {
 	superchunk->x = x;
 	superchunk->z = z;
 
-	vec_init(&superchunk->sectors);
+	superchunk->sectors.clear();
 
 	char buffer[256];
 	sprintf(buffer, "superchunks/s.%d.%d.mp", x, z);
@@ -62,13 +62,21 @@ void SuperChunk_Init(SuperChunk* superchunk, int x, int z) {
 
 			{
 				ChunkInfo chunkInfo = superchunk->grid[i % SUPERCHUNK_SIZE][i / SUPERCHUNK_SIZE];
-				if (chunkInfo.actualSize > 0) {
-					while (chunkInfo.position + chunkInfo.blockSize > superchunk->sectors.length) {
-						vec_push(&superchunk->sectors, false);
-					}
-					for (int j = 0; j < chunkInfo.blockSize; j++)
-						superchunk->sectors.data[chunkInfo.position + j] = true;
-				}
+                if (chunkInfo.actualSize > 0) {
+
+                    const uint32_t MAX_REASONABLE_SECTORS = 10000;
+
+                    if (chunkInfo.position > MAX_REASONABLE_SECTORS ||
+                        chunkInfo.blockSize > MAX_REASONABLE_SECTORS ||
+                        chunkInfo.position + chunkInfo.blockSize > MAX_REASONABLE_SECTORS) {
+                        Crash("Invalid chunk info: position=%u, blockSize=%u in superchunk %d,%d",
+                              chunkInfo.position, chunkInfo.blockSize, x, z);
+                    }
+
+                    while (chunkInfo.position + chunkInfo.blockSize > superchunk->sectors.size()) {
+                        superchunk->sectors.push_back(false);
+                    }
+                }
 			}
 		}
 
@@ -86,7 +94,7 @@ void SuperChunk_Init(SuperChunk* superchunk, int x, int z) {
 }
 void SuperChunk_Deinit(SuperChunk* superchunk) {
 	SuperChunk_SaveIndex(superchunk);
-	vec_deinit(&superchunk->sectors);
+	superchunk->sectors.clear();
 	fclose(superchunk->dataFile);
 }
 
@@ -134,8 +142,8 @@ void SuperChunk_SaveIndex(SuperChunk* superchunk) {
 static uint32_t reserveSectors(SuperChunk* superchunk, int amount) {
 	int amountFulfilled = 0;
 	int startValue = -1;
-	for (int i = 0; i < superchunk->sectors.length; i++) {
-		if (!superchunk->sectors.data[i]) {
+	for (int i = 0; i < superchunk->sectors.size(); i++) {
+		if (!superchunk->sectors[i]) {
 			if (startValue == -1) startValue = i;
 			amountFulfilled++;
 		} else {
@@ -143,16 +151,16 @@ static uint32_t reserveSectors(SuperChunk* superchunk, int amount) {
 			startValue = -1;
 		}
 		if (amountFulfilled == amount) {
-			for (int i = 0; i < amount; i++) superchunk->sectors.data[startValue + i] = true;
+			for (int i = 0; i < amount; i++) superchunk->sectors[startValue + i] = true;
 			return startValue;
 		}
 	}
-	for (int i = 0; i < amount; i++) vec_push(&superchunk->sectors, true);
-	return superchunk->sectors.length - amount;
+	for (int i = 0; i < amount; i++) superchunk->sectors.push_back( true);
+	return superchunk->sectors.size() - amount;
 }
 static void freeSectors(SuperChunk* superchunk, uint32_t address, uint8_t size) {
 	for (size_t i = 0; i < size; i++) {
-		superchunk->sectors.data[address + i] = false;
+		superchunk->sectors[address + i] = false;
 	}
 }
 
@@ -216,7 +224,7 @@ void SuperChunk_SaveChunk(SuperChunk* superchunk, Chunk* chunk) {
 			if (fwrite(fileBuffer, compressedSize, 1, superchunk->dataFile) != 1)
 				Crash("Couldn't write complete chunk data to file");
 
-			superchunk->grid[x][z] = (ChunkInfo){address, compressedSize, uncompressedSize, blockSize, chunk->revision};
+			superchunk->grid[x][z] = (ChunkInfo){address, compressedSize, uncompressedSize, static_cast<uint8_t>(blockSize), chunk->revision};
 		}
 	}
 }
