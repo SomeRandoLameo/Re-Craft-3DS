@@ -4,7 +4,7 @@ extern "C" {
 }
 #include <stdint.h>
 
-void Texture_Load(C3D_Tex* result, char* filename);
+void Texture_Load(C3D_Tex* result, const char* filename);
 
 #define TEXTURE_MAPSIZE 128
 #define TEXTURE_TILESIZE 16
@@ -21,6 +21,6 @@ typedef struct {
 } Texture_Map;
 
 void Texture_MapInit(Texture_Map* map, const char** files, int num_files);
-Texture_MapIcon Texture_MapGetIcon(Texture_Map* map, char* filename);
+Texture_MapIcon Texture_MapGetIcon(Texture_Map* map, const char* filename);
 
 void Texture_TileImage8(uint8_t* src, uint8_t* dst, int size);

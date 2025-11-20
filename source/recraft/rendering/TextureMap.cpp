@@ -11,7 +11,7 @@
 
 #include "misc/Crash.h"
 
-uint32_t hash(char* str) {
+uint32_t hash(const char* str) {
 	unsigned long hash = 5381;
 	int c;
 	while ((c = *str++)) hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
@@ -20,7 +20,7 @@ uint32_t hash(char* str) {
 
 void tileImage32(u32* src, u8* dst, int sizex, int sizez);
 
-void Texture_Load(C3D_Tex* result, char* filename) {
+void Texture_Load(C3D_Tex* result, const char* filename) {
     int width = 0, height = 0, c = 0;
     unsigned char* image = stbi_load(filename, &width, &height, &c, 4);
     if (image != NULL) {
@@ -210,7 +210,7 @@ void Texture_MapInit(Texture_Map* map, const char** files, int num_files) {
     linearFree(buffer);
 }
 
-Texture_MapIcon Texture_MapGetIcon(Texture_Map* map, char* filename) {
+Texture_MapIcon Texture_MapGetIcon(Texture_Map* map, const char* filename) {
     uint32_t h = hash(filename);
     for (size_t i = 0; i < TEXTURE_MAPTILES * TEXTURE_MAPTILES; i++) {
         if (h == map->icons[i].textureHash) {
