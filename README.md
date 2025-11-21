@@ -12,7 +12,11 @@ The game should run in theory. If not: create an issue and steps to recreate it.
 - 3ds-curl 
 - 3ds-mbedtls
 - 3ds-libopus
-- (you may or may not need more, lacking documentation)
+- submodules
+  - [mclib-3ds](https://github.com/SomeRandoLameo/mclib-3ds)
+  - [imgui-ctr](https://github.com/npid7/imgui-impl-ctr/tree/e67a33579fa6424171ec1a583b6baffa077ee2d3)
+  - [imgui-impl-ctr](https://github.com/npid7/imgui-impl-ctr)
+  - [stb](https://github.com/nothings/stb/tree/f1c79c02822848a9bed4315b12c8c8f3761e1296)
 
 ### Roadmap
 | Task                                 | Status      | Notes                                                                                                                                                                                         |
@@ -24,6 +28,8 @@ The game should run in theory. If not: create an issue and steps to recreate it.
 | Added ImGui for debugging purposes   | ✅ Done      | Added a small Manager for utillizing ImGui everywhere                                                                                                                                         |
 | Join Craftus and MCLib               | In Progress | Use the same Items, Blocks, Vectors, Math and more. This requires an almost full rewrite of craftus and feature-expansions of MC-lib (as i found out 27.10.2025 eg. Today)                    |
 | Implement proper OOP design          | In Progress | Minecraft 1.12 Client sources may help here                                                                                                                                                   |
+| New Renderer                         | In Progress | A completely new Renderer that should fix all rendering problems, written from scratch                                                                                                        |
+| ...                                  | ...         | Various bug fixing and client core feature implementations                                                                                                                                    |
 | Proper Itemstacks                    | Planned     | A Block uint8 ID is not enough                                                                                                                                                                |
 | Inventory                            | Planned     | Survival and Creative                                                                                                                                                                         |
 | Armor slots                          | Planned     | Survival and Creative, online only                                                                                                                                                            |
@@ -43,6 +49,7 @@ The game should run in theory. If not: create an issue and steps to recreate it.
 | Add mc-like GuiScreen manager system | Planned     | Minecraft 1.12 Client sources may help here                                                                                                                                                   |
 | Add Java-like Thread system          | Planned     | My MiniThread implementation may help here                                                                                                                                                    |
 | Add GUI system                       | Planned     | Minecraft 1.12 Client sources may help here                                                                                                                                                   |
+| OreUI for GUI                        | Planned     | Fully fledged Minecraft OreUI WITH resource pack support!                                                                                                                                     |
 | Add Main Menu GUI                    | Planned     | Minecraft 1.12 Client sources and my 3DSCraft attempt may help here                                                                                                                           |
 | Add Multiplayer GUI                  | Planned     | Minecraft 1.12 Client sources and my 3DSCraft attempt may help here                                                                                                                           |
 | ...                                  | ...         |                                                                                                                                                                                               |
@@ -50,21 +57,25 @@ The game should run in theory. If not: create an issue and steps to recreate it.
 
 ### Future Features
 - [ ] Microsoft authentication (from [prism launcher](https://github.com/PrismLauncher/PrismLauncher))
-- [ ] Newer MCLib version ([1.15.2 branch](https://github.com/plushmonkey/mclib/tree/1.15.2)) for newer server support
+- [ ] Newer MCLib version [1.15.2 branch](https://github.com/plushmonkey/mclib/tree/1.15.2) for newer server support
 - [ ] SDMC Resource pack support
 - [ ] Proper worldgen for client singleplayer
 - [ ] On-device server (3DS "local multiplayer" to connect with PC and other 3DSes) — *may be limited by 3DS network capabilities*
 
 ### Credits
-- Network engine bits from [mclib](https://github.com/plushmonkey/mclib)
-- Learned how to utilize mclib from [Terracotta](https://github.com/plushmonkey/Terracotta)
+- Network engine bits from [mclib-3ds](https://github.com/SomeRandoLameo/mclib-3ds)
 - Client Engine bits from [craftus](https://github.com/Onixiya/craftus)
-- Dear IMGUI [imgui](https://github.com/ocornut/imgui/tree/1362fc0c56d8742167379661a353d8342f7c4a86)
+- Dear IMGUI for 3DS (used only for debugging) [imgui-ctr](https://github.com/npid7/imgui-impl-ctr/tree/e67a33579fa6424171ec1a583b6baffa077ee2d3)
+- Learned how to utilize mclib from [Terracotta](https://github.com/plushmonkey/Terracotta)
 - 3DS Compatability layer for IMGUI [imgui-impl-ctr](https://github.com/npid7/imgui-impl-ctr)
 - Audio & Other misc. bits from [QuickLime](https://github.com/syelan34/quicklime) (this may be used in the future)
 
 ### Special thanks goes out to: 
-- Tobid7
+- Tobid7 (New renderer and main contributor)
+- RSDuck & Onixia (Craftus)
+- Plushmonkey (mclib & Terra)
+- the people behind DEAR IMGUI
+- the people behind stb
 
 ### Licensing
 - All external snippets must respect their original licenses
