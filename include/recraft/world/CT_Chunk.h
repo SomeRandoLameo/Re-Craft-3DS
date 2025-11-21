@@ -74,15 +74,15 @@ void Chunk_GenerateHeightmap(Chunk* chunk);
 
 uint8_t Chunk_GetHeightMap(Chunk* chunk, int x, int z);
 
-uint8_t Chunk_GetMetadata(Chunk* chunk, int x, int y, int z);
+uint8_t Chunk_GetMetadata(Chunk* chunk, mc::Vector3i position);
 
-void Chunk_SetMetadata(Chunk* chunk, int x, int y, int z, uint8_t metadata);
+void Chunk_SetMetadata(Chunk* chunk, mc::Vector3i position, uint8_t metadata);
 
-Block Chunk_GetBlock(Chunk* chunk, int x, int y, int z);
+Block Chunk_GetBlock(Chunk* chunk, mc::Vector3i position);
 
 // resets the meta data
-void Chunk_SetBlock(Chunk* chunk, int x, int y, int z, Block block);
+void Chunk_SetBlock(Chunk* chunk, mc::Vector3i position, Block block);
 
-void Chunk_SetBlockAndMeta(Chunk* chunk, int x, int y, int z, Block block, uint8_t metadata);
+void Chunk_SetBlockAndMeta(Chunk* chunk, mc::Vector3i position, Block block, uint8_t metadata);
 
 bool Cluster_IsEmpty(Cluster* cluster);

@@ -20,12 +20,12 @@ void SmeaGen_Generate(WorkQueue* queue, WorkerItem item, void* context) {
 				     (smeasChunkHeight * smeasClusterSize / 2);
 
 			for (int y = 0; y < height - 3; y++) {
-				Chunk_SetBlock(item.chunk, x, y, z, Block_Stone);
+				Chunk_SetBlock(item.chunk, mc::Vector3i(x, y, z), Block_Stone);
 			}
 			for (int y = height - 3; y < height; y++) {
-				Chunk_SetBlock(item.chunk, x, y, z, Block_Dirt);
+				Chunk_SetBlock(item.chunk, mc::Vector3i(x, y, z), Block_Dirt);
 			}
-			Chunk_SetBlock(item.chunk, x, height, z, Block_Grass);
+			Chunk_SetBlock(item.chunk, mc::Vector3i(x, height, z), Block_Grass);
 		}
 	}
 }

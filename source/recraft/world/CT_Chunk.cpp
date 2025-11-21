@@ -39,19 +39,22 @@ void Chunk_RequestGraphicsUpdate(Chunk* chunk, int cluster) {
 }
 
 void Chunk_GenerateHeightmap(Chunk* chunk) {
-	if (chunk->heightmapRevision != chunk->revision)
-		for (int x = 0; x < CHUNK_SIZE; x++)
-			for (int z = 0; z < CHUNK_SIZE; z++)
-				for (int i = CLUSTER_PER_CHUNK - 1; i >= 0; --i) {
-					if (Cluster_IsEmpty(&chunk->clusters[i])) continue;
-					for (int j = CHUNK_SIZE - 1; j >= 0; --j) {
-						if (chunk->clusters[i].blocks[x][j][z] != Block_Air) {
-							chunk->heightmap[x][z] = i * CHUNK_SIZE + j + 1;
-							i = -1;
-							break;
-						}
-					}
-				}
+	if (chunk->heightmapRevision != chunk->revision){
+		for (int x = 0; x < CHUNK_SIZE; x++) {
+            for (int z = 0; z < CHUNK_SIZE; z++) {
+                for (int i = CLUSTER_PER_CHUNK - 1; i >= 0; --i) {
+                    if (Cluster_IsEmpty(&chunk->clusters[i])) continue;
+                    for (int j = CHUNK_SIZE - 1; j >= 0; --j) {
+                        if (chunk->clusters[i].blocks[x][j][z] != Block_Air) {
+                            chunk->heightmap[x][z] = i * CHUNK_SIZE + j + 1;
+                            i = -1;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
 	chunk->heightmapRevision = chunk->revision;
 }
 
@@ -60,37 +63,36 @@ uint8_t Chunk_GetHeightMap(Chunk* chunk, int x, int z) {
     return chunk->heightmap[x][z];
 }
 
-uint8_t Chunk_GetMetadata(Chunk* chunk, int x, int y, int z) {
-    return chunk->clusters[y / CHUNK_SIZE].metadataLight[x][y - (y / CHUNK_SIZE * CHUNK_SIZE)][z] & 0xf;
+uint8_t Chunk_GetMetadata(Chunk* chunk, mc::Vector3i position) {
+    return chunk->clusters[position.y / CHUNK_SIZE].metadataLight[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z] & 0xf;
 }
 
-void Chunk_SetMetadata(Chunk* chunk, int x, int y, int z, uint8_t metadata) {
+void Chunk_SetMetadata(Chunk* chunk, mc::Vector3i position, uint8_t metadata) {
     metadata &= 0xf;
-    Cluster* cluster = &chunk->clusters[y / CHUNK_SIZE];
-    uint8_t* addr = &cluster->metadataLight[x][y - (y / CHUNK_SIZE * CHUNK_SIZE)][z];
+    Cluster* cluster = &chunk->clusters[position.y / CHUNK_SIZE];
+    uint8_t* addr = &cluster->metadataLight[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z];
     *addr = (*addr & 0xf0) | metadata;
     ++cluster->revision;
     ++chunk->revision;
 }
 
-Block Chunk_GetBlock(Chunk* chunk, int x, int y, int z) {
-    return chunk->clusters[y / CHUNK_SIZE].blocks[x][y - (y / CHUNK_SIZE * CHUNK_SIZE)][z];
+Block Chunk_GetBlock(Chunk* chunk, mc::Vector3i position) {
+    return chunk->clusters[position.y / CHUNK_SIZE].blocks[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z];
 }
 
 
 // resets the meta data
-void Chunk_SetBlock(Chunk* chunk, int x, int y, int z, Block block) {
-    Cluster* cluster = &chunk->clusters[y / CHUNK_SIZE];
-    cluster->blocks[x][y - (y / CHUNK_SIZE * CHUNK_SIZE)][z] = block;
-    Chunk_SetMetadata(chunk, x, y, z, 0);
-    /*++cluster->revision;
-    ++chunk->revision;*/  // durch das Setzen der Metadaten wird das sowieso erhöht
+void Chunk_SetBlock(Chunk* chunk, mc::Vector3i position, Block block) {
+    Cluster* cluster = &chunk->clusters[position.y / CHUNK_SIZE];
+    cluster->blocks[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z] = block;
+    Chunk_SetMetadata(chunk, position, 0);
 }
-void Chunk_SetBlockAndMeta(Chunk* chunk, int x, int y, int z, Block block, uint8_t metadata) {
-    Cluster* cluster = &chunk->clusters[y / CHUNK_SIZE];
-    cluster->blocks[x][y - (y / CHUNK_SIZE * CHUNK_SIZE)][z] = block;
+
+void Chunk_SetBlockAndMeta(Chunk* chunk, mc::Vector3i position, Block block, uint8_t metadata) {
+    Cluster* cluster = &chunk->clusters[position.y / CHUNK_SIZE];
+    cluster->blocks[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z] = block;
     metadata &= 0xf;
-    uint8_t* addr = &cluster->metadataLight[x][y - (y / CHUNK_SIZE * CHUNK_SIZE)][z];
+    uint8_t* addr = &cluster->metadataLight[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z];
     *addr = (*addr & 0xf0) | metadata;
 
     ++cluster->revision;

@@ -85,7 +85,7 @@ Chunk* World_GetChunk(World* world, int x, int z) {
 Block World_GetBlock(World* world, int x, int y, int z) {
 	if (y < 0 || y >= CHUNK_HEIGHT) return Block_Air;
 	Chunk* chunk = World_GetChunk(world, WorldToChunkCoord(x), WorldToChunkCoord(z));
-	if (chunk) return Chunk_GetBlock(chunk, WorldToLocalCoord(x), y, WorldToLocalCoord(z));
+	if (chunk) return Chunk_GetBlock(chunk, mc::Vector3i(WorldToLocalCoord(x), y, WorldToLocalCoord(z)));
 	return Block_Air;
 }
 
@@ -112,7 +112,7 @@ void World_SetBlock(World* world, int x, int y, int z, Block block) {
 	if (chunk) {
 		int lX = WorldToLocalCoord(x);
 		int lZ = WorldToLocalCoord(z);
-		Chunk_SetBlock(chunk, lX, y, lZ, block);
+		Chunk_SetBlock(chunk, mc::Vector3i(lX, y, lZ), block);
 
 		NOTIFY_ALL_NEIGHTBORS
 	}
@@ -126,7 +126,7 @@ void World_SetBlockAndMeta(World* world, int x, int y, int z, Block block, uint8
 	if (chunk) {
 		int lX = WorldToLocalCoord(x);
 		int lZ = WorldToLocalCoord(z);
-		Chunk_SetBlockAndMeta(chunk, lX, y, lZ, block, metadata);
+		Chunk_SetBlockAndMeta(chunk, mc::Vector3i(lX, y, lZ), block, metadata);
 
 		NOTIFY_ALL_NEIGHTBORS
 	}
@@ -135,7 +135,7 @@ void World_SetBlockAndMeta(World* world, int x, int y, int z, Block block, uint8
 uint8_t World_GetMetadata(World* world, int x, int y, int z) {
 	if (y < 0 || y >= CHUNK_HEIGHT) return 0;
 	Chunk* chunk = World_GetChunk(world, WorldToChunkCoord(x), WorldToChunkCoord(z));
-	if (chunk) return Chunk_GetMetadata(chunk, WorldToLocalCoord(x), y, WorldToLocalCoord(z));
+	if (chunk) return Chunk_GetMetadata(chunk, mc::Vector3i(WorldToLocalCoord(x), y, WorldToLocalCoord(z)));
 	return 0;
 }
 
@@ -147,7 +147,7 @@ void World_SetMetadata(World* world, int x, int y, int z, uint8_t metadata) {
 	if (chunk) {
 		int lX = WorldToLocalCoord(x);
 		int lZ = WorldToLocalCoord(z);
-		Chunk_SetMetadata(chunk, lX, y, lZ, metadata);
+		Chunk_SetMetadata(chunk, mc::Vector3i(lX, y, lZ), metadata);
 
 		NOTIFY_ALL_NEIGHTBORS
 	}
