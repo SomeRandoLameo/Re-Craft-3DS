@@ -1,26 +1,20 @@
 #include "rendering/Hand.h"
 
-#include "misc/NumberUtils.h"
-#include "rendering/VertexFmt.h"
+int16_t toTexCoord(int x, int tw) {
+    return (int16_t)(((float)(x) / (float)(tw)) * (float)(1 << 15));
+}
 
-#include "rendering/TextureMap.h"
-
-#include <string.h>
-
-static WorldVertex* handVBO;
-static C3D_Tex SkinTexture;
-
-void Hand_Init() {
+Hand::Hand() {
 	handVBO = (WorldVertex*)linearAlloc(sizeof(cube_sides_lut));
 	
 	Texture_Load(&SkinTexture, "romfs:/assets/textures/entity/player.png");
 }
-void Hand_Deinit() {
+Hand::~Hand() {
 	linearFree(handVBO);
 	C3D_TexDelete(&SkinTexture);
 }
 
-void Hand_Draw(int projUniform, C3D_Mtx* projection, mc::inventory::Slot stack, Player* player) {
+void Hand::Draw(int projUniform, C3D_Mtx* projection, mc::inventory::Slot stack, Player* player) {
 	C3D_Mtx pm;
 	C3D_Mtx model;
 	Mtx_Identity(&model);
@@ -80,7 +74,7 @@ void Hand_Draw(int projUniform, C3D_Mtx* projection, mc::inventory::Slot stack, 
 			}
 			for (int j = 0; j < 6; j++) {
 				int idx = i * 6 + j;
-#define toTexCoord(x, tw) (int16_t)(((float)(x) / (float)(tw)) * (float)(1 << 15))
+
 				const int16_t uvLookUp[6][4] = {
 				    {toTexCoord(48, 64), toTexCoord(52, 64), toTexCoord(20, 64), toTexCoord(32, 64)},  // west = inside
 				    {toTexCoord(40, 64), toTexCoord(44, 64), toTexCoord(20, 64), toTexCoord(32, 64)},  // east = outside

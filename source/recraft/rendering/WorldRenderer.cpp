@@ -20,7 +20,7 @@ WorldRenderer::WorldRenderer(Player* player_, World* world_, WorkQueue* workqueu
 
     cursor = new Cursor();
 
-    Hand_Init();
+    hand = new Hand();
 
     float data[256];
     for (int i = 0; i <= 128; i++) {
@@ -37,7 +37,7 @@ WorldRenderer::WorldRenderer(Player* player_, World* world_, WorkQueue* workqueu
     C3D_FogColor(0xffd990);
     C3D_FogLutBind(&fogLut);
 
-    Clouds_Init();
+    clouds = new Clouds();
 }
 
 WorldRenderer::~WorldRenderer() {
@@ -47,8 +47,8 @@ WorldRenderer::~WorldRenderer() {
     delete cursor;
     cursor = nullptr;
 
-    Hand_Deinit();
-    Clouds_Deinit();
+    hand->~Hand();
+    clouds->~Clouds();
 }
 
 void WorldRenderer::RenderWorld() {
@@ -172,7 +172,7 @@ void WorldRenderer::RenderWorld() {
 void WorldRenderer::Render(float iod) {
     cam.Update(player, iod);
 
-    Hand_Draw(projectionUniform, cam.GetProjection(),
+    hand->Draw(projectionUniform, cam.GetProjection(),
               player->quickSelectBar[player->quickSelectBarSlot], player);
 
     C3D_TexBind(0, (C3D_Tex*)Block_GetTextureMap());
@@ -181,7 +181,7 @@ void WorldRenderer::Render(float iod) {
 
     RenderWorld();
 
-    Clouds_Render(projectionUniform, cam.GetVP(), world, player->position.x, player->position.z);
+    clouds->Draw(projectionUniform, cam.GetVP(), world, player->position.x, player->position.z);
 
     if (player->blockInActionRange)
         cursor->Draw(projectionUniform, cam.GetVP(), world,

@@ -6,6 +6,8 @@
 #include "../mcbridge/MCBridge.h"
 #include "Camera.h"
 #include "Cursor.h"
+#include "Hand.h"
+#include "Clouds.h"
 #include <citro3d.h>
 
 //mclib
@@ -39,6 +41,8 @@ public:
 private:
     void RenderWorld();
 
+    Hand* hand;
+    Clouds* clouds;
     Player* player;
     World* world;
     WorkQueue* workqueue;

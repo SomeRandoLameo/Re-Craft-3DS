@@ -47,6 +47,7 @@ public:
     C3D_RenderTarget* GetTopTarget() const { return renderTargets[0]; }
     C3D_RenderTarget* GetBottomTarget() const { return lowerScreen; }
 private:
+    Clouds* clouds;
     C3D_RenderTarget* renderTargets[2];
     C3D_RenderTarget* lowerScreen;
 

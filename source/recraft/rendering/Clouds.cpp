@@ -8,8 +8,6 @@ extern "C" {
 
 #include "rendering/TextureMap.h"
 
-#include <stdio.h>
-
 static WorldVertex vertices[] = {{{-1, 0, -1}, {0, 0}, {255, 255, 255}, {0, 0, 0}},
 				 {{1, 0, -1}, {INT16_MAX, 0}, {255, 255, 255}, {0, 0, 0}},
 				 {{1, 0, 1}, {INT16_MAX, INT16_MAX}, {255, 255, 255}, {0, 0, 0}},
@@ -17,12 +15,7 @@ static WorldVertex vertices[] = {{{-1, 0, -1}, {0, 0}, {255, 255, 255}, {0, 0, 0
 				 {{-1, 0, 1}, {0, INT16_MAX}, {255, 255, 255}, {0, 0, 0}},
 				 {{-1, 0, -1}, {0, 0}, {255, 255, 255}, {0, 0, 0}}};
 
-static C3D_Tex texture;
-static WorldVertex* cloudVBO;
-
-#define TEXTURE_SIZE 64
-
-void Clouds_Init() {
+Clouds::Clouds() {
 	uint8_t* map = (uint8_t*)malloc(TEXTURE_SIZE * TEXTURE_SIZE);
 	for (int i = 0; i < TEXTURE_SIZE; i++) {
 		for (int j = 0; j < TEXTURE_SIZE; j++) {
@@ -43,12 +36,12 @@ void Clouds_Init() {
 	memcpy(cloudVBO, vertices, sizeof(vertices));
 }
 
-void Clouds_Deinit() {
+Clouds::~Clouds() {
 	C3D_TexDelete(&texture);
 	linearFree(cloudVBO);
 }
 
-void Clouds_Render(int projUniform, C3D_Mtx* projectionview, World* world, float tx, float tz) {
+void Clouds::Draw(int projUniform, C3D_Mtx* projectionview, World* world, float tx, float tz) {
 	C3D_Mtx model;
 	Mtx_Identity(&model);
 	Mtx_Translate(&model, tx, 90.f, tz, true);

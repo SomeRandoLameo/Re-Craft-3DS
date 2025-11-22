@@ -4,8 +4,19 @@
 
 #include "../entity/Player.h"
 #include "../blocks/CT_Block.h"
+#include "misc/NumberUtils.h"
+#include "rendering/VertexFmt.h"
 
-void Hand_Init();
-void Hand_Deinit();
+#include "rendering/TextureMap.h"
 
-void Hand_Draw(int projUniform, C3D_Mtx* projection, mc::inventory::Slot stack, Player* player);
+#include <string.h>
+
+class Hand {
+public:
+    Hand();
+    ~Hand();
+    void Draw(int projUniform, C3D_Mtx* projection, mc::inventory::Slot stack, Player* player);
+private:
+    WorldVertex* handVBO;
+    C3D_Tex SkinTexture;
+};

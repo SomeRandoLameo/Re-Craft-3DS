@@ -48,7 +48,7 @@ Renderer::Renderer(World* world_, Player* player_, WorkQueue* queue){
 	renderTargets[0] = nullptr;
 	renderTargets[1] = nullptr;
 	lowerScreen = nullptr;
-
+    clouds = new Clouds();
 	C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
 
 	renderTargets[0] = C3D_RenderTargetCreate(240, 400, GPU_RB_RGBA8, GPU_RB_DEPTH16);
@@ -108,6 +108,8 @@ Renderer::~Renderer() {
 
 	PolyGen_Deinit();
 
+    clouds->~Clouds();
+
 	delete worldRenderer;
 	worldRenderer = nullptr;
 
@@ -155,6 +157,7 @@ void Renderer::Render(DebugUI* debugUi) {
             reinterpret_cast<void*>(renderTargets[0]),
             reinterpret_cast<void*>(lowerScreen)
     );
+
 
     C3D_DepthTest(true, GPU_GREATER, GPU_WRITE_ALL);
     C3D_CullFace(GPU_CULL_BACK_CCW);
@@ -216,7 +219,7 @@ void Renderer::RenderFrame(int eyeIndex, float iod) {
 		C3D_Mtx vp;
 		Mtx_Multiply(&vp, &projection, &view);
 
-		Clouds_Render(world_shader_uLocProjection, &vp, world, 0.f, 0.f);
+		clouds->Draw(world_shader_uLocProjection, &vp, world, 0.f, 0.f);
 
 		SpriteBatch_BindTexture(&logoTex);
 
