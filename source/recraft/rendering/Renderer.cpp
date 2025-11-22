@@ -88,7 +88,7 @@ Renderer::Renderer(World* world_, Player* player_, WorkQueue* queue){
 
 	SpriteBatch_Init(gui_shader_uLocProjection);
 
-	Gui_Init();
+	Gui::Init();
 
 	C3D_CullFace(GPU_CULL_BACK_CCW);
 
@@ -111,7 +111,7 @@ Renderer::~Renderer() {
 	delete worldRenderer;
 	worldRenderer = nullptr;
 
-	Gui_Deinit();
+	Gui::Deinit();
 
 	SpriteBatch_Deinit();
 
@@ -251,7 +251,7 @@ void Renderer::RenderLowerScreen(DebugUI* debugUi) {
 		if (showDebugInfo) debugUi->Draw();
 	}
 
-	Gui_Frame();
+	Gui::Frame();
 
 	SpriteBatch_Render(GFX_BOTTOM);
 }

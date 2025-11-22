@@ -298,7 +298,7 @@ void ReCraftCore::Run() {
                 }
 			}
 		}
-		Gui_InputData(inputData);
+		Gui::InputData(inputData);
 	}
 
     /**

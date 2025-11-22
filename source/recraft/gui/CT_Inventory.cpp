@@ -45,7 +45,7 @@ void Inventory::renderHotbar(int x, int y, mc::inventory::Slot* stacks, int coun
         }
 
         // Handle cursor interaction
-        if (Gui_EnteredCursorInside(rx - 4, ry - 4, 18 * 2, 18 * 2)) {
+        if (Gui::EnteredCursorInside(rx - 4, ry - 4, 18 * 2, 18 * 2)) {
             selected = i;
             handleStackClick(&stacks[i]);
 
@@ -97,13 +97,13 @@ int Inventory::draw(int x, int y, int width, mc::inventory::Slot* stacks, int co
 
     // Draw pagination buttons if needed
     if (count > MAX_PER_SITE) {
-        Gui_Offset(0, 60);
-        if (Gui_Button(0.f, " << ") && currentSite > 1) {
+        Gui::Offset(0, 60);
+        if (Gui::Button(0.f, " << ") && currentSite > 1) {
             --currentSite;
         }
 
-        Gui_Offset(270, 60);
-        if (Gui_Button(0.f, " >> ") && currentSite * MAX_PER_SITE < count) {
+        Gui::Offset(270, 60);
+        if (Gui::Button(0.f, " >> ") && currentSite * MAX_PER_SITE < count) {
             ++currentSite;
         }
     }
@@ -130,7 +130,7 @@ int Inventory::draw(int x, int y, int width, mc::inventory::Slot* stacks, int co
         SpriteBatch_PushIcon(stacks[i], headX * 2, headY * 2, 10);
 
         // Handle cursor interaction
-        if (Gui_EnteredCursorInside(headX * 2, headY * 2, 16 * 2, 16 * 2)) {
+        if (Gui::EnteredCursorInside(headX * 2, headY * 2, 16 * 2, 16 * 2)) {
             handleStackClick(&stacks[i]);
         }
 
