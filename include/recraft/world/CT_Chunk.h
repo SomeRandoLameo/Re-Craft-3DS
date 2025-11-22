@@ -37,52 +37,56 @@ typedef enum {
 	ChunkGen_Finished  // Terrain | Decoration
 } ChunkGenProgress;
 
-typedef struct {
-	// Die Gesamtanzahl! >= graphicalTasksRunning
-	uint32_t tasksRunning;
-	uint32_t graphicalTasksRunning;
-
-	uint32_t uuid;
-
-	ChunkGenProgress genProgress;
-
-	int x, z;
-	Cluster clusters[CLUSTER_PER_CHUNK];
-
-	uint8_t heightmap[CHUNK_SIZE][CHUNK_SIZE];
-	uint32_t heightmapRevision;
-
-	size_t revision;
-
-	uint32_t displayRevision;
-	bool forceVBOUpdate;
-
-	int references;
-} Chunk;
-
 extern Xorshift32 uuidGenerator;
 extern const uint8_t _seethroughTable[6][6];
+
 uint16_t ChunkSeeThrough(Direction in, Direction out);
-
 bool ChunkCanBeSeenThrough(uint16_t visiblity, Direction in, Direction out);
-
-void Chunk_Init(Chunk* chunk, int x, int z);
-
-void Chunk_RequestGraphicsUpdate(Chunk* chunk, int cluster);
-
-void Chunk_GenerateHeightmap(Chunk* chunk);
-
-uint8_t Chunk_GetHeightMap(Chunk* chunk, int x, int z);
-
-uint8_t Chunk_GetMetadata(Chunk* chunk, mc::Vector3i position);
-
-void Chunk_SetMetadata(Chunk* chunk, mc::Vector3i position, uint8_t metadata);
-
-Block Chunk_GetBlock(Chunk* chunk, mc::Vector3i position);
-
-// resets the meta data
-void Chunk_SetBlock(Chunk* chunk, mc::Vector3i position, Block block);
-
-void Chunk_SetBlockAndMeta(Chunk* chunk, mc::Vector3i position, Block block, uint8_t metadata);
-
 bool Cluster_IsEmpty(Cluster* cluster);
+
+class Chunk{
+public:
+    uint32_t tasksRunning;
+    uint32_t graphicalTasksRunning;
+
+    uint32_t uuid;
+
+    ChunkGenProgress genProgress;
+
+    int x, z;
+    Cluster clusters[CLUSTER_PER_CHUNK];
+
+    uint8_t heightmap[CHUNK_SIZE][CHUNK_SIZE];
+    uint32_t heightmapRevision;
+
+    size_t revision;
+
+    uint32_t displayRevision;
+    bool forceVBOUpdate;
+
+    int references;
+
+
+
+    Chunk();
+    Chunk(int x, int z);
+    ~Chunk() = default;
+    void RequestGraphicsUpdate(int cluster);
+
+    void GenerateHeightmap();
+
+    uint8_t GetHeightMap(int x, int z);
+
+    uint8_t GetMetadata(mc::Vector3i position);
+
+    void SetMetadata(mc::Vector3i position, uint8_t metadata);
+
+    Block GetBlock(mc::Vector3i position);
+
+    void SetBlock(mc::Vector3i position, Block block);
+
+    void SetBlockAndMeta(mc::Vector3i position, Block block, uint8_t metadata);
+
+
+};
+

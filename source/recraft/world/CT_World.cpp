@@ -53,7 +53,8 @@ Chunk* World::LoadChunk(int x, int z) {
 			Chunk* chunk = freeChunks[i];
             freeChunks.erase(freeChunks.begin() + i);
 
-			Chunk_Init(chunk, x, z);
+            chunk->~Chunk();  // Destroy old
+            new (chunk) Chunk(x, z);  // Construct new with x, z
 			WorkQueue_AddItem(workqueue, (WorkerItem){WorkerItemType_Load, chunk});
 
 			chunk->references++;
@@ -83,7 +84,7 @@ Chunk* World::GetChunk(int x, int z) {
 Block World::GetBlock( mc::Vector3i position) {
 	if (position.y < 0 || position.y >= CHUNK_HEIGHT) return Block_Air;
 	Chunk* chunk = GetChunk(WorldToChunkCoord(position.x), WorldToChunkCoord(position.z));
-	if (chunk) return Chunk_GetBlock(chunk, mc::Vector3i(WorldToLocalCoord(position.x), position.y, WorldToLocalCoord(position.z)));
+	if (chunk) return chunk->GetBlock(mc::Vector3i(WorldToLocalCoord(position.x), position.y, WorldToLocalCoord(position.z)));
 	return Block_Air;
 }
 
@@ -91,7 +92,7 @@ static void NotifyNeighbor(int axis, int comp, World* world, int cX, int cZ, int
     if (axis == comp) {
         Chunk* neighborChunk = world->GetChunk(cX + xDiff, cZ + zDiff);
         if (neighborChunk) {
-            Chunk_RequestGraphicsUpdate(neighborChunk, y / CHUNK_SIZE);
+            neighborChunk->RequestGraphicsUpdate(y / CHUNK_SIZE);
         }
     }
 }
@@ -103,10 +104,10 @@ static void NotifyAllNeighbors(Chunk* chunk, World* world, int cX, int cZ, int l
     NotifyNeighbor(lZ, 15, world, cX, cZ, y, 0, 1);
 
     if (WorldToLocalCoord(y) == 0 && y / CHUNK_SIZE - 1 >= 0) {
-        Chunk_RequestGraphicsUpdate(chunk, y / CHUNK_SIZE - 1);
+        chunk->RequestGraphicsUpdate(y / CHUNK_SIZE - 1);
     }
     if (WorldToLocalCoord(y) == 15 && y / CHUNK_SIZE + 1 < CLUSTER_PER_CHUNK) {
-        Chunk_RequestGraphicsUpdate(chunk, y / CHUNK_SIZE + 1);
+        chunk->RequestGraphicsUpdate(y / CHUNK_SIZE + 1);
     }
 }
 
@@ -118,7 +119,7 @@ void World::SetBlock(mc::Vector3i position, Block block) {
 	if (chunk) {
 		int lX = WorldToLocalCoord(position.x);
 		int lZ = WorldToLocalCoord(position.z);
-		Chunk_SetBlock(chunk, mc::Vector3i(lX, position.y, lZ), block);
+        chunk->SetBlock(mc::Vector3i(lX, position.y, lZ), block);
 
         NotifyAllNeighbors(chunk,this, cX,cZ,lX,lZ,position.y);
 	}
@@ -132,7 +133,7 @@ void World::SetBlockAndMeta(mc::Vector3i position, Block block, uint8_t metadata
 	if (chunk) {
 		int lX = WorldToLocalCoord(position.x);
 		int lZ = WorldToLocalCoord(position.z);
-		Chunk_SetBlockAndMeta(chunk, mc::Vector3i(lX, position.y, lZ), block, metadata);
+        chunk->SetBlockAndMeta(mc::Vector3i(lX, position.y, lZ), block, metadata);
 
         NotifyAllNeighbors(chunk,this,cX,cZ,lX,lZ,position.y);
 	}
@@ -141,7 +142,7 @@ void World::SetBlockAndMeta(mc::Vector3i position, Block block, uint8_t metadata
 uint8_t World::GetMetadata(mc::Vector3i position) {
 	if (position.y < 0 || position.y >= CHUNK_HEIGHT) return 0;
 	Chunk* chunk = GetChunk(WorldToChunkCoord(position.x), WorldToChunkCoord(position.z));
-	if (chunk) return Chunk_GetMetadata(chunk, mc::Vector3i(WorldToLocalCoord(position.x), position.y, WorldToLocalCoord(position.z)));
+	if (chunk) return chunk->GetMetadata(mc::Vector3i(WorldToLocalCoord(position.x), position.y, WorldToLocalCoord(position.z)));
 	return 0;
 }
 
@@ -153,7 +154,7 @@ void World::SetMetadata(mc::Vector3i position, uint8_t metadata) {
 	if (chunk) {
 		int lX = WorldToLocalCoord(position.x);
 		int lZ = WorldToLocalCoord(position.z);
-		Chunk_SetMetadata(chunk, mc::Vector3i(lX, position.y, lZ), metadata);
+        chunk->SetMetadata(mc::Vector3i(lX, position.y, lZ), metadata);
 
         NotifyAllNeighbors(chunk,this,cX,cZ,lX,lZ,position.y);
 	}
@@ -167,7 +168,7 @@ int World::GetHeight(int x, int z) {
 		int lX = WorldToLocalCoord(x);
 		int lZ = WorldToLocalCoord(z);
 
-		return Chunk_GetHeightMap(chunk, lX, lZ);
+		return chunk->GetHeightMap(lX, lZ);
 	}
 	return 0;
 }

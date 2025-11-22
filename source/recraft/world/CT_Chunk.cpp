@@ -1,3 +1,4 @@
+#include <climits>
 #include "world/CT_Chunk.h"
 
 Xorshift32 uuidGenerator = (Xorshift32)314159265;
@@ -20,33 +21,46 @@ bool ChunkCanBeSeenThrough(uint16_t visiblity, Direction in, Direction out) {
     return visiblity & (1 << (uint16_t)(_seethroughTable[in][out]));
 }
 
-void Chunk_Init(Chunk* chunk, int x, int z) {
-    memset(chunk, 0, sizeof(Chunk));
+Chunk::Chunk() {
+    memset(this, 0, sizeof(Chunk));
 
-    chunk->x = x;
-    chunk->z = z;
+    this->x = INT_MAX;
+    this->z = INT_MAX;
     for (int i = 0; i < CLUSTER_PER_CHUNK; i++) {
-        chunk->clusters[i].y = i;
-        chunk->clusters[i].seeThrough = UINT16_MAX;
-        chunk->clusters[i].empty = true;
+        this->clusters[i].y = i;
+        this->clusters[i].seeThrough = UINT16_MAX;
+        this->clusters[i].empty = true;
     }
-    chunk->uuid = Xorshift32_Next(&uuidGenerator);
+    this->uuid = Xorshift32_Next(&uuidGenerator);
 }
 
-void Chunk_RequestGraphicsUpdate(Chunk* chunk, int cluster) {
-    chunk->clusters[cluster].forceVBOUpdate = true;
-    chunk->forceVBOUpdate = true;
+Chunk::Chunk(int x, int z) {
+    memset(this, 0, sizeof(Chunk));
+
+    this->x = x;
+    this->z = z;
+    for (int i = 0; i < CLUSTER_PER_CHUNK; i++) {
+        this->clusters[i].y = i;
+        this->clusters[i].seeThrough = UINT16_MAX;
+        this->clusters[i].empty = true;
+    }
+    this->uuid = Xorshift32_Next(&uuidGenerator);
 }
 
-void Chunk_GenerateHeightmap(Chunk* chunk) {
-	if (chunk->heightmapRevision != chunk->revision){
+void Chunk::RequestGraphicsUpdate(int cluster) {
+    clusters[cluster].forceVBOUpdate = true;
+    forceVBOUpdate = true;
+}
+
+void Chunk::GenerateHeightmap() {
+	if (heightmapRevision != revision) {
 		for (int x = 0; x < CHUNK_SIZE; x++) {
             for (int z = 0; z < CHUNK_SIZE; z++) {
                 for (int i = CLUSTER_PER_CHUNK - 1; i >= 0; --i) {
-                    if (Cluster_IsEmpty(&chunk->clusters[i])) continue;
+                    if (Cluster_IsEmpty(&clusters[i])) continue;
                     for (int j = CHUNK_SIZE - 1; j >= 0; --j) {
-                        if (chunk->clusters[i].blocks[x][j][z] != Block_Air) {
-                            chunk->heightmap[x][z] = i * CHUNK_SIZE + j + 1;
+                        if (clusters[i].blocks[x][j][z] != Block_Air) {
+                            heightmap[x][z] = i * CHUNK_SIZE + j + 1;
                             i = -1;
                             break;
                         }
@@ -55,48 +69,48 @@ void Chunk_GenerateHeightmap(Chunk* chunk) {
             }
         }
     }
-	chunk->heightmapRevision = chunk->revision;
+	heightmapRevision = revision;
 }
 
-uint8_t Chunk_GetHeightMap(Chunk* chunk, int x, int z) {
-    Chunk_GenerateHeightmap(chunk);
-    return chunk->heightmap[x][z];
+uint8_t Chunk::GetHeightMap(int x, int z) {
+    GenerateHeightmap();
+    return heightmap[x][z];
 }
 
-uint8_t Chunk_GetMetadata(Chunk* chunk, mc::Vector3i position) {
-    return chunk->clusters[position.y / CHUNK_SIZE].metadataLight[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z] & 0xf;
+uint8_t Chunk::GetMetadata(mc::Vector3i position) {
+    return clusters[position.y / CHUNK_SIZE].metadataLight[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z] & 0xf;
 }
 
-void Chunk_SetMetadata(Chunk* chunk, mc::Vector3i position, uint8_t metadata) {
+void Chunk::SetMetadata(mc::Vector3i position, uint8_t metadata) {
     metadata &= 0xf;
-    Cluster* cluster = &chunk->clusters[position.y / CHUNK_SIZE];
+    Cluster* cluster = &clusters[position.y / CHUNK_SIZE];
     uint8_t* addr = &cluster->metadataLight[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z];
     *addr = (*addr & 0xf0) | metadata;
     ++cluster->revision;
-    ++chunk->revision;
+    ++revision;
 }
 
-Block Chunk_GetBlock(Chunk* chunk, mc::Vector3i position) {
-    return chunk->clusters[position.y / CHUNK_SIZE].blocks[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z];
+Block Chunk::GetBlock(mc::Vector3i position) {
+    return clusters[position.y / CHUNK_SIZE].blocks[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z];
 }
 
 
 // resets the meta data
-void Chunk_SetBlock(Chunk* chunk, mc::Vector3i position, Block block) {
-    Cluster* cluster = &chunk->clusters[position.y / CHUNK_SIZE];
+void Chunk::SetBlock(mc::Vector3i position, Block block) {
+    Cluster* cluster = &clusters[position.y / CHUNK_SIZE];
     cluster->blocks[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z] = block;
-    Chunk_SetMetadata(chunk, position, 0);
+    SetMetadata(position, 0);
 }
 
-void Chunk_SetBlockAndMeta(Chunk* chunk, mc::Vector3i position, Block block, uint8_t metadata) {
-    Cluster* cluster = &chunk->clusters[position.y / CHUNK_SIZE];
+void Chunk::SetBlockAndMeta(mc::Vector3i position, Block block, uint8_t metadata) {
+    Cluster* cluster = &clusters[position.y / CHUNK_SIZE];
     cluster->blocks[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z] = block;
     metadata &= 0xf;
     uint8_t* addr = &cluster->metadataLight[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z];
     *addr = (*addr & 0xf0) | metadata;
 
     ++cluster->revision;
-    ++chunk->revision;
+    ++revision;
 }
 
 bool Cluster_IsEmpty(Cluster* cluster) {
