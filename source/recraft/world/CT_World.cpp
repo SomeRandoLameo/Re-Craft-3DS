@@ -2,61 +2,59 @@
 
 #include "blocks/BlockEvents.h"
 
-#include <string.h>
-
-#include <assert.h>
-#include <limits.h>
-#include <stdint.h>
+#include <cstring>
+#include <climits>
+#include <cstdint>
 
 int WorldToChunkCoord(int x) { return (x + (int)(x < 0)) / CHUNK_SIZE - (int)(x < 0); }
 int WorldToLocalCoord(int x) { return x - WorldToChunkCoord(x) * CHUNK_SIZE; }
 
-void World_Init(World* world, WorkQueue* workqueue) {
-	strcpy(world->name, "TestWelt");
+World::World(WorkQueue *workqueue_) {
+    strcpy(name, "TestWelt");
 
-	world->workqueue = workqueue;
+    this->workqueue = workqueue_;
 
-	world->genSettings.seed = 28112000;
-	world->genSettings.type = WorldGen_SuperFlat;
+    genSettings.seed = 28112000;
+    genSettings.type = WorldGen_SuperFlat;
 
-	world->freeChunks.clear();
+    freeChunks.clear();
 
-	World_Reset(world);
+    Reset();
 }
 
-void World_Reset(World* world) {
-	world->cacheTranslationX = 0;
-	world->cacheTranslationZ = 0;
+void World::Reset() {
+	cacheTranslationX = 0;
+	cacheTranslationZ = 0;
 
-	world->freeChunks.clear();
+	freeChunks.clear();
 
 	for (size_t i = 0; i < CHUNKPOOL_SIZE; i++) {
-		world->chunkPool[i].x = INT_MAX;
-		world->chunkPool[i].z = INT_MAX;
-		world->freeChunks.push_back(&world->chunkPool[i]);
+		chunkPool[i].x = INT_MAX;
+		chunkPool[i].z = INT_MAX;
+		freeChunks.push_back(&chunkPool[i]);
 	}
 
-	world->randomTickGen = Xorshift32_New();
+	randomTickGen = Xorshift32_New();
 }
 
-Chunk* World_LoadChunk(World* world, int x, int z) {
-	for (int i = 0; i < world->freeChunks.size(); i++) {
-		if (world->freeChunks[i]->x == x && world->freeChunks[i]->z == z) {
-			Chunk* chunk = world->freeChunks[i];
-            world->freeChunks.erase(world->freeChunks.begin() + i);
+Chunk* World::LoadChunk(int x, int z) {
+	for (int i = 0; i < freeChunks.size(); i++) {
+		if (freeChunks[i]->x == x && freeChunks[i]->z == z) {
+			Chunk* chunk = freeChunks[i];
+            freeChunks.erase(freeChunks.begin() + i);
 
 			chunk->references++;
 			return chunk;
 		}
 	}
 
-	for (int i = 0; i < world->freeChunks.size(); i++) {
-		if (!world->freeChunks[i]->tasksRunning) {
-			Chunk* chunk = world->freeChunks[i];
-            world->freeChunks.erase(world->freeChunks.begin() + i);
+	for (int i = 0; i < freeChunks.size(); i++) {
+		if (!freeChunks[i]->tasksRunning) {
+			Chunk* chunk = freeChunks[i];
+            freeChunks.erase(freeChunks.begin() + i);
 
 			Chunk_Init(chunk, x, z);
-			WorkQueue_AddItem(world->workqueue, (WorkerItem){WorkerItemType_Load, chunk});
+			WorkQueue_AddItem(workqueue, (WorkerItem){WorkerItemType_Load, chunk});
 
 			chunk->references++;
 			return chunk;
@@ -66,97 +64,105 @@ Chunk* World_LoadChunk(World* world, int x, int z) {
 	return NULL;
 }
 
-void World_UnloadChunk(World* world, Chunk* chunk) {
-	WorkQueue_AddItem(world->workqueue, (WorkerItem){WorkerItemType_Save, chunk});
-	world->freeChunks.push_back(chunk);
+void World::UnloadChunk(Chunk* chunk) {
+	WorkQueue_AddItem(workqueue, (WorkerItem){WorkerItemType_Save, chunk});
+	freeChunks.push_back(chunk);
 	chunk->references--;
 }
 
-Chunk* World_GetChunk(World* world, int x, int z) {
+Chunk* World::GetChunk(int x, int z) {
 	int halfS = CHUNKCACHE_SIZE / 2;
-	int lowX = world->cacheTranslationX - halfS;
-	int lowZ = world->cacheTranslationZ - halfS;
-	int highX = world->cacheTranslationX + halfS;
-	int highZ = world->cacheTranslationZ + halfS;
-	if (x >= lowX && z >= lowZ && x <= highX && z <= highZ) return world->chunkCache[x - lowX][z - lowZ];
+	int lowX = cacheTranslationX - halfS;
+	int lowZ = cacheTranslationZ - halfS;
+	int highX = cacheTranslationX + halfS;
+	int highZ = cacheTranslationZ + halfS;
+	if (x >= lowX && z >= lowZ && x <= highX && z <= highZ) return chunkCache[x - lowX][z - lowZ];
 	return NULL;
 }
 
-Block World_GetBlock(World* world, int x, int y, int z) {
-	if (y < 0 || y >= CHUNK_HEIGHT) return Block_Air;
-	Chunk* chunk = World_GetChunk(world, WorldToChunkCoord(x), WorldToChunkCoord(z));
-	if (chunk) return Chunk_GetBlock(chunk, mc::Vector3i(WorldToLocalCoord(x), y, WorldToLocalCoord(z)));
+Block World::GetBlock( mc::Vector3i position) {
+	if (position.y < 0 || position.y >= CHUNK_HEIGHT) return Block_Air;
+	Chunk* chunk = GetChunk(WorldToChunkCoord(position.x), WorldToChunkCoord(position.z));
+	if (chunk) return Chunk_GetBlock(chunk, mc::Vector3i(WorldToLocalCoord(position.x), position.y, WorldToLocalCoord(position.z)));
 	return Block_Air;
 }
 
-#define NOTIFY_NEIGHTBOR(axis, comp, xDiff, zDiff)                                               \
-	if (axis == comp) {                                                                      \
-		Chunk* neightborChunk = World_GetChunk(world, cX + xDiff, cZ + zDiff);           \
-		if (neightborChunk) Chunk_RequestGraphicsUpdate(neightborChunk, y / CHUNK_SIZE); \
-	\
+static void NotifyNeighbor(int axis, int comp, World* world, int cX, int cZ, int y, int xDiff, int zDiff) {
+    if (axis == comp) {
+        Chunk* neighborChunk = world->GetChunk(cX + xDiff, cZ + zDiff);
+        if (neighborChunk) {
+            Chunk_RequestGraphicsUpdate(neighborChunk, y / CHUNK_SIZE);
+        }
+    }
 }
 
-#define NOTIFY_ALL_NEIGHTBORS                                                                                             \
-	NOTIFY_NEIGHTBOR(lX, 0, -1, 0)                                                                                    \
-	NOTIFY_NEIGHTBOR(lX, 15, 1, 0)                                                                                    \
-	NOTIFY_NEIGHTBOR(lZ, 0, 0, -1)                                                                                    \
-	NOTIFY_NEIGHTBOR(lZ, 15, 0, 1)                                                                                    \
-	if (WorldToLocalCoord(y) == 0 && y / CHUNK_SIZE - 1 >= 0) Chunk_RequestGraphicsUpdate(chunk, y / CHUNK_SIZE - 1); \
-	if (WorldToLocalCoord(y) == 15 && y / CHUNK_SIZE + 1 < CLUSTER_PER_CHUNK) Chunk_RequestGraphicsUpdate(chunk, y / CHUNK_SIZE + 1);
+static void NotifyAllNeighbors(Chunk* chunk, World* world, int cX, int cZ, int lX, int lZ, int y) {
+    NotifyNeighbor(lX, 0, world, cX, cZ, y, -1, 0);
+    NotifyNeighbor(lX, 15, world, cX, cZ, y, 1, 0);
+    NotifyNeighbor(lZ, 0, world, cX, cZ, y, 0, -1);
+    NotifyNeighbor(lZ, 15, world, cX, cZ, y, 0, 1);
 
-void World_SetBlock(World* world, int x, int y, int z, Block block) {
-	if (y < 0 || y >= CHUNK_HEIGHT) return;
-	int cX = WorldToChunkCoord(x);
-	int cZ = WorldToChunkCoord(z);
-	Chunk* chunk = World_GetChunk(world, cX, cZ);
+    if (WorldToLocalCoord(y) == 0 && y / CHUNK_SIZE - 1 >= 0) {
+        Chunk_RequestGraphicsUpdate(chunk, y / CHUNK_SIZE - 1);
+    }
+    if (WorldToLocalCoord(y) == 15 && y / CHUNK_SIZE + 1 < CLUSTER_PER_CHUNK) {
+        Chunk_RequestGraphicsUpdate(chunk, y / CHUNK_SIZE + 1);
+    }
+}
+
+void World::SetBlock(mc::Vector3i position, Block block) {
+	if (position.y < 0 || position.y >= CHUNK_HEIGHT) return;
+	int cX = WorldToChunkCoord(position.x);
+	int cZ = WorldToChunkCoord(position.z);
+	Chunk* chunk = GetChunk(cX, cZ);
 	if (chunk) {
-		int lX = WorldToLocalCoord(x);
-		int lZ = WorldToLocalCoord(z);
-		Chunk_SetBlock(chunk, mc::Vector3i(lX, y, lZ), block);
+		int lX = WorldToLocalCoord(position.x);
+		int lZ = WorldToLocalCoord(position.z);
+		Chunk_SetBlock(chunk, mc::Vector3i(lX, position.y, lZ), block);
 
-		NOTIFY_ALL_NEIGHTBORS
+        NotifyAllNeighbors(chunk,this, cX,cZ,lX,lZ,position.y);
 	}
 }
 
-void World_SetBlockAndMeta(World* world, int x, int y, int z, Block block, uint8_t metadata) {
-	if (y < 0 || y >= CHUNK_HEIGHT) return;
-	int cX = WorldToChunkCoord(x);
-	int cZ = WorldToChunkCoord(z);
-	Chunk* chunk = World_GetChunk(world, cX, cZ);
+void World::SetBlockAndMeta(mc::Vector3i position, Block block, uint8_t metadata) {
+	if (position.y < 0 || position.y >= CHUNK_HEIGHT) return;
+	int cX = WorldToChunkCoord(position.x);
+	int cZ = WorldToChunkCoord(position.z);
+	Chunk* chunk = GetChunk(cX, cZ);
 	if (chunk) {
-		int lX = WorldToLocalCoord(x);
-		int lZ = WorldToLocalCoord(z);
-		Chunk_SetBlockAndMeta(chunk, mc::Vector3i(lX, y, lZ), block, metadata);
+		int lX = WorldToLocalCoord(position.x);
+		int lZ = WorldToLocalCoord(position.z);
+		Chunk_SetBlockAndMeta(chunk, mc::Vector3i(lX, position.y, lZ), block, metadata);
 
-		NOTIFY_ALL_NEIGHTBORS
+        NotifyAllNeighbors(chunk,this,cX,cZ,lX,lZ,position.y);
 	}
 }
 
-uint8_t World_GetMetadata(World* world, int x, int y, int z) {
-	if (y < 0 || y >= CHUNK_HEIGHT) return 0;
-	Chunk* chunk = World_GetChunk(world, WorldToChunkCoord(x), WorldToChunkCoord(z));
-	if (chunk) return Chunk_GetMetadata(chunk, mc::Vector3i(WorldToLocalCoord(x), y, WorldToLocalCoord(z)));
+uint8_t World::GetMetadata(mc::Vector3i position) {
+	if (position.y < 0 || position.y >= CHUNK_HEIGHT) return 0;
+	Chunk* chunk = GetChunk(WorldToChunkCoord(position.x), WorldToChunkCoord(position.z));
+	if (chunk) return Chunk_GetMetadata(chunk, mc::Vector3i(WorldToLocalCoord(position.x), position.y, WorldToLocalCoord(position.z)));
 	return 0;
 }
 
-void World_SetMetadata(World* world, int x, int y, int z, uint8_t metadata) {
-	if (y < 0 || y >= CHUNK_HEIGHT) return;
-	int cX = WorldToChunkCoord(x);
-	int cZ = WorldToChunkCoord(z);
-	Chunk* chunk = World_GetChunk(world, cX, cZ);
+void World::SetMetadata(mc::Vector3i position, uint8_t metadata) {
+	if (position.y < 0 || position.y >= CHUNK_HEIGHT) return;
+	int cX = WorldToChunkCoord(position.x);
+	int cZ = WorldToChunkCoord(position.z);
+	Chunk* chunk = GetChunk(cX, cZ);
 	if (chunk) {
-		int lX = WorldToLocalCoord(x);
-		int lZ = WorldToLocalCoord(z);
-		Chunk_SetMetadata(chunk, mc::Vector3i(lX, y, lZ), metadata);
+		int lX = WorldToLocalCoord(position.x);
+		int lZ = WorldToLocalCoord(position.z);
+		Chunk_SetMetadata(chunk, mc::Vector3i(lX, position.y, lZ), metadata);
 
-		NOTIFY_ALL_NEIGHTBORS
+        NotifyAllNeighbors(chunk,this,cX,cZ,lX,lZ,position.y);
 	}
 }
 
-int World_GetHeight(World* world, int x, int z) {
+int World::GetHeight(int x, int z) {
 	int cX = WorldToChunkCoord(x);
 	int cZ = WorldToChunkCoord(z);
-	Chunk* chunk = World_GetChunk(world, cX, cZ);
+	Chunk* chunk = GetChunk(cX, cZ);
 	if (chunk) {
 		int lX = WorldToLocalCoord(x);
 		int lZ = WorldToLocalCoord(z);
@@ -166,16 +172,16 @@ int World_GetHeight(World* world, int x, int z) {
 	return 0;
 }
 
-void World_UpdateChunkCache(World* world, int orginX, int orginZ) {
-	if (orginX != world->cacheTranslationX || orginZ != world->cacheTranslationZ) {
+void World::UpdateChunkCache(int orginX, int orginZ) {
+	if (orginX != cacheTranslationX || orginZ != cacheTranslationZ) {
 		Chunk* tmpBuffer[CHUNKCACHE_SIZE][CHUNKCACHE_SIZE];
-		memcpy(tmpBuffer, world->chunkCache, sizeof(tmpBuffer));
+		memcpy(tmpBuffer, chunkCache, sizeof(tmpBuffer));
 
-		int oldBufferStartX = world->cacheTranslationX - CHUNKCACHE_SIZE / 2;
-		int oldBufferStartZ = world->cacheTranslationZ - CHUNKCACHE_SIZE / 2;
+		int oldBufferStartX = cacheTranslationX - CHUNKCACHE_SIZE / 2;
+		int oldBufferStartZ = cacheTranslationZ - CHUNKCACHE_SIZE / 2;
 
-		int diffX = orginX - world->cacheTranslationX;
-		int diffZ = orginZ - world->cacheTranslationZ;
+		int diffX = orginX - cacheTranslationX;
+		int diffZ = orginZ - cacheTranslationZ;
 
 		for (int i = 0; i < CHUNKCACHE_SIZE; i++) {
 			for (int j = 0; j < CHUNKCACHE_SIZE; j++) {
@@ -183,10 +189,10 @@ void World_UpdateChunkCache(World* world, int orginX, int orginZ) {
 				int wz = orginZ + (j - CHUNKCACHE_SIZE / 2);
 				if (wx >= oldBufferStartX && wx < oldBufferStartX + CHUNKCACHE_SIZE && wz >= oldBufferStartZ &&
 				    wz < oldBufferStartZ + CHUNKCACHE_SIZE) {
-					world->chunkCache[i][j] = tmpBuffer[i + diffX][j + diffZ];
+					chunkCache[i][j] = tmpBuffer[i + diffX][j + diffZ];
 					tmpBuffer[i + diffX][j + diffZ] = NULL;
 				} else {
-					world->chunkCache[i][j] = World_LoadChunk(world, wx, wz);
+					chunkCache[i][j] = LoadChunk(wx, wz);
 				}
 			}
 		}
@@ -194,42 +200,43 @@ void World_UpdateChunkCache(World* world, int orginX, int orginZ) {
 		for (int i = 0; i < CHUNKCACHE_SIZE; i++) {
 			for (int j = 0; j < CHUNKCACHE_SIZE; j++) {
 				if (tmpBuffer[i][j] != NULL) {
-					World_UnloadChunk(world, tmpBuffer[i][j]);
+					UnloadChunk(tmpBuffer[i][j]);
 				}
 			}
 		}
 
-		world->cacheTranslationX = orginX;
-		world->cacheTranslationZ = orginZ;
+		cacheTranslationX = orginX;
+		cacheTranslationZ = orginZ;
 	}
 }
 
-void World_Tick(World* world) {
-	for (int x = 0; x < CHUNKCACHE_SIZE; x++)
-		for (int z = 0; z < CHUNKCACHE_SIZE; z++) {
-			Chunk* chunk = world->chunkCache[x][z];
+void World::Tick() {
+	for (int x = 0; x < CHUNKCACHE_SIZE; x++) {
+        for (int z = 0; z < CHUNKCACHE_SIZE; z++) {
+            Chunk *chunk = chunkCache[x][z];
 
-			if (chunk->genProgress == ChunkGen_Empty && !chunk->tasksRunning)
-				WorkQueue_AddItem(world->workqueue, (WorkerItem){WorkerItemType_BaseGen, chunk});
+            if (chunk->genProgress == ChunkGen_Empty && !chunk->tasksRunning)
+                WorkQueue_AddItem(workqueue, (WorkerItem) {WorkerItemType_BaseGen, chunk});
 
-			if (x > 0 && z > 0 && x < CHUNKCACHE_SIZE - 1 && z < CHUNKCACHE_SIZE - 1 &&
-			    chunk->genProgress == ChunkGen_Terrain && !chunk->tasksRunning) {
-				bool clear = true;
-				for (int xOff = -1; xOff < 2 && clear; xOff++)
-					for (int zOff = -1; zOff < 2 && clear; zOff++) {
-						Chunk* borderChunk = world->chunkCache[x + xOff][z + zOff];
-						if (borderChunk->genProgress == ChunkGen_Empty || !borderChunk->tasksRunning) clear = false;
-					}
-				if (clear) WorkQueue_AddItem(world->workqueue, (WorkerItem){WorkerItemType_Decorate, chunk});
+            if (x > 0 && z > 0 && x < CHUNKCACHE_SIZE - 1 && z < CHUNKCACHE_SIZE - 1 &&
+                chunk->genProgress == ChunkGen_Terrain && !chunk->tasksRunning) {
+                bool clear = true;
+                for (int xOff = -1; xOff < 2 && clear; xOff++)
+                    for (int zOff = -1; zOff < 2 && clear; zOff++) {
+                        Chunk *borderChunk = chunkCache[x + xOff][z + zOff];
+                        if (borderChunk->genProgress == ChunkGen_Empty || !borderChunk->tasksRunning) clear = false;
+                    }
+                if (clear) WorkQueue_AddItem(workqueue, (WorkerItem) {WorkerItemType_Decorate, chunk});
 
-				int xVals[RANDOMTICKS_PER_CHUNK];
-				int yVals[RANDOMTICKS_PER_CHUNK];
-				int zVals[RANDOMTICKS_PER_CHUNK];
-				for (int i = 0; i < RANDOMTICKS_PER_CHUNK; i++) {
-					xVals[i] = WorldToLocalCoord(Xorshift32_Next(&world->randomTickGen));
-					yVals[i] = WorldToLocalCoord(Xorshift32_Next(&world->randomTickGen));
-					zVals[i] = WorldToLocalCoord(Xorshift32_Next(&world->randomTickGen));
-				}
-			}
-		}
+                int xVals[RANDOMTICKS_PER_CHUNK];
+                int yVals[RANDOMTICKS_PER_CHUNK];
+                int zVals[RANDOMTICKS_PER_CHUNK];
+                for (int i = 0; i < RANDOMTICKS_PER_CHUNK; i++) {
+                    xVals[i] = WorldToLocalCoord(Xorshift32_Next(&randomTickGen));
+                    yVals[i] = WorldToLocalCoord(Xorshift32_Next(&randomTickGen));
+                    zVals[i] = WorldToLocalCoord(Xorshift32_Next(&randomTickGen));
+                }
+            }
+        }
+    }
 }

@@ -8,15 +8,15 @@ ReCraftCore* ReCraftCore::theReCraftCore = nullptr;
 ReCraftCore::ReCraftCore() {
     theReCraftCore = this;
 }
-
+//TODO: Why isnt this in world?
 void ReCraftCore::ReleaseWorld(ChunkWorker* chunkWorker, SaveManager* savemgr, World* world) {
 	for (int i = 0; i < CHUNKCACHE_SIZE; i++) {
 		for (int j = 0; j < CHUNKCACHE_SIZE; j++) {
-			World_UnloadChunk(world, world->chunkCache[i][j]);
+            world->UnloadChunk(world->chunkCache[i][j]);
 		}
 	}
 	chunkWorker->Finish();
-	World_Reset(world);
+    world->Reset();
 
     savemgr->Unload();
 }
@@ -53,8 +53,7 @@ void ReCraftCore::Run() {
 
 	sino_init();
 
-	World* world = (World*)malloc(sizeof(World));
-
+    World* world = new World(&chunkWorker.GetQueue());
 	//Sound BackgroundSound;
 	//Sound PlayerSound;
 	Player player(world);
@@ -69,7 +68,7 @@ void ReCraftCore::Run() {
 
 	WorldSelect_Init();
 
-	World_Init(world, &chunkWorker.GetQueue());
+
 
     MCBridge mcBridge;
 
@@ -177,15 +176,18 @@ void ReCraftCore::Run() {
 
 		if (this->gamestate == GameState_Playing) {
 			while (timeAccum >= 1.f / 20.f) {
-				World_Tick(world);
+                world->Tick();
 
 				timeAccum -= 1.f / 20.f;
 			}
 
             playerCtrl.Update(&debugUI, /*&PlayerSound,*/ inputData, dt);
 
-			World_UpdateChunkCache(world, WorldToChunkCoord(FastFloor(player.position.x)),
-					       WorldToChunkCoord(FastFloor(player.position.z)));
+            world->UpdateChunkCache(
+                WorldToChunkCoord(FastFloor(player.position.x)),
+			    WorldToChunkCoord(FastFloor(player.position.z))
+            );
+
 		}else if(this->gamestate == GameState_Playing_OnLine){
 
             //ONLINE LOGIC HERE
@@ -259,7 +261,7 @@ void ReCraftCore::Run() {
                     for (int i = 0; i < CHUNKCACHE_SIZE; i++) {
                         for (int j = 0; j < CHUNKCACHE_SIZE; j++) {
                             world->chunkCache[i][j] =
-                                World_LoadChunk(world, i - CHUNKCACHE_SIZE / 2 + world->cacheTranslationX,
+                                world->LoadChunk(i - CHUNKCACHE_SIZE / 2 + world->cacheTranslationX,
                                         j - CHUNKCACHE_SIZE / 2 + world->cacheTranslationZ);
                         }
                     }
@@ -268,14 +270,14 @@ void ReCraftCore::Run() {
                         while (chunkWorker.IsWorking() || !chunkWorker.GetQueue().queue.empty()) {
                             svcSleepThread(50000000);  // 1 Tick
                         }
-                        World_Tick(world);
+                        world->Tick();
                     }
 
                     if (newWorld) {
                         int highestblock = 0;
                         for (int x = -1; x < 1; x++) {
                             for (int z = -1; z < 1; z++) {
-                                int height = World_GetHeight(world, x, z);
+                                int height = world->GetHeight(x, z);
                                 if (height > highestblock) highestblock = height;
                             }
                         }
@@ -299,14 +301,6 @@ void ReCraftCore::Run() {
 		Gui_InputData(inputData);
 	}
 
-
-
-
-
-
-
-
-
     /**
      * EXIT/CLEANUP CODE
      */
@@ -327,7 +321,7 @@ void ReCraftCore::Run() {
 
 	SuperChunk_DeinitPools();
 
-	free(world);
+    delete world;
 /*
 	if (BackgroundSound.threaid != NULL)
 	{

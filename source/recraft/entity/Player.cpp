@@ -78,7 +78,7 @@ void Player::Update(void* dmg) {
 void Player::HandleFallDamage() {
     if (velocity.y <= -12) {
         rndy = round(velocity.y);
-        if (World_GetBlock(world, position.x, position.y - 1, position.z) != Block_Air) {
+        if (world->GetBlock(mc::Vector3i(position.x, position.y - 1, position.z)) != Block_Air) {
             hp = hp + rndy;
             rndy = 0;
         }
@@ -86,7 +86,7 @@ void Player::HandleFallDamage() {
 }
 
 void Player::HandleFireDamage() {
-    if (World_GetBlock(world, position.x, position.y, position.z) == Block_Lava) {
+    if (world->GetBlock(ToVector3i(position)) == Block_Lava) {
       //  DebugUI_Log("ur burning lol");
         OvertimeDamage("Fire", 10);
     }
@@ -123,10 +123,10 @@ void Player::HandleRespawn(void* arg1) {
                 position.x = 0.0;
 
                 int spawnY = 1;
-                while (World_GetBlock(world, spawnPos.x, spawnPos.y, spawnPos.z) != Block_Air)
+                while (world->GetBlock( mc::ToVector3i(spawnPos)) != Block_Air)
                     spawnY++;
 
-                bool shouldOffset = world->genSettings.type != WorldGen_SuperFlat;
+                bool shouldOffset = world->GetGenSettings().type != WorldGen_SuperFlat;
                 position.y = shouldOffset ? spawnY + 1 : spawnY;
                 position.z = 0.0;
             }
@@ -139,10 +139,10 @@ void Player::HandleRespawn(void* arg1) {
                 position.x = spawnPos.x;
 
                 int spawnY = 1;
-                while (World_GetBlock(world, spawnPos.x, spawnY, spawnPos.z) != Block_Air)
+                while (world->GetBlock(ToVector3i(spawnPos)) != Block_Air)
                     spawnY++;
 
-                bool shouldOffset = world->genSettings.type != WorldGen_SuperFlat;
+                bool shouldOffset = world->GetGenSettings().type != WorldGen_SuperFlat;
                 position.y = shouldOffset ? spawnY + 1 : spawnY;
                 position.z = spawnPos.z;
             }
@@ -158,16 +158,31 @@ bool Player::CanMove(mc::Vector3d newVec) {
     for (int x = -1; x < 2; x++) {
         for (int y = 0; y < 3; y++) {
             for (int z = -1; z < 2; z++) {
-                int pX = FastFloor(newVec.x) + x;
-                int pY = FastFloor(newVec.y) + y;
-                int pZ = FastFloor(newVec.z) + z;
-                if (World_GetBlock(world, pX, pY, pZ) != Block_Air &&
-                    World_GetBlock(world, pX, pY, pZ) != Block_Lava &&
-                    World_GetBlock(world, pX, pY, pZ) != Block_Water) {
-                    if (AABB_Overlap(newVec.x - PLAYER_COLLISIONBOX_SIZE / 2.f, newVec.y,
-                                     newVec.z - PLAYER_COLLISIONBOX_SIZE / 2.f,
-                                     PLAYER_COLLISIONBOX_SIZE, PLAYER_HEIGHT, PLAYER_COLLISIONBOX_SIZE,
-                                     pX, pY, pZ, 1.f, 1.f, 1.f)) {
+
+                mc::Vector3i blockPos(
+                    FastFloor(newVec.x) + x,
+                    FastFloor(newVec.y) + y,
+                    FastFloor(newVec.z) + z
+                );
+
+                if (world->GetBlock(blockPos) != Block_Air &&
+                    world->GetBlock(blockPos) != Block_Lava &&
+                    world->GetBlock(blockPos) != Block_Water) {
+                    if (AABB_Overlap(
+                            newVec.x - PLAYER_COLLISIONBOX_SIZE / 2.f,
+                            newVec.y,
+                            newVec.z - PLAYER_COLLISIONBOX_SIZE / 2.f,
+                            PLAYER_COLLISIONBOX_SIZE,
+                            PLAYER_HEIGHT,
+                            PLAYER_COLLISIONBOX_SIZE,
+                            blockPos.x,
+                            blockPos.y,
+                            blockPos.z,
+                            1.f,
+                            1.f,
+                            1.f
+                       )
+                    ) {
                         return false;
                     }
                 }
@@ -234,14 +249,18 @@ void Player::Move(float dt, mc::Vector3d accl) {
             for (int x = -1; x < 2; x++) {
                 for (int y = 0; y < 3; y++) {
                     for (int z = -1; z < 2; z++) {
-                        int pX = FastFloor(axisStep.x) + x;
-                        int pY = FastFloor(axisStep.y) + y;
-                        int pZ = FastFloor(axisStep.z) + z;
+                        auto blockPos = mc::Vector3i(
+                            FastFloor(axisStep.x) + x,
+                            FastFloor(axisStep.y) + y,
+                            FastFloor(axisStep.z) + z
+                        );
 
-                        if (World_GetBlock(world, pX, pY, pZ) != Block_Air &&
-                            World_GetBlock(world, pX, pY, pZ) != Block_Lava &&
-                            World_GetBlock(world, pX, pY, pZ) != Block_Water) {
-                            Box blockBox = Box_Create(pX, pY, pZ, 1, 1, 1);
+
+
+                        if (world->GetBlock(blockPos) != Block_Air &&
+                            world->GetBlock(blockPos) != Block_Lava &&
+                            world->GetBlock(blockPos) != Block_Water) {
+                            Box blockBox = Box_Create(blockPos.x, blockPos.y, blockPos.z, 1, 1, 1);
 
                             mc::Vector3d normal(0.f, 0.f, 0.f);
                             float depth = 0.f;
@@ -282,15 +301,19 @@ void Player::Move(float dt, mc::Vector3d accl) {
             mc::Vector3d nrmDiff = newPos - position;
             nrmDiff.Normalize();
 
-            Block block = World_GetBlock(world,
-                                         FastFloor(finalPos.x + nrmDiff.x),
-                                         FastFloor(finalPos.y + nrmDiff.y) + 2,
-                                         FastFloor(finalPos.z + nrmDiff.z)
+            Block block = world->GetBlock(
+                mc::Vector3i(
+                    FastFloor(finalPos.x + nrmDiff.x),
+                    FastFloor(finalPos.y + nrmDiff.y) + 2,
+                    FastFloor(finalPos.z + nrmDiff.z)
+                )
             );
-            Block landingBlock = World_GetBlock(world,
-                                                FastFloor(finalPos.x + nrmDiff.x),
-                                                FastFloor(finalPos.y + nrmDiff.y) + 1,
-                                                FastFloor(finalPos.z + nrmDiff.z)
+            Block landingBlock = world->GetBlock(
+                mc::Vector3i(
+                    FastFloor(finalPos.x + nrmDiff.x),
+                    FastFloor(finalPos.y + nrmDiff.y) + 1,
+                    FastFloor(finalPos.z + nrmDiff.z)
+                )
             );
 
             if ((block == Block_Air || block == Block_Lava || block == Block_Water) &&
@@ -339,11 +362,12 @@ void Player::PlaceBlock() {
             return;
 
         //TODO: Remove Ducttape
-        World_SetBlockAndMeta(
-                world,
-                viewRayCast.x + offset[0],
-                viewRayCast.y + offset[1],
-                viewRayCast.z + offset[2],
+        world->SetBlockAndMeta(
+                mc::Vector3i(
+                        (int)viewRayCast.x + offset[0],
+                        (int)viewRayCast.y + offset[1],
+                        (int)viewRayCast.z + offset[2]
+                ),
                 MCBridge::MCLIBSlotToCTItemStack(quickSelectBar[quickSelectBarSlot]).block,
                 MCBridge::MCLIBSlotToCTItemStack(quickSelectBar[quickSelectBarSlot]).meta
         );
@@ -355,7 +379,7 @@ void Player::PlaceBlock() {
 
 void Player::BreakBlock() {
     if (world && blockInActionRange && breakPlaceTimeout < 0.f) {
-        World_SetBlock(world, viewRayCast.x, viewRayCast.y, viewRayCast.z, Block_Air);
+        world->SetBlock(mc::Vector3i(viewRayCast.x, viewRayCast.y, viewRayCast.z), Block_Air);
     }
 
     if (breakPlaceTimeout < 0.f)

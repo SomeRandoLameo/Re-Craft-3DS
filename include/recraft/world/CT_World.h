@@ -27,47 +27,55 @@ typedef struct {
 } GeneratorSettings;
 
 #define WORLD_NAME_SIZE 12
-typedef struct {
-	int HighestBlock;
+class World {
+public:
+    World(WorkQueue* workqueue);
+    ~World() = default;
 
-	char name[WORLD_NAME_SIZE];
+    void Reset();
+    void Tick();
 
-	GeneratorSettings genSettings;
+    Chunk* LoadChunk(int x, int z);
+    void UnloadChunk(Chunk* chunk);
 
-	int cacheTranslationX, cacheTranslationZ;
+    Chunk* GetChunk(int x, int z);
 
-	Chunk chunkPool[CHUNKPOOL_SIZE];
-	Chunk* chunkCache[CHUNKCACHE_SIZE][CHUNKCACHE_SIZE];
-	std::vector<Chunk*> freeChunks;
+    Block GetBlock(mc::Vector3i position);
+    void SetBlock(mc::Vector3i position, Block block);
+    uint8_t GetMetadata(mc::Vector3i position);
+    void SetMetadata(mc::Vector3i position, uint8_t metadata);
 
-	WorkQueue* workqueue;
+    void SetBlockAndMeta(mc::Vector3i position, Block block, uint8_t metadata);
 
-	Xorshift32 randomTickGen;
+    void UpdateChunkCache(int originX, int originZ);
 
-	int weather;
-} World;
+    int GetHeight(int x, int z);
 
+    // Public member access (if needed)
+    int GetHighestBlock() const { return HighestBlock; }
+    const char* GetName() const { return name; }
+    const GeneratorSettings& GetGenSettings() const { return genSettings; }
+    int GetWeather() const { return weather; }
+    void SetWeather(int newWeather) { weather = newWeather; }
+
+    int cacheTranslationX, cacheTranslationZ;
+    GeneratorSettings genSettings;
+
+    Chunk* chunkCache[CHUNKCACHE_SIZE][CHUNKCACHE_SIZE];
+    char name[WORLD_NAME_SIZE];
+private:
+    int HighestBlock;
+
+    Chunk chunkPool[CHUNKPOOL_SIZE];
+    std::vector<Chunk*> freeChunks;
+
+    WorkQueue* workqueue;
+
+    Xorshift32 randomTickGen;
+
+    int weather;
+};
+
+// Helper functions remain as free functions
 int WorldToChunkCoord(int x);
 int WorldToLocalCoord(int x);
-
-void World_Init(World* world, WorkQueue* workqueue);
-
-void World_Reset(World* world);
-
-void World_Tick(World* world);
-
-Chunk* World_LoadChunk(World* world, int x, int z);
-void World_UnloadChunk(World* world, Chunk* chunk);
-
-Chunk* World_GetChunk(World* world, int x, int z);
-
-Block World_GetBlock(World* world, int x, int y, int z);
-void World_SetBlock(World* world, int x, int y, int z, Block block);
-uint8_t World_GetMetadata(World* world, int x, int y, int z);
-void World_SetMetadata(World* world, int x, int y, int z, uint8_t metadata);
-
-void World_SetBlockAndMeta(World* world, int x, int y, int z, Block block, uint8_t metadata);
-
-void World_UpdateChunkCache(World* world, int orginX, int orginZ);
-
-int World_GetHeight(World* world, int x, int z);

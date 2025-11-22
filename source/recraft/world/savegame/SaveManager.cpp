@@ -109,7 +109,7 @@ void SaveManager::Unload() {
     mpack_start_map(&writer, 3);
 
         mpack_write_cstr(&writer, "name");
-        mpack_write_cstr(&writer, world->name);
+        mpack_write_cstr(&writer, world->GetName());
 
         mpack_write_cstr(&writer, "players");
         mpack_start_array(&writer, 1);
@@ -165,7 +165,7 @@ void SaveManager::Unload() {
         mpack_finish_array(&writer);
 
         mpack_write_cstr(&writer, "worldType");
-        mpack_write_uint(&writer, world->genSettings.type);
+        mpack_write_uint(&writer, world->GetGenSettings().type);
 
     mpack_finish_map(&writer);
 

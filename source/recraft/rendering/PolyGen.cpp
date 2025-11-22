@@ -90,13 +90,24 @@ typedef struct {
 
 static inline Block fastBlockFetch(World* world, Chunk* chunk, Cluster* cluster, int x, int y, int z) {
 	return (x < 0 || y < 0 || z < 0 || x >= CHUNK_SIZE || y >= CHUNK_SIZE || z >= CHUNK_SIZE)
-		   ? World_GetBlock(world, (chunk->x * CHUNK_SIZE) + x, (cluster->y * CHUNK_SIZE) + y, (chunk->z * CHUNK_SIZE) + z)
+		   ? world->GetBlock(mc::Vector3i(
+                   (chunk->x * CHUNK_SIZE) + x,
+                   (cluster->y * CHUNK_SIZE) + y,
+                   (chunk->z * CHUNK_SIZE) + z)
+                   )
 		   : cluster->blocks[x][y][z];
 }
 
 static inline uint8_t fastMetadataFetch(World* world, Chunk* chunk, Cluster* cluster, int x, int y, int z) {
 	return (x < 0 || y < 0 || z < 0 || x >= CHUNK_SIZE || y >= CHUNK_SIZE || z >= CHUNK_SIZE)
-		   ? World_GetMetadata(world, (chunk->x * CHUNK_SIZE) + x, (cluster->y * CHUNK_SIZE) + y, (chunk->z * CHUNK_SIZE) + z)
+		   ? world->GetMetadata(
+                           mc::Vector3i(
+                               (chunk->x * CHUNK_SIZE) + x,
+                               (cluster->y * CHUNK_SIZE) + y,
+                               (chunk->z * CHUNK_SIZE) + z)
+                           )
+
+
 		   : (cluster->metadataLight[x][y][z] & 0xf);
 }
 
@@ -141,7 +152,7 @@ void PolyGen_Harvest(DebugUI* debugUi) {
                     vboUpdates.pop_back();
 
 
-                    Chunk* chunk = World_GetChunk(world, update.x, update.z);
+                    Chunk* chunk = world->GetChunk(update.x, update.z);
 					if (chunk) {
 						if (chunk->clusters[update.y].vertices > 0) vboCache.Free(chunk->clusters[update.y].vbo);
 						if (chunk->clusters[update.y].transparentVertices > 0)
