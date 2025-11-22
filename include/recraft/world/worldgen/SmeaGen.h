@@ -2,7 +2,12 @@
 
 #include "../CT_World.h"
 
-typedef struct { World* world; } SmeaGen;
+class SmeaGen {
+public:
+    void Init(World* world);
+    static void Generate(WorkQueue* queue, WorkerItem item, void* context);
+private:
+    World* world;
+};
 
-void SmeaGen_Init(SmeaGen* gen, World* world);
-void SmeaGen_Generate(WorkQueue* queue, WorkerItem item, void* context);
+

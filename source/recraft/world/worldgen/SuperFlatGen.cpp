@@ -1,13 +1,13 @@
 #include "world/worldgen/SuperFlatGen.h"
 
-#include "misc/NumberUtils.h"
+void SuperFlatGen::Init(World* world) {
+    world = world;
+}
 
-void SuperFlatGen_Init(SuperFlatGen* gen, World* world) {}
-
-void SuperFlatGen_Generate(WorkQueue* queue, WorkerItem item, void* context) {
+void SuperFlatGen::Generate(WorkQueue* queue, WorkerItem item, void* context) {
 	for (int y = 0; y < 17; y++) {
 		Block block = Block_Air;
-		switch (y) {  // TODO: Mit einem Lookup Table ersetzen, Superflach Gen konfigurierbar machen
+		switch (y) {
 			case 0:
 				block = Block_Bedrock;
 				break;

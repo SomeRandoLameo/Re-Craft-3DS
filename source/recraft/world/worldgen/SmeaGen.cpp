@@ -5,10 +5,12 @@ extern "C" {
 
 }
 
-void SmeaGen_Init(SmeaGen* gen, World* world) { gen->world = world; }
+void SmeaGen::Init(World* world) {
+    world = world;
+}
 
-// based off https://github.com/smealum/3dscraft/blob/master/source/generation.c
-void SmeaGen_Generate(WorkQueue* queue, WorkerItem item, void* context) {
+// based of https://github.com/smealum/3dscraft/blob/master/source/generation.c
+void SmeaGen::Generate(WorkQueue* queue, WorkerItem item, void* context) {
 	for (int x = 0; x < CHUNK_SIZE; x++) {
 		for (int z = 0; z < CHUNK_SIZE; z++) {
 			float px = (float)(x + item.chunk->x * CHUNK_SIZE);

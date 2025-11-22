@@ -48,8 +48,8 @@ void ReCraftCore::Run() {
 	ChunkWorker chunkWorker;
 
 	chunkWorker.AddHandler(WorkerItemType_PolyGen, (WorkerFuncObj){&PolyGen_GeneratePolygons, NULL, true});
-	chunkWorker.AddHandler(WorkerItemType_BaseGen, (WorkerFuncObj){&SuperFlatGen_Generate, &flatGen, true});
-	chunkWorker.AddHandler(WorkerItemType_BaseGen, (WorkerFuncObj){&SmeaGen_Generate, &smeaGen, true});
+	chunkWorker.AddHandler(WorkerItemType_BaseGen, (WorkerFuncObj){&SuperFlatGen::Generate, &flatGen, true});
+	chunkWorker.AddHandler(WorkerItemType_BaseGen, (WorkerFuncObj){&SmeaGen::Generate, &smeaGen, true});
 
 	sino_init();
 
@@ -59,8 +59,8 @@ void ReCraftCore::Run() {
 	Player player(world);
 	PlayerController playerCtrl(&player);
 
-	SuperFlatGen_Init(&flatGen, world);
-	SmeaGen_Init(&smeaGen, world);
+	flatGen.Init(world);
+	smeaGen.Init(world);
 
     Renderer renderer(world, &player, &chunkWorker.GetQueue());
 
@@ -195,10 +195,7 @@ void ReCraftCore::Run() {
 
             if(mcBridge.isConnected()){
                 mcBridge.withClient([&](mc::core::Client* client, mc::protocol::packets::PacketDispatcher* dispatcher) {
-
-                    mc::Vector3d playerPos = client->GetPlayerController()->GetPosition();
-
-                    player.position = playerPos;
+                    player.position = client->GetPlayerController()->GetPosition();
 
                     dimension = client->GetConnection()->GetDimension();
                     playerCtrl.Update(&debugUI, /*&PlayerSound,*/ inputData, dt);
