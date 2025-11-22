@@ -135,8 +135,8 @@ void WorldSelect_Render() {
 
 	if (menustate == MenuState_SelectWorld) {
 		int movementX = 0, movementY = 0;
-		Gui_GetCursorMovement(&movementX, &movementY);
-		if (Gui_IsCursorInside(0, 0, 160, 2 * 32)) {
+		Gui::GetCursorMovement(&movementX, &movementY);
+		if (Gui::IsCursorInside(0, 0, 160, 2 * 32)) {
 			velocity += movementY / 2.f;
 			velocity = CLAMP(velocity, -max_velocity, max_velocity);
 		}
@@ -157,44 +157,44 @@ void WorldSelect_Render() {
 				SpriteBatch_PushSingleColorQuad(10, y - 3, -7, 1, CHAR_HEIGHT + 6, SHADER_RGB(20, 20, 20));
 				SpriteBatch_PushSingleColorQuad(10 + 140, y - 3, -7, 1, CHAR_HEIGHT + 6, SHADER_RGB(20, 20, 20));
 			}
-			if (Gui_EnteredCursorInside(10, y - 3, 140, CHAR_HEIGHT + 6) && y < 32 * 2) {
+			if (Gui::EnteredCursorInside(10, y - 3, 140, CHAR_HEIGHT + 6) && y < 32 * 2) {
 				selectedWorld = (int)i;
 			}
 			SpriteBatch_PushText(20, y, -6, INT16_MAX, true, INT_MAX, nullptr, "%s", info.name, movementY);
 		}
 
 
-		Gui_Offset(0, 2 * 32 + 5 + BUTTON_TEXT_PADDING);
-		Gui_BeginRowCenter(Gui_RelativeWidth(0.95f), 1);
-		clicked_play = Gui_Button(1.f, "Play selected world");
-		Gui_EndRow();
-		Gui_BeginRowCenter(Gui_RelativeWidth(0.95f), 2);
-		clicked_new_world = Gui_Button(0.333f, "New Wrld");
-		clicked_delete_world = Gui_Button(0.333f, "Del Wrld");
-		clicked_mp_connect = Gui_Button(0.333f, "MP CON");
-		Gui_EndRow();
+		Gui::Offset(0, 2 * 32 + 5 + Gui::BUTTON_TEXT_PADDING);
+		Gui::BeginRowCenter(Gui::RelativeWidth(0.95f), 1);
+		clicked_play = Gui::Button(1.f, "Play selected world");
+        Gui::EndRow();
+        Gui::BeginRowCenter(Gui::RelativeWidth(0.95f), 2);
+		clicked_new_world = Gui::Button(0.333f, "New Wrld");
+		clicked_delete_world = Gui::Button(0.333f, "Del Wrld");
+		clicked_mp_connect = Gui::Button(0.333f, "MP CON");
+        Gui::EndRow();
 	} else if (menustate == MenuState_ConfirmDeletion) {
-		Gui_Offset(0, 10);
-		Gui_BeginRow(SpriteBatch_GetWidth(), 1);
-		Gui_Label(0.f, true, INT16_MAX, true, "Are you sure?");
-		Gui_EndRow();
-		Gui_VerticalSpace(Gui_RelativeHeight(0.4f));
-		Gui_BeginRowCenter(Gui_RelativeWidth(0.8f), 3);
-		canceled_deletion = Gui_Button(0.4f, "No");
-		Gui_Space(0.2f);
-		confirmed_deletion = Gui_Button(0.4f, "Yes");
-		Gui_EndRow();
+        Gui::Offset(0, 10);
+        Gui::BeginRow(SpriteBatch_GetWidth(), 1);
+        Gui::Label(0.f, true, INT16_MAX, true, "Are you sure?");
+        Gui::EndRow();
+        Gui::VerticalSpace(Gui::RelativeHeight(0.4f));
+        Gui::BeginRowCenter(Gui::RelativeWidth(0.8f), 3);
+		canceled_deletion = Gui::Button(0.4f, "No");
+        Gui::Space(0.2f);
+		confirmed_deletion = Gui::Button(0.4f, "Yes");
+        Gui::EndRow();
 	} else if (menustate == MenuState_WorldOptions) {
-		Gui_Offset(0, 10);
-		Gui_BeginRowCenter(Gui_RelativeWidth(0.9f), 3);
-		Gui_Label(0.45f, true, INT16_MAX, false, "World type:");
-		Gui_Space(0.1f);
-		if (Gui_Button(0.45f, "%s", worldGenTypesStr[worldGenType])) {
+        Gui::Offset(0, 10);
+        Gui::BeginRowCenter(Gui::RelativeWidth(0.9f), 3);
+        Gui::Label(0.45f, true, INT16_MAX, false, "World type:");
+        Gui::Space(0.1f);
+		if (Gui::Button(0.45f, "%s", worldGenTypesStr[worldGenType])) {
 			worldGenType = static_cast<WorldGenType>(static_cast<int>(worldGenType) + 1);
 			if (worldGenType == WorldGenTypes_Count)
 				worldGenType = static_cast<WorldGenType>(0);
 		}
-		Gui_EndRow();
+        Gui::EndRow();
 
 		/*Gui_Offset(0, 32);
 		Gui_BeginRowCenter(Gui_RelativeWidth(0.9f), 3);
@@ -206,12 +206,12 @@ void WorldSelect_Render() {
 		}
 		Gui_EndRow();*/
 
-		Gui_VerticalSpace(Gui_RelativeHeight(0.4f));
+        Gui::VerticalSpace(Gui::RelativeHeight(0.4f));
 
-		Gui_BeginRowCenter(Gui_RelativeWidth(0.9f), 3);
-		canceled_world_options = Gui_Button(0.45f, "Cancel");
-		Gui_Space(0.1f);
-		confirmed_world_options = Gui_Button(0.45f, "Continue");
+        Gui::BeginRowCenter(Gui::RelativeWidth(0.9f), 3);
+		canceled_world_options = Gui::Button(0.45f, "Cancel");
+        Gui::Space(0.1f);
+		confirmed_world_options = Gui::Button(0.45f, "Continue");
 	}
 }
 

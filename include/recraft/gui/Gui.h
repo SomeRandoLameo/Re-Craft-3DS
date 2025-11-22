@@ -4,32 +4,38 @@
 #include <stdint.h>
 
 #include "../misc/InputData.h"
+//TODO: COreUI
+class Gui{
+public:
+    static void Init();
+    static void Deinit();
 
-void Gui_Init();
-void Gui_Deinit();
+    static void InputData(InputData data);
 
-void Gui_InputData(InputData data);
+    static void Frame();
 
-void Gui_Frame();
+    static int RelativeWidth(float x);
+    static int RelativeHeight(float y);
 
-int Gui_RelativeWidth(float x);
-int Gui_RelativeHeight(float y);
+    static void Offset(int x, int y);
+    static void BeginRowCenter(int width, int count);
+    static void VerticalSpace(int y);
 
-void Gui_Offset(int x, int y);
-void Gui_BeginRowCenter(int width, int count);
-void Gui_VerticalSpace(int y);
+    static void Space(float space);
 
-void Gui_Space(float space);
+    static void BeginRow(int width, int count);
+    static void EndRow();
 
-void Gui_BeginRow(int width, int count);
-void Gui_EndRow();
+    static void Label(float size, bool shadow, int16_t color, bool center, const char* text, ...);
 
-void Gui_Label(float size, bool shadow, int16_t color, bool center, const char* text, ...);
-#define BUTTON_HEIGHT 20
-#define BUTTON_TEXT_PADDING ((BUTTON_HEIGHT - CHAR_HEIGHT) / 2)
-bool Gui_Button(float size, const char* label, ...);
+    static bool Button(float size, const char* label, ...);
 
-bool Gui_IsCursorInside(int x, int y, int w, int h);
-bool Gui_WasCursorInside(int x, int y, int w, int h);
-void Gui_GetCursorMovement(int* x, int* y);
-bool Gui_EnteredCursorInside(int x, int y, int w, int h);
+    static bool IsCursorInside(int x, int y, int w, int h);
+    static bool WasCursorInside(int x, int y, int w, int h);
+    static void GetCursorMovement(int* x, int* y);
+    static bool EnteredCursorInside(int x, int y, int w, int h);
+
+    static const int BUTTON_HEIGHT = 20;
+    static const int CHAR_HEIGHT = 8;
+    static const int BUTTON_TEXT_PADDING = ((BUTTON_HEIGHT - CHAR_HEIGHT) / 2);
+};
