@@ -57,8 +57,10 @@ void Player::InitializeInventory() {
     inventory[l++] = mc::inventory::Slot(Block_Emerald_Ore, 1, 0);
     inventory[l++] = mc::inventory::Slot(Block_Furnace, 1, 0);
 
-    for (int i = 0; i < Inventory::calculateQuickSelectSlots(); i++)
+    for (int i = 0; i < 9; i++) {
         quickSelectBar[i] = mc::inventory::Slot(Block_Air, 0, 0);
+    }
+
 }
 
 void Player::Update(void* dmg) {

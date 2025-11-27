@@ -9,24 +9,14 @@ class ReCraftCore;
 
 class Inventory {
 public:
-    static constexpr int QUICKSELECT_MAX_SLOTS = 9;
     static constexpr int QUICKSELECT_HEIGHT = 23;  // 22 + 1
     static constexpr int MAX_PER_SITE = 27;
 
-    // Calculate quickselect dimensions
-    static constexpr int calculateQuickSelectSlots() noexcept {
-        return QUICKSELECT_MAX_SLOTS;
-    }
-
-    static constexpr int calculateQuickSelectWidth(int slots) noexcept {
-        return 54 + (slots - 2) * 20;
-    }
-
     // Render the hotbar UI
-    static void renderHotbar(int x, int y, mc::inventory::Slot* stacks, int count, int& selected);
+    static void renderHotbar(int x, int y, mc::inventory::Slot* stacks, int& selected);
 
     // Draw inventory grid, returns current site number
-    static int draw(int x, int y, int width, mc::inventory::Slot* stacks, int count, int site);
+    static int draw(int x, int y, mc::inventory::Slot* stacks, int count, int site);
 
     // Transfer itemStacks
     static void Transfer(ItemStack* src, ItemStack* dst);
@@ -37,4 +27,6 @@ private:
 
     // Helper function for click handling
     static void handleStackClick(mc::inventory::Slot* stack);
+
+    static void drawSlot(mc::inventory::Slot *slot, int x, int y);
 };

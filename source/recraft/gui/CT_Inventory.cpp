@@ -30,17 +30,17 @@ void Inventory::handleStackClick(mc::inventory::Slot* stack) {
     }
 }
 
-void Inventory::renderHotbar(int x, int y, mc::inventory::Slot* stacks, int count, int& selected) {
+void Inventory::renderHotbar(int x, int y, mc::inventory::Slot* stacks, int& selected) {
     SpriteBatch_BindGuiTexture(GuiTexture_Widgets);
 
-    for (int i = 0; i < count; ++i) {
+    for (int i = 0; i < 9; ++i) {
         SpriteBatch_SetScale(1);
 
         const int rx = (i * 20 + x + 3) * 2;
         const int ry = (y + 3) * 2;
 
         // Render item icon if stack has items
-        if (MCBridge::MCLIBSlotToCTItemStack(stacks[i]).amount > 0) {
+        if (stacks[i].GetItemCount() > 0) {
             SpriteBatch_PushIcon(stacks[i], rx, ry, 11);
         }
 
@@ -66,7 +66,7 @@ void Inventory::renderHotbar(int x, int y, mc::inventory::Slot* stacks, int coun
         }
 
         // Draw slot separator (except for last two slots)
-        if (i < count - 2) {
+        if (i < 9 - 2) {
             SpriteBatch_PushQuad(i * 20 + 21 + x, y, 10, 20, 22, 21, 0, 20, 22);
         }
     }
@@ -75,86 +75,66 @@ void Inventory::renderHotbar(int x, int y, mc::inventory::Slot* stacks, int coun
 
     // Draw hotbar ends
     SpriteBatch_PushQuad(x, y, 10, 21, 22, 0, 0, 21, 22);
-    SpriteBatch_PushQuad(21 + 20 * (count - 2) + x, y, 10, 21, 22, 161, 0, 21, 22);
+    SpriteBatch_PushQuad(21 + 20 * 7 + x, y, 10, 21, 22, 161, 0, 21, 22);
 
     // Draw selection indicator
     SpriteBatch_PushQuad(x + selected * 20 - 1, y - 1, 14, 24, 24, 0, 22, 24, 24);
 }
 
-int Inventory::draw(int x, int y, int width, mc::inventory::Slot* stacks, int count, int site) {
+void Inventory::drawSlot(mc::inventory::Slot* slot, int x, int y) {
+
+    SpriteBatch_PushIcon(*slot, x * 2, y * 2, 10);
+
+    if (Gui::EnteredCursorInside(x * 2, y * 2, 16 * 2, 16 * 2)) {
+        handleStackClick(slot);
+    }
+
+    const int16_t backgroundColor = (sourceStack == slot)
+                                    ? SHADER_RGB(20, 5, 2)
+                                    : SHADER_RGB_DARKEN(SHADER_RGB(20, 20, 21), 9);
+
+    SpriteBatch_PushSingleColorQuad(
+            x * 2, y * 2, 9, 16 * 2, 16 * 2,
+            backgroundColor
+    );
+}
+
+int Inventory::draw(int x, int y, mc::inventory::Slot* stacks, int count, int site) {
     SpriteBatch_SetScale(1);
 
     int headX = x;
     int headY = y;
     int currentSite = site;
-    bool even = false;
-    bool newLine = false;
 
-    const int16_t colors[2] = {
-            SHADER_RGB_DARKEN(SHADER_RGB(20, 20, 21), 9),
-            SHADER_RGB_DARKEN(SHADER_RGB(20, 20, 21), 8)
-    };
-
-    // Draw pagination buttons if needed
-    if (count > MAX_PER_SITE) {
-        Gui::Offset(0, 60);
+    if (count > 27) {
+        Gui::Offset(0, 155);
         if (Gui::Button(0.f, " << ") && currentSite > 1) {
             --currentSite;
         }
 
-        Gui::Offset(270, 60);
-        if (Gui::Button(0.f, " >> ") && currentSite * MAX_PER_SITE < count) {
+        Gui::Offset(270, 155);
+        if (Gui::Button(0.f, " >> ") && currentSite * 27 < count) {
             ++currentSite;
         }
     }
 
-    const int startIndex = (currentSite - 1) * MAX_PER_SITE;
-    const int endIndex = std::min(currentSite * MAX_PER_SITE, count);
+    const int startIndex = (currentSite - 1) * 27;
+    const int endIndex = std::min(currentSite * 27, count);
 
     for (int i = startIndex; i < endIndex; ++i) {
-        // Only draw valid inventory items
+
         if (!stacks[i].GetItemId() || stacks[i].GetItemCount() <= 0) {
             continue;
         }
 
-        newLine = false;
-
-        // Check if we need to wrap to next line
-        if ((headX + 16) >= width) {
+        if ((i - startIndex) % 9 == 0 && i != startIndex) {
             headX = x;
-            headY += 17;
-            newLine = true;
+            headY += 16;
         }
 
-        // Draw item icon
-        SpriteBatch_PushIcon(stacks[i], headX * 2, headY * 2, 10);
+        drawSlot(&stacks[i], headX, headY);
 
-        // Handle cursor interaction
-        if (Gui::EnteredCursorInside(headX * 2, headY * 2, 16 * 2, 16 * 2)) {
-            handleStackClick(&stacks[i]);
-        }
-
-        // Draw background quad with appropriate color
-        const int16_t backgroundColor = (sourceStack == &stacks[i])
-                                        ? SHADER_RGB(20, 5, 2)
-                                        : colors[even];
-
-        SpriteBatch_PushSingleColorQuad(
-                headX * 2, headY * 2, 9, 16 * 2, 16 * 2,
-                backgroundColor
-        );
-
-        even = !even;
         headX += 16;
-
-        // Draw separator line between inventory rows
-        if (newLine) {
-            even = false;
-            SpriteBatch_PushSingleColorQuad(
-                    x * 2, (headY - 1) * 2, 10, (width - 32) * 2, 2,
-                    SHADER_RGB(7, 7, 7)
-            );
-        }
     }
 
     SpriteBatch_SetScale(2);

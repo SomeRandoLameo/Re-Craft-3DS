@@ -245,11 +245,12 @@ void Renderer::RenderLowerScreen(DebugUI* debugUi) {
 		WorldSelect_Render();
 	} else {
 		SpriteBatch_SetScale(2);
-		player->quickSelectBarSlots = Inventory::calculateQuickSelectSlots();
-        Inventory::renderHotbar(160 / 2 - Inventory::calculateQuickSelectWidth(player->quickSelectBarSlots) / 2,
-                               120 - Inventory::QUICKSELECT_HEIGHT, player->quickSelectBar, player->quickSelectBarSlots,
+
+        Inventory::renderHotbar(160 / 2 - 194 / 2,
+                               120 - Inventory::QUICKSELECT_HEIGHT, player->quickSelectBar,
                                player->quickSelectBarSlot);
-		player->inventorySite = Inventory::draw(16, 0, 170, player->inventory, sizeof(player->inventory) / sizeof(ItemStack), player->inventorySite);
+
+		player->inventorySite = Inventory::draw(((137/2)-(120/2)), 10, player->inventory, sizeof(player->inventory) / sizeof(ItemStack), player->inventorySite);
 
 		if (showDebugInfo) debugUi->Draw();
 	}

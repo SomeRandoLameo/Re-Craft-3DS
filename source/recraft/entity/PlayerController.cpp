@@ -349,13 +349,17 @@ void PlayerController::Update(DebugUI* debugUi, InputData input, float dt) {
     bool releasedCrouch = WasKeyReleased(controlScheme.crouch, &agnosticInput);
     player->crouching ^= !player->flying && releasedCrouch;
 
+
+    //Hotbar left-right switching
     bool switchBlockLeft = WasKeyPressed(controlScheme.switchBlockLeft, &agnosticInput);
     bool switchBlockRight = WasKeyPressed(controlScheme.switchBlockRight, &agnosticInput);
 
     if (switchBlockLeft && --player->quickSelectBarSlot == -1)
-        player->quickSelectBarSlot = player->quickSelectBarSlots - 1;
-    if (switchBlockRight && ++player->quickSelectBarSlot == player->quickSelectBarSlots)
+        player->quickSelectBarSlot = 8;
+    if (switchBlockRight && ++player->quickSelectBarSlot == 9)
         player->quickSelectBarSlot = 0;
+
+
 
     if (openedCmd) {
         dt = 0.f;

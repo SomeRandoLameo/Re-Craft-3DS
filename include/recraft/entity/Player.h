@@ -70,10 +70,9 @@ public:
     int gamemode = 0;
     bool cheats = false;
 
-    int quickSelectBarSlots = Inventory::calculateQuickSelectSlots();
     int quickSelectBarSlot = 0;
     int inventorySite = 1;
-    mc::inventory::Slot quickSelectBar[Inventory::calculateQuickSelectSlots()];
+    mc::inventory::Slot quickSelectBar[9];
 
     Raycast_Result viewRayCast;
     bool blockInSight = false;
