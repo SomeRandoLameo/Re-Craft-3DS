@@ -62,5 +62,3 @@ void Block_GetTexture(mc::inventory::Slot block, Direction direction, int16_t* o
 void Block_GetColor(Block block, uint8_t metadata, Direction direction, uint8_t out_rgb[]);
 
 bool Block_Opaque(Block block, uint8_t metadata);
-
-extern const char* BlockNames[Blocks_Count];

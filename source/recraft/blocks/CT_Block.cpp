@@ -8,57 +8,54 @@ static Texture_Map textureMap;
 // PATH PREFIX
 #define PPRX "romfs:/assets/textures/blocks/"
 
-#define TEXTURE_FILES                                                                                                               \
-	A(stone, "stone.png"),                                                                                                             \
-    A(dirt, "dirt.png"),                                                                                                            \
-    A(cobblestone, "cobblestone.png"),                                                                                              \
-    A(grass_side, "grass_side.png"), 				\
-	A(grass_top, "grass_top.png"),                                                                                                     \
-    A(stonebrick, "stonebrick.png"),                                                                                                \
-    A(sand, "sand.png"),                                                                                                            \
-    A(oaklog_side, "log_oak.png"), 				\
-	A(oaklog_top, "log_oak_top.png"),                                                                                                  \
-    A(leaves_oak, "leaves_oak.png"),                                                                                                \
-    A(glass, "glass.png"),                                                                          \
-    A(brick, "brick.png"), 				\
-	A(oakplanks, "planks_oak.png"),                                                                                                    \
-    A(wool, "wool.png"),                                                                                                            \
-    A(bedrock, "bedrock.png"),                                                                                 \
-    A(gravel, "gravel.png"), 						\
-	A(coarse, "coarse_dirt.png"),                                                                                                      \
-    A(door_top, "door_top.png"),                                                                                                    \
-    A(door_bottom, "door_bottom.png"),									\
-	A(snow_grass_side, "snow_grass_side.png"),                                                                                         \
-    A(snow, "snow.png"),                                                                                                            \
-    A(obsidian, "obsidian.png"), 									\
-	A(sandstone_side, "sandstone_side.png"),                                                                                           \
-    A(sandstone_top, "sandstone_top.png"),                                                                                          \
-    A(sandstone_bottom, "sandstone_bottom.png"), 	\
-	A(netherrack, "netherrack.png"),                                                                                                   \
-    A(smooth_stone, "smooth_stone.png"),                                                                                            \
-    A(lava,"lava.png"),                                                                                                             \
-    A(water,"water.png"),					\
-	A(grass_path_side, "grass_path_side.png"),                                                                                         \
-    A(grass_path_top, "grass_path_top.png"), 												\
-	A(crafting_table_side, "crafting_table_side.png"),                                                                                 \
-    A(crafting_table_top, "crafting_table_top.png"),								\
-	A(iron_ore,"iron_ore.png"),                                                                                                        \
-    A(iron_block,"iron_block.png"),                                                                                                 \
-    A(diamond_ore,"diamond_ore.png"),                                                                                               \
-    A(diamond_block,"diamond_block.png"),\
-	A(gold_ore,"gold_ore.png"),                                                                                                        \
-    A(gold_block,"gold_block.png"),                                                                                                 \
-    A(coal_ore,"coal_ore.png"),                                                                      \
-    A(coal_block,"coal_block.png"),			\
-	A(emerald_ore,"emerald_ore.png"),                                                                                                  \
-    A(emerald_block,"emerald_block.png"),                                                                                           \
-    A(furnace_side,"furnace_side.png"),						\
-	A(furnace_front,"furnace_front.png"),                                                                                              \
-    A(furnace_top,"furnace_top.png")
-
-#define A(i, n) PPRX n
-const char* block_texture_files[] = {TEXTURE_FILES};
-#undef A
+const char* blockTextures[] = {
+        PPRX "stone.png",
+        PPRX "dirt.png",
+        PPRX "cobblestone.png",
+        PPRX "grass_side.png",
+        PPRX "grass_top.png",
+        PPRX "stonebrick.png",
+        PPRX "sand.png",
+        PPRX "log_oak.png",
+        PPRX "log_oak_top.png",
+        PPRX "leaves_oak.png",
+        PPRX "glass.png",
+        PPRX "brick.png",
+        PPRX "planks_oak.png",
+        PPRX "wool.png",
+        PPRX "bedrock.png",
+        PPRX "gravel.png",
+        PPRX "coarse_dirt.png",
+        PPRX "door_top.png",
+        PPRX "door_bottom.png",
+        PPRX "snow_grass_side.png",
+        PPRX "snow.png",
+        PPRX "obsidian.png",
+        PPRX "sandstone_side.png",
+        PPRX "sandstone_top.png",
+        PPRX "sandstone_bottom.png",
+        PPRX "netherrack.png",
+        PPRX "smooth_stone.png",
+        PPRX "lava.png",
+        PPRX "water.png",
+        PPRX "grass_path_side.png",
+        PPRX "grass_path_top.png",
+        PPRX "crafting_table_side.png",
+        PPRX "crafting_table_top.png",
+        PPRX "iron_ore.png",
+        PPRX "iron_block.png",
+        PPRX "diamond_ore.png",
+        PPRX "diamond_block.png",
+        PPRX "gold_ore.png",
+        PPRX "gold_block.png",
+        PPRX "coal_ore.png",
+        PPRX "coal_block.png",
+        PPRX "emerald_ore.png",
+        PPRX "emerald_block.png",
+        PPRX "furnace_side.png",
+        PPRX "furnace_front.png",
+        PPRX "furnace_top.png"
+};
 
 static struct {
 	Texture_MapIcon stone;
@@ -110,10 +107,55 @@ static struct {
 } icon;
 
 void Block_Init() {
-	Texture_MapInit(&textureMap, block_texture_files, sizeof(block_texture_files) / sizeof(block_texture_files[0]));
-#define A(i, n) icon.i = Texture_MapGetIcon(&textureMap, PPRX n)
-	TEXTURE_FILES;
-#undef A
+	Texture_MapInit(&textureMap, blockTextures, sizeof(blockTextures) / sizeof(blockTextures[0]));
+
+    icon.stone               = Texture_MapGetIcon(&textureMap, blockTextures[0]);
+    icon.dirt                = Texture_MapGetIcon(&textureMap, blockTextures[1]);
+    icon.cobblestone         = Texture_MapGetIcon(&textureMap, blockTextures[2]);
+    icon.grass_side          = Texture_MapGetIcon(&textureMap, blockTextures[3]);
+    icon.grass_top           = Texture_MapGetIcon(&textureMap, blockTextures[4]);
+    icon.stonebrick          = Texture_MapGetIcon(&textureMap, blockTextures[5]);
+    icon.sand                = Texture_MapGetIcon(&textureMap, blockTextures[6]);
+    icon.oaklog_side         = Texture_MapGetIcon(&textureMap, blockTextures[7]);
+    icon.oaklog_top          = Texture_MapGetIcon(&textureMap, blockTextures[8]);
+    icon.leaves_oak          = Texture_MapGetIcon(&textureMap, blockTextures[9]);
+    icon.glass               = Texture_MapGetIcon(&textureMap, blockTextures[10]);
+    icon.brick               = Texture_MapGetIcon(&textureMap, blockTextures[11]);
+    icon.oakplanks           = Texture_MapGetIcon(&textureMap, blockTextures[12]);
+    icon.wool                = Texture_MapGetIcon(&textureMap, blockTextures[13]);
+    icon.bedrock             = Texture_MapGetIcon(&textureMap, blockTextures[14]);
+    icon.gravel              = Texture_MapGetIcon(&textureMap, blockTextures[15]);
+    icon.coarse              = Texture_MapGetIcon(&textureMap, blockTextures[16]);
+    icon.door_top            = Texture_MapGetIcon(&textureMap, blockTextures[17]);
+    icon.door_bottom         = Texture_MapGetIcon(&textureMap, blockTextures[18]);
+    icon.snow_grass_side     = Texture_MapGetIcon(&textureMap, blockTextures[19]);
+    icon.snow                = Texture_MapGetIcon(&textureMap, blockTextures[20]);
+    icon.obsidian            = Texture_MapGetIcon(&textureMap, blockTextures[21]);
+    icon.sandstone_side      = Texture_MapGetIcon(&textureMap, blockTextures[22]);
+    icon.sandstone_top       = Texture_MapGetIcon(&textureMap, blockTextures[23]);
+    icon.sandstone_bottom    = Texture_MapGetIcon(&textureMap, blockTextures[24]);
+    icon.netherrack          = Texture_MapGetIcon(&textureMap, blockTextures[25]);
+    icon.smooth_stone        = Texture_MapGetIcon(&textureMap, blockTextures[26]);
+    icon.lava                = Texture_MapGetIcon(&textureMap, blockTextures[27]);
+    icon.water               = Texture_MapGetIcon(&textureMap, blockTextures[28]);
+    icon.grass_path_side     = Texture_MapGetIcon(&textureMap, blockTextures[29]);
+    icon.grass_path_top      = Texture_MapGetIcon(&textureMap, blockTextures[30]);
+    icon.crafting_table_side = Texture_MapGetIcon(&textureMap, blockTextures[31]);
+    icon.crafting_table_top  = Texture_MapGetIcon(&textureMap, blockTextures[32]);
+    icon.iron_ore            = Texture_MapGetIcon(&textureMap, blockTextures[33]);
+    icon.iron_block          = Texture_MapGetIcon(&textureMap, blockTextures[34]);
+    icon.diamond_ore         = Texture_MapGetIcon(&textureMap, blockTextures[35]);
+    icon.diamond_block       = Texture_MapGetIcon(&textureMap, blockTextures[36]);
+    icon.gold_ore            = Texture_MapGetIcon(&textureMap, blockTextures[37]);
+    icon.gold_block          = Texture_MapGetIcon(&textureMap, blockTextures[38]);
+    icon.coal_ore            = Texture_MapGetIcon(&textureMap, blockTextures[39]);
+    icon.coal_block          = Texture_MapGetIcon(&textureMap, blockTextures[40]);
+    icon.emerald_ore         = Texture_MapGetIcon(&textureMap, blockTextures[41]);
+    icon.emerald_block       = Texture_MapGetIcon(&textureMap, blockTextures[42]);
+    icon.furnace_side        = Texture_MapGetIcon(&textureMap, blockTextures[43]);
+    icon.furnace_front       = Texture_MapGetIcon(&textureMap, blockTextures[44]);
+    icon.furnace_top         = Texture_MapGetIcon(&textureMap, blockTextures[45]);
+
 }
 void Block_Deinit() { C3D_TexDelete(&textureMap.texture); }
 
@@ -340,45 +382,3 @@ void Block_GetColor(Block block, uint8_t metadata, Direction direction, uint8_t 
 }
 
 bool Block_Opaque(Block block, uint8_t metadata) { return block != Block_Air && block != Block_Glass && block != Block_Door_Top && block != Block_Door_Bottom; }
-
-const char* BlockNames[Blocks_Count] = {
-	"Air",
-    "Stone",
-    "Dirt",
-    "Grass",
-    "Cobblestone",
-    "Sand",
-    "Log",
-    "Leaves",
-    "Glass",
-    "Stone Bricks",
-    "Bricks",
-    "Planks",
-    "Wool",
-    "Bedrock",
-    "Gravel",
-	"Coarse",
-    "Door_Top",
-    "Door_Bottom",
-    "Snow_Grass",
-    "Snow",
-    "Obsidian",
-    "Netherrack",
-    "Sandstone",
-    "Smooth_Stone",
-    "Crafting_Table",
-	"Grass_Path",
-    "Water",
-    "Lava",
-    "Iron_Ore",
-    "Iron_Block",
-    "Coal_Ore",
-    "Coal_Block",
-    "Diamond_Ore",
-    "Diamond_Block",
-    "Gold_Ore",
-    "Gold_Block",
-	"Emerald_Ore",
-    "Emerald_Block",
-    "Furnace"
-};
