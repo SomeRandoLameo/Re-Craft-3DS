@@ -215,18 +215,42 @@ void ReCraftCore::Run() {
                         player.quickSelectBar[i] = item;
                         debugUI.Text("%d ",item.GetItemId());
                     }
-
+/*
+ *  BUG: When player joins the world, the chunks arent loaded causing this to crash when joining the world.
+ *
                     debugUI.Text("===============");
-                    auto rndblock = client->GetWorld()->GetChunk(mc::Vector3i(0,0,0))->GetBlock(mc::Vector3i(0,3,0)); //TODO: This crashes on Hardware
+
+
+                    auto chunkpos = mc::ToVector3i(mc::Vector3d(
+                            player.position.x,
+                            0,
+                            player.position.z
+                    ));
+
+                    auto blockpos = mc::ToVector3i(mc::Vector3d(
+                            player.position.x,
+                            player.position.y - 1,
+                            player.position.z
+                    ));
+
+                    auto relativeBlockPos = mc::Vector3i(
+                            blockpos.x & 15,
+                            blockpos.y,
+                            blockpos.z & 15
+                    );
+
+                    auto readBlockPos = client->GetWorld()->GetChunk(chunkpos)->GetBlock(relativeBlockPos);
+
                     debugUI.Text(
                             "%s %d,%f at: %s in chunk: %s",
-                            rndblock->GetName().c_str(),
-                            rndblock->GetType(),
-                            static_cast<float>(rndblock->GetType()),
+                            readBlockPos->GetName().c_str(),
+                            readBlockPos->GetType(),
+                            static_cast<float>(readBlockPos->GetType()),
                             to_string(mc::Vector3i(0,3,0)).c_str(),
                             to_string(mc::Vector3i(0,0,0)).c_str()
                     );
                     debugUI.Text("===============");
+                    */
                 });
             }
 
