@@ -1,9 +1,12 @@
-ReCraft3DS.smdh
-ReCraft3DS.3dsx
-ReCraft3DS.elf
-ReCraft3DS.lst
 build/*
+/*.3dsx
+/*.elf
+/*.smdh
+/*.lst
+
 /.idea/*
+/.vscode
+
 /ServerPing.pcapng
 /ServerCom.pcapng
 /world/playerdata/*
@@ -18,9 +21,6 @@ build/*
 /world/level.dat_old
 /ops.json
 /world/region/*
-/Re-Craft-3DS.3dsx
-/Re-Craft-3DS.elf
-/Re-Craft-3DS.smdh
 /server.jar
 /server.properties
 /usercache.json
@@ -38,4 +38,3 @@ build/*
 /server/server.jar
 /server/usercache.json
 /server/whitelist.json
-.vscode

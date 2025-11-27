@@ -4,7 +4,7 @@
 #include "entity/Player.h"
 #include "entity/Damage.h"
 
-void OvertimeDamage(char* cause, int time) {
+void OvertimeDamage(const char* cause, int time) {
     Player* player;
     if (strcmp(cause, "fire") == 0) {
         while (time > 0) {

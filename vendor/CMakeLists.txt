@@ -1,5 +1,14 @@
 cmake_minimum_required(VERSION 3.22)
 
+find_package(PkgConfig REQUIRED)
+
+foreach(LIB zlib mbedtls libcurl opusfile)
+    pkg_check_modules(${LIB}_PKG QUIET ${LIB})
+    if (NOT ${LIB}_PKG_FOUND)
+        message(FATAL_ERROR "${LIB} not found")
+    endif()
+endforeach()
+
 # Ini
 add_library(ini STATIC ini/ini.c)
 target_include_directories(ini PUBLIC ini)

@@ -7,3 +7,6 @@
 [submodule "vendor/mclib"]
 	path = vendor/mclib
 	url = https://github.com/SomeRandoLameo/mclib-3ds.git
+[submodule "romfs"]
+	path = romfs
+	url = https://github.com/Moddimation/Re-Craft-3DS-Data

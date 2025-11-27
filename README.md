@@ -16,7 +16,9 @@ The game should run in theory. If not: create an issue and steps to recreate it.
   - [mclib-3ds](https://github.com/SomeRandoLameo/mclib-3ds)
   - [imgui-ctr](https://github.com/npid7/imgui-impl-ctr/tree/e67a33579fa6424171ec1a583b6baffa077ee2d3)
   - [imgui-impl-ctr](https://github.com/npid7/imgui-impl-ctr)
-  - [stb](https://github.com/nothings/stb/tree/f1c79c02822848a9bed4315b12c8c8f3761e1296)
+  - [stb](https://github.com/nothings/stb/tree/f1c79c02822848a9bed4315b12c8c8f3761e1296)  
+
+To install, run: ```dkp-pacman -Sy 3ds-zlib 3ds-mbedtls 3ds-curl 3ds-opusfile```
 
 ### Roadmap
 | Task                                 | Status      | Notes                                                                                                                                                                                         |

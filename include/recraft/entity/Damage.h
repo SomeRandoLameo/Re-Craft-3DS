@@ -7,4 +7,4 @@ typedef struct {
     int time;
 }Damage;
 
-void OvertimeDamage(char* cause, int time);
+void OvertimeDamage(const char* cause, int time);
