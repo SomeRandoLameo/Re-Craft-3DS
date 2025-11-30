@@ -34,7 +34,6 @@ add_subdirectory(vendor)
 
 add_executable(${PROJECT_NAME}
     source/main.cpp
-
     source/recraft/blocks/BlockEvent.cpp
     source/recraft/blocks/CT_Block.cpp
     source/recraft/entity/Damage.cpp
@@ -46,6 +45,7 @@ add_executable(${PROJECT_NAME}
     source/recraft/gui/Gui.cpp
     source/recraft/gui/SpriteBatch.cpp
     source/recraft/gui/WorldSelect.cpp
+    source/recraft/gui/GuiChat.cpp
     source/recraft/inventory/ItemStack.cpp
     source/recraft/mcbridge/MCBridge.cpp
     source/recraft/misc/Collision.cpp
@@ -75,8 +75,7 @@ add_executable(${PROJECT_NAME}
     source/recraft/world/WorkQueue.cpp
     source/recraft/world/worldgen/SmeaGen.cpp
     source/recraft/world/worldgen/SuperFlatGen.cpp
-        include/recraft/gui/ImGuiManager.h
-        source/recraft/gui/ImGuiManager.cpp
+    source/recraft/gui/ImGuiManager.cpp
 )
 target_include_directories(${PROJECT_NAME} PUBLIC
     include/recraft

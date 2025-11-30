@@ -1,5 +1,6 @@
 #include "ReCraftCore.h"
 #include "gui/ImGuiManager.h"
+#include "gui/GuiChat.h"
 
 bool showDebugInfo = true;
 
@@ -68,7 +69,7 @@ void ReCraftCore::Run() {
 
 	WorldSelect_Init();
 
-
+    GuiChat* chat;
 
     MCBridge mcBridge;
 
@@ -102,7 +103,7 @@ void ReCraftCore::Run() {
 		//}
 
         ImGuiManager::GetInstance()->RegisterCallback("DebugUI", [&]() {
-            ImGui::Begin("Debug Info");
+            ImGui::Begin("Game Info");
 
             ImGui::Text("Performance");
             ImGui::Spacing();
@@ -215,6 +216,12 @@ void ReCraftCore::Run() {
                         player.quickSelectBar[i] = item;
                         debugUI.Text("%d ",item.GetItemId());
                     }
+
+
+                    bool showChat = true;//TODO: Move somewhere into render to show globally instead of console_activate & console_log, this is just temp
+                    chat->Render(&showChat);
+
+
 /*
  *  BUG: When player joins the world, the chunks arent loaded causing this to crash when joining the world.
  *
@@ -311,9 +318,9 @@ void ReCraftCore::Run() {
                 } else {
 
                     mcBridge.connect();
-                    terra::T_World world(mcBridge.getClient()->GetDispatcher());
+                    //terra::T_World world(mcBridge.getClient()->GetDispatcher());
                    // auto mesh_gen = std::make_shared<terra::render::ChunkMeshGenerator>(&world, camera.GetPosition());
-
+                    chat = new GuiChat(mcBridge.getClient()->GetDispatcher(), mcBridge.getClient());
                     mcBridge.startBackgroundThread();
                     this->gamestate = GameState_Playing_OnLine;
                 }

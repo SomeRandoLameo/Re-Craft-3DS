@@ -9,6 +9,8 @@
 #include <stdio.h>
 #include <string.h>
 
+
+//TODO: ImGUI for this (at least for now), this needs to work with online
 void CommandLine_Activate(World* world, Player* player,DebugUI* debugUi) {
 	static SwkbdState swkbd;
 	static char textBuffer[64];
