@@ -69,7 +69,7 @@ void SaveManager::Load(char* path) {
             player->spawnset = mpack_node_bool(mpack_node_map_cstr(playerNode,"ss"));
         }
 
-        //player->gamemode=mpack_node_int(mpack_node_map_cstr(playerNode,"gamemode"));
+        player->gamemode = mpack_node_int(mpack_node_map_cstr(playerNode,"gamemode"));
         //use this optional part for "old" version of saved worlds
         mpack_node_t hpNode = mpack_node_map_cstr_optional(playerNode, "hp");
         if (mpack_node_type(hpNode) != mpack_type_nil)
@@ -113,7 +113,7 @@ void SaveManager::Unload() {
 
         mpack_write_cstr(&writer, "players");
         mpack_start_array(&writer, 1);
-            mpack_start_map(&writer, 13);
+            mpack_start_map(&writer, 14);
 
 
                 mpack_write_cstr(&writer, "x");
@@ -144,9 +144,10 @@ void SaveManager::Unload() {
                 mpack_write_cstr(&writer, "hunger");
                 mpack_write_int(&writer, player->hunger);
 
-                /*mpack_write_cstr(&writer, "gamemode");
+                mpack_write_cstr(&writer, "gamemode");
                 mpack_write_int(&writer, player->gamemode);
-                mpack_write_cstr(&writer, "cheats");
+
+                /*mpack_write_cstr(&writer, "cheats");
                 mpack_write_bool(&writer, player->cheats);*/
 
                 mpack_write_cstr(&writer, "pitch");

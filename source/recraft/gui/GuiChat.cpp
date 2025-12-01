@@ -1,4 +1,5 @@
 #include "gui/GuiChat.h"
+#include <cuchar>
 
 GuiChat::GuiChat(mc::protocol::packets::PacketDispatcher *dispatcher, mc::core::Client *client)
         : mc::protocol::packets::PacketHandler(dispatcher), m_Client(client)
@@ -50,7 +51,6 @@ std::string GuiChat::Input(){
 
 void GuiChat::SendMessage(std::string message){
     mc::protocol::packets::out::ChatPacket packet(message);
-
     m_Client->GetConnection()->SendPacket(&packet);
 }
 
@@ -58,4 +58,8 @@ void GuiChat::HandlePacket(mc::protocol::packets::in::ChatPacket* packet) {
     std::string message = mc::util::ParseChatNode(packet->GetChatData());
     message = mc::util::StripChatMessage(message);
     if (!message.empty()) m_messages.push_back(message);
+}
+
+void GuiChat::OnTick() {
+
 }

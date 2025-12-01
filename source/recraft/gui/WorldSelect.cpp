@@ -16,13 +16,6 @@
 
 #include <3ds.h>
 
-typedef struct {
-	uint32_t lastPlayed;
-	char name[WORLD_NAME_SIZE];
-	char path[256];
-} WorldInfo;
-
-static std::vector<WorldInfo> worlds;
 
 void WorldSelect_ScanWorlds() {
 	worlds.clear();
@@ -92,35 +85,6 @@ void WorldSelect_Init() {
 
 void WorldSelect_Deinit() { worlds.clear(); }
 
-typedef enum { MenuState_SelectWorld, MenuState_ConfirmDeletion, MenuState_WorldOptions } MenuState;
-
-static int scroll = 0;
-static float velocity = 0.f;
-static int selectedWorld = -1;
-
-static bool clicked_play = false;
-static bool clicked_new_world = false;
-static bool clicked_mp_connect = false;
-static bool clicked_delete_world = false;
-
-static bool confirmed_world_options = false;
-static bool canceled_world_options = false;
-
-static bool confirmed_deletion = false;
-static bool canceled_deletion = false;
-
-static WorldGenType worldGenType = WorldGen_SuperFlat;
-
-static gamemode gamemode1=Gamemode_Survival;
-
-static char* gamemodestr[]={"Survival","Creative","Adventure","Spectator"};
-
-static char* worldGenTypesStr[] = {"Smea", "Superflat"};
-
-static MenuState menustate = MenuState_SelectWorld;
-
-static float max_velocity = 20.f;
-
 void WorldSelect_Render() {
 	SpriteBatch_SetScale(2);
 
@@ -166,56 +130,57 @@ void WorldSelect_Render() {
 
 		Gui::Offset(0, 2 * 32 + 5 + Gui::BUTTON_TEXT_PADDING);
 		Gui::BeginRowCenter(Gui::RelativeWidth(0.95f), 1);
-		clicked_play = Gui::Button(1.f, "Play selected world");
+		    clicked_play = Gui::Button(1.f, "Play selected world");
         Gui::EndRow();
         Gui::BeginRowCenter(Gui::RelativeWidth(0.95f), 2);
-		clicked_new_world = Gui::Button(0.333f, "New Wrld");
-		clicked_delete_world = Gui::Button(0.333f, "Del Wrld");
-		clicked_mp_connect = Gui::Button(0.333f, "MP CON");
+            clicked_new_world = Gui::Button(0.333f, "New Wrld");
+            clicked_delete_world = Gui::Button(0.333f, "Del Wrld");
+            clicked_mp_connect = Gui::Button(0.333f, "MP CON");
         Gui::EndRow();
 	} else if (menustate == MenuState_ConfirmDeletion) {
         Gui::Offset(0, 10);
         Gui::BeginRow(SpriteBatch_GetWidth(), 1);
-        Gui::Label(0.f, true, INT16_MAX, true, "Are you sure?");
+            Gui::Label(0.f, true, INT16_MAX, true, "Are you sure?");
         Gui::EndRow();
         Gui::VerticalSpace(Gui::RelativeHeight(0.4f));
         Gui::BeginRowCenter(Gui::RelativeWidth(0.8f), 3);
-		canceled_deletion = Gui::Button(0.4f, "No");
-        Gui::Space(0.2f);
-		confirmed_deletion = Gui::Button(0.4f, "Yes");
+            canceled_deletion = Gui::Button(0.4f, "No");
+            Gui::Space(0.2f);
+            confirmed_deletion = Gui::Button(0.4f, "Yes");
         Gui::EndRow();
 	} else if (menustate == MenuState_WorldOptions) {
         Gui::Offset(0, 10);
+
         Gui::BeginRowCenter(Gui::RelativeWidth(0.9f), 3);
-        Gui::Label(0.45f, true, INT16_MAX, false, "World type:");
+        Gui::Label(0.45f, true, INT16_MAX, false, "Game Mode:");
         Gui::Space(0.1f);
-		if (Gui::Button(0.45f, "%s", worldGenTypesStr[worldGenType])) {
-			worldGenType = static_cast<WorldGenType>(static_cast<int>(worldGenType) + 1);
-			if (worldGenType == WorldGenTypes_Count)
-				worldGenType = static_cast<WorldGenType>(0);
-		}
+        if (Gui::Button(0.45f, "%s", gamemodestr[gamemode1])) {
+            gamemode1 = static_cast<gamemode>(static_cast<int>(gamemode1) + 1);
+            if (gamemode1 == Gamemode_Count)
+                gamemode1 = static_cast<gamemode>(0);
+        }
         Gui::EndRow();
 
-		/*Gui_Offset(0, 32);
-		Gui_BeginRowCenter(Gui_RelativeWidth(0.9f), 3);
-		Gui_Label(0.45f, true, INT16_MAX, false, "Gamemode:");
-		Gui_Space(0.1f);
-		if (Gui_Button(0.45f, "%s", gamemodestr[gamemode1])) {
-			gamemode1++;
-			if (gamemode1 ==Gamemode_Count) gamemode1 = 0;
-		}
-		Gui_EndRow();*/
+        Gui::BeginRowCenter(Gui::RelativeWidth(0.9f), 3);
+            Gui::Label(0.45f, true, INT16_MAX, false, "World type:");
+            Gui::Space(0.1f);
+            if (Gui::Button(0.45f, "%s", worldGenTypesStr[worldGenType])) {
+                worldGenType = static_cast<WorldGenType>(static_cast<int>(worldGenType) + 1);
+                if (worldGenType == WorldGenTypes_Count)
+                    worldGenType = static_cast<WorldGenType>(0);
+            }
+        Gui::EndRow();
 
         Gui::VerticalSpace(Gui::RelativeHeight(0.4f));
 
         Gui::BeginRowCenter(Gui::RelativeWidth(0.9f), 3);
-		canceled_world_options = Gui::Button(0.45f, "Cancel");
-        Gui::Space(0.1f);
+		    canceled_world_options = Gui::Button(0.45f, "Cancel");
+            Gui::Space(0.1f);
 		confirmed_world_options = Gui::Button(0.45f, "Continue");
 	}
 }
 
-bool WorldSelect_Update(char* out_worldpath, char* out_name, WorldGenType* worldType, bool* newWorld, bool* isMP) {
+bool WorldSelect_Update(char* out_worldpath, char* out_name, WorldGenType* worldType, Player* player, bool* newWorld, bool* isMP) {
 	if (clicked_new_world) {
 		clicked_new_world = false;
 		menustate = MenuState_WorldOptions;
@@ -230,21 +195,16 @@ bool WorldSelect_Update(char* out_worldpath, char* out_name, WorldGenType* world
 	if (confirmed_world_options) {
 		confirmed_world_options = false;
 		*worldType = worldGenType;
-		//player->gamemode=gamemode3;
+		player->gamemode=gamemode1;
 
 		static SwkbdState swkbd;
 		static char name[WORLD_NAME_SIZE];
 
-#ifndef _DEBUG
 		swkbdInit(&swkbd, SWKBD_TYPE_WESTERN, 2, WORLD_NAME_SIZE);
 		swkbdSetValidation(&swkbd, SWKBD_NOTEMPTY_NOTBLANK, 0, WORLD_NAME_SIZE);
 		swkbdSetHintText(&swkbd, "Enter the world name");
 
 		int button = swkbdInputText(&swkbd, name, 12);
-#else
-		strcpy(name, "testworld");
-		int button = 2;
-#endif
 
 		strcpy(out_name, name);
 		menustate = MenuState_SelectWorld;

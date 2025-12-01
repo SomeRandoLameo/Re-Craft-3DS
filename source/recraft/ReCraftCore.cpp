@@ -272,7 +272,7 @@ void ReCraftCore::Run() {
 			WorldGenType worldType;
 			bool newWorld = false;
 			bool isMultiplayer = false;
-			if (WorldSelect_Update(path, name, &worldType, &newWorld, &isMultiplayer)) {
+			if (WorldSelect_Update(path, name, &worldType, &player, &newWorld, &isMultiplayer)) {
                 if(!isMultiplayer){
                     strcpy(world->name, name);
                     world->genSettings.type = worldType;

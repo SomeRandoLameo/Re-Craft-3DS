@@ -21,4 +21,5 @@ private:
 
     void SendMessage(std::string message);
 
+    void OnTick() override;
 };

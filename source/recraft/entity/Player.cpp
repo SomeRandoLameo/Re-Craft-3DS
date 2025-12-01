@@ -71,9 +71,12 @@ void Player::Update(void* dmg) {
     blockInSight = Raycast_Cast(world, position + mc::Vector3d(0,PLAYER_EYEHEIGHT,0), view, &viewRayCast);
     blockInActionRange = blockInSight && viewRayCast.distSqr < 3.5f * 3.5f * 3.5f;
 
-    HandleFallDamage();
-    HandleFireDamage();
-    HandleHunger();
+    if(gamemode != 1){
+        HandleFallDamage();
+        HandleFireDamage();
+        HandleHunger();
+    }
+
     HandleRespawn(dmg);
 }
 
