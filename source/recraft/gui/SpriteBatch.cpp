@@ -34,7 +34,7 @@ static int screenWidth = 0, screenHeight = 0;
 static int guiScale = 2;
 
 void SpriteBatch_Init(int projUniform_) {
-	vertexList[0] = (GuiVertex*)linearAlloc(sizeof(GuiVertex) * 256);
+	vertexList[0] = (GuiVertex*)linearAlloc(sizeof(GuiVertex) * 2 * (4096 + 1024));
 	vertexList[1] = (GuiVertex*)linearAlloc(sizeof(GuiVertex) * 2 * (4096 + 1024));
 
 	projUniform = projUniform_;
@@ -44,6 +44,8 @@ void SpriteBatch_Init(int projUniform_) {
     fontLoader.LoadFont(font, "romfs:/assets/textures/font/ascii.png");
 
 	Texture_Load(&widgetsTex, "romfs:/assets/textures/gui/widgets.png");
+
+	Texture_Load(&iconsTex, "romfs:/assets/textures/gui/icons.png");
 
 	uint8_t data[16 * 16];
 	memset(data, 0xff, 16 * 16 * sizeof(uint8_t));

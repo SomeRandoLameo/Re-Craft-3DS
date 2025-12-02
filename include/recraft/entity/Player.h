@@ -45,6 +45,10 @@ public:
     bool crouching = false;
     World* world = nullptr;
 
+    // experience is a value between 0 and 0.99*
+    float experience = 0.1;
+    float experienceLevel= 5000000;
+
     mc::Vector3d view = mc::Vector3d(0, 0, -1);
     bool autoJumpEnabled = true;
 

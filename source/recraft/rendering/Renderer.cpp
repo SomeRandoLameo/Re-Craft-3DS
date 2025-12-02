@@ -127,6 +127,147 @@ Renderer::~Renderer() {
 }
 
 
+// this is actual minecraft ported code
+//TODO: Add support for damage animations, potion effects like poisin, wither and more
+//TODO: Move this somewhere else once the new renderer works
+void Renderer::RenderHealth() {
+    int health = player->hp;
+    int yPos = 99;
+    int spriteSize = 9;
+    SpriteBatch_BindGuiTexture(GuiTexture_Icons);
+    for(int amount = 0; amount < 10; ++amount) {
+
+        int var6 = 0;
+        bool var9 = false;
+        if(var9) {
+            var6 = 1;
+        }
+
+
+
+        int prevHealth = player->hp;
+
+        if(health <= 4){
+            yPos += nextafter(2,0);
+        }
+        SpriteBatch_PushQuad(spriteSize + (amount * 8), yPos, -1, spriteSize, spriteSize,  16 + var6 * spriteSize, 0, spriteSize, spriteSize);
+
+        if(var9) {
+            if((amount << 1) + 1 < prevHealth) {
+                SpriteBatch_PushQuad(spriteSize + (amount * 8), yPos,0,spriteSize, spriteSize, 70, 0, spriteSize, spriteSize);
+            }
+
+            if((amount << 1) + 1 == prevHealth) {
+                SpriteBatch_PushQuad(spriteSize + (amount * 8), yPos,0,spriteSize, spriteSize,79, 0, spriteSize, spriteSize);
+            }
+        }
+
+        if((amount << 1) + 1 < health) {
+            SpriteBatch_PushQuad(spriteSize + (amount * 8), yPos, 0, spriteSize, spriteSize, 52, 0, spriteSize, spriteSize);
+        }
+
+        if((amount << 1) + 1 == health) {
+            SpriteBatch_PushQuad(spriteSize + (amount * 8), yPos, 0, spriteSize, spriteSize, 61, 0, spriteSize, spriteSize);
+        }
+
+    }
+}
+
+void Renderer::RenderExpBar() {
+    // harcoded cap for now
+    int barCap = 10;
+
+    SpriteBatch_BindGuiTexture(GuiTexture_Icons);
+
+    if (barCap > 0) {
+        int barLength = 182;
+        int xpFill	  = (int)(player->experience * (float)(barLength + 1));
+
+        int y = 120 - 9;
+        SpriteBatch_PushQuad(200 / 2 - 182 / 2, y, 0, barLength, 5, 0, 64, barLength, 5);
+
+        if (xpFill > 0) {
+            SpriteBatch_PushQuad(200 / 2 - 182 / 2, y, 1, xpFill, 5, 0, 69, xpFill, 5);
+        }
+    }
+
+    if (player->experienceLevel > 0) {
+        char experienceStr[20];	 // buffer to hold the string representation of experience level
+
+        int experienceInt = (int)player->experienceLevel;
+        snprintf(experienceStr, sizeof(experienceStr), "%d", experienceInt);  // Format as integer
+
+        int textWidth = SpriteBatch_CalcTextWidth(experienceStr);
+
+        int textY = 10;
+
+        SpriteBatch_PushText(200 / 2 - textWidth / 2 + 1, 120 - textY, 2, SHADER_RGB(0, 0, 0), false, INT_MAX, 0, experienceStr);
+        SpriteBatch_PushText(200 / 2 - textWidth / 2 - 1, 120 - textY, 2, SHADER_RGB(0, 0, 0), false, INT_MAX, 0, experienceStr);
+        SpriteBatch_PushText(200 / 2 - textWidth / 2, 120 - textY + 1, 2, SHADER_RGB(0, 0, 0), false, INT_MAX, 0, experienceStr);
+        SpriteBatch_PushText(200 / 2 - textWidth / 2, 120 - textY - 1, 2, SHADER_RGB(0, 0, 0), false, INT_MAX, 0, experienceStr);
+        SpriteBatch_PushText(200 / 2 - textWidth / 2, 120 - textY, 3, SHADER_RGB(100, 255, 32), false, INT_MAX, 0, experienceStr);
+    }
+}
+
+//TODO: Hunger effects
+void Renderer::RenderHunger() {
+
+    int spriteSize = 9;
+    int xpos = 190;
+    int ypos = 99;
+
+    int saturationLevel = player->hunger;
+
+    for (int amount = 0; amount < 10; ++amount)
+    {
+
+
+        int l6 = 16;
+        int j7 = 0;
+/*
+        //whatever this is
+        if (entityplayer.isPotionActive(MobEffects.HUNGER))
+        {
+            l6 += 36;
+            j7 = 13;
+        }
+
+        //Shaking effect
+        if (entityplayer.getFoodStats().getSaturationLevel() <= 0.0F && this.updateCounter % (k * 3 + 1) == 0)
+        {
+            ypos = j1 + (this.rand.nextInt(3) - 1);
+        }
+*/
+
+        int spriteXpos = xpos - amount * 8 - 9;
+        SpriteBatch_PushQuad(spriteXpos, ypos,-1,spriteSize,spriteSize, 16 + j7 * 9, 27, 9, 9);
+
+        if (amount * 2 + 1 < saturationLevel)
+        {
+            SpriteBatch_PushQuad(spriteXpos, ypos,0,spriteSize,spriteSize, l6 + 36, 27, 9, 9);
+        }
+
+        if (amount * 2 + 1 == saturationLevel)
+        {
+            SpriteBatch_PushQuad(spriteXpos, ypos, 0, spriteSize,spriteSize,l6 + 45, 27, 9, 9);
+        }
+    }
+}
+
+void Renderer::RenderGameOverlay() {
+    SpriteBatch_BindGuiTexture(GuiTexture_Icons);
+    SpriteBatch_PushQuad(200 / 2 - 16 / 2, 120 / 2 - 16 / 2, 0, 16, 16, 0, 0, 16, 16);
+
+    if(player->gamemode == 0){
+        RenderExpBar();
+        RenderHealth();
+        RenderHunger();
+    }
+
+}
+
+
+
 void Renderer::Render(DebugUI* debugUi) {
     float iod = osGet3DSliderState() * PLAYER_HALFEYEDIFF;
 
@@ -188,16 +329,8 @@ void Renderer::RenderFrame(int eyeIndex, float iod) {
 
 		worldRenderer->Render(!eyeIndex ? -iod : iod);
 
-		SpriteBatch_BindGuiTexture(GuiTexture_Widgets);
-		if (iod == 0.f) SpriteBatch_PushQuad(200 / 2 - 16 / 2, 120 / 2 - 16 / 2, 0, 16, 16, 240, 0, 16, 16);
-	} else if (*ReCraftCore::GetInstance()->GetGameState() == GameState_Playing) {
-        C3D_TexBind(0, (C3D_Tex*)Block_GetTextureMap());
-
-        worldRenderer->Render(!eyeIndex ? -iod : iod);
-
-        SpriteBatch_BindGuiTexture(GuiTexture_Widgets);
-        if (iod == 0.f) SpriteBatch_PushQuad(200 / 2 - 16 / 2, 120 / 2 - 16 / 2, 0, 16, 16, 240, 0, 16, 16);
-    } else if (*ReCraftCore::GetInstance()->GetGameState() == GameState_Playing_OnLine) {
+        RenderGameOverlay();
+	} else if (*ReCraftCore::GetInstance()->GetGameState() == GameState_Playing_OnLine) {
         C3D_TexBind(0, (C3D_Tex*)Block_GetTextureMap());
 
         //TODO: There needs to be a world to render :D

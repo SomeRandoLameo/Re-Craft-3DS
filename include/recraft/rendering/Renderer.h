@@ -74,4 +74,9 @@ private:
     void RenderFrame(int eyeIndex, float iod);
     void RenderLowerScreen(DebugUI* debugUi);
     void RenderImGui();
+
+    void RenderExpBar();
+    void RenderHealth();
+    void RenderGameOverlay();
+    void RenderHunger();
 };
