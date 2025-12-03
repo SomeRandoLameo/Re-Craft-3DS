@@ -55,6 +55,8 @@ The game should run in theory. If not: create an issue and steps to recreate it.
 | Add Multiplayer GUI                  | Planned     | Minecraft 1.12 Client sources and my 3DSCraft attempt may help here                                                                                                                           |
 | ...                                  | ...         |                                                                                                                                                                                               |
 | Implement working sound engine       | Planned     | this can be added if every other core feature has been added properly                                                                                                                         |
+| CIA Build target       | Planned     | this doesnt exist yet, but woutl be cool. preferrably with a 3D icon, similar to my 3DSCraft                                                                                                                      |
+
 
 ### Future Features
 - [ ] Microsoft authentication (from [prism launcher](https://github.com/PrismLauncher/PrismLauncher))
