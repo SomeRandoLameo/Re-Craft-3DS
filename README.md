@@ -59,7 +59,7 @@ The game should run in theory. If not: create an issue and steps to recreate it.
 
 
 ### Future Features
-- [ ] Microsoft authentication (from [prism launcher](https://github.com/PrismLauncher/PrismLauncher))
+- [ ] Microsoft authentication (from [prism launcher](https://github.com/PrismLauncher/PrismLauncher)) - this might help as well: [Minecraft Wiki article](https://minecraft.wiki/w/Microsoft_authentication)
 - [ ] Newer MCLib version [1.15.2 branch](https://github.com/plushmonkey/mclib/tree/1.15.2) for newer server support
 - [ ] SDMC Resource pack support
 - [ ] Proper worldgen for client singleplayer
