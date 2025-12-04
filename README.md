@@ -19,6 +19,8 @@ The game should run in theory. If not: create an issue and steps to recreate it.
   - [stb](https://github.com/nothings/stb/tree/f1c79c02822848a9bed4315b12c8c8f3761e1296)
 
 ### Roadmap
+We recently created a project board. if you want to contribute, but dont know where to start, check it out. it has priorities and is organized way better than this table.
+
 | Task                                 | Status      | Notes                                                                                                                                                                                         |
 |--------------------------------------|-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Port MCLib                           | ✅ Done      | Ported and tested. Minor crashes may still occur, but i was able to successfully send/control Movement packets                                                                                |
