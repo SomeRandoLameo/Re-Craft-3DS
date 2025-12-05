@@ -18,6 +18,26 @@ The game should run in theory. If not: create an issue and steps to recreate it.
   - [imgui-impl-ctr](https://github.com/npid7/imgui-impl-ctr)
   - [stb](https://github.com/nothings/stb/tree/f1c79c02822848a9bed4315b12c8c8f3761e1296)
 
+### How to get this running?
+- install the Dependencies
+- make the Re_Craft_3dsx target
+- install it via 3dslink, ftp or the custom send target built into the cmakelist
+
+### How do i connect to servers?
+- For now, the IP and Username are hardcoded inside the MCBridge. You need to change them accordingly.
+- We created build targets to download and start a vanilla 1.12 minecraft server.
+  - run download-server target
+  - run start-server target
+  - navigate to the server folder to accept the EULA for Minecraft servers
+  - run start-server again
+  - the server should run as an offline superflat server named ReCraft dev server.
+- We already created a server configuration. You can change it, but you usually dont need to.
+- Get your local PC IP address (the one that looks like 192.168.xxx.xxx, 172.xxx.xxx.xxx, 127.0.xxx or 10.0.xxx.xxx)
+- Replace the IP in MCBridge with the one you notated
+- Rebuild the project and reinstall it.
+
+*SIDENOTE*: In order to connect to the offline dev server, your 3DS *NEEDS TO BE ON THE SAME NETWORK AS THE SERVER*, otherwise this wont connect.
+
 ### Roadmap
 We recently created a project board. if you want to contribute, but dont know where to start, check it out. it has priorities and is organized way better than this table.
 
