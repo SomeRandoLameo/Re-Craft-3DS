@@ -32,7 +32,7 @@ The game should run in theory. If not: create an issue and steps to recreate it.
   - run start-server again
   - the server should run as an offline superflat server named ReCraft dev server.
 - We already created a server configuration. You can change it, but you usually dont need to.
-- Get your local PC IP address (the one that looks like 192.168.xxx.xxx, 172.xxx.xxx.xxx, 127.0.xxx or 10.0.xxx.xxx)
+- Get your local PC IP address (the one that looks like 192.168.xxx.xxx, 172.xxx.xxx.xxx, 127.xxx.xxx.xxx or 10.xxx.xxx.xxx)
 - Replace the IP in MCBridge with the one you notated
 - Rebuild the project and reinstall it.
 
