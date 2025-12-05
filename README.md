@@ -39,7 +39,8 @@ The game should run in theory. If not: create an issue and steps to recreate it.
 *SIDENOTE*: In order to connect to the offline dev server, your 3DS *NEEDS TO BE ON THE SAME NETWORK AS THE SERVER*, otherwise this wont connect.
 
 ### Roadmap
-We recently created a project board. if you want to contribute, but dont know where to start, check it out. it has priorities and is organized way better than this table.
+We recently created a [project board](https://github.com/users/SomeRandoLameo/projects/2/views/2). if you want to contribute, but dont know where to start, check it out. 
+it has priorities and is organized way better than this table below. The table likely wont be updated and removed in the future
 
 | Task                                 | Status      | Notes                                                                                                                                                                                         |
 |--------------------------------------|-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -96,11 +97,12 @@ We recently created a project board. if you want to contribute, but dont know wh
 - Audio & Other misc. bits from [QuickLime](https://github.com/syelan34/quicklime) (this may be used in the future)
 
 ### Special thanks goes out to: 
-- Tobid7 (New renderer and main contributor)
-- RSDuck & Onixia (Craftus)
-- Plushmonkey (mclib & Terra)
-- the people behind DEAR IMGUI
-- the people behind stb
+- Tobid7 ([Amethyst](https://github.com/tobid7/amethyst) and main contributor)
+- RSDuck & Onixia ([Craftus](https://github.com/Onixiya/craftus))
+- Plushmonkey ([original mclib](https://github.com/plushmonkey/mclib) & [Terra](https://github.com/plushmonkey/Terracotta))
+- the people behind [DEAR IMGUI](https://github.com/ocornut/imgui)
+- the people behind [stb](https://github.com/nothings/stb)
+- And many more! (if you think, your code is used here, feel free to commit a change to the readme. We will validate and add it if possible)
 
 ### Licensing
 - All external snippets must respect their original licenses
