@@ -4,7 +4,7 @@ a Minecraft (1.10.x - 1.12.x) client implemented on the 3DS (and new 3DS)
 ### Other informations
 This is a hobby project. I cannot tell how far this will go in the future but for now this will stay active for a longer amount of time.
 Please dont be annoyed if this crashed on your device, as this is my first proper c++ lang and 3DS hardware project.
-Also. I, personally DO NOT own an O3DS. The current roms are built with focus on the N3DS, since i cannot test O3DS compatability.
+The current roms are built with focus on the N3DS, however o3DS Support is being tested as well.
 The game should run in theory. If not: create an issue and steps to recreate it. We will greatly appreciate this!
 
 ### Additional libraries (you need to install them in order to build this project)
