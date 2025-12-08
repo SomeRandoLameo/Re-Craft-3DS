@@ -19,7 +19,9 @@ The game should run in theory. If not: create an issue and steps to recreate it.
   - [stb](https://github.com/nothings/stb/tree/f1c79c02822848a9bed4315b12c8c8f3761e1296)
 
 ### How to get this running?
-- install the Dependencies
+- install DevKitPro for the Nintendo3DS
+- install CMake
+- install the Dependencies or all portlibs (easier)
 - make the Re_Craft_3dsx target
 - install it via 3dslink, ftp or the custom send target built into the cmakelist
 
