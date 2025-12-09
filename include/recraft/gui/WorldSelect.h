@@ -41,9 +41,9 @@ static WorldGenType worldGenType = WorldGen_SuperFlat;
 
 static gamemode gamemode1=Gamemode_Survival;
 
-static char* gamemodestr[]={"Survival","Creative","Adventure","Spectator"};
+static const char* gamemodestr[]={"Survival","Creative","Adventure","Spectator"};
 
-static char* worldGenTypesStr[] = {"Smea", "Superflat"};
+static const char* worldGenTypesStr[] = {"Smea", "Superflat"};
 
 static MenuState menustate = MenuState_SelectWorld;
 
