@@ -1,17 +1,16 @@
 #pragma once
 
-#include "../entity/Player.h"
-#include "../world/WorkQueue.h"
-#include "../world/CT_World.h"
 #include "../GameStates.h"
+#include "../entity/Player.h"
 #include "../gui/DebugUI.h"
+#include "../world/CT_World.h"
+#include "../world/WorkQueue.h"
 #include "WorldRenderer.h"
-#include "../ReCraftCore.h"
 #include "gui/ImGuiManager.h"
 
 #include <citro3d.h>
 
-//TODO: Organize
+// TODO: Organize
 #include <3ds.h>
 #include <citro3d.h>
 #include <tex3ds.h>
@@ -31,52 +30,53 @@
 #include "imgui_impl_ctr.h"
 
 struct NpiEasyTex {
-    C3D_Tex* tex = NULL;
-    Tex3DS_Texture t3x;
+  C3D_Tex *tex = NULL;
+  Tex3DS_Texture t3x;
 };
 
 class ReCraftCore;
 
 class Renderer {
 public:
-    Renderer(World* world_, Player* player_, WorkQueue* queue);
-    ~Renderer();
+  Renderer(World *world_, Player *player_, WorkQueue *queue);
+  ~Renderer();
 
-    void Render(DebugUI* debugUi);
+  void Render(DebugUI *debugUi);
 
-    C3D_RenderTarget* GetTopTarget() const { return renderTargets[0]; }
-    C3D_RenderTarget* GetBottomTarget() const { return lowerScreen; }
+  C3D_RenderTarget *GetTopTarget() const { return renderTargets[0]; }
+  C3D_RenderTarget *GetBottomTarget() const { return lowerScreen; }
+
 private:
-    Clouds* clouds;
-    C3D_RenderTarget* renderTargets[2];
-    C3D_RenderTarget* lowerScreen;
+  Clouds *clouds;
+  C3D_RenderTarget *renderTargets[2];
+  C3D_RenderTarget *lowerScreen;
 
-    DVLB_s *world_dvlb, *gui_dvlb;
-    shaderProgram_s world_shader, gui_shader;
-    int world_shader_uLocProjection, gui_shader_uLocProjection;
+  DVLB_s *world_dvlb, *gui_dvlb;
+  shaderProgram_s world_shader, gui_shader;
+  int world_shader_uLocProjection, gui_shader_uLocProjection;
 
-    C3D_AttrInfo world_vertexAttribs, gui_vertexAttribs;
+  C3D_AttrInfo world_vertexAttribs, gui_vertexAttribs;
 
-    C3D_Tex logoTex;
+  C3D_Tex logoTex;
 
-    World* world;
+  World *world;
 
-    Player* player;
-    WorldRenderer* worldRenderer;
-    WorkQueue* workqueue;
+  Player *player;
+  WorldRenderer *worldRenderer;
+  WorkQueue *workqueue;
 
-    ImGuiIO* io;
-    NpiEasyTex ntex;
-    bool show_demo_window;
-    std::string cstyle;
-    std::vector<std::string> styles;
+  ImGuiIO *io;
+  NpiEasyTex ntex;
+  bool show_demo_window;
+  std::string cstyle;
+  std::vector<std::string> styles;
 
-    void RenderFrame(int eyeIndex, float iod);
-    void RenderLowerScreen(DebugUI* debugUi);
-    void RenderImGui();
+  void RenderFrame(int eyeIndex, float iod);
+  void RenderLowerScreen(DebugUI *debugUi);
+  void RenderImGui();
 
-    void RenderExpBar();
-    void RenderHealth();
-    void RenderGameOverlay();
-    void RenderHunger();
+  void RenderExpBar();
+  void RenderHealth();
+  void RenderGameOverlay();
+  void RenderHunger();
 };

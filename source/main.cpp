@@ -1,7 +1,10 @@
+#include <amethyst.hpp>
+
 #include "ReCraftCore.h"
 
 int main() {
-    ReCraftCore core;
-    core.Run();
-    return 0;
+  Amy::RegisterCxxExceptionHandler();
+  ReCraftCore core;
+  core.Run();
+  return 0;
 }

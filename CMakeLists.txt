@@ -52,7 +52,6 @@ add_executable(${PROJECT_NAME}
     source/recraft/misc/CommandLine.cpp
     source/recraft/misc/Crash.cpp
     source/recraft/misc/Raycast.cpp
-    source/recraft/misc/Sound.cpp
     source/recraft/ReCraftCore.cpp
     source/recraft/rendering/Camera.cpp
     source/recraft/rendering/Clouds.cpp
@@ -97,6 +96,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     miniz
     imgui-ctr
     stb
+    amethyst
     world_asm # World Shader
     gui_asm # gui shader
 )
