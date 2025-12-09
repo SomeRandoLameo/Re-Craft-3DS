@@ -1,10 +1,10 @@
-# Re-Craft-3DS
+# Re::Craft 3DS
 a Minecraft (1.10.x - 1.12.x) client implemented on the 3DS (and new 3DS)
 
 ### Other informations
 This is a hobby project. I cannot tell how far this will go in the future but for now this will stay active for a longer amount of time.
 Please dont be annoyed if this crashed on your device, as this is my first proper c++ lang and 3DS hardware project.
-Also. I, personally DO NOT own an O3DS. The current roms are built with focus on the N3DS, since i cannot test O3DS compatability.
+The current roms are built with focus on the N3DS, however o3DS Support is being tested as well.
 The game should run in theory. If not: create an issue and steps to recreate it. We will greatly appreciate this!
 
 ### Additional libraries (you need to install them in order to build this project)
@@ -18,7 +18,32 @@ The game should run in theory. If not: create an issue and steps to recreate it.
   - [imgui-impl-ctr](https://github.com/npid7/imgui-impl-ctr)
   - [stb](https://github.com/nothings/stb/tree/f1c79c02822848a9bed4315b12c8c8f3761e1296)
 
+### How to get this running?
+- install DevKitPro for the Nintendo3DS
+- install CMake
+- install the Dependencies or all portlibs (easier)
+- make the Re_Craft_3dsx target
+- install it via 3dslink, ftp or the custom send target built into the cmakelist
+
+### How do i connect to servers?
+- For now, the IP and Username are hardcoded inside the MCBridge. You need to change them accordingly.
+- We created build targets to download and start a vanilla 1.12 minecraft server.
+  - run download-server target
+  - run start-server target
+  - navigate to the server folder to accept the EULA for Minecraft servers
+  - run start-server again
+  - the server should run as an offline superflat server named ReCraft dev server.
+- We already created a server configuration. You can change it, but you usually dont need to.
+- Get your local PC IP address (the one that looks like 192.168.xxx.xxx, 172.xxx.xxx.xxx, 127.xxx.xxx.xxx or 10.xxx.xxx.xxx)
+- Replace the IP in MCBridge with the one you notated
+- Rebuild the project and reinstall it.
+
+*SIDENOTE*: In order to connect to the offline dev server, your 3DS *NEEDS TO BE ON THE SAME NETWORK AS THE SERVER*, otherwise this wont connect.
+
 ### Roadmap
+We recently created a [project board](https://github.com/users/SomeRandoLameo/projects/2/views/2). if you want to contribute, but dont know where to start, check it out. 
+it has priorities and is organized way better than this table below. The table likely wont be updated and removed in the future
+
 | Task                                 | Status      | Notes                                                                                                                                                                                         |
 |--------------------------------------|-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Port MCLib                           | ✅ Done      | Ported and tested. Minor crashes may still occur, but i was able to successfully send/control Movement packets                                                                                |
@@ -74,11 +99,12 @@ The game should run in theory. If not: create an issue and steps to recreate it.
 - Audio & Other misc. bits from [QuickLime](https://github.com/syelan34/quicklime) (this may be used in the future)
 
 ### Special thanks goes out to: 
-- Tobid7 (New renderer and main contributor)
-- RSDuck & Onixia (Craftus)
-- Plushmonkey (mclib & Terra)
-- the people behind DEAR IMGUI
-- the people behind stb
+- Tobid7 ([Amethyst](https://github.com/tobid7/amethyst) and main contributor)
+- RSDuck & Onixia ([Craftus](https://github.com/Onixiya/craftus))
+- Plushmonkey ([original mclib](https://github.com/plushmonkey/mclib) & [Terra](https://github.com/plushmonkey/Terracotta))
+- the people behind [DEAR IMGUI](https://github.com/ocornut/imgui)
+- the people behind [stb](https://github.com/nothings/stb)
+- And many more! (if you think, your code is used here, feel free to commit a change to the readme. We will validate and add it if possible)
 
 ### Licensing
 - All external snippets must respect their original licenses
