@@ -50,8 +50,10 @@ std::string GuiChat::Input(){
 }
 
 void GuiChat::SendMessage(std::string message){
-    mc::protocol::packets::out::ChatPacket packet(message);
-    m_Client->GetConnection()->SendPacket(&packet);
+    if(!message.empty()){
+        mc::protocol::packets::out::ChatPacket packet(message);
+        m_Client->GetConnection()->SendPacket(&packet);
+    }
 }
 
 void GuiChat::HandlePacket(mc::protocol::packets::in::ChatPacket* packet) {
