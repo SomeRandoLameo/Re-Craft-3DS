@@ -1,4 +1,4 @@
-# Re-Craft-3DS
+# Re::Craft 3DS
 a Minecraft (1.10.x - 1.12.x) client implemented on the 3DS (and new 3DS)
 
 ### Other informations
