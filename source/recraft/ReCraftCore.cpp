@@ -32,10 +32,9 @@ ReCraftCore::ReCraftCore() {
   flatGen.Init(world);
   smeaGen.Init(world);
 
-  renderer = new Renderer(world, player, &chunkWorker.GetQueue());
-
   AssetMgr.AutoLoad("font", "romfs:/ComicNeue.ttf");
 
+  renderer = new Renderer(world, player, &chunkWorker.GetQueue());
   debugUI = new DebugUI();
 
   WorldSelect_Init();

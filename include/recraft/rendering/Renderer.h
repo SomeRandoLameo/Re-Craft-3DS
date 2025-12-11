@@ -29,11 +29,6 @@
 #include "imgui_impl_citro3d.h"
 #include "imgui_impl_ctr.h"
 
-struct NpiEasyTex {
-  C3D_Tex *tex = NULL;
-  Tex3DS_Texture t3x;
-};
-
 class ReCraftCore;
 
 class Renderer {
@@ -51,9 +46,13 @@ private:
   C3D_RenderTarget *renderTargets[2];
   C3D_RenderTarget *lowerScreen;
 
-  DVLB_s *world_dvlb, *gui_dvlb;
+  DVLB_s *world_dvlb = nullptr;
+  DVLB_s *gui_dvlb = nullptr;
+
   shaderProgram_s world_shader, gui_shader;
-  int world_shader_uLocProjection, gui_shader_uLocProjection;
+
+  int world_shader_uLocProjection= 0;
+  int gui_shader_uLocProjection = 0;
 
   C3D_AttrInfo world_vertexAttribs, gui_vertexAttribs;
 
@@ -62,11 +61,10 @@ private:
   World *world;
 
   Player *player;
-  WorldRenderer *worldRenderer;
+  WorldRenderer *worldRenderer = nullptr;
   WorkQueue *workqueue;
 
   ImGuiIO *io;
-  NpiEasyTex ntex;
   bool show_demo_window;
   std::string cstyle;
   std::vector<std::string> styles;

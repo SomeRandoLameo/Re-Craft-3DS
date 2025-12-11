@@ -18,17 +18,17 @@ static char *logLines[LOG_LINES];
 static int currentStatusLine = 0;
 
 DebugUI::DebugUI() {
-  for (int i = 0; i < LOG_LINES; i++) {
-    logLines[i] = (char *)malloc(LOG_LINE_LENGTH);
-    memset(logLines[i], 0x0, LOG_LINE_LENGTH);
+  for (auto & logLine : logLines) {
+    logLine = (char *)malloc(LOG_LINE_LENGTH);
+    memset(logLine, 0x0, LOG_LINE_LENGTH);
   }
-  for (int i = 0; i < STATUS_LINES; i++) {
-    statusLines[i] = (char *)malloc(STATUS_LINE_LENGTH);
-    memset(statusLines[i], 0x0, STATUS_LINE_LENGTH);
+  for (auto & statusLine : statusLines) {
+    statusLine = (char *)malloc(STATUS_LINE_LENGTH);
+    memset(statusLine, 0x0, STATUS_LINE_LENGTH);
   }
   RenderData = new Iron::Drawlist();
-  RenderData->SetFont(
-      ReCraftCore::GetInstance()->GetAssetManager()->Get<Iron::Font>("font"));
+    //TODO: MC Bitmap pixel font loaded from assets :D
+  RenderData->SetFont(ReCraftCore::GetInstance()->GetAssetManager()->Get<Iron::Font>("font"));
 }
 
 DebugUI::~DebugUI() {
@@ -52,8 +52,10 @@ void DebugUI::Text(const char *text, ...) {
 
 void DebugUI::Log(const char *text, ...) {
   char *lastLine = logLines[LOG_LINES - 1];
-  for (int i = LOG_LINES - 1; i > 0; i--)
-    logLines[i] = logLines[i - 1];
+  for (int i = LOG_LINES - 1; i > 0; i--) {
+      logLines[i] = logLines[i - 1];
+  }
+
   logLines[0] = lastLine;
 
   va_list args;
@@ -66,20 +68,20 @@ void DebugUI::Log(const char *text, ...) {
 
 void DebugUI::Draw() {
   int yOffset = (240 / 3) * 2;
-  for (int i = 0; i < LOG_LINES; i++) {
+  for (auto & logLine : logLines) {
     int step = 15;
-    RenderData->DrawText(Amy::fvec2(0, yOffset), logLines[i], 0xffffffff);
+    RenderData->DrawText(Amy::fvec2(0, yOffset), logLine, 0xffffffff);
     yOffset += step;
     if (yOffset >= 240)
       break;
   }
   yOffset = 0;
-  for (int i = 0; i < STATUS_LINES; i++) {
+  for (auto & statusLine : statusLines) {
     int step = 15;
-    RenderData->DrawText(Amy::fvec2(0, yOffset), statusLines[i], 0xffffffff);
+    RenderData->DrawText(Amy::fvec2(0, yOffset), statusLine, 0xffffffff);
     yOffset += step;
 
-    memset(statusLines[i], 0x0, STATUS_LINE_LENGTH);
+    memset(statusLine, 0x0, STATUS_LINE_LENGTH);
   }
   currentStatusLine = 0;
 }

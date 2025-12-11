@@ -22,12 +22,6 @@ const auto FB_SCALE = 1.0f;
 C3D::Screen *Top[2];
 C3D::Screen *Bottom;
 
-#define DISPLAY_TRANSFER_FLAGS                                                 \
-  (GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) |                       \
-   GX_TRANSFER_RAW_COPY(0) | GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGBA8) |    \
-   GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB8) |                              \
-   GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
-
 #define CLEAR_COLOR_SKY 0x90d9ffff
 #define CLEAR_COLOR_BLACK 0x000000ff
 
@@ -36,12 +30,9 @@ extern bool showDebugInfo;
 
 Renderer::Renderer(World *world_, Player *player_, WorkQueue *queue) {
   // i actually prefer this
-  this->world_dvlb = nullptr;
-  this->gui_dvlb = nullptr;
   this->world = world_;
   this->player = player_;
   this->workqueue = queue;
-  this->worldRenderer = nullptr;
   this->world_shader_uLocProjection = 0;
   this->gui_shader_uLocProjection = 0;
 
