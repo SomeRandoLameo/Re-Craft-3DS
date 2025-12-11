@@ -12,83 +12,105 @@ The game should run in theory. If not: create an issue and steps to recreate it.
 - 3ds-curl 
 - 3ds-mbedtls
 - 3ds-libopus
+  - (or the entire 3ds-portlibs)
 - submodules
   - [mclib-3ds](https://github.com/SomeRandoLameo/mclib-3ds)
+  - [amethyst](https://github.com/tobid7/amethyst)
   - [imgui-ctr](https://github.com/npid7/imgui-impl-ctr/tree/e67a33579fa6424171ec1a583b6baffa077ee2d3)
   - [imgui-impl-ctr](https://github.com/npid7/imgui-impl-ctr)
   - [stb](https://github.com/nothings/stb/tree/f1c79c02822848a9bed4315b12c8c8f3761e1296)
 
-### How to get this running?
-- install DevKitPro for the Nintendo3DS
-- install CMake
-- install the Dependencies or all portlibs (easier)
-- make the Re_Craft_3dsx target
-- install it via 3dslink, ftp or the custom send target built into the cmakelist
+### How do i build this rom? 
+
+**Install dependencies:**
+```bash
+# Install all portlibs (easier & recommended option)
+# You can also use normal pacman if you configured that correctly
+sudo dkp-pacman -S 3ds-portlibs
+
+# OR install individual libraries
+sudo dkp-pacman -S 3ds-zlib 3ds-curl 3ds-mbedtls 3ds-libopus
+```
+
+**Clone and build:**
+```bash
+# Clone the repository with submodules
+git clone --recursive https://github.com/YourRepo/ReCraft.git
+cd ReCraft
+
+# If you already cloned without --recursive, initialize submodules
+git submodule update --init --recursive
+
+# Configure CMake
+# The Toolchain has to be set to the toolchain of DevKitPro.
+# The 3DS IP is used for the send target. If you dont want to send via your IDE, you can leave it empty
+cmake -B build -DCMAKE_TOOLCHAIN_FILE=/opt/devkitpro/3ds.cmake -D3DS_IP="YOUR_3DS_IP_HERE"
+
+# Build the project
+make Re_Craft_3dsx
+
+# Install via 3dslink (3DS must be on network)
+make send
+
+# you can also use standalone 3DSLink
+cd cmake_build_debug/
+3dslink Re-Craft-3DS.3dsx
+
+# OR use FTP to transfer the .3dsx file to your 3DS manually
+```
 
 ### How do i connect to servers?
-- For now, the IP and Username are hardcoded inside the MCBridge. You need to change them accordingly.
-- We created build targets to download and start a vanilla 1.12 minecraft server.
-  - run download-server target
-  - run start-server target
-  - navigate to the server folder to accept the EULA for Minecraft servers
-  - run start-server again
-  - the server should run as an offline superflat server named ReCraft dev server.
-- We already created a server configuration. You can change it, but you usually dont need to.
-- Get your local PC IP address (the one that looks like 192.168.xxx.xxx, 172.xxx.xxx.xxx, 127.xxx.xxx.xxx or 10.xxx.xxx.xxx)
-- Replace the IP in MCBridge with the one you notated
-- Rebuild the project and reinstall it.
 
-*SIDENOTE*: In order to connect to the offline dev server, your 3DS *NEEDS TO BE ON THE SAME NETWORK AS THE SERVER*, otherwise this wont connect.
+**Quick setup (included local test server):**
+```bash
+# Download the Minecraft 1.12 server
+cmake --build . --target download-server
+
+# Navigate to server folder and accept EULA
+cd server
+# Edit eula.txt and change "eula=false" to "eula=true"
+# if the file is not present, start the server once. 
+# Then you should be able to accept the EULA
+
+# Start the server
+cd ..
+cmake --build . --target start-server
+```
+
+**Configure connection:**
+```bash
+# Get your local IP address
+# Windows:
+ipconfig
+
+# Linux/Mac:
+ifconfig
+# or
+ip -4 addr show
+
+# Look for an address like:
+# 192.168.x.x, 172.x.x.x, 10.x.x.x, or 127.0.0.1 (localhost only)
+```
+
+**Update MCBridge with your IP:**
+1. Open `MCBridge.cpp` (or relevant file)
+2. Replace the hardcoded IP with your local IP address (the IP from the Minecraft server you started)
+3. Change the username if desired
+4. Rebuild and reinstall:
+```bash
+cd build
+make Re_Craft_3dsx
+make send
+```
+
+The server runs as an "offline" superflat server. You can modify `server.properties` in the server folder if needed.
+Online mode is not (yet) supported.
+
+*SIDENOTE*: In order to connect to the offline dev server, your 3DS *NEEDS TO BE ON THE SAME NETWORK AS THE SERVER*, otherwise this wont connect and may crash
 
 ### Roadmap
-We recently created a [project board](https://github.com/users/SomeRandoLameo/projects/2/views/2). if you want to contribute, but dont know where to start, check it out. 
-it has priorities and is organized way better than this table below. The table likely wont be updated and removed in the future
-
-| Task                                 | Status      | Notes                                                                                                                                                                                         |
-|--------------------------------------|-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Port MCLib                           | ✅ Done      | Ported and tested. Minor crashes may still occur, but i was able to successfully send/control Movement packets                                                                                |
-| Port Craftus                         | ✅ Done      | No crashes in C version. Minor 2D layer glitches when a 2D buffer overflows (will be fixed in cpp rewrite). No sound (SoundEngine got removed because it never worked in the real one either) |
-| Rename Craftus source files to .cpp  | ✅ Done      |                                                                                                                                                                                               |
-| Run MCLib code as separate thread    | ✅ Done      | Test implementation first, there is no need for a proper GUI here. We can use what we already got.                                                                                            |
-| Added ImGui for debugging purposes   | ✅ Done      | Added a small Manager for utillizing ImGui everywhere                                                                                                                                         |
-| Join Craftus and MCLib               | In Progress | Use the same Items, Blocks, Vectors, Math and more. This requires an almost full rewrite of craftus and feature-expansions of MC-lib (as i found out 27.10.2025 eg. Today)                    |
-| Implement proper OOP design          | In Progress | Minecraft 1.12 Client sources may help here                                                                                                                                                   |
-| New Renderer                         | In Progress | A completely new Renderer that should fix all rendering problems, written from scratch                                                                                                        |
-| Async Keyboard                         | Planned | a custom keyboard with dpad navigation that doesnt (unlike the swkb keyboard) block the main thread.                                                                                                        |
-| ...                                  | ...         | Various bug fixing and client core feature implementations                                                                                                                                    |
-| Proper Itemstacks                    | Planned     | A Block uint8 ID is not enough                                                                                                                                                                |
-| Inventory                            | Planned     | Survival and Creative                                                                                                                                                                         |
-| Armor slots                          | Planned     | Survival and Creative, online only                                                                                                                                                            |
-| Offhand slot                         | Planned     | Survival and Creative                                                                                                                                                                         |
-| Chest                                | Planned     | only online for now (meaning only when a packet was triggered)                                                                                                                                |
-| Furnace                              | Planned     | only online for now (meaning only when a packet was triggered)                                                                                                                                |
-| Survival hearts                      | Planned     | was ported, but but not all types of poision arent yet implemented because they dont exist yet                                                                                                                                  |
-| XP Bar                               | Planned     | was ported, but not yet fully integrated, because XP doesnt exist yet                                                                                                                           |
-| Hotbar                               | Planned     | Survival and Creative                                                                                                                                                                         |
-| Chat                                 | Planned     | Added only in Online mode, still on IMGUI, needs a propper UI as GUIOverlay                                                                                                                                                                           |
-| ...                                  | ...         | Various bug fixing and client core feature implementations                                                                                                                                    |
-| Autosaving in background             | Planned     | chunks need to to be saved in order to prevent memory flooding                                                                                                                                |
-| ...                                  | ...         | Various bug fixing and client core feature implementations                                                                                                                                    |
-| Multiplayer world                    | Planned     | A Propper attempt at 3DS Chunk and block rendering, entity rendering and more                                                                                                                 |
-| Block interactions                   | Planned     | Blocks like Chests, Furncances and more should be interactive in both singleplayer and multiplayer                                                                                            |
-| ...                                  | ...         | Various bug fixing and client core feature implementations                                                                                                                                    |
-| Add mc-like GuiScreen manager system | Planned     | Minecraft 1.12 Client sources may help here                                                                                                                                                   |
-| Add Java-like Thread system          | Planned     | My MiniThread implementation may help here                                                                                                                                                    |
-| Add GUI system                       | Planned     | Minecraft 1.12 Client sources may help here                                                                                                                                                   |
-| OreUI for GUI                        | Planned     | Fully fledged Minecraft OreUI WITH resource pack support!                                                                                                                                     |
-| Add Main Menu GUI                    | Planned     | Minecraft 1.12 Client sources and my 3DSCraft attempt may help here                                                                                                                           |
-| Add Multiplayer GUI                  | Planned     | Minecraft 1.12 Client sources and my 3DSCraft attempt may help here                                                                                                                           |
-| ...                                  | ...         |                                                                                                                                                                                               |
-| Implement working sound engine       | Planned     | this can be added if every other core feature has been added properly                                                                                                                         |
-| CIA Build target       | Planned     | this doesnt exist yet, but woutl be cool. preferrably with a 3D icon, similar to my 3DSCraft                                                                                                                      |
-
-
-### Future Features
-- [ ] Microsoft authentication (from [prism launcher](https://github.com/PrismLauncher/PrismLauncher)) - this might help as well: [Minecraft Wiki article](https://minecraft.wiki/w/Microsoft_authentication)
-- [ ] Newer MCLib version [1.15.2 branch](https://github.com/plushmonkey/mclib/tree/1.15.2) for newer server support
-- [ ] SDMC Resource pack support
-- [ ] Proper worldgen for client singleplayer
-- [ ] On-device server (3DS "local multiplayer" to connect with PC and other 3DSes) — *may be limited by 3DS network capabilities*
+There is a [project board](https://github.com/users/SomeRandoLameo/projects/2/views/2). if you want to contribute, but dont know where to start, check it out. 
+It has priorities and is organized for easy navigation.
 
 ### Credits
 - Network engine bits from [mclib-3ds](https://github.com/SomeRandoLameo/mclib-3ds)
