@@ -35,7 +35,7 @@ sudo dkp-pacman -S 3ds-zlib 3ds-curl 3ds-mbedtls 3ds-libopus
 **Clone and build:**
 ```bash
 # Clone the repository with submodules
-git clone --recursive https://github.com/YourRepo/ReCraft.git
+git clone --recursive https://github.com/SomeRandoLameo/Re-Craft-3DS
 cd ReCraft
 
 # If you already cloned without --recursive, initialize submodules
@@ -47,7 +47,7 @@ git submodule update --init --recursive
 cmake -B build -DCMAKE_TOOLCHAIN_FILE=/opt/devkitpro/3ds.cmake -D3DS_IP="YOUR_3DS_IP_HERE"
 
 # Build the project
-make Re_Craft_3dsx
+make Re-Craft-3DS_3dsx
 
 # Install via 3dslink (3DS must be on network)
 make send
