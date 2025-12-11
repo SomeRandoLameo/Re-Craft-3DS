@@ -266,6 +266,9 @@ void Renderer::Render(DebugUI *debugUi) {
   if (*ReCraftCore::GetInstance()->GetGameState() == GameState_Playing)
     PolyGen_Harvest(debugUi);
 
+  if (*ReCraftCore::GetInstance()->GetGameState() == GameState_Playing_OnLine)
+      PolyGen_Harvest(debugUi);
+
   for (int i = 0; i < 2; i++) {
     RenderFrame(i, iod);
     if (iod <= 0.f)
@@ -323,17 +326,13 @@ void Renderer::RenderFrame(int eyeIndex, float iod) {
     worldRenderer->Render(!eyeIndex ? -iod : iod);
 
     RenderGameOverlay();
-  } else if (*ReCraftCore::GetInstance()->GetGameState() ==
-             GameState_Playing_OnLine) {
+  } else if (*ReCraftCore::GetInstance()->GetGameState() == GameState_Playing_OnLine) {
     C3D_TexBind(0, (C3D_Tex *)Block_GetTextureMap());
 
     // TODO: There needs to be a world to render :D
-    // worldRenderer->Render(!eyeIndex ? -iod : iod);
+    worldRenderer->Render(!eyeIndex ? -iod : iod);
 
-    SpriteBatch_BindGuiTexture(GuiTexture_Widgets);
-    if (iod == 0.f)
-      SpriteBatch_PushQuad(200 / 2 - 16 / 2, 120 / 2 - 16 / 2, 0, 16, 16, 240,
-                           0, 16, 16);
+    RenderGameOverlay();
   } else {
     C3D_Mtx projection;
     Mtx_PerspStereoTilt(&projection, C3D_AngleFromDegrees(90.f),

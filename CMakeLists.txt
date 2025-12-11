@@ -69,8 +69,6 @@ add_executable(${PROJECT_NAME}
     source/recraft/world/Direction.cpp
     source/recraft/world/savegame/SaveManager.cpp
     source/recraft/world/savegame/SuperChunk.cpp
-    source/recraft/world/T_Chunk.cpp
-    source/recraft/world/T_World.cpp
     source/recraft/world/WorkQueue.cpp
     source/recraft/world/worldgen/SmeaGen.cpp
     source/recraft/world/worldgen/SuperFlatGen.cpp
