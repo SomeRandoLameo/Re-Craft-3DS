@@ -2,26 +2,26 @@
 #include "rendering/VertexFmt.h"
 #include "misc/NumberUtils.h"
 
-Cursor::Cursor() : cursorVBO(nullptr) {
+Cursor::Cursor() {
 	InitializeVertexBuffer();
 }
 
 Cursor::~Cursor() {
-	if (cursorVBO) {
-		linearFree(cursorVBO);
-		cursorVBO = nullptr;
+	if (m_cursorVBO) {
+		linearFree(m_cursorVBO);
+		m_cursorVBO = nullptr;
 	}
 }
 
 void Cursor::InitializeVertexBuffer() {
-	cursorVBO = (WorldVertex*)linearAlloc(sizeof(cube_sides_lut));
-	memcpy(cursorVBO, cube_sides_lut, sizeof(cube_sides_lut));
+	m_cursorVBO = (WorldVertex*)linearAlloc(sizeof(cube_sides_lut));
+	memcpy(m_cursorVBO, cube_sides_lut, sizeof(cube_sides_lut));
 
 	// Set all vertices to white
 	for (int i = 0; i < 6 * 6; i++) {
-		cursorVBO[i].rgb[0] = 255;
-		cursorVBO[i].rgb[1] = 255;
-		cursorVBO[i].rgb[2] = 255;
+		m_cursorVBO[i].rgb[0] = 255;
+		m_cursorVBO[i].rgb[1] = 255;
+		m_cursorVBO[i].rgb[2] = 255;
 	}
 }
 
@@ -38,7 +38,7 @@ void Cursor::Draw(int projUniform, C3D_Mtx* projectionview, World* world,
 
 	// Build vertex data for visible faces
 	size_t vertices = 0;
-	WorldVertex* vtx = cursorVBO;
+	WorldVertex* vtx = m_cursorVBO;
 
 	for (int i = 0; i < 6; i++) {
 		const int* offset = DirectionToOffset[i];
@@ -79,7 +79,7 @@ void Cursor::Draw(int projUniform, C3D_Mtx* projectionview, World* world,
 	// Set up buffer info
 	C3D_BufInfo* bufInfo = C3D_GetBufInfo();
 	BufInfo_Init(bufInfo);
-	BufInfo_Add(bufInfo, cursorVBO, sizeof(WorldVertex), 4, 0x3210);
+	BufInfo_Add(bufInfo, m_cursorVBO, sizeof(WorldVertex), 4, 0x3210);
 
 	// Draw
 	C3D_DrawArrays(GPU_TRIANGLES, 0, vertices);

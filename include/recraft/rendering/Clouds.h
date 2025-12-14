@@ -12,8 +12,8 @@ public:
 
     void Draw(int projUniform, C3D_Mtx* projectionview, World* world, float tx, float tz);
 private:
-    WorldVertex* cloudVBO;
-    C3D_Tex texture;
+    WorldVertex* m_cloudVBO = nullptr;
+    C3D_Tex m_texture;
 
     static const int TEXTURE_SIZE = 64;
 };

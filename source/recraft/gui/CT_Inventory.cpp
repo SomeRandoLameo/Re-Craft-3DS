@@ -6,27 +6,27 @@
 #include <algorithm>
 
 void Inventory::handleStackClick(mc::inventory::Slot* stack) {
-    if (sourceStack == nullptr && stack != proposedSourceStack) {
-        proposedSourceStack = stack;
+    if (m_sourceStack == nullptr && stack != m_proposedSourceStack) {
+        m_proposedSourceStack = stack;
     }
-    else if (proposedSourceStack == stack) {
-        sourceStack = stack;
-        proposedSourceStack = nullptr;
+    else if (m_proposedSourceStack == stack) {
+        m_sourceStack = stack;
+        m_proposedSourceStack = nullptr;
     }
-    else if (sourceStack != nullptr) {
-        if (sourceStack != stack) {
+    else if (m_sourceStack != nullptr) {
+        if (m_sourceStack != stack) {
             // Convert to ItemStack
-            ItemStack sourceItemStack = MCBridge::MCLIBSlotToCTItemStack(*sourceStack);
+            ItemStack sourceItemStack = MCBridge::MCLIBSlotToCTItemStack(*m_sourceStack);
             ItemStack destItemStack = MCBridge::MCLIBSlotToCTItemStack(*stack);
 
             // Perform the transfer
             Inventory::Transfer(&sourceItemStack, &destItemStack);
 
             // Convert back and write to the original slots
-            *sourceStack = MCBridge::CTItemStackToMCLIBSlot(sourceItemStack);
+            *m_sourceStack = MCBridge::CTItemStackToMCLIBSlot(sourceItemStack);
             *stack = MCBridge::CTItemStackToMCLIBSlot(destItemStack);
         }
-        sourceStack = nullptr;
+        m_sourceStack = nullptr;
     }
 }
 
@@ -57,7 +57,7 @@ void Inventory::renderHotbar(int x, int y, mc::inventory::Slot* stacks, int& sel
         SpriteBatch_SetScale(2);
 
         // Highlight source stack
-        if (sourceStack == &stacks[i]) {
+        if (m_sourceStack == &stacks[i]) {
             SpriteBatch_PushSingleColorQuad(
                     rx / 2 - 2, ry / 2 - 2, 9, 18, 18,
                     SHADER_RGB(20, 5, 2)
@@ -89,7 +89,7 @@ void Inventory::drawSlot(mc::inventory::Slot* slot, int x, int y) {
         handleStackClick(slot);
     }
 
-    const int16_t backgroundColor = (sourceStack == slot)
+    const int16_t backgroundColor = (m_sourceStack == slot)
                                     ? SHADER_RGB(20, 5, 2)
                                     : SHADER_RGB_DARKEN(SHADER_RGB(20, 20, 21), 9);
 

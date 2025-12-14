@@ -5,13 +5,13 @@ int16_t toTexCoord(int x, int tw) {
 }
 
 Hand::Hand() {
-	handVBO = (WorldVertex*)linearAlloc(sizeof(cube_sides_lut));
+	m_handVBO = (WorldVertex*)linearAlloc(sizeof(cube_sides_lut));
 	
-	Texture_Load(&SkinTexture, "romfs:/assets/textures/entity/player.png");
+	Texture_Load(&m_SkinTexture, "romfs:/assets/textures/entity/player.png");
 }
 Hand::~Hand() {
-	linearFree(handVBO);
-	C3D_TexDelete(&SkinTexture);
+	linearFree(m_handVBO);
+	C3D_TexDelete(&m_SkinTexture);
 }
 
 void Hand::Draw(int projUniform, C3D_Mtx* projection, mc::inventory::Slot stack, Player* player) {
@@ -35,7 +35,7 @@ void Hand::Draw(int projUniform, C3D_Mtx* projection, mc::inventory::Slot stack,
 
 	C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, projUniform, &pm);
 
-	memcpy(handVBO, cube_sides_lut, sizeof(cube_sides_lut));
+	memcpy(m_handVBO, cube_sides_lut, sizeof(cube_sides_lut));
 	for (int i = 0; i < 6; i++) {
 		if (stack.GetItemCount() > 0) {
 			int16_t iconUV[2];
@@ -49,15 +49,15 @@ void Hand::Draw(int projUniform, C3D_Mtx* projection, mc::inventory::Slot stack,
 			for (int j = 0; j < 6; j++) {
 				int idx = i * 6 + j;
 
-				handVBO[idx].uv[0] = (handVBO[idx].uv[0] == 1 ? (oneDivIconsPerRow - 1) : 1) + iconUV[0];
-				handVBO[idx].uv[1] = (handVBO[idx].uv[1] == 1 ? (oneDivIconsPerRow - 1) : 1) + iconUV[1];
+				m_handVBO[idx].uv[0] = (m_handVBO[idx].uv[0] == 1 ? (oneDivIconsPerRow - 1) : 1) + iconUV[0];
+                m_handVBO[idx].uv[1] = (m_handVBO[idx].uv[1] == 1 ? (oneDivIconsPerRow - 1) : 1) + iconUV[1];
 
-				handVBO[idx].rgb[0] = color[0];
-				handVBO[idx].rgb[1] = color[1];
-				handVBO[idx].rgb[2] = color[2];
+                m_handVBO[idx].rgb[0] = color[0];
+				m_handVBO[idx].rgb[1] = color[1];
+				m_handVBO[idx].rgb[2] = color[2];
 			}
 		} else {
-			C3D_TexBind(0, &SkinTexture);
+			C3D_TexBind(0, &m_SkinTexture);
 
 			if (i == Direction_East ||
 			    i == Direction_West) {  // eines der dümmsten Dinge, die ich jemals in meinem Leben getan habe
@@ -66,10 +66,10 @@ void Hand::Draw(int projUniform, C3D_Mtx* projection, mc::inventory::Slot stack,
 				};
 				for (int j = 0; j < 6; j++) {
 					int idx = i * 6 + j;
-					int u = handVBO[idx].uv[0];
-					int v = handVBO[idx].uv[1];
-					handVBO[idx].uv[0] = uvRotationTable[(i == Direction_West) ? 1 : 0][v][u][0];
-					handVBO[idx].uv[1] = uvRotationTable[(i == Direction_East) ? 1 : 0][v][u][1];
+					int u = m_handVBO[idx].uv[0];
+					int v = m_handVBO[idx].uv[1];
+					m_handVBO[idx].uv[0] = uvRotationTable[(i == Direction_West) ? 1 : 0][v][u][0];
+					m_handVBO[idx].uv[1] = uvRotationTable[(i == Direction_East) ? 1 : 0][v][u][1];
 				}
 			}
 			for (int j = 0; j < 6; j++) {
@@ -84,8 +84,8 @@ void Hand::Draw(int projUniform, C3D_Mtx* projection, mc::inventory::Slot stack,
 				    {toTexCoord(44, 64), toTexCoord(48, 64), toTexCoord(16, 64), toTexCoord(20, 64)},  // north = top
 				};
 
-				handVBO[idx].uv[0] = uvLookUp[i][handVBO[idx].uv[0]];
-				handVBO[idx].uv[1] = uvLookUp[i][handVBO[idx].uv[1] + 2];
+				m_handVBO[idx].uv[0] = uvLookUp[i][m_handVBO[idx].uv[0]];
+				m_handVBO[idx].uv[1] = uvLookUp[i][m_handVBO[idx].uv[1] + 2];
 			}
 		}
 	}
@@ -94,7 +94,7 @@ void Hand::Draw(int projUniform, C3D_Mtx* projection, mc::inventory::Slot stack,
 
 	C3D_BufInfo* bufInfo = C3D_GetBufInfo();
 	BufInfo_Init(bufInfo);
-	BufInfo_Add(bufInfo, handVBO, sizeof(WorldVertex), 4, 0x3210);
+	BufInfo_Add(bufInfo, m_handVBO, sizeof(WorldVertex), 4, 0x3210);
 
 	C3D_DrawArrays(GPU_TRIANGLES, 0, 6 * 6);
 

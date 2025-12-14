@@ -40,14 +40,14 @@ public:
     bool IsAABBVisible(C3D_FVec origin, C3D_FVec size) const;
 
     // Getters for matrices if really needed
-    C3D_Mtx* GetProjection() { return &projection; }
-    C3D_Mtx* GetView() { return &view; }
-    C3D_Mtx* GetVP() { return &vp; }
+    C3D_Mtx* GetProjection() { return &m_projection; }
+    C3D_Mtx* GetView() { return &m_view; }
+    C3D_Mtx* GetVP() { return &m_vp; }
 
 private:
-    C3D_Mtx projection, view, vp;
-    C3D_FVec frustumPlanes[FrustumPlanes_Count];
-    mc::Vector3d frustumCorners[FrustumCorners_Count];
+    C3D_Mtx m_projection, m_view, m_vp;
+    C3D_FVec m_frustumPlanes[FrustumPlanes_Count];
+    mc::Vector3d m_frustumCorners[FrustumCorners_Count];
 
-    float near, far, fov;
+    float m_near, m_far, m_fov;
 };

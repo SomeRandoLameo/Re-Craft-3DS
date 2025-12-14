@@ -33,48 +33,48 @@ class ReCraftCore;
 
 class Renderer {
 public:
-  Renderer(World *world_, Player *player_, WorkQueue *queue);
-  ~Renderer();
+    Renderer(World *world_, Player *player_, WorkQueue *queue);
+    ~Renderer();
 
-  void Render(DebugUI *debugUi);
+    void Render(DebugUI *debugUi);
 
-  C3D_RenderTarget *GetTopTarget() const { return renderTargets[0]; }
-  C3D_RenderTarget *GetBottomTarget() const { return lowerScreen; }
+    C3D_RenderTarget *GetTopTarget() const { return m_renderTargets[0]; }
+    C3D_RenderTarget *GetBottomTarget() const { return m_lowerScreen; }
 
 private:
-  Clouds *clouds;
-  C3D_RenderTarget *renderTargets[2];
-  C3D_RenderTarget *lowerScreen;
+    Clouds *m_clouds = nullptr;
+    C3D_RenderTarget *m_renderTargets[2]{ nullptr, nullptr };
+    C3D_RenderTarget *m_lowerScreen = nullptr;
 
-  DVLB_s *world_dvlb = nullptr;
-  DVLB_s *gui_dvlb = nullptr;
+    DVLB_s *m_world_dvlb = nullptr;
+    DVLB_s *m_gui_dvlb = nullptr;
 
-  shaderProgram_s world_shader, gui_shader;
+    shaderProgram_s m_world_shader, m_gui_shader;
 
-  int world_shader_uLocProjection= 0;
-  int gui_shader_uLocProjection = 0;
+    int m_world_shader_uLocProjection = 0;
+    int m_gui_shader_uLocProjection = 0;
 
-  C3D_AttrInfo world_vertexAttribs, gui_vertexAttribs;
+    C3D_AttrInfo m_world_vertexAttribs, m_gui_vertexAttribs;
 
-  C3D_Tex logoTex;
+    C3D_Tex m_logoTex;
 
-  World *world;
+    World *m_world;
 
-  Player *player;
-  WorldRenderer *worldRenderer = nullptr;
-  WorkQueue *workqueue;
+    Player *m_player;
+    WorldRenderer *m_worldRenderer = nullptr;
+    WorkQueue *m_workqueue;
 
-  ImGuiIO *io;
-  bool show_demo_window;
-  std::string cstyle;
-  std::vector<std::string> styles;
+    ImGuiIO *m_io;
+    bool m_show_demo_window;
+    std::string m_cstyle;
+    std::vector<std::string> m_styles;
 
-  void RenderFrame(int eyeIndex, float iod);
-  void RenderLowerScreen(DebugUI *debugUi);
-  void RenderImGui();
+    void RenderFrame(int eyeIndex, float iod);
+    void RenderLowerScreen(DebugUI *debugUi);
+    void RenderImGui();
 
-  void RenderExpBar();
-  void RenderHealth();
-  void RenderGameOverlay();
-  void RenderHunger();
+    void RenderExpBar();
+    void RenderHealth();
+    void RenderGameOverlay();
+    void RenderHunger();
 };

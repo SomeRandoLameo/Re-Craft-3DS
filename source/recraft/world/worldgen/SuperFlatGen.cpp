@@ -1,7 +1,7 @@
 #include "world/worldgen/SuperFlatGen.h"
 
 void SuperFlatGen::Init(World* world) {
-    world = world;
+    m_world = world;
 }
 
 void SuperFlatGen::Generate(WorkQueue* queue, WorkerItem item, void* context) {

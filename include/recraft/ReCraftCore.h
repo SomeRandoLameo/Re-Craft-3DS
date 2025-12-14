@@ -30,29 +30,29 @@ class ReCraftCore : public Amy::App {
  public:
   ReCraftCore();
   ~ReCraftCore();
-  static ReCraftCore* GetInstance() { return theReCraftCore; }
+  static ReCraftCore* GetInstance() { return m_theReCraftCore; }
 
   void Main() override;
 
-  GameState* GetGameState() { return &gamestate; }
-  Amy::AssetMgr* GetAssetManager() { return &AssetMgr; }
+  GameState* GetGameState() { return &m_gamestate; }
+  Amy::AssetMgr* GetAssetManager() { return &m_AssetMgr; }
 
  private:
-  static ReCraftCore* theReCraftCore;
-  SuperFlatGen flatGen;
-  SmeaGen smeaGen;
-  SaveManager savemgr;
-  ChunkWorker chunkWorker;
-  MCBridge mcBridge;
-  DebugUI* debugUI = nullptr;
-  Player* player = nullptr;
-  World* world = nullptr;
-  PlayerController* playerCtrl = nullptr;
-  Renderer* renderer = nullptr;
-  GuiChat* chat = nullptr;
-  GameState gamestate;
-  Amy::AssetMgr AssetMgr;
-  float timeAccum = 0.f;
+  static ReCraftCore* m_theReCraftCore;
+  SuperFlatGen m_flatGen;
+  SmeaGen m_smeaGen;
+  SaveManager m_savemgr;
+  ChunkWorker m_chunkWorker;
+  MCBridge m_mcBridge;
+  DebugUI* m_debugUI = nullptr;
+  Player* m_player = nullptr;
+  World* m_world = nullptr;
+  PlayerController* m_playerCtrl = nullptr;
+  Renderer* m_renderer = nullptr;
+  GuiChat* m_chat = nullptr;
+  GameState m_gamestate;
+  Amy::AssetMgr m_AssetMgr;
+  float m_timeAccum = 0.f;
   void ReleaseWorld(ChunkWorker* chunkWorker, SaveManager* savemgr,
                     World* world);
 };

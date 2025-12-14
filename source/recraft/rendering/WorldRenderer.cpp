@@ -10,18 +10,21 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include <ranges>
+
 int sky_time = 0;
 
-WorldRenderer::WorldRenderer(Player* player_, World* world_, WorkQueue* workqueue_, int projectionUniform_)
-        : player(player_), world(world_), workqueue(workqueue_), projectionUniform(projectionUniform_), cursor(nullptr) {
+WorldRenderer::WorldRenderer(Player* player, World* world, WorkQueue* workqueue, int projectionUniform)
+        : m_player(player), m_world(world), m_workqueue(workqueue), m_projectionUniform(projectionUniform), m_cursor(nullptr) {
 
-    renderingQueue.clear();
-    transparentClusters.clear();
+    m_renderingQueue.clear();
+    m_transparentClusters.clear();
 
-    cursor = new Cursor();
+    m_cursor = new Cursor();
 
-    hand = new Hand();
+    m_hand = new Hand();
 
+    // what the hell is event that.
     float data[256];
     for (int i = 0; i <= 128; i++) {
         float val = 1.f;
@@ -32,47 +35,47 @@ WorldRenderer::WorldRenderer(Player* player_, World* world_, WorkQueue* workqueu
         if (i < 128) data[i] = val;
         if (i > 0) data[i + 127] = val - data[i - 1];
     }
-    FogLut_FromArray(&fogLut, data);
+    FogLut_FromArray(&m_fogLut, data);
     C3D_FogGasMode(GPU_FOG, GPU_PLAIN_DENSITY, false);
     C3D_FogColor(0xffd990);
-    C3D_FogLutBind(&fogLut);
+    C3D_FogLutBind(&m_fogLut);
 
-    clouds = new Clouds();
+    m_clouds = new Clouds();
 }
 
 WorldRenderer::~WorldRenderer() {
-    renderingQueue.clear();
-    transparentClusters.clear();
+    m_renderingQueue.clear();
+    m_transparentClusters.clear();
 
-    delete cursor;
-    cursor = nullptr;
+    delete m_cursor;
+    m_cursor = nullptr;
 
-    hand->~Hand();
-    clouds->~Clouds();
+    m_hand->~Hand();
+    m_clouds->~Clouds();
 }
 
 void WorldRenderer::RenderWorld() {
     C3D_FogColor(0xffd990);
 
-    memset(chunkRendered, 0, sizeof(chunkRendered));
+    memset(m_chunkRendered, 0, sizeof(m_chunkRendered));
 
     int polysTotal = 0, clustersDrawn = 0, steps = 0;
 
-    renderingQueue.clear();
-    transparentClusters.clear();
+    m_renderingQueue.clear();
+    m_transparentClusters.clear();
 
-    int pY = CLAMP(WorldToChunkCoord(FastFloor(player->position.y)), 0, CLUSTER_PER_CHUNK - 1);
-    Chunk* pChunk = world->GetChunk(WorldToChunkCoord(FastFloor(player->position.x)),
-                                   WorldToChunkCoord(FastFloor(player->position.z)));
-    renderingQueue.push_back(RenderStep{&pChunk->clusters[pY], pChunk, Direction_Invalid});
-    ClusterRenderedRef(CHUNKCACHE_SIZE / 2 + world->cacheTranslationX, pY,
-                       CHUNKCACHE_SIZE / 2 + world->cacheTranslationZ) = 1;
+    int pY = CLAMP(WorldToChunkCoord(FastFloor(m_player->position.y)), 0, CLUSTER_PER_CHUNK - 1);
+    Chunk* pChunk = m_world->GetChunk(WorldToChunkCoord(FastFloor(m_player->position.x)),
+                                   WorldToChunkCoord(FastFloor(m_player->position.z)));
+    m_renderingQueue.push_back(RenderStep{&pChunk->clusters[pY], pChunk, Direction_Invalid});
+    ClusterRenderedRef(CHUNKCACHE_SIZE / 2 + m_world->cacheTranslationX, pY,
+                       CHUNKCACHE_SIZE / 2 + m_world->cacheTranslationZ) = 1;
 
-    mc::Vector3d playerPos = player->position;
+    mc::Vector3d playerPos = m_player->position;
 
-    while (renderingQueue.size() > 0) {
-        RenderStep step = renderingQueue.back();
-        renderingQueue.pop_back();
+    while (!m_renderingQueue.empty()) {
+        RenderStep step = m_renderingQueue.back();
+        m_renderingQueue.pop_back();
         Chunk* chunk = step.chunk;
         Cluster* cluster = step.cluster;
 
@@ -89,7 +92,7 @@ void WorldRenderer::RenderWorld() {
             clustersDrawn++;
         }
         if (cluster->transparentVertices > 0 && cluster->transparentVBO.size) {
-            transparentClusters.push_back(TransparentRender{cluster, chunk});
+            m_transparentClusters.push_back(TransparentRender{cluster, chunk});
         }
 
         for (int i = 0; i < 6; i++) {
@@ -97,10 +100,10 @@ void WorldRenderer::RenderWorld() {
             const int* offset = DirectionToOffset[dir];
 
             int newX = chunk->x + offset[0], newY = cluster->y + offset[1], newZ = chunk->z + offset[2];
-            if (newX < world->cacheTranslationX - CHUNKCACHE_SIZE / 2 + 1 ||
-                newX > world->cacheTranslationX + CHUNKCACHE_SIZE / 2 - 1 ||
-                newZ < world->cacheTranslationZ - CHUNKCACHE_SIZE / 2 + 1 ||
-                newZ > world->cacheTranslationZ + CHUNKCACHE_SIZE / 2 - 1 ||
+            if (newX < m_world->cacheTranslationX - CHUNKCACHE_SIZE / 2 + 1 ||
+                newX > m_world->cacheTranslationX + CHUNKCACHE_SIZE / 2 - 1 ||
+                newZ < m_world->cacheTranslationZ - CHUNKCACHE_SIZE / 2 + 1 ||
+                newZ > m_world->cacheTranslationZ + CHUNKCACHE_SIZE / 2 - 1 ||
                 newY < 0 || newY >= CLUSTER_PER_CHUNK)
                 continue;
 
@@ -120,38 +123,38 @@ void WorldRenderer::RenderWorld() {
                 continue;
 
             C3D_FVec chunkPosition = FVec3_New(newX * CHUNK_SIZE, newY * CHUNK_SIZE, newZ * CHUNK_SIZE);
-            if (!cam.IsAABBVisible(chunkPosition, FVec3_New(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE)))
+            if (!m_cam.IsAABBVisible(chunkPosition, FVec3_New(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE)))
                 continue;
 
             ClusterRenderedRef(newX, newY, newZ) |= 1;
 
-            Chunk* newChunk = world->GetChunk(newX, newZ);
+            Chunk* newChunk = m_world->GetChunk(newX, newZ);
             RenderStep nextStep = (RenderStep){&newChunk->clusters[newY], newChunk, DirectionOpposite[dir]};
-            if (newChunk) renderingQueue.push_back(nextStep);
+            if (newChunk) m_renderingQueue.push_back(nextStep);
         }
     }
 
     for (int x = 1; x < CHUNKCACHE_SIZE - 1; x++) {
         for (int z = 1; z < CHUNKCACHE_SIZE - 1; z++) {
-            Chunk* chunk = world->chunkCache[x][z];
+            Chunk* chunk = m_world->chunkCache[x][z];
 
             if ((chunk->revision != chunk->displayRevision || chunk->forceVBOUpdate) && !chunk->tasksRunning) {
                 bool clear = true;
                 for (int xOff = -1; xOff < 2 && clear; xOff++)
                     for (int zOff = -1; zOff < 2 && clear; zOff++)
-                        if (world->chunkCache[x + xOff][z + zOff]->genProgress == ChunkGen_Empty)
+                        if (m_world->chunkCache[x + xOff][z + zOff]->genProgress == ChunkGen_Empty)
                             clear = false;
 
                 if (clear)
-                    WorkQueue_AddItem(workqueue, (WorkerItem){WorkerItemType_PolyGen, chunk});
+                    WorkQueue_AddItem(m_workqueue, (WorkerItem){WorkerItemType_PolyGen, chunk});
             }
         }
     }
 
     C3D_AlphaTest(true, GPU_GEQUAL, 255);
 
-    for (auto it = transparentClusters.rbegin(); it != transparentClusters.rend(); ++it) {
-        TransparentRender* render = &(*it);
+    for (auto & m_transparentCluster : std::ranges::reverse_view(m_transparentClusters)) {
+        TransparentRender* render = &m_transparentCluster;
 
         C3D_BufInfo bufInfo;
         BufInfo_Init(&bufInfo);
@@ -170,21 +173,25 @@ void WorldRenderer::RenderWorld() {
 }
 
 void WorldRenderer::Render(float iod) {
-    cam.Update(player, iod);
+    m_cam.Update(m_player, iod);
 
-    hand->Draw(projectionUniform, cam.GetProjection(),
-              player->quickSelectBar[player->quickSelectBarSlot], player);
+    m_hand->Draw(m_projectionUniform, m_cam.GetProjection(),
+              m_player->quickSelectBar[m_player->quickSelectBarSlot], m_player);
 
     C3D_TexBind(0, (C3D_Tex*)Block_GetTextureMap());
 
-    C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, projectionUniform, cam.GetVP());
+    C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, m_projectionUniform, m_cam.GetVP());
 
     RenderWorld();
 
-    clouds->Draw(projectionUniform, cam.GetVP(), world, player->position.x, player->position.z);
+    m_clouds->Draw(m_projectionUniform, m_cam.GetVP(), m_world, m_player->position.x, m_player->position.z);
 
-    if (player->blockInActionRange)
-        cursor->Draw(projectionUniform, cam.GetVP(), world,
-                     player->viewRayCast.x, player->viewRayCast.y, player->viewRayCast.z,
-                     player->viewRayCast.direction);
+    if (m_player->blockInActionRange){
+        m_cursor->Draw(m_projectionUniform, m_cam.GetVP(), m_world,
+            m_player->viewRayCast.x,
+            m_player->viewRayCast.y,
+            m_player->viewRayCast.z,
+            m_player->viewRayCast.direction
+        );
+    }
 }

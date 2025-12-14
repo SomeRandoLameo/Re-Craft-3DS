@@ -6,8 +6,8 @@
 
 class SaveManager {
 public:
-    SaveManager();
-    ~SaveManager();
+    SaveManager() = default;
+    ~SaveManager() = default;
 
     // Delete copy constructor and assignment operator
     SaveManager(const SaveManager&) = delete;
@@ -16,7 +16,6 @@ public:
     static void InitFileSystem();
 
     void Init(Player* player);
-    void Deinit();
 
     void Load(char* path);
     void Unload();
@@ -29,9 +28,9 @@ public:
     static void SaveChunkCallback(WorkQueue* queue, WorkerItem item, void* context);
 
 private:
-    Player* player;
-    World* world;
-    std::vector<SuperChunk*> superchunks;
+    Player* m_player = nullptr;
+    World* m_world = nullptr;
+    std::vector<SuperChunk*> m_superchunks;
 
     SuperChunk* FetchSuperChunk(int x, int z);
 };

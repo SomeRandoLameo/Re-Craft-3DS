@@ -52,11 +52,11 @@ public:
     int GetHeight(int x, int z);
 
     // Public member access (if needed)
-    int GetHighestBlock() const { return HighestBlock; }
+    int GetHighestBlock() const { return m_HighestBlock; }
     const char* GetName() const { return name; }
     const GeneratorSettings& GetGenSettings() const { return genSettings; }
-    int GetWeather() const { return weather; }
-    void SetWeather(int newWeather) { weather = newWeather; }
+    int GetWeather() const { return m_weather; }
+    void SetWeather(int newWeather) { m_weather = newWeather; }
 
     int cacheTranslationX, cacheTranslationZ;
     GeneratorSettings genSettings;
@@ -64,16 +64,16 @@ public:
     Chunk* chunkCache[CHUNKCACHE_SIZE][CHUNKCACHE_SIZE];
     char name[WORLD_NAME_SIZE];
 private:
-    int HighestBlock;
+    int m_HighestBlock;
 
-    Chunk chunkPool[CHUNKPOOL_SIZE];
-    std::vector<Chunk*> freeChunks;
+    Chunk m_chunkPool[CHUNKPOOL_SIZE];
+    std::vector<Chunk*> m_freeChunks;
 
-    WorkQueue* workqueue;
+    WorkQueue* m_workqueue;
 
-    Xorshift32 randomTickGen;
+    Xorshift32 m_randomTickGen;
 
-    int weather;
+    int m_weather;
 };
 
 // Helper functions remain as free functions

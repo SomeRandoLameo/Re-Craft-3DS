@@ -25,13 +25,13 @@ public:
 
     void ExecuteCallbacks();
 
-    bool IsInitialized() const { return initialized; }
+    bool IsInitialized() const { return m_initialized; }
 
 private:
-    ImGuiManager() : initialized(false) {}
+    ImGuiManager() {}
     ~ImGuiManager() {}
 
-    static ImGuiManager* instance;
-    bool initialized;
-    std::map<std::string, ImGuiCallback> callbacks;
+    static ImGuiManager* m_instance;
+    bool m_initialized = false;
+    std::map<std::string, ImGuiCallback> m_callbacks;
 };

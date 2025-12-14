@@ -22,8 +22,8 @@ public:
     static void Transfer(ItemStack* src, ItemStack* dst);
 private:
     // Internal state for drag-and-drop operations
-    static inline mc::inventory::Slot* sourceStack = nullptr;
-    static inline mc::inventory::Slot* proposedSourceStack = nullptr;
+    static inline mc::inventory::Slot* m_sourceStack = nullptr;
+    static inline mc::inventory::Slot* m_proposedSourceStack = nullptr;
 
     // Helper function for click handling
     static void handleStackClick(mc::inventory::Slot* stack);

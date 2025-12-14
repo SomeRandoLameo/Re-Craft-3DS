@@ -18,7 +18,7 @@ public:
 			  int x, int y, int z, Direction highlight);
 
 private:
-	WorldVertex* cursorVBO;
+	WorldVertex* m_cursorVBO = nullptr;
 
 	void InitializeVertexBuffer();
 };

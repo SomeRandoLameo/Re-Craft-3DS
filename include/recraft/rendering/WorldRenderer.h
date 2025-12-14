@@ -32,7 +32,6 @@ public:
     WorldRenderer(Player* player, World* world, WorkQueue* workqueue, int projectionUniform);
     ~WorldRenderer();
 
-    // Delete copy constructor and assignment operator
     WorldRenderer(const WorldRenderer&) = delete;
     WorldRenderer& operator=(const WorldRenderer&) = delete;
 
@@ -41,29 +40,29 @@ public:
 private:
     void RenderWorld();
 
-    Hand* hand;
-    Clouds* clouds;
-    Player* player;
-    World* world;
-    WorkQueue* workqueue;
-    Camera cam;
-    int projectionUniform;
+    Hand* m_hand;
+    Clouds* m_clouds;
+    Player* m_player;
+    World* m_world;
+    WorkQueue* m_workqueue;
+    Camera m_cam;
+    int m_projectionUniform;
 
-    Cursor* cursor;
+    Cursor* m_cursor;
 
-    std::vector<RenderStep> renderingQueue;
-    uint8_t chunkRendered[CHUNKCACHE_SIZE][CLUSTER_PER_CHUNK][CHUNKCACHE_SIZE];
-    std::vector<TransparentRender> transparentClusters;
+    std::vector<RenderStep> m_renderingQueue;
+    uint8_t m_chunkRendered[CHUNKCACHE_SIZE][CLUSTER_PER_CHUNK][CHUNKCACHE_SIZE];
+    std::vector<TransparentRender> m_transparentClusters;
 
-    C3D_FogLut fogLut;
+    C3D_FogLut m_fogLut;
 
     inline bool ClusterWasRendered(int x, int y, int z) const {
-        return chunkRendered[x - (world->cacheTranslationX - (CHUNKCACHE_SIZE / 2))][y]
-        [z - (world->cacheTranslationZ - (CHUNKCACHE_SIZE / 2))];
+        return m_chunkRendered[x - (m_world->cacheTranslationX - (CHUNKCACHE_SIZE / 2))][y]
+        [z - (m_world->cacheTranslationZ - (CHUNKCACHE_SIZE / 2))];
     }
 
     inline uint8_t& ClusterRenderedRef(int x, int y, int z) {
-        return chunkRendered[x - (world->cacheTranslationX - (CHUNKCACHE_SIZE / 2))][y]
-        [z - (world->cacheTranslationZ - (CHUNKCACHE_SIZE / 2))];
+        return m_chunkRendered[x - (m_world->cacheTranslationX - (CHUNKCACHE_SIZE / 2))][y]
+        [z - (m_world->cacheTranslationZ - (CHUNKCACHE_SIZE / 2))];
     }
 };

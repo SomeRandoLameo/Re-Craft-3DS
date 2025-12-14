@@ -9,15 +9,15 @@
 int WorldToChunkCoord(int x) { return (x + (int)(x < 0)) / CHUNK_SIZE - (int)(x < 0); }
 int WorldToLocalCoord(int x) { return x - WorldToChunkCoord(x) * CHUNK_SIZE; }
 
-World::World(WorkQueue *workqueue_) {
+World::World(WorkQueue *workqueue) {
     strcpy(name, "TestWelt");
 
-    this->workqueue = workqueue_;
+    m_workqueue = workqueue;
 
     genSettings.seed = 28112000;
     genSettings.type = WorldGen_SuperFlat;
 
-    freeChunks.clear();
+    m_freeChunks.clear();
 
     Reset();
 }
@@ -26,36 +26,36 @@ void World::Reset() {
 	cacheTranslationX = 0;
 	cacheTranslationZ = 0;
 
-	freeChunks.clear();
+	m_freeChunks.clear();
 
 	for (size_t i = 0; i < CHUNKPOOL_SIZE; i++) {
-		chunkPool[i].x = INT_MAX;
-		chunkPool[i].z = INT_MAX;
-		freeChunks.push_back(&chunkPool[i]);
+		m_chunkPool[i].x = INT_MAX;
+		m_chunkPool[i].z = INT_MAX;
+		m_freeChunks.push_back(&m_chunkPool[i]);
 	}
 
-	randomTickGen = Xorshift32_New();
+	m_randomTickGen = Xorshift32_New();
 }
 
 Chunk* World::LoadChunk(int x, int z) {
-	for (int i = 0; i < freeChunks.size(); i++) {
-		if (freeChunks[i]->x == x && freeChunks[i]->z == z) {
-			Chunk* chunk = freeChunks[i];
-            freeChunks.erase(freeChunks.begin() + i);
+	for (int i = 0; i < m_freeChunks.size(); i++) {
+		if (m_freeChunks[i]->x == x && m_freeChunks[i]->z == z) {
+			Chunk* chunk = m_freeChunks[i];
+            m_freeChunks.erase(m_freeChunks.begin() + i);
 
 			chunk->references++;
 			return chunk;
 		}
 	}
 
-	for (int i = 0; i < freeChunks.size(); i++) {
-		if (!freeChunks[i]->tasksRunning) {
-			Chunk* chunk = freeChunks[i];
-            freeChunks.erase(freeChunks.begin() + i);
+	for (int i = 0; i < m_freeChunks.size(); i++) {
+		if (!m_freeChunks[i]->tasksRunning) {
+			Chunk* chunk = m_freeChunks[i];
+            m_freeChunks.erase(m_freeChunks.begin() + i);
 
-            chunk->~Chunk();  // Destroy old
-            new (chunk) Chunk(x, z);  // Construct new with x, z
-			WorkQueue_AddItem(workqueue, (WorkerItem){WorkerItemType_Load, chunk});
+            chunk->~Chunk();
+            new (chunk) Chunk(x, z);
+			WorkQueue_AddItem(m_workqueue, (WorkerItem){WorkerItemType_Load, chunk});
 
 			chunk->references++;
 			return chunk;
@@ -66,8 +66,9 @@ Chunk* World::LoadChunk(int x, int z) {
 }
 
 void World::UnloadChunk(Chunk* chunk) {
-	WorkQueue_AddItem(workqueue, (WorkerItem){WorkerItemType_Save, chunk});
-	freeChunks.push_back(chunk);
+    // TODO: unloaded chunks should be removed from the cache, there seems to be a bug with saving or a buffer
+	WorkQueue_AddItem(m_workqueue, (WorkerItem){WorkerItemType_Save, chunk});
+	m_freeChunks.push_back(chunk);
 	chunk->references--;
 }
 
@@ -216,26 +217,32 @@ void World::Tick() {
         for (int z = 0; z < CHUNKCACHE_SIZE; z++) {
             Chunk *chunk = chunkCache[x][z];
 
-            if (chunk->genProgress == ChunkGen_Empty && !chunk->tasksRunning)
-                WorkQueue_AddItem(workqueue, (WorkerItem) {WorkerItemType_BaseGen, chunk});
+            if (chunk->genProgress == ChunkGen_Empty && !chunk->tasksRunning) {
+                WorkQueue_AddItem(m_workqueue, (WorkerItem) {WorkerItemType_BaseGen, chunk});
+            }
+
 
             if (x > 0 && z > 0 && x < CHUNKCACHE_SIZE - 1 && z < CHUNKCACHE_SIZE - 1 &&
                 chunk->genProgress == ChunkGen_Terrain && !chunk->tasksRunning) {
                 bool clear = true;
-                for (int xOff = -1; xOff < 2 && clear; xOff++)
+                for (int xOff = -1; xOff < 2 && clear; xOff++) {
                     for (int zOff = -1; zOff < 2 && clear; zOff++) {
                         Chunk *borderChunk = chunkCache[x + xOff][z + zOff];
                         if (borderChunk->genProgress == ChunkGen_Empty || !borderChunk->tasksRunning) clear = false;
                     }
-                if (clear) WorkQueue_AddItem(workqueue, (WorkerItem) {WorkerItemType_Decorate, chunk});
+                }
+
+                if (clear) {
+                    WorkQueue_AddItem(m_workqueue, (WorkerItem) {WorkerItemType_Decorate, chunk});
+                }
 
                 int xVals[RANDOMTICKS_PER_CHUNK];
                 int yVals[RANDOMTICKS_PER_CHUNK];
                 int zVals[RANDOMTICKS_PER_CHUNK];
                 for (int i = 0; i < RANDOMTICKS_PER_CHUNK; i++) {
-                    xVals[i] = WorldToLocalCoord(Xorshift32_Next(&randomTickGen));
-                    yVals[i] = WorldToLocalCoord(Xorshift32_Next(&randomTickGen));
-                    zVals[i] = WorldToLocalCoord(Xorshift32_Next(&randomTickGen));
+                    xVals[i] = WorldToLocalCoord(Xorshift32_Next(&m_randomTickGen));
+                    yVals[i] = WorldToLocalCoord(Xorshift32_Next(&m_randomTickGen));
+                    zVals[i] = WorldToLocalCoord(Xorshift32_Next(&m_randomTickGen));
                 }
             }
         }

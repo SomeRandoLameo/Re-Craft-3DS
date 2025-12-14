@@ -1,11 +1,11 @@
 #include "ReCraftCore.h"
 
 bool showDebugInfo = true;
-ReCraftCore *ReCraftCore::theReCraftCore = nullptr;
+ReCraftCore *ReCraftCore::m_theReCraftCore = nullptr;
 
 ReCraftCore::ReCraftCore() {
-    theReCraftCore = this;
-    this->gamestate = GameState_SelectWorld;
+    m_theReCraftCore = this;
+    this->m_gamestate = GameState_SelectWorld;
     gfxInitDefault();
     // Enable N3DS 804MHz operation, where available
     osSetSpeedupEnable(true);
@@ -13,46 +13,49 @@ ReCraftCore::ReCraftCore() {
     romfsInit();
 
     SuperChunk_InitPools();
-    savemgr.InitFileSystem();
+    m_savemgr.InitFileSystem();
 
-    chunkWorker.AddHandler(
+    m_chunkWorker.AddHandler(
         WorkerItemType_PolyGen,
-        (WorkerFuncObj) {&PolyGen_GeneratePolygons, NULL, true}
+        (WorkerFuncObj) {&PolyGen_GeneratePolygons, nullptr, true}
     );
 
-    chunkWorker.AddHandler(
+    m_chunkWorker.AddHandler(
         WorkerItemType_BaseGen,
-        (WorkerFuncObj) {&SuperFlatGen::Generate, &flatGen, true}
+        (WorkerFuncObj) {&SuperFlatGen::Generate, &m_flatGen, true}
     );
 
-    chunkWorker.AddHandler(
+    m_chunkWorker.AddHandler(
         WorkerItemType_BaseGen,
-        (WorkerFuncObj) {&SmeaGen::Generate, &smeaGen, true}
+        (WorkerFuncObj) {&SmeaGen::Generate, &m_smeaGen, true}
     );
 
     sino_init();
 
-    world = new World(&chunkWorker.GetQueue());
-    player = new Player(world);
-    playerCtrl = new PlayerController(player);
+    m_world = new World(&m_chunkWorker.GetQueue());
+    m_player = new Player(m_world);
+    m_playerCtrl = new PlayerController(m_player);
 
-    flatGen.Init(world);
-    smeaGen.Init(world);
+    m_flatGen.Init(m_world);
+    m_smeaGen.Init(m_world);
 
-    AssetMgr.AutoLoad("font", "romfs:/ComicNeue.ttf");
+    m_AssetMgr.AutoLoad("font", "romfs:/ComicNeue.ttf");
 
-    renderer = new Renderer(world, player, &chunkWorker.GetQueue());
-    debugUI = new DebugUI();
+    m_renderer = new Renderer(m_world, m_player, &m_chunkWorker.GetQueue());
+    m_debugUI = new DebugUI();
 
     WorldSelect_Init();
 
-    savemgr.Init(player);
-    chunkWorker.AddHandler(
-            WorkerItemType_Load,
-            (WorkerFuncObj) {SaveManager::LoadChunkCallback, &savemgr, true});
-    chunkWorker.AddHandler(
-            WorkerItemType_Save,
-            (WorkerFuncObj) {SaveManager::SaveChunkCallback, &savemgr, true});
+    m_savemgr.Init(m_player);
+    m_chunkWorker.AddHandler(
+        WorkerItemType_Load,
+        (WorkerFuncObj) {SaveManager::LoadChunkCallback, &m_savemgr, true}
+    );
+
+    m_chunkWorker.AddHandler(
+        WorkerItemType_Save,
+        (WorkerFuncObj) {SaveManager::SaveChunkCallback, &m_savemgr, true}
+    );
 
     ImGuiManager::GetInstance()->RegisterCallback("DebugUI", [=, this]() {
         ImGui::Begin("Game Info");
@@ -68,19 +71,19 @@ ReCraftCore::ReCraftCore() {
         ImGui::Separator();
         ImGui::Text("Player");
         ImGui::Spacing();
-        ImGui::Text("Position: %.2f, %.2f, %.2f", player->position.x,
-                    player->position.y, player->position.z);
-        ImGui::Text("Spawn: %.2f, %.2f, %.2f", player->spawnPos.x,
-                    player->spawnPos.y, player->spawnPos.z);
-        ImGui::Text("HP: %i", player->hp);
-        ImGui::Text("Hunger: %i (Timer: %i)", player->hunger, player->hungertimer);
-        ImGui::Text("Velocity Y: %.3f, RndY: %.3f", player->velocity.y,
-                    player->rndy);
+        ImGui::Text("Position: %.2f, %.2f, %.2f", m_player->position.x,
+                    m_player->position.y, m_player->position.z);
+        ImGui::Text("Spawn: %.2f, %.2f, %.2f", m_player->spawnPos.x,
+                    m_player->spawnPos.y, m_player->spawnPos.z);
+        ImGui::Text("HP: %i", m_player->hp);
+        ImGui::Text("Hunger: %i (Timer: %i)", m_player->hunger, m_player->hungertimer);
+        ImGui::Text("Velocity Y: %.3f, RndY: %.3f", m_player->velocity.y,
+                    m_player->rndy);
         ImGui::Separator();
         ImGui::Text("Inventory");
         ImGui::Spacing();
-        ImGui::Text("Gamemode: %i", player->gamemode);
-        ImGui::Text("Quickbar Slot: %i", player->quickSelectBarSlot);
+        ImGui::Text("Gamemode: %i", m_player->gamemode);
+        ImGui::Text("Quickbar Slot: %i", m_player->quickSelectBarSlot);
 
         ImGui::End();
     });
@@ -90,26 +93,25 @@ ReCraftCore::ReCraftCore() {
 ReCraftCore::~ReCraftCore() {
     ImGuiManager::GetInstance()->UnregisterCallback("DebugUI");
 
-    if (this->gamestate == GameState_Playing) {
-        ReleaseWorld(&chunkWorker, &savemgr, world);
+    if (m_gamestate == GameState_Playing) {
+        ReleaseWorld(&m_chunkWorker, &m_savemgr, m_world);
     }
 
-    if (this->gamestate == GameState_Playing_OnLine) {
-        mcBridge.stopBackgroundThread();
-        mcBridge.disconnect();
+    if (m_gamestate == GameState_Playing_OnLine) {
+        m_mcBridge.stopBackgroundThread();
+        m_mcBridge.disconnect();
     }
 
-    savemgr.~SaveManager();
+    m_savemgr.~SaveManager();
     SuperChunk_DeinitPools();
 
-    delete debugUI;
-    delete world;
+    delete m_debugUI;
+    delete m_world;
     sino_exit();
     WorldSelect_Deinit();
 
-    delete renderer;
-    chunkWorker.~ChunkWorker();
-    delete renderer;
+    delete m_renderer;
+    m_chunkWorker.~ChunkWorker();
 
     romfsExit();
     gfxExit();
@@ -129,17 +131,17 @@ void ReCraftCore::ReleaseWorld(ChunkWorker *chunkWorker, SaveManager *savemgr, W
 }
 
 void ReCraftCore::Main() {
-    renderer->Render(debugUI);
+    m_renderer->Render(m_debugUI);
 
     hidScanInput();
     u32 keysheld = hidKeysHeld(), keysdown = hidKeysDown();
     if (keysdown & KEY_START) {
-        if (this->gamestate == GameState_SelectWorld)
+        if (m_gamestate == GameState_SelectWorld)
             Exit();
-        else if (this->gamestate == GameState_Playing) {
-            ReleaseWorld(&chunkWorker, &savemgr, world);
+        else if (m_gamestate == GameState_Playing) {
+            ReleaseWorld(&m_chunkWorker, &m_savemgr, m_world);
 
-            this->gamestate = GameState_SelectWorld;
+            m_gamestate = GameState_SelectWorld;
 
             WorldSelect_ScanWorlds();
         }
@@ -160,41 +162,41 @@ void ReCraftCore::Main() {
         touchPos.py, cstickPos.dx, cstickPos.dy
     };
 
-    timeAccum += Delta();
-    if (this->gamestate == GameState_Playing) {
-        while (timeAccum >= 20.f) {
-            world->Tick();
+    m_timeAccum += Delta();
+    if (m_gamestate == GameState_Playing) {
+        while (m_timeAccum >= 20.f) {
+            m_world->Tick();
 
-            timeAccum = -20.f;
+            m_timeAccum = -20.f;
         }
 
-        playerCtrl->Update(debugUI, inputData, Delta() * 0.001);
+        m_playerCtrl->Update(m_debugUI, inputData, Delta() * 0.001);
 
-        world->UpdateChunkCache(
-            WorldToChunkCoord(FastFloor(player->position.x)),
-            WorldToChunkCoord(FastFloor(player->position.z))
+        m_world->UpdateChunkCache(
+            WorldToChunkCoord(FastFloor(m_player->position.x)),
+            WorldToChunkCoord(FastFloor(m_player->position.z))
         );
 
-    } else if (this->gamestate == GameState_Playing_OnLine) {
+    } else if (m_gamestate == GameState_Playing_OnLine) {
 
-        if (mcBridge.isConnected()) {
-            mcBridge.withClient([&](mc::core::Client *client, mc::protocol::packets::PacketDispatcher * dispatcher) {
-                player->position = client->GetPlayerController()->GetPosition();
+        if (m_mcBridge.isConnected()) {
+            m_mcBridge.withClient([&](mc::core::Client *client, mc::protocol::packets::PacketDispatcher * dispatcher) {
+                m_player->position = client->GetPlayerController()->GetPosition();
 
                 //dimension = client->GetConnection()->GetDimension();
-                playerCtrl->Update(debugUI, inputData, Delta() * 0.001);
+                m_playerCtrl->Update(m_debugUI, inputData, Delta() * 0.001);
 
                 // TODO: This is baaaad :D
 
                 client->GetPlayerController()->Move(
-                    mc::Vector3d(-playerCtrl->movement.x * (0.125 / 2),
-                         -playerCtrl->movement.y * (0.125 / 2),
-                         -playerCtrl->movement.z * (0.125 / 2)
+                    mc::Vector3d(-m_playerCtrl->movement.x * (0.125 / 2),
+                         -m_playerCtrl->movement.y * (0.125 / 2),
+                         -m_playerCtrl->movement.z * (0.125 / 2)
                     )
                 );
 
-                client->GetPlayerController()->SetPitch(-playerCtrl->player->pitch);
-                client->GetPlayerController()->SetYaw(-playerCtrl->player->yaw);
+                client->GetPlayerController()->SetPitch(-m_playerCtrl->player->pitch);
+                client->GetPlayerController()->SetYaw(-m_playerCtrl->player->yaw);
                 /*
                  // TODO: packet spam prevention... This is enough for now
                  for (int i = 0; i < 9; i++) {
@@ -205,7 +207,7 @@ void ReCraftCore::Main() {
          */
                 bool showChat = true;  // TODO: Move somewhere into render to show globally instead
                 // of console_activate & console_log, this is just temp
-                chat->Render(&showChat);
+                m_chat->Render(&showChat);
 
                 /*
                  *  BUG: When player joins the world, the chunks arent loaded causing
@@ -248,73 +250,73 @@ void ReCraftCore::Main() {
             });
 
 
-            world->UpdateChunkCache(WorldToChunkCoord(FastFloor(player->position.x)),
-                                    WorldToChunkCoord(FastFloor(player->position.z)));
+            m_world->UpdateChunkCache(WorldToChunkCoord(FastFloor(m_player->position.x)),
+                                    WorldToChunkCoord(FastFloor(m_player->position.z)));
         }
 
-    } else if (this->gamestate == GameState_SelectWorld) {
+    } else if (m_gamestate == GameState_SelectWorld) {
         char path[256];
         char name[WORLD_NAME_SIZE] = {'\0'};
         WorldGenType worldType;
         bool newWorld = false;
         bool isMultiplayer = false;
-        if (WorldSelect_Update(path, name, &worldType, player, &newWorld,
+        if (WorldSelect_Update(path, name, &worldType, m_player, &newWorld,
                                &isMultiplayer)) {
             if (!isMultiplayer) {
-                strcpy(world->name, name);
-                world->genSettings.type = worldType;
+                strcpy(m_world->name, name);
+                m_world->genSettings.type = worldType;
 
-                savemgr.Load(path);
+                m_savemgr.Load(path);
 
-                chunkWorker.SetHandlerActive(
-                    WorkerItemType_BaseGen, &flatGen,
-                    world->genSettings.type == WorldGen_SuperFlat
+                m_chunkWorker.SetHandlerActive(
+                    WorkerItemType_BaseGen, &m_flatGen,
+                    m_world->genSettings.type == WorldGen_SuperFlat
                 );
 
-                chunkWorker.SetHandlerActive(
-                    WorkerItemType_BaseGen, &smeaGen,
-                    world->genSettings.type == WorldGen_Smea
+                m_chunkWorker.SetHandlerActive(
+                    WorkerItemType_BaseGen, &m_smeaGen,
+                    m_world->genSettings.type == WorldGen_Smea
                 );
 
-                world->cacheTranslationX = WorldToChunkCoord(FastFloor(player->position.x));
-                world->cacheTranslationZ = WorldToChunkCoord(FastFloor(player->position.z));
+                m_world->cacheTranslationX = WorldToChunkCoord(FastFloor(m_player->position.x));
+                m_world->cacheTranslationZ = WorldToChunkCoord(FastFloor(m_player->position.z));
                 for (int i = 0; i < CHUNKCACHE_SIZE; i++) {
                     for (int j = 0; j < CHUNKCACHE_SIZE; j++) {
-                        world->chunkCache[i][j] = world->LoadChunk(
-                            i - CHUNKCACHE_SIZE / 2 + world->cacheTranslationX,
-                            j - CHUNKCACHE_SIZE / 2 + world->cacheTranslationZ
+                        m_world->chunkCache[i][j] = m_world->LoadChunk(
+                            i - CHUNKCACHE_SIZE / 2 + m_world->cacheTranslationX,
+                            j - CHUNKCACHE_SIZE / 2 + m_world->cacheTranslationZ
                         );
                     }
                 }
 
                 for (int i = 0; i < 3; i++) {
-                    while (chunkWorker.IsWorking() ||
-                           !chunkWorker.GetQueue().queue.empty()) {
+                    while (m_chunkWorker.IsWorking() ||
+                           !m_chunkWorker.GetQueue().queue.empty()) {
                         svcSleepThread(50000000);  // 1 Tick
                     }
-                    world->Tick();
+                    m_world->Tick();
                 }
 
                 if (newWorld) {
                     int highestblock = 0;
                     for (int x = -1; x < 1; x++) {
                         for (int z = -1; z < 1; z++) {
-                            int height = world->GetHeight(x, z);
+                            int height = m_world->GetHeight(x, z);
                             if (height > highestblock) highestblock = height;
                         }
                     }
 
-                    player->hunger = 20;
-                    player->hp = 20;
-                    player->position.y = (float) highestblock + 0.2f;
+                    m_player->hunger = 20;
+                    m_player->hp = 20;
+                    m_player->position.y = (float) highestblock + 0.2f;
                 }
-                this->gamestate = GameState_Playing;
+                m_gamestate = GameState_Playing;
             } else {
-                mcBridge.connect();
+                m_mcBridge.connect();
 
-                this->chat = new GuiChat(mcBridge.getClient()->GetDispatcher(), mcBridge.getClient());
-                mcBridge.startBackgroundThread();
-                this->gamestate = GameState_Playing_OnLine;
+                m_chat = new GuiChat(m_mcBridge.getClient()->GetDispatcher(), m_mcBridge.getClient());
+                m_mcBridge.startBackgroundThread();
+                m_gamestate = GameState_Playing_OnLine;
             }
         }
     }

@@ -6,7 +6,7 @@ extern "C" {
 }
 
 void SmeaGen::Init(World* world) {
-    world = world;
+    m_world = world;
 }
 
 // based of https://github.com/smealum/3dscraft/blob/master/source/generation.c

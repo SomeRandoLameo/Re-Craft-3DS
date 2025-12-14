@@ -28,8 +28,9 @@ void Player::InitializeInventory() {
     inventory[l++] = mc::inventory::Slot(Block_Stonebrick, 1, 0);
     inventory[l++] = mc::inventory::Slot(Block_Brick, 1, 0);
     inventory[l++] = mc::inventory::Slot(Block_Planks, 1, 0);
-    for (int i = 0; i < 16; i++)
+    for (int i = 0; i < 16; i++) {
         inventory[l++] = mc::inventory::Slot(Block_Wool, 1,static_cast<u8>(i));
+    }
     inventory[l++] = mc::inventory::Slot(Block_Bedrock, 1, 0);
     inventory[l++] = mc::inventory::Slot(Block_Gravel, 1, 0);
     inventory[l++] = mc::inventory::Slot(Block_Coarse, 1, 0);
@@ -214,11 +215,14 @@ void Player::Move(float dt, mc::Vector3d accl) {
 
     while (simStepAccum >= SimStep) {
         velocity.y -= GravityPlusFriction * SimStep * 2.f;
-        if (velocity.y < MaxFallVelocity)
+        if (velocity.y < MaxFallVelocity) {
             velocity.y = MaxFallVelocity;
+        }
 
-        if (flying)
+        if (flying) {
             velocity.y = 0.f;
+        }
+
 
         float speedFactor = 1.f;
         if (!grounded && !flying) {
@@ -260,8 +264,6 @@ void Player::Move(float dt, mc::Vector3d accl) {
                             FastFloor(axisStep.z) + z
                         );
 
-
-
                         if (world->GetBlock(blockPos) != Block_Air &&
                             world->GetBlock(blockPos) != Block_Lava &&
                             world->GetBlock(blockPos) != Block_Water) {
@@ -281,25 +283,28 @@ void Player::Move(float dt, mc::Vector3d accl) {
             if (!collision) {
                 finalPos.values[i] = newPos.values[i];
             } else if (i == 1) {
-                if (velocity.y < 0.f || accl.y < 0.f)
+                if (velocity.y < 0.f || accl.y < 0.f) {
                     grounded = true;
+                }
                 jumped = false;
                 velocity.x = 0.f;
                 velocity.y = 0.f;
                 velocity.z = 0.f;
             } else {
                 wallCollision = true;
-                if (i == 0)
+                if (i == 0) {
                     velocity.x = 0.f;
-                else
+                } else {
                     velocity.z = 0.f;
+                }
             }
         }
 
         mc::Vector3d movDiff = finalPos - position;
 
-        if (grounded && flying)
+        if (grounded && flying) {
             flying = false;
+        }
 
         if (wallCollision && autoJumpEnabled) {
 
@@ -327,10 +332,13 @@ void Player::Move(float dt, mc::Vector3d accl) {
             }
         }
 
-        if (crouching && crouchAdd > -0.3f)
+        if (crouching && crouchAdd > -0.3f) {
             crouchAdd -= SimStep * 2.f;
-        if (!crouching && crouchAdd < 0.0f)
+        }
+
+        if (!crouching && crouchAdd < 0.0f) {
             crouchAdd += SimStep * 2.f;
+        }
 
         if (crouching && !grounded && wasGrounded && finalPos.y < position.y &&
             movDiff.x != 0.f && movDiff.z != 0.f) {
@@ -345,10 +353,13 @@ void Player::Move(float dt, mc::Vector3d accl) {
        // velocity.y = velocity.y;
         velocity.z = velocity.z * 0.95f;
 
-        if (ABS(velocity.x) < 0.1f)
+        if (ABS(velocity.x) < 0.1f) {
             velocity.x = 0.f;
-        if (ABS(velocity.z) < 0.1f)
+        }
+
+        if (ABS(velocity.z) < 0.1f) {
             velocity.z = 0.f;
+        }
 
         simStepAccum -= SimStep;
     }
@@ -378,8 +389,9 @@ void Player::PlaceBlock() {
         );
     }
 
-    if (breakPlaceTimeout < 0.f)
+    if (breakPlaceTimeout < 0.f) {
         breakPlaceTimeout = PLAYER_PLACE_REPLACE_TIMEOUT;
+    }
 }
 
 void Player::BreakBlock() {
@@ -387,6 +399,7 @@ void Player::BreakBlock() {
         world->SetBlock(mc::Vector3i(viewRayCast.x, viewRayCast.y, viewRayCast.z), Block_Air);
     }
 
-    if (breakPlaceTimeout < 0.f)
+    if (breakPlaceTimeout < 0.f) {
         breakPlaceTimeout = PLAYER_PLACE_REPLACE_TIMEOUT;
+    }
 }

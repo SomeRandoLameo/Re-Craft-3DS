@@ -1,16 +1,16 @@
 #include "gui/ImGuiManager.h"
 
-ImGuiManager* ImGuiManager::instance = nullptr;
+ImGuiManager* ImGuiManager::m_instance = nullptr;
 
 ImGuiManager* ImGuiManager::GetInstance() {
-    if (!instance) {
-        instance = new ImGuiManager();
+    if (!m_instance) {
+        m_instance = new ImGuiManager();
     }
-    return instance;
+    return m_instance;
 }
 
 void ImGuiManager::Initialize() {
-    if (initialized) return;
+    if (m_initialized) return;
 
     ImGui::CreateContext();
     ImGui::StyleColorsDark();
@@ -24,23 +24,23 @@ void ImGuiManager::Initialize() {
     ImGui_ImplCtr_Init();
     ImGui_ImplCitro3D_Init();
 
-    initialized = true;
+    m_initialized = true;
 }
 
 void ImGuiManager::Shutdown() {
-    if (!initialized) return;
+    if (!m_initialized) return;
 
-    callbacks.clear();
+    m_callbacks.clear();
 
     ImGui_ImplCitro3D_Shutdown();
     ImGui_ImplCtr_Shutdown();
     ImGui::DestroyContext();
 
-    initialized = false;
+    m_initialized = false;
 }
 
 void ImGuiManager::BeginFrame() {
-    if (!initialized) return;
+    if (!m_initialized) return;
 
     ImGui_ImplCitro3D_NewFrame();
     ImGui_ImplCtr_NewFrame();
@@ -48,24 +48,24 @@ void ImGuiManager::BeginFrame() {
 }
 
 void ImGuiManager::EndFrame(void* topTarget, void* bottomTarget) {
-    if (!initialized) return;
+    if (!m_initialized) return;
 
     ImGui::Render();
     ImGui_ImplCitro3D_RenderDrawData(ImGui::GetDrawData(), topTarget, bottomTarget);
 }
 
 void ImGuiManager::RegisterCallback(const std::string& name, ImGuiCallback callback) {
-    callbacks[name] = callback;
+    m_callbacks[name] = callback;
 }
 
 void ImGuiManager::UnregisterCallback(const std::string& name) {
-    callbacks.erase(name);
+    m_callbacks.erase(name);
 }
 
 void ImGuiManager::ExecuteCallbacks() {
-    if (!initialized) return;
+    if (!m_initialized) return;
 
-    for (auto& [name, callback] : callbacks) {
+    for (auto& [name, callback] : m_callbacks) {
         if (callback) {
             callback();
         }
