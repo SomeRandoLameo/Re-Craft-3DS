@@ -5,6 +5,8 @@
 #include "gui/SpriteBatch.h"
 #include "misc/NumberUtils.h"
 #include "rendering/VertexFmt.h"
+#include "amethyst/iron.hpp"
+#include "ReCraftCore.h"
 
 static InputData oldInput;
 static InputData input;
@@ -14,6 +16,8 @@ typedef struct {
 	int highestElement;
 	int unpaddedWidth;
 } Row;
+
+Amy::Iron::Drawlist* Gui::RenderData = nullptr;
 
 static Row currentRow;
 static int relativeX, relativeY;
@@ -26,6 +30,10 @@ void Gui::Init() {
 
 	paddingX = 2;
 	paddingY = 3;
+
+    //RenderData = new Iron::Drawlist();
+    //TODO: MC Bitmap pixel font loaded from assets :D
+    //RenderData->SetFont(ReCraftCore::GetInstance()->GetAssetManager()->Get<Iron::Font>("font"));
 }
 
 static inline int relativeToAbsoluteSize(float s) { return (int)((float)currentRow.unpaddedWidth * s); }
@@ -94,11 +102,15 @@ bool Gui::Button(float size, const char* label, ...) {
 	int middlePieceSize = w - SLICE_SIZE * 2;
 
 	SpriteBatch_BindGuiTexture(GuiTexture_Widgets);
-	SpriteBatch_PushQuad(x, y, -3, SLICE_SIZE, 20, 0, 46 + (pressed * BUTTON_HEIGHT * 2), SLICE_SIZE, 20);
-	SpriteBatch_PushQuad(x + SLICE_SIZE, y, -3, middlePieceSize, 20, SLICE_SIZE, 46 + (pressed * BUTTON_HEIGHT * 2), middlePieceSize,
-			     20);
-	SpriteBatch_PushQuad(x + SLICE_SIZE + middlePieceSize, y, -3, SLICE_SIZE, 20, 192, 46 + (pressed * BUTTON_HEIGHT * 2), SLICE_SIZE,
-			     20);
+    SpriteBatch_PushQuad(x, y, -3, SLICE_SIZE, 20, 0, 46 + (pressed * BUTTON_HEIGHT * 2), SLICE_SIZE, 20);
+    SpriteBatch_PushQuad(x + SLICE_SIZE, y, -3, middlePieceSize, 20, SLICE_SIZE, 46 + (pressed * BUTTON_HEIGHT * 2), middlePieceSize,20);
+    SpriteBatch_PushQuad(x + SLICE_SIZE + middlePieceSize, y, -3, SLICE_SIZE, 20, 192, 46 + (pressed * BUTTON_HEIGHT * 2), SLICE_SIZE,20);
+    //RenderData->DrawTex(ReCraftCore::GetInstance()->GetAssetManager()->Get<Amy::Texture>("GuiTexture_Widgets"));
+   // RenderData->DrawRectFilled(Amy::fvec2(x, y), Amy::fvec2(SLICE_SIZE, 20), Amy::Color(255, 255, 255, 255));
+   // RenderData->DrawRectFilled(Amy::fvec2(x + SLICE_SIZE, y), Amy::fvec2(middlePieceSize, 20), Amy::Color(255, 255, 255, 255));
+   // RenderData->DrawRectFilled(Amy::fvec2(x + SLICE_SIZE + middlePieceSize, y), Amy::fvec2(SLICE_SIZE, 20), Amy::Color(255, 255, 255, 255));
+
+
 
 	SpriteBatch_PushTextVargs(x + (w / 2 - textWidth / 2), y + (BUTTON_HEIGHT - CHAR_HEIGHT) / 2, -1, SHADER_RGB(31, 31, 31), true,
 				  INT_MAX, NULL, label, vl);

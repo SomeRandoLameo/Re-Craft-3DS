@@ -19,7 +19,7 @@ typedef enum {
 
 typedef struct {
 	WorkerItemType type;
-	Chunk* chunk;
+	ChunkColumn* chunk;
 	uint32_t uuid;
 } WorkerItem;
 

@@ -54,5 +54,5 @@ void SuperChunk_Init(SuperChunk* superchunk, int x, int z);
 void SuperChunk_Deinit(SuperChunk* superchunk);
 void SuperChunk_SaveIndex(SuperChunk* superchunk);
 
-void SuperChunk_SaveChunk(SuperChunk* superchunk, Chunk* chunk);
-void SuperChunk_LoadChunk(SuperChunk* superchunk, Chunk* chunk);
+void SuperChunk_SaveChunk(SuperChunk* superchunk, ChunkColumn* chunk);
+void SuperChunk_LoadChunk(SuperChunk* superchunk, ChunkColumn* chunk);

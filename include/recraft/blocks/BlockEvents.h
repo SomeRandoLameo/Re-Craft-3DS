@@ -5,4 +5,4 @@
 
 #define RANDOMTICKS_PER_CLUSTER (3)
 #define RANDOMTICKS_PER_CHUNK (CLUSTER_PER_CHUNK * RANDOMTICKS_PER_CLUSTER)
-void BlockEvent_RandomTick(World* world, Chunk* chunk, int x[], int y[], int z[]);
+void BlockEvent_RandomTick(World* world, ChunkColumn* chunk, int x[], int y[], int z[]);

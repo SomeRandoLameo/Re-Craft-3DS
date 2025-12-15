@@ -4,6 +4,8 @@
 #include <stdint.h>
 
 #include "../misc/InputData.h"
+#include "amethyst/iron.hpp"
+
 //TODO: COreUI
 class Gui {
 public:
@@ -34,6 +36,8 @@ public:
     static bool WasCursorInside(int x, int y, int w, int h);
     static void GetCursorMovement(int* x, int* y);
     static bool EnteredCursorInside(int x, int y, int w, int h);
+
+    static Amy::Iron::Drawlist* RenderData;
 
     static const int BUTTON_HEIGHT = 20;
     static const int CHAR_HEIGHT = 8;

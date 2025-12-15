@@ -10,9 +10,9 @@
 static const int SectorSize = 2048;
 static mpack_node_data_t* nodeDataPool = NULL;
 static const int nodeDataPoolSize = 2048;
-const int decompressBufferSize = sizeof(Chunk) * 2;
+const int decompressBufferSize = sizeof(ChunkColumn) * 2;
 static char* decompressBuffer;
-static const int fileBufferSize = sizeof(Chunk) * 2;
+static const int fileBufferSize = sizeof(ChunkColumn) * 2;
 static char* fileBuffer;
 
 //TODO: REMOVE AFTER REWRITE!!!
@@ -169,7 +169,7 @@ static void freeSectors(SuperChunk* superchunk, uint32_t address, uint8_t size) 
     }
 }
 
-void SuperChunk_SaveChunk(SuperChunk* superchunk, Chunk* chunk) {
+void SuperChunk_SaveChunk(SuperChunk* superchunk, ChunkColumn* chunk) {
     int x = ChunkToLocalSuperChunkCoord(chunk->x);
     int z = ChunkToLocalSuperChunkCoord(chunk->z);
 
@@ -182,19 +182,19 @@ void SuperChunk_SaveChunk(SuperChunk* superchunk, Chunk* chunk) {
         mpack_write_cstr(&writer, "clusters");
         mpack_start_array(&writer, CLUSTER_PER_CHUNK);
         for (int i = 0; i < CLUSTER_PER_CHUNK; i++) {
-            bool empty = Cluster_IsEmpty(&chunk->clusters[i]);
+            bool empty = chunk->chunks[i].IsEmpty();
 
             mpack_start_map(&writer, empty ? 2 : 4);
 
             if (!empty) {
                 mpack_write_cstr(&writer, "blocks");
-                mpack_write_bin(&writer, (char*)chunk->clusters[i].blocks, sizeof(chunk->clusters[i].blocks));
+                mpack_write_bin(&writer, (char*)chunk->chunks[i].blocks, sizeof(chunk->chunks[i].blocks));
                 mpack_write_cstr(&writer, "metadataLight");
-                mpack_write_bin(&writer, (char*)chunk->clusters[i].metadataLight, sizeof(chunk->clusters[i].metadataLight));
+                mpack_write_bin(&writer, (char*)chunk->chunks[i].metadataLight, sizeof(chunk->chunks[i].metadataLight));
             }
 
             mpack_write_cstr(&writer, "revision");
-            mpack_write_u32(&writer, chunk->clusters[i].revision);
+            mpack_write_u32(&writer, chunk->chunks[i].revision);
 
             mpack_write_cstr(&writer, "empty");
             mpack_write_bool(&writer, empty);
@@ -234,7 +234,7 @@ void SuperChunk_SaveChunk(SuperChunk* superchunk, Chunk* chunk) {
     }
 }
 
-void SuperChunk_LoadChunk(SuperChunk* superchunk, Chunk* chunk) {
+void SuperChunk_LoadChunk(SuperChunk* superchunk, ChunkColumn* chunk) {
     int x = ChunkToLocalSuperChunkCoord(chunk->x);
     int z = ChunkToLocalSuperChunkCoord(chunk->z);
     ChunkInfo chunkInfo = superchunk->grid[x][z];
@@ -253,24 +253,24 @@ void SuperChunk_LoadChunk(SuperChunk* superchunk, Chunk* chunk) {
             for (int i = 0; i < CLUSTER_PER_CHUNK; i++) {
                 mpack_node_t cluster = mpack_node_array_at(clusters, i);
 
-                chunk->clusters[i].revision = mpack_node_u32(mpack_node_map_cstr(cluster, "revision"));
+                chunk->chunks[i].revision = mpack_node_u32(mpack_node_map_cstr(cluster, "revision"));
 
                 mpack_node_t emptyNode = mpack_node_map_cstr_optional(cluster, "empty");
                 if (mpack_node_type(emptyNode) != mpack_type_nil) {
-                    chunk->clusters[i].emptyRevision = chunk->clusters[i].revision;
-                    chunk->clusters[i].empty = mpack_node_bool(emptyNode);
+                    chunk->chunks[i].emptyRevision = chunk->chunks[i].revision;
+                    chunk->chunks[i].empty = mpack_node_bool(emptyNode);
                 } else {
-                    chunk->clusters[i].emptyRevision = 0;
-                    chunk->clusters[i].empty = false;
+                    chunk->chunks[i].emptyRevision = 0;
+                    chunk->chunks[i].empty = false;
                 }
 
                 mpack_node_t blocksNode = mpack_node_map_cstr_optional(cluster, "blocks");
                 if (mpack_node_type(blocksNode) == mpack_type_bin)  // preserve savedata, in case of a wrong empty flag
-                    memcpy(chunk->clusters[i].blocks, mpack_node_data(blocksNode), sizeof(chunk->clusters[i].blocks));
+                    memcpy(chunk->chunks[i].blocks, mpack_node_data(blocksNode), sizeof(chunk->chunks[i].blocks));
                 mpack_node_t metadataNode = mpack_node_map_cstr_optional(cluster, "metadataLight");
                 if (mpack_node_type(metadataNode) == mpack_type_bin)
-                    memcpy(chunk->clusters[i].metadataLight, mpack_node_data(metadataNode),
-                           sizeof(chunk->clusters[i].metadataLight));
+                    memcpy(chunk->chunks[i].metadataLight, mpack_node_data(metadataNode),
+                           sizeof(chunk->chunks[i].metadataLight));
             }
 
             chunk->genProgress = (ChunkGenProgress)mpack_node_int(mpack_node_map_cstr(root, "genProgress"));

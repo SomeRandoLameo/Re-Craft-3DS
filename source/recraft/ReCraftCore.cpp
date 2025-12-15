@@ -42,6 +42,9 @@ ReCraftCore::ReCraftCore() {
     auto fnt = Iron::Font::New();
     fnt->LoadBMF("romfs:/assets/textures/font/ascii.png");
     m_AssetMgr.Add("font", fnt);
+
+    m_AssetMgr.AutoLoad("GuiTexture_Widgets", "romfs:/assets/textures/gui/widgets.png");
+
     //m_AssetMgr.AutoLoad("font", "romfs:/ComicNeue.ttf");
 
     m_renderer = new Renderer(m_world, m_player, &m_chunkWorker.GetQueue());

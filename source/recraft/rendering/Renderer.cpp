@@ -288,12 +288,17 @@ void Renderer::Render(DebugUI *debugUi) {
 
     ImGuiManager::GetInstance()->ExecuteCallbacks();
 
-    C3D_FrameDrawOn(m_renderTargets[0]);
     Iron::NewFrame();
+
+    C3D_FrameDrawOn(m_renderTargets[0]);
     Iron::DrawOn(Top[0]);
     Iron::Draw(*debugUi->RenderData);
     debugUi->RenderData->Clear();
-    C3D_FrameDrawOn(m_lowerScreen);
+
+    //C3D_FrameDrawOn(m_lowerScreen);
+    //Iron::DrawOn(Bottom);
+    //Iron::Draw(*Gui::RenderData);
+    //Gui::RenderData->Clear();
 
     ImGuiManager::GetInstance()->EndFrame(
       reinterpret_cast<void *>(m_renderTargets[0]),

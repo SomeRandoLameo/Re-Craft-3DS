@@ -17,14 +17,14 @@
 
 
 struct RenderStep {
-    Cluster* cluster;
-    Chunk* chunk;
+    Chunk* cluster;
+    ChunkColumn* chunk;
     Direction enteredFrom;
 };
 
 struct TransparentRender {
-    Cluster* cluster;
-    Chunk* chunk;
+    Chunk* cluster;
+    ChunkColumn* chunk;
 };
 
 class WorldRenderer {

@@ -88,7 +88,7 @@ typedef struct {
 	bool transparent;
 } Face;
 
-static inline Block fastBlockFetch(World* world, Chunk* chunk, Cluster* cluster, int x, int y, int z) {
+static inline Block fastBlockFetch(World* world, ChunkColumn* chunk, Chunk* cluster, int x, int y, int z) {
 	return (x < 0 || y < 0 || z < 0 || x >= CHUNK_SIZE || y >= CHUNK_SIZE || z >= CHUNK_SIZE)
 		   ? world->GetBlock(mc::Vector3i(
                    (chunk->x * CHUNK_SIZE) + x,
@@ -98,7 +98,7 @@ static inline Block fastBlockFetch(World* world, Chunk* chunk, Cluster* cluster,
 		   : cluster->blocks[x][y][z];
 }
 
-static inline uint8_t fastMetadataFetch(World* world, Chunk* chunk, Cluster* cluster, int x, int y, int z) {
+static inline uint8_t fastMetadataFetch(World* world, ChunkColumn* chunk, Chunk* cluster, int x, int y, int z) {
 	return (x < 0 || y < 0 || z < 0 || x >= CHUNK_SIZE || y >= CHUNK_SIZE || z >= CHUNK_SIZE)
 		   ? world->GetMetadata(
                            mc::Vector3i(
@@ -152,16 +152,16 @@ void PolyGen_Harvest(DebugUI* debugUi) {
                     vboUpdates.pop_back();
 
 
-                    Chunk* chunk = world->GetChunk(update.x, update.z);
+                    ChunkColumn* chunk = world->GetChunk(update.x, update.z);
 					if (chunk) {
-						if (chunk->clusters[update.y].vertices > 0) vboCache.Free(chunk->clusters[update.y].vbo);
-						if (chunk->clusters[update.y].transparentVertices > 0)
-							vboCache.Free(chunk->clusters[update.y].transparentVBO);
-						chunk->clusters[update.y].vbo = update.vbo;
-						chunk->clusters[update.y].vertices = update.vertices;
-						chunk->clusters[update.y].transparentVBO = update.transparentVBO;
-						chunk->clusters[update.y].transparentVertices = update.transparentVertices;
-						chunk->clusters[update.y].seeThrough = update.visibility;
+						if (chunk->chunks[update.y].vertices > 0) vboCache.Free(chunk->chunks[update.y].vbo);
+						if (chunk->chunks[update.y].transparentVertices > 0)
+							vboCache.Free(chunk->chunks[update.y].transparentVBO);
+						chunk->chunks[update.y].vbo = update.vbo;
+						chunk->chunks[update.y].vertices = update.vertices;
+						chunk->chunks[update.y].transparentVBO = update.transparentVBO;
+						chunk->chunks[update.y].transparentVertices = update.transparentVertices;
+						chunk->chunks[update.y].seeThrough = update.visibility;
 					}
 				}
 		}
@@ -182,7 +182,7 @@ static inline void addFace(int x, int y, int z, Direction dir, Block block, uint
 	}
 }
 
-static uint16_t floodFill(World* world, Chunk* chunk, Cluster* cluster, int x, int y, int z, Direction entrySide0, Direction entrySide1, Direction entrySide2) {
+static uint16_t floodFill(World* world, ChunkColumn* chunk, Chunk* cluster, int x, int y, int z, Direction entrySide0, Direction entrySide1, Direction entrySide2) {
 	if (floodfill_visited[x][y][z] & 1) return 0;
 	uint8_t exitPoints[6] = {false};
 	if (entrySide0 != Direction_Invalid) exitPoints[entrySide0] = true;
@@ -227,11 +227,11 @@ static uint16_t floodFill(World* world, Chunk* chunk, Cluster* cluster, int x, i
 
 void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context) {
 	for (int i = 0; i < CLUSTER_PER_CHUNK; i++) {
-		Cluster* cluster = &item.chunk->clusters[i];
+		Chunk* chunk = &item.chunk->chunks[i];
 
-		if (cluster->revision != cluster->vboRevision || cluster->forceVBOUpdate) {
-			cluster->vboRevision = cluster->revision;
-			cluster->forceVBOUpdate = false;
+		if (chunk->revision != chunk->vboRevision || chunk->forceVBOUpdate) {
+            chunk->vboRevision = chunk->revision;
+            chunk->forceVBOUpdate = false;
 
 			currentFace = 0;
 			transparentFaces = 0;
@@ -254,15 +254,15 @@ void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context) 
 						else if (y == CHUNK_SIZE - 1)
 							yDir = Direction_Top;
 
-						if (!Block_Opaque(cluster->blocks[x][y][z], cluster->metadataLight[x][y][z] & 0xf))
-							visibility |= floodFill(world, item.chunk, cluster, x, y, z, xDir, yDir, zDir);
-						Block block = fastBlockFetch(world, item.chunk, cluster, x + (!x ? -1 : 1), y, z);
-						uint8_t meta = fastMetadataFetch(world, item.chunk, cluster, x + (!x ? -1 : 1), y, z);
-						if (!Block_Opaque(block, meta) && cluster->blocks[x][y][z] != Block_Air) {
+						if (!Block_Opaque(chunk->blocks[x][y][z], chunk->metadataLight[x][y][z] & 0xf))
+							visibility |= floodFill(world, item.chunk, chunk, x, y, z, xDir, yDir, zDir);
+						Block block = fastBlockFetch(world, item.chunk, chunk, x + (!x ? -1 : 1), y, z);
+						uint8_t meta = fastMetadataFetch(world, item.chunk, chunk, x + (!x ? -1 : 1), y, z);
+						if (!Block_Opaque(block, meta) && chunk->blocks[x][y][z] != Block_Air) {
 							addFace(
-							    x, y, z, xDir, cluster->blocks[x][y][z], cluster->metadataLight[x][y][z] & 0xf,
-							    0,
-							    !Block_Opaque(cluster->blocks[x][y][z], cluster->metadataLight[x][y][z] & 0xf));
+                                    x, y, z, xDir, chunk->blocks[x][y][z], chunk->metadataLight[x][y][z] & 0xf,
+                                    0,
+                                    !Block_Opaque(chunk->blocks[x][y][z], chunk->metadataLight[x][y][z] & 0xf));
 						}
 					}
 				}
@@ -281,15 +281,15 @@ void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context) 
 							zDir = Direction_South;
 						else if (z == CHUNK_SIZE - 1)
 							zDir = Direction_North;
-						if (!Block_Opaque(cluster->blocks[x][y][z], cluster->metadataLight[x][y][z] & 0xf))
-							visibility |= floodFill(world, item.chunk, cluster, x, y, z, xDir, yDir, zDir);
-						Block block = fastBlockFetch(world, item.chunk, cluster, x, y + (!y ? -1 : 1), z);
-						uint8_t meta = fastMetadataFetch(world, item.chunk, cluster, x, y + (!y ? -1 : 1), z);
-						if (!Block_Opaque(block, meta) && cluster->blocks[x][y][z] != Block_Air) {
+						if (!Block_Opaque(chunk->blocks[x][y][z], chunk->metadataLight[x][y][z] & 0xf))
+							visibility |= floodFill(world, item.chunk, chunk, x, y, z, xDir, yDir, zDir);
+						Block block = fastBlockFetch(world, item.chunk, chunk, x, y + (!y ? -1 : 1), z);
+						uint8_t meta = fastMetadataFetch(world, item.chunk, chunk, x, y + (!y ? -1 : 1), z);
+						if (!Block_Opaque(block, meta) && chunk->blocks[x][y][z] != Block_Air) {
 							addFace(
-							    x, y, z, yDir, cluster->blocks[x][y][z], cluster->metadataLight[x][y][z] & 0xf,
-							    0,
-							    !Block_Opaque(cluster->blocks[x][y][z], cluster->metadataLight[x][y][z] & 0xf));
+                                    x, y, z, yDir, chunk->blocks[x][y][z], chunk->metadataLight[x][y][z] & 0xf,
+                                    0,
+                                    !Block_Opaque(chunk->blocks[x][y][z], chunk->metadataLight[x][y][z] & 0xf));
 						}
 					}
 				}
@@ -308,15 +308,15 @@ void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context) 
 							yDir = Direction_Bottom;
 						else if (y == CHUNK_SIZE - 1)
 							yDir = Direction_Top;
-						if (!Block_Opaque(cluster->blocks[x][y][z], cluster->metadataLight[x][y][z] & 0xf))
-							visibility |= floodFill(world, item.chunk, cluster, x, y, z, xDir, yDir, zDir);
-						Block block = fastBlockFetch(world, item.chunk, cluster, x, y, z + (!z ? -1 : 1));
-						if (!Block_Opaque(block, cluster->metadataLight[x][y][z] & 0xf) &&
-						    cluster->blocks[x][y][z] != Block_Air) {
+						if (!Block_Opaque(chunk->blocks[x][y][z], chunk->metadataLight[x][y][z] & 0xf))
+							visibility |= floodFill(world, item.chunk, chunk, x, y, z, xDir, yDir, zDir);
+						Block block = fastBlockFetch(world, item.chunk, chunk, x, y, z + (!z ? -1 : 1));
+						if (!Block_Opaque(block, chunk->metadataLight[x][y][z] & 0xf) &&
+                            chunk->blocks[x][y][z] != Block_Air) {
 							addFace(
-							    x, y, z, zDir, cluster->blocks[x][y][z], cluster->metadataLight[x][y][z] & 0xf,
-							    0,
-							    !Block_Opaque(cluster->blocks[x][y][z], cluster->metadataLight[x][y][z] & 0xf));
+                                    x, y, z, zDir, chunk->blocks[x][y][z], chunk->metadataLight[x][y][z] & 0xf,
+                                    0,
+                                    !Block_Opaque(chunk->blocks[x][y][z], chunk->metadataLight[x][y][z] & 0xf));
 						}
 					}
 				}
@@ -326,8 +326,8 @@ void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context) 
 			int pz = FastFloor(player->position.z);
 			if (WorldToChunkCoord(px) == item.chunk->x && WorldToChunkCoord(pz) == item.chunk->z &&
 			    WorldToChunkCoord(py) == i) {
-				floodFill(world, item.chunk, cluster, WorldToLocalCoord(px), WorldToLocalCoord(py), WorldToLocalCoord(pz),
-					  Direction_Invalid, Direction_Invalid, Direction_Invalid);
+				floodFill(world, item.chunk, chunk, WorldToLocalCoord(px), WorldToLocalCoord(py), WorldToLocalCoord(pz),
+                          Direction_Invalid, Direction_Invalid, Direction_Invalid);
 			}
 
 			int transparentVertices = transparentFaces * 6;

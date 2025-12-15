@@ -1,6 +1,6 @@
 #include "blocks/BlockEvents.h"
 
-void BlockEvent_RandomTick(World* world, Chunk* chunk, int x[], int y[], int z[]) {
+void BlockEvent_RandomTick(World* world, ChunkColumn* chunk, int x[], int y[], int z[]) {
 	int k = 0;
 	for (int i = 0; i < CLUSTER_PER_CHUNK; i++) {
 		for (int j = 0; j < RANDOMTICKS_PER_CLUSTER; j++) {

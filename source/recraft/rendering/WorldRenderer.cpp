@@ -65,9 +65,9 @@ void WorldRenderer::RenderWorld() {
     m_transparentClusters.clear();
 
     int pY = CLAMP(WorldToChunkCoord(FastFloor(m_player->position.y)), 0, CLUSTER_PER_CHUNK - 1);
-    Chunk* pChunk = m_world->GetChunk(WorldToChunkCoord(FastFloor(m_player->position.x)),
-                                   WorldToChunkCoord(FastFloor(m_player->position.z)));
-    m_renderingQueue.push_back(RenderStep{&pChunk->clusters[pY], pChunk, Direction_Invalid});
+    ChunkColumn* pChunk = m_world->GetChunk(WorldToChunkCoord(FastFloor(m_player->position.x)),
+                                            WorldToChunkCoord(FastFloor(m_player->position.z)));
+    m_renderingQueue.push_back(RenderStep{&pChunk->chunks[pY], pChunk, Direction_Invalid});
     ClusterRenderedRef(CHUNKCACHE_SIZE / 2 + m_world->cacheTranslationX, pY,
                        CHUNKCACHE_SIZE / 2 + m_world->cacheTranslationZ) = 1;
 
@@ -76,8 +76,8 @@ void WorldRenderer::RenderWorld() {
     while (!m_renderingQueue.empty()) {
         RenderStep step = m_renderingQueue.back();
         m_renderingQueue.pop_back();
-        Chunk* chunk = step.chunk;
-        Cluster* cluster = step.cluster;
+        ChunkColumn* chunk = step.chunk;
+        Chunk* cluster = step.cluster;
 
         if (cluster->vertices > 0 && cluster->vbo.size) {
             ClusterRenderedRef(chunk->x, cluster->y, chunk->z) |= 2;
@@ -128,15 +128,15 @@ void WorldRenderer::RenderWorld() {
 
             ClusterRenderedRef(newX, newY, newZ) |= 1;
 
-            Chunk* newChunk = m_world->GetChunk(newX, newZ);
-            RenderStep nextStep = (RenderStep){&newChunk->clusters[newY], newChunk, DirectionOpposite[dir]};
+            ChunkColumn* newChunk = m_world->GetChunk(newX, newZ);
+            RenderStep nextStep = (RenderStep){&newChunk->chunks[newY], newChunk, DirectionOpposite[dir]};
             if (newChunk) m_renderingQueue.push_back(nextStep);
         }
     }
 
     for (int x = 1; x < CHUNKCACHE_SIZE - 1; x++) {
         for (int z = 1; z < CHUNKCACHE_SIZE - 1; z++) {
-            Chunk* chunk = m_world->chunkCache[x][z];
+            ChunkColumn* chunk = m_world->chunkCache[x][z];
 
             if ((chunk->revision != chunk->displayRevision || chunk->forceVBOUpdate) && !chunk->tasksRunning) {
                 bool clear = true;

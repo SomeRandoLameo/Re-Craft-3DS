@@ -10,10 +10,11 @@
 #include <string.h>
 
 #define CHUNK_SIZE (16)
-#define CHUNK_HEIGHT (128)
+#define CHUNK_HEIGHT (256)
 #define CLUSTER_PER_CHUNK (CHUNK_HEIGHT / CHUNK_SIZE)
 
-typedef struct {
+class Chunk {
+public:
 	int y;
 	Block blocks[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
 	uint8_t metadataLight[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];  // first half metadata, second half light
@@ -29,7 +30,9 @@ typedef struct {
 	size_t vertices, transparentVertices;
 	uint32_t vboRevision;
 	bool forceVBOUpdate;
-} Cluster;
+
+    bool IsEmpty();
+};
 
 typedef enum {
 	ChunkGen_Empty,  //
@@ -42,9 +45,9 @@ extern const uint8_t _seethroughTable[6][6];
 
 uint16_t ChunkSeeThrough(Direction in, Direction out);
 bool ChunkCanBeSeenThrough(uint16_t visiblity, Direction in, Direction out);
-bool Cluster_IsEmpty(Cluster* cluster);
 
-class Chunk{
+
+class ChunkColumn {
 public:
     uint32_t tasksRunning;
     uint32_t graphicalTasksRunning;
@@ -54,7 +57,7 @@ public:
     ChunkGenProgress genProgress;
 
     int x, z;
-    Cluster clusters[CLUSTER_PER_CHUNK];
+    Chunk chunks[CLUSTER_PER_CHUNK];
 
     uint8_t heightmap[CHUNK_SIZE][CHUNK_SIZE];
     uint32_t heightmapRevision;
@@ -67,10 +70,9 @@ public:
     int references;
 
 
-
-    Chunk();
-    Chunk(int x, int z);
-    ~Chunk() = default;
+    ChunkColumn();
+    ChunkColumn(int x, int z);
+    ~ChunkColumn() = default;
     void RequestGraphicsUpdate(int cluster);
 
     void GenerateHeightmap();
@@ -86,7 +88,5 @@ public:
     void SetBlock(mc::Vector3i position, Block block);
 
     void SetBlockAndMeta(mc::Vector3i position, Block block, uint8_t metadata);
-
-
 };
 

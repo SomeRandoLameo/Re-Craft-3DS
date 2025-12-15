@@ -18,70 +18,75 @@ static char *logLines[LOG_LINES];
 static int currentStatusLine = 0;
 
 DebugUI::DebugUI() {
-  for (auto & logLine : logLines) {
-    logLine = (char *)malloc(LOG_LINE_LENGTH);
-    memset(logLine, 0x0, LOG_LINE_LENGTH);
-  }
-  for (auto & statusLine : statusLines) {
-    statusLine = (char *)malloc(STATUS_LINE_LENGTH);
-    memset(statusLine, 0x0, STATUS_LINE_LENGTH);
-  }
-  RenderData = new Iron::Drawlist();
-    //TODO: MC Bitmap pixel font loaded from assets :D
-  RenderData->SetFont(ReCraftCore::GetInstance()->GetAssetManager()->Get<Iron::Font>("font"));
+    for (auto & logLine : logLines) {
+        logLine = (char *)malloc(LOG_LINE_LENGTH);
+        memset(logLine, 0x0, LOG_LINE_LENGTH);
+    }
+    for (auto & statusLine : statusLines) {
+        statusLine = (char *)malloc(STATUS_LINE_LENGTH);
+        memset(statusLine, 0x0, STATUS_LINE_LENGTH);
+    }
+    RenderData = new Iron::Drawlist();
+        //TODO: MC Bitmap pixel font loaded from assets :D
+    RenderData->SetFont(ReCraftCore::GetInstance()->GetAssetManager()->Get<Iron::Font>("font"));
 }
 
 DebugUI::~DebugUI() {
-  for (int i = 0; i < LOG_LINES; i++)
-    free(logLines[i]);
-  for (int i = 0; i < STATUS_LINES; i++)
-    free(statusLines[i]);
-  delete RenderData;
+    for (int i = 0; i < LOG_LINES; i++){
+        free(logLines[i]);
+    }
+    for (int i = 0; i < STATUS_LINES; i++){
+        free(statusLines[i]);
+    }
+
+    delete RenderData;
 }
 
 void DebugUI::Text(const char *text, ...) {
-  if (currentStatusLine >= STATUS_LINES)
-    return;
-  va_list args;
-  va_start(args, text);
+    if (currentStatusLine >= STATUS_LINES) {
+        return;
+    }
 
-  vsprintf(statusLines[currentStatusLine++], text, args);
+    va_list args;
+    va_start(args, text);
 
-  va_end(args);
+    vsprintf(statusLines[currentStatusLine++], text, args);
+
+    va_end(args);
 }
 
 void DebugUI::Log(const char *text, ...) {
-  char *lastLine = logLines[LOG_LINES - 1];
-  for (int i = LOG_LINES - 1; i > 0; i--) {
-      logLines[i] = logLines[i - 1];
-  }
+    char *lastLine = logLines[LOG_LINES - 1];
+    for (int i = LOG_LINES - 1; i > 0; i--) {
+        logLines[i] = logLines[i - 1];
+    }
 
-  logLines[0] = lastLine;
+    logLines[0] = lastLine;
 
-  va_list args;
-  va_start(args, text);
+    va_list args;
+    va_start(args, text);
 
-  vsprintf(logLines[0], text, args);
+    vsprintf(logLines[0], text, args);
 
-  va_end(args);
+    va_end(args);
 }
 
 void DebugUI::Draw() {
-  int yOffset = (240 / 3) * 2;
-  for (auto & logLine : logLines) {
-    int step = 15;
-    RenderData->DrawText(Amy::fvec2(0, yOffset), logLine, 0xffffffff);
-    yOffset += step;
-    if (yOffset >= 240)
-      break;
-  }
-  yOffset = 0;
-  for (auto & statusLine : statusLines) {
-    int step = 15;
-    RenderData->DrawText(Amy::fvec2(0, yOffset), statusLine, 0xffffffff);
-    yOffset += step;
+    int yOffset = (240 / 3) * 2;
+    for (auto & logLine : logLines) {
+        int step = 15;
+        RenderData->DrawText(Amy::fvec2(0, yOffset), logLine, 0xffffffff);
+        yOffset += step;
+        if (yOffset >= 240)
+          break;
+    }
+    yOffset = 0;
+    for (auto & statusLine : statusLines) {
+        int step = 15;
+        RenderData->DrawText(Amy::fvec2(0, yOffset), statusLine, 0xffffffff);
+        yOffset += step;
 
-    memset(statusLine, 0x0, STATUS_LINE_LENGTH);
-  }
-  currentStatusLine = 0;
+        memset(statusLine, 0x0, STATUS_LINE_LENGTH);
+    }
+    currentStatusLine = 0;
 }
