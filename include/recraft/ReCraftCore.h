@@ -25,6 +25,7 @@ extern "C" {
 #include "world/savegame/SuperChunk.h"
 #include "world/worldgen/SmeaGen.h"
 #include "world/worldgen/SuperFlatGen.h"
+#include "world/OnlineWorld.h"
 
 class ReCraftCore : public Amy::App {
  public:
@@ -50,6 +51,7 @@ class ReCraftCore : public Amy::App {
   PlayerController* m_playerCtrl = nullptr;
   Renderer* m_renderer = nullptr;
   GuiChat* m_chat = nullptr;
+  OnlineWorld* m_onlineWorld = nullptr;
   GameState m_gamestate;
   Amy::AssetMgr m_AssetMgr;
   float m_timeAccum = 0.f;

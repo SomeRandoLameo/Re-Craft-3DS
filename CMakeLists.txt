@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED true)
 set(3DS_IP "" CACHE STRING "3ds IP (make send)")
 
 set(APP_NAME "Re-Craft-3DS")
-set(APP_DESC "a Minecraft 1.10.x - 1.12.x client implemented on the 3DS (and new 3DS)")
+set(APP_DESC "a Minecraft client implemented on the 3DS (and new 3DS)")
 set(APP_AUTHOR "SomeRandoLameo")
 set(APP_ICON "${CMAKE_SOURCE_DIR}/icon.png")
 set(APP_ROMFS "${CMAKE_SOURCE_DIR}/romfs")
@@ -73,6 +73,7 @@ add_executable(${PROJECT_NAME}
     source/recraft/world/worldgen/SmeaGen.cpp
     source/recraft/world/worldgen/SuperFlatGen.cpp
     source/recraft/gui/ImGuiManager.cpp
+    source/recraft/world/OnlineWorld.cpp
 )
 target_include_directories(${PROJECT_NAME} PUBLIC
     include/recraft

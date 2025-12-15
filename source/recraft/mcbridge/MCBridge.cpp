@@ -18,7 +18,7 @@ bool MCBridge::connect() {
         return true;
     }
 
-    const std::string server("192.168.2.184");
+    const std::string server("192.168.2.186");
     const u16 port = 25565;
     const std::string username("Nintendo3DS");
     const std::string password("");
