@@ -18,7 +18,7 @@ void Camera::Update(Player* player, float iod) {
 	float currentFov = m_fov + C3D_AngleFromDegrees(12.f) * player->fovAdd;
 	Mtx_PerspStereoTilt(&m_projection, currentFov, (400.f / 240.f), m_near, m_far, iod, 1.f, false);
 
-    // View bobbing at player head
+	// View bobbing at player head
 	mc::Vector3d playerHead(
 			player->position.x,
 			player->position.y + PLAYER_EYEHEIGHT + sinf(player->bobbing) * 0.1f + player->crouchAdd,
@@ -34,94 +34,11 @@ void Camera::Update(Player* player, float iod) {
 	Mtx_Multiply(&vpTemp, &m_projection, &m_view);
 	Mtx_Copy(&m_vp, &vpTemp);
 
-	C3D_FVec rowX = vpTemp.r[0];
-	C3D_FVec rowY = vpTemp.r[1];
-	C3D_FVec rowZ = vpTemp.r[2];
-	C3D_FVec rowW = vpTemp.r[3];
+	m_frustum.UpdateFromMatrix(vpTemp);
 
-	m_frustumPlanes[Frustum_Near] = FVec4_Normalize(FVec4_Subtract(rowW, rowZ));
-	m_frustumPlanes[Frustum_Right] = FVec4_Normalize(FVec4_Add(rowW, rowX));
-	m_frustumPlanes[Frustum_Left] = FVec4_Normalize(FVec4_Subtract(rowW, rowX));
-	m_frustumPlanes[Frustum_Top] = FVec4_Normalize(FVec4_Add(rowW, rowY));
-	m_frustumPlanes[Frustum_Bottom] = FVec4_Normalize(FVec4_Subtract(rowW, rowY));
-	m_frustumPlanes[Frustum_Far] = FVec4_Normalize(FVec4_Add(rowW, rowZ));
+	mc::Vector3d forward(player->view.x, player->view.y, player->view.z);
+	mc::Vector3d right = Vector3d_crs(mc::Vector3d(0, 1, 0), mc::Vector3d(sinf(player->yaw), 0.f, cosf(player->yaw)));
+	mc::Vector3d up = Vector3d_crs(forward, right);
 
-    mc::Vector3d forward(player->view.x,player->view.y,player->view.z);
-    mc::Vector3d right = Vector3d_crs(mc::Vector3d(0, 1, 0), mc::Vector3d(sinf(player->yaw), 0.f, cosf(player->yaw)));
-    mc::Vector3d up = Vector3d_crs(forward, right);
-
-	float ar = 400.f / 240.f;
-	float tan2halffov = 2.f * tanf(m_fov / 2.f);
-
-	float hNear = tan2halffov * m_near;
-	float wNear = hNear * ar;
-
-	float hFar = tan2halffov * m_far;
-	float wFar = hFar * ar;
-
-    mc::Vector3d cNear = playerHead + Vector3d_Scale(forward, m_near);
-    mc::Vector3d cFar = playerHead + Vector3d_Scale(forward, m_far);
-
-	m_frustumCorners[Frustum_NearBottomLeft] = ((cNear - Vector3d_Scale(up, hNear * 0.5f)) - Vector3d_Scale(right, wNear * 0.5f));
-	m_frustumCorners[Frustum_NearBottomRight] = ((cNear - Vector3d_Scale(up, hNear * 0.5f)) + Vector3d_Scale(right, wNear * 0.5f));
-	m_frustumCorners[Frustum_NearTopLeft] = ((cNear + Vector3d_Scale(up, hNear * 0.5f)) - Vector3d_Scale(right, wNear * 0.5f));
-	m_frustumCorners[Frustum_NearTopRight] = ((cNear + Vector3d_Scale(up, hNear * 0.5f)) + Vector3d_Scale(right, wNear * 0.5f));
-	m_frustumCorners[Frustum_FarBottomLeft] = ((cFar - Vector3d_Scale(up, hFar * 0.5f)) - Vector3d_Scale(right, wFar * 0.5f));
-	m_frustumCorners[Frustum_FarBottomRight] = ((cFar - Vector3d_Scale(up, hFar * 0.5f)) + Vector3d_Scale(right, wFar * 0.5f));
-	m_frustumCorners[Frustum_FarTopLeft] = ((cFar + Vector3d_Scale(up, hFar * 0.5f)) - Vector3d_Scale(right, wFar * 0.5f));
-	m_frustumCorners[Frustum_FarTopRight] = ((cFar + Vector3d_Scale(up, hFar * 0.5f)) + Vector3d_Scale(right, wFar * 0.5f));
-}
-
-bool Camera::IsPointVisible(C3D_FVec point) const {
-	point.w = 1.f;
-	for (int i = 0; i < FrustumPlanes_Count; i++) {
-		if (FVec4_Dot(point, m_frustumPlanes[i]) < 0.f) {
-			return false;
-		}
-	}
-	return true;
-}
-
-bool Camera::IsAABBVisible(C3D_FVec origin, C3D_FVec size) const {
-    mc::Vector3d min(origin.x, origin.y, origin.z);
-    mc::Vector3d max(origin.x + size.x, origin.y + size.y, origin.z + size.z);
-
-    // Check if AABB is outside any frustum plane
-    for (int i = 0; i < 6; i++) {
-        int out = 0;
-        for (int z = 0; z < 2; z++) {
-            for (int y = 0; y < 2; y++) {
-                for (int x = 0; x < 2; x++) {
-                    C3D_FVec corner = FVec4_New(
-                            x ? max.x : min.x,
-                            y ? max.y : min.y,
-                            z ? max.z : min.z,
-                            1.0f
-                    );
-                    out += (FVec4_Dot(m_frustumPlanes[i], corner) < 0.0);
-                }
-            }
-        }
-        if (out == 8) return false;
-    }
-
-    // Check if frustum is outside any AABB plane
-    for (int axis = 0; axis < 3; axis++) {
-        int countAbove = 0, countBelow = 0;
-
-        for (int i = 0; i < 8; i++) {
-            float coord = (axis == 0) ? m_frustumCorners[i].x :
-                          (axis == 1) ? m_frustumCorners[i].y :
-                          m_frustumCorners[i].z;
-            float axisMin = (axis == 0) ? min.x : (axis == 1) ? min.y : min.z;
-            float axisMax = (axis == 0) ? max.x : (axis == 1) ? max.y : max.z;
-
-            if (coord > axisMax) countAbove++;
-            if (coord < axisMin) countBelow++;
-        }
-
-        if (countAbove == 8 || countBelow == 8) return false;
-    }
-
-    return true;
+    m_frustum.UpdateCorners(playerHead, forward, right, up, m_fov, 400.f / 240.f, m_near, m_far);
 }

@@ -23,11 +23,10 @@ const auto FB_SCALE = 1.0f;
 extern bool showDebugInfo;
 
 Renderer::Renderer(World* world, Player* player, WorkQueue* queue) {
-    // i actually prefer this
     m_world = world;
     m_player = player;
     m_workqueue = queue;
-
+    m_inventory = new Inventory();
     m_clouds = new Clouds();
     C3D::Init();
 
@@ -340,12 +339,17 @@ void Renderer::RenderLowerScreen(DebugUI* debugUi) {
     } else {
         SpriteBatch_SetScale(2);
 
-        Inventory::renderHotbar(160 / 2 - 194 / 2, 120 - Inventory::QUICKSELECT_HEIGHT, m_player->quickSelectBar,
-                                m_player->quickSelectBarSlot);
+        m_inventory->renderHotbar(160 / 2 - 194 / 2,
+            120 - Inventory::QUICKSELECT_HEIGHT,
+            m_player->quickSelectBar, m_player->quickSelectBarSlot
+        );
 
-        m_player->inventorySite =
-            Inventory::draw(((137 / 2) - (120 / 2)), 10, m_player->inventory,
-                            sizeof(m_player->inventory) / sizeof(ItemStack), m_player->inventorySite);
+        m_inventory->draw(
+                ((137 / 2) - (120 / 2)), 10, m_player->inventory,
+                sizeof(m_player->inventory) / sizeof(ItemStack), m_player->inventorySite
+        );
+
+        m_player->inventorySite = m_inventory->currentSite;
 
         if (showDebugInfo) {
             debugUi->Draw();

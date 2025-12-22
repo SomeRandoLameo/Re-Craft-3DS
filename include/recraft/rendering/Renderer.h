@@ -59,7 +59,7 @@ private:
     Player* m_player;
     WorldRenderer* m_worldRenderer = nullptr;
     WorkQueue* m_workqueue;
-
+    Inventory* m_inventory;
     ImGuiIO* m_io;
     bool m_show_demo_window;
     std::string m_cstyle;

@@ -59,13 +59,13 @@ void Player::InitializeInventory() {
     inventory[l++] = mc::inventory::Slot(Block_Emerald_Ore, 1, 0);
     inventory[l++] = mc::inventory::Slot(Block_Furnace, 1, 0);
 
-    for (int i = 0; i < 9; i++) {
-        quickSelectBar[i] = mc::inventory::Slot(Block_Air, 0, 0);
+    for (auto & i : quickSelectBar) {
+        i = mc::inventory::Slot(Block_Air, 0, 0);
     }
 
 }
 
-void Player::Update(void* dmg) {
+void Player::Update(Damage* dmg) {
     view.x = -sinf(yaw) * cosf(pitch);
     view.y = sinf(pitch);
     view.z = -cosf(yaw) * cosf(pitch);
@@ -220,9 +220,7 @@ void Player::HandleHunger() {
     }
 }
 
-void Player::HandleRespawn(void* arg1) {
-    // Stupid patch (need to get rid of that)
-    Damage* dmg = (Damage*)arg1;
+void Player::HandleRespawn(Damage* dmg) {
     if (hp <= 0) {
         if (difficulty != 4) {
             if (!spawnset) {

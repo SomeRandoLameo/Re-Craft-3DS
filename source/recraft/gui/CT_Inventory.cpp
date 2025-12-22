@@ -99,12 +99,12 @@ void Inventory::drawSlot(mc::inventory::Slot* slot, int x, int y) {
     );
 }
 
-int Inventory::draw(int x, int y, mc::inventory::Slot* stacks, int count, int site) {
+void Inventory::draw(int x, int y, mc::inventory::Slot* stacks, int count, int site) {
     SpriteBatch_SetScale(1);
 
     int headX = x;
     int headY = y;
-    int currentSite = site;
+    currentSite = site;
 
     if (count > 27) {
         Gui::Offset(0, 155);
@@ -138,7 +138,6 @@ int Inventory::draw(int x, int y, mc::inventory::Slot* stacks, int count, int si
     }
 
     SpriteBatch_SetScale(2);
-    return currentSite;
 }
 
 void Inventory::Transfer(ItemStack* src, ItemStack* dst) {

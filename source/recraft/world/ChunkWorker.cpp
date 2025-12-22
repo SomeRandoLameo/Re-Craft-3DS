@@ -2,8 +2,8 @@
 #include "misc/Crash.h"
 #include <stdio.h>
 
-ChunkWorker::ChunkWorker() : thread(nullptr), working(false), shouldStop(false) {
-	WorkQueue_Init(&queue);
+ChunkWorker::ChunkWorker() {
+	WorkQueue_Init(&m_queue);
 
 	if (R_FAILED(APT_SetAppCpuTimeLimit(30))) {
 		Crash("Couldn't set AppCpuTimeLimit");
@@ -14,38 +14,38 @@ ChunkWorker::ChunkWorker() : thread(nullptr), working(false), shouldStop(false) 
 	APT_CheckNew3DS(&isNew3ds);
 	svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
 
-	thread = threadCreate(&ChunkWorker::MainloopWrapper, (void*)this,
+	m_thread = threadCreate(&ChunkWorker::MainloopWrapper, (void*)this,
 						  CHUNKWORKER_THREAD_STACKSIZE, prio - 1,
 						  isNew3ds ? 2 : 1, false);
 
-	if (!thread) {
+	if (!m_thread) {
 		Crash("Couldn't create worker thread");
 	}
 }
 
 ChunkWorker::~ChunkWorker() {
-	shouldStop = true;
-	LightEvent_Signal(&queue.itemAddedEvent);
-	threadJoin(thread, UINT64_MAX);
-	threadFree(thread);
+	m_shouldStop = true;
+	LightEvent_Signal(&m_queue.itemAddedEvent);
+	threadJoin(m_thread, UINT64_MAX);
+	threadFree(m_thread);
 
-	WorkQueue_Deinit(&queue);
+	WorkQueue_Deinit(&m_queue);
 
 }
 
 void ChunkWorker::Finish() {
-	LightEvent_Signal(&queue.itemAddedEvent);
-	while (working || queue.queue.size() > 0) {
+	LightEvent_Signal(&m_queue.itemAddedEvent);
+	while (m_working || m_queue.queue.size() > 0) {
 		svcSleepThread(1000000);
 	}
 }
 
 void ChunkWorker::AddHandler(WorkerItemType type, WorkerFuncObj obj) {
-	handler[type].push_back(obj);
+	m_handler[type].push_back(obj);
 }
 
 void ChunkWorker::SetHandlerActive(WorkerItemType type, void* context, bool active) {
-	for (auto& h : handler[type]) {
+	for (auto& h : m_handler[type]) {
 		if (h.context == context) {
 			h.active = active;
 			return;
@@ -62,25 +62,25 @@ void ChunkWorker::Mainloop() {
 	std::vector<WorkerItem> privateQueue;
 	privateQueue.clear();
 
-	while (!shouldStop || queue.queue.size() > 0) {
-		working = false;
+	while (!m_shouldStop || m_queue.queue.size() > 0) {
+		m_working = false;
 
-		LightEvent_Wait(&queue.itemAddedEvent);
-		LightEvent_Clear(&queue.itemAddedEvent);
+		LightEvent_Wait(&m_queue.itemAddedEvent);
+		LightEvent_Clear(&m_queue.itemAddedEvent);
 
-		working = true;
+		m_working = true;
 
 		// Move queue items into private queue
-		LightLock_Lock(&queue.listInUse);
+		LightLock_Lock(&m_queue.listInUse);
 
 		privateQueue.insert(
 				privateQueue.end(),
-				queue.queue.begin(),
-				queue.queue.end()
+				m_queue.queue.begin(),
+				m_queue.queue.end()
 		);
-		queue.queue.clear();
+		m_queue.queue.clear();
 
-		LightLock_Unlock(&queue.listInUse);
+		LightLock_Unlock(&m_queue.listInUse);
 
 		// Process private queue
 		while (!privateQueue.empty()) {
@@ -89,9 +89,9 @@ void ChunkWorker::Mainloop() {
 
 			if (item.uuid == item.chunk->uuid) {
 
-				for (auto& h : handler[item.type]) {
+				for (auto& h : m_handler[item.type]) {
 					if (h.active) {
-						h.func(&queue, item, h.context);
+						h.func(&m_queue, item, h.context);
 					}
 					svcSleepThread(7000);
 				}

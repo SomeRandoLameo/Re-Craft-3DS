@@ -4,8 +4,6 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "entity/Player.h"
-
 void OvertimeDamage(const char* cause, int time) {
   /*Player* player;
   if (strcmp(cause, "fire") == 0) {

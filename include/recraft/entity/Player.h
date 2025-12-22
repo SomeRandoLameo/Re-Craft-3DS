@@ -27,7 +27,7 @@ public:
     Player(World* world);
     ~Player() = default;
 
-    void Update(void* dmg);
+    void Update(Damage* dmg);
     void UpdateMovement(PlayerControlScheme m_controlScheme, InputData input, float dt);
     void Move(float dt, mc::Vector3d accl);
     void PlaceBlock();
@@ -98,5 +98,5 @@ private:
     void HandleFallDamage();
     void HandleFireDamage();
     void HandleHunger();
-    void HandleRespawn(void* dmg);
+    void HandleRespawn(Damage* dmg);
 };

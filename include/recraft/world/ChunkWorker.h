@@ -27,16 +27,16 @@ public:
 	void AddHandler(WorkerItemType type, WorkerFuncObj obj);
 	void SetHandlerActive(WorkerItemType type, void* context, bool active);
 
-	inline bool IsWorking() const { return working; }
-	inline WorkQueue& GetQueue() { return queue; }
+	inline bool IsWorking() const { return m_working; }
+	inline WorkQueue& GetQueue() { return m_queue; }
 
 private:
 	static void MainloopWrapper(void* context);
 	void Mainloop();
 
-	Thread thread;
-	WorkQueue queue;
-    std::vector<WorkerFuncObj> handler[WorkerItemTypes_Count];
-	volatile bool working;
-	volatile bool shouldStop;
+	Thread m_thread = nullptr;
+	WorkQueue m_queue;
+    std::vector<WorkerFuncObj> m_handler[WorkerItemTypes_Count];
+	volatile bool m_working = false;
+	volatile bool m_shouldStop = false;
 };
