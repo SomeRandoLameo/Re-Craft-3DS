@@ -72,43 +72,43 @@ void World::UnloadChunk(ChunkColumn* chunk) {
 	chunk->references--;
 }
 
-ChunkColumn* World::GetChunk(int x, int z) {
+ChunkColumn* World::GetChunkColumn(int x, int z) {
 	int halfS = CHUNKCACHE_SIZE / 2;
 	int lowX = cacheTranslationX - halfS;
 	int lowZ = cacheTranslationZ - halfS;
 	int highX = cacheTranslationX + halfS;
 	int highZ = cacheTranslationZ + halfS;
 	if (x >= lowX && z >= lowZ && x <= highX && z <= highZ) return chunkCache[x - lowX][z - lowZ];
-	return NULL;
+	return nullptr;
 }
 
 Block World::GetBlock( mc::Vector3i position) {
 	if (position.y < 0 || position.y >= CHUNK_HEIGHT) return Block_Air;
-	ChunkColumn* chunk = GetChunk(WorldToChunkCoord(position.x), WorldToChunkCoord(position.z));
+	ChunkColumn* chunk = GetChunkColumn(WorldToChunkCoord(position.x), WorldToChunkCoord(position.z));
 	if (chunk) return chunk->GetBlock(mc::Vector3i(WorldToLocalCoord(position.x), position.y, WorldToLocalCoord(position.z)));
 	return Block_Air;
 }
 
 static void NotifyNeighbor(int axis, int comp, World* world, int cX, int cZ, int y, int xDiff, int zDiff) {
     if (axis == comp) {
-        ChunkColumn* neighborChunk = world->GetChunk(cX + xDiff, cZ + zDiff);
+        ChunkColumn* neighborChunk = world->GetChunkColumn(cX + xDiff, cZ + zDiff);
         if (neighborChunk) {
             neighborChunk->RequestGraphicsUpdate(y / CHUNK_SIZE);
         }
     }
 }
 
-static void NotifyAllNeighbors(ChunkColumn* chunk, World* world, int cX, int cZ, int lX, int lZ, int y) {
+static void NotifyAllNeighbors(ChunkColumn* column, World* world, int cX, int cZ, int lX, int lZ, int y) {
     NotifyNeighbor(lX, 0, world, cX, cZ, y, -1, 0);
     NotifyNeighbor(lX, 15, world, cX, cZ, y, 1, 0);
     NotifyNeighbor(lZ, 0, world, cX, cZ, y, 0, -1);
     NotifyNeighbor(lZ, 15, world, cX, cZ, y, 0, 1);
 
     if (WorldToLocalCoord(y) == 0 && y / CHUNK_SIZE - 1 >= 0) {
-        chunk->RequestGraphicsUpdate(y / CHUNK_SIZE - 1);
+        column->RequestGraphicsUpdate(y / CHUNK_SIZE - 1);
     }
     if (WorldToLocalCoord(y) == 15 && y / CHUNK_SIZE + 1 < CLUSTER_PER_CHUNK) {
-        chunk->RequestGraphicsUpdate(y / CHUNK_SIZE + 1);
+        column->RequestGraphicsUpdate(y / CHUNK_SIZE + 1);
     }
 }
 
@@ -116,7 +116,7 @@ void World::SetBlock(mc::Vector3i position, Block block) {
 	if (position.y < 0 || position.y >= CHUNK_HEIGHT) return;
 	int cX = WorldToChunkCoord(position.x);
 	int cZ = WorldToChunkCoord(position.z);
-	ChunkColumn* chunk = GetChunk(cX, cZ);
+	ChunkColumn* chunk = GetChunkColumn(cX, cZ);
 	if (chunk) {
 		int lX = WorldToLocalCoord(position.x);
 		int lZ = WorldToLocalCoord(position.z);
@@ -130,7 +130,7 @@ void World::SetBlockAndMeta(mc::Vector3i position, Block block, uint8_t metadata
 	if (position.y < 0 || position.y >= CHUNK_HEIGHT) return;
 	int cX = WorldToChunkCoord(position.x);
 	int cZ = WorldToChunkCoord(position.z);
-	ChunkColumn* chunk = GetChunk(cX, cZ);
+	ChunkColumn* chunk = GetChunkColumn(cX, cZ);
 	if (chunk) {
 		int lX = WorldToLocalCoord(position.x);
 		int lZ = WorldToLocalCoord(position.z);
@@ -142,7 +142,7 @@ void World::SetBlockAndMeta(mc::Vector3i position, Block block, uint8_t metadata
 
 uint8_t World::GetMetadata(mc::Vector3i position) {
 	if (position.y < 0 || position.y >= CHUNK_HEIGHT) return 0;
-	ChunkColumn* chunk = GetChunk(WorldToChunkCoord(position.x), WorldToChunkCoord(position.z));
+	ChunkColumn* chunk = GetChunkColumn(WorldToChunkCoord(position.x), WorldToChunkCoord(position.z));
 	if (chunk) return chunk->GetMetadata(mc::Vector3i(WorldToLocalCoord(position.x), position.y, WorldToLocalCoord(position.z)));
 	return 0;
 }
@@ -151,7 +151,7 @@ void World::SetMetadata(mc::Vector3i position, uint8_t metadata) {
 	if (position.y < 0 || position.y >= CHUNK_HEIGHT) return;
 	int cX = WorldToChunkCoord(position.x);
 	int cZ = WorldToChunkCoord(position.z);
-	ChunkColumn* chunk = GetChunk(cX, cZ);
+	ChunkColumn* chunk = GetChunkColumn(cX, cZ);
 	if (chunk) {
 		int lX = WorldToLocalCoord(position.x);
 		int lZ = WorldToLocalCoord(position.z);
@@ -164,7 +164,7 @@ void World::SetMetadata(mc::Vector3i position, uint8_t metadata) {
 int World::GetHeight(int x, int z) {
 	int cX = WorldToChunkCoord(x);
 	int cZ = WorldToChunkCoord(z);
-	ChunkColumn* chunk = GetChunk(cX, cZ);
+	ChunkColumn* chunk = GetChunkColumn(cX, cZ);
 	if (chunk) {
 		int lX = WorldToLocalCoord(x);
 		int lZ = WorldToLocalCoord(z);

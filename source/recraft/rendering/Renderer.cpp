@@ -295,7 +295,6 @@ void Renderer::RenderFrame(int eyeIndex, float iod) {
     } else if (*ReCraftCore::GetInstance()->GetGameState() == GameState_Playing_OnLine) {
         C3D_TexBind(0, (C3D_Tex*)Block_GetTextureMap());
 
-        // TODO: There needs to be a world to render :D
         m_worldRenderer->Render(!eyeIndex ? -iod : iod);
 
         RenderGameOverlay();

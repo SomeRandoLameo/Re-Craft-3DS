@@ -36,6 +36,8 @@ public:
     bool CanMove(mc::Vector3d newVec);
 
     mc::Vector3d position = mc::Vector3d(0.f, 0.f, 0.f);
+    mc::Vector3d velocity = mc::Vector3d(0, 0, 0);
+
     float pitch = 0.f;
     float yaw = 0.f;
     float bobbing = 0.f;
@@ -50,12 +52,11 @@ public:
 
     // experience is a value between 0 and 0.99*
     float experience = 0.1;
-    float experienceLevel= 5000000;
+    float experienceLevel = 5000000;
 
     mc::Vector3d view = mc::Vector3d(0, 0, -1);
     bool autoJumpEnabled = true;
 
-    mc::Vector3d velocity = mc::Vector3d(0, 0, 0);
     float simStepAccum = 0.f;
 
     float breakPlaceTimeout = 0.f;

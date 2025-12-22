@@ -5,7 +5,7 @@
 #include "VecMath.h"
 //mclib
 #include <mclib/common/Vector.h>
-
+//TODO: Use MCLIB AABB
 typedef struct { mc::Vector3d min, max; } Box;
 
 Box Box_Create(float x, float y, float z, float w, float h, float d);

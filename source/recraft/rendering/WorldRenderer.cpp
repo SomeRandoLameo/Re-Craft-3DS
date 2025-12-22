@@ -69,8 +69,8 @@ void WorldRenderer::RenderWorld() {
     m_transparentClusters.clear();
 
     int pY = CLAMP(WorldToChunkCoord(FastFloor(m_player->position.y)), 0, CLUSTER_PER_CHUNK - 1);
-    ChunkColumn* pChunk = m_world->GetChunk(WorldToChunkCoord(FastFloor(m_player->position.x)),
-                                            WorldToChunkCoord(FastFloor(m_player->position.z)));
+    ChunkColumn* pChunk = m_world->GetChunkColumn(WorldToChunkCoord(FastFloor(m_player->position.x)),
+                                                  WorldToChunkCoord(FastFloor(m_player->position.z)));
     m_renderingQueue.push_back(RenderStep{&pChunk->chunks[pY], pChunk, Direction_Invalid});
     ClusterRenderedRef(CHUNKCACHE_SIZE / 2 + m_world->cacheTranslationX, pY,
                        CHUNKCACHE_SIZE / 2 + m_world->cacheTranslationZ) = 1;
@@ -127,7 +127,7 @@ void WorldRenderer::RenderWorld() {
 
             ClusterRenderedRef(newX, newY, newZ) |= 1;
 
-            ChunkColumn* newChunk = m_world->GetChunk(newX, newZ);
+            ChunkColumn* newChunk = m_world->GetChunkColumn(newX, newZ);
             RenderStep nextStep = (RenderStep){&newChunk->chunks[newY], newChunk, DirectionOpposite[dir]};
             if (newChunk)
                 m_renderingQueue.push_back(nextStep);

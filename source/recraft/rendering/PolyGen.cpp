@@ -152,7 +152,7 @@ void PolyGen_Harvest(DebugUI* debugUi) {
                     vboUpdates.pop_back();
 
 
-                    ChunkColumn* chunk = world->GetChunk(update.x, update.z);
+                    ChunkColumn* chunk = world->GetChunkColumn(update.x, update.z);
 					if (chunk) {
 						if (chunk->chunks[update.y].vertices > 0) vboCache.Free(chunk->chunks[update.y].vbo);
 						if (chunk->chunks[update.y].transparentVertices > 0)

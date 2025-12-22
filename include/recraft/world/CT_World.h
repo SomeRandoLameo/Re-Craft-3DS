@@ -38,7 +38,7 @@ public:
     ChunkColumn* LoadChunk(int x, int z);
     void UnloadChunk(ChunkColumn* chunk);
 
-    ChunkColumn* GetChunk(int x, int z);
+    ChunkColumn* GetChunkColumn(int x, int z);
 
     Block GetBlock(mc::Vector3i position);
     void SetBlock(mc::Vector3i position, Block block);
