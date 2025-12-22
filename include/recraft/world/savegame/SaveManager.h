@@ -15,7 +15,7 @@ public:
 
     static void InitFileSystem();
 
-    void Init(Player* player);
+    void Init(Player* player, World* world);
 
     void Load(char* path);
     void Unload();

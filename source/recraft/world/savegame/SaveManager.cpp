@@ -19,9 +19,9 @@ void SaveManager::InitFileSystem() {
     mkdir("sdmc:/craftus_redesigned/saves", mkdirFlags);
 }
 
-void SaveManager::Init(Player* player) {
+void SaveManager::Init(Player* player, World* world) {
     m_player = player;
-    m_world = m_player->world;
+    m_world = world;
 }
 
 void SaveManager::Load(char* path) {

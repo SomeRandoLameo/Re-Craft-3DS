@@ -358,8 +358,7 @@ void Block_GetTexture(mc::inventory::Slot block, Direction direction, int16_t* o
 #define extractR(c) ((c >> 16) & 0xff)
 #define extractG(c) (((c) >> 8) & 0xff)
 #define extractB(c) ((c)&0xff)
-/*#define toRGB16(c) \
-	{ extractR(c), extractG(c), extractB(c) }*/
+
 void Block_GetColor(Block block, uint8_t metadata, Direction direction, uint8_t out_rgb[]) {
 	if ((block == Block_Grass && direction == Direction_Top) || block == Block_Leaves) {
 		out_rgb[0] = 140;

@@ -11,6 +11,10 @@
 #include "entity/Damage.h"
 #include "misc/Raycast.h"
 #include "misc/VecMath.h"
+#include "misc/InputData.h"
+
+class PlayerControlScheme;
+class PlayerController;
 
 #define PLAYER_EYEHEIGHT (1.65f)
 #define PLAYER_HEIGHT (1.8f)
@@ -20,12 +24,11 @@
 
 class Player {
 public:
-    // Constructor and destructor
     Player(World* world);
     ~Player() = default;
 
-    // Public methods
     void Update(void* dmg);
+    void UpdateMovement(PlayerControlScheme m_controlScheme, InputData input, float dt);
     void Move(float dt, mc::Vector3d accl);
     void PlaceBlock();
     void BreakBlock();
@@ -43,7 +46,7 @@ public:
     bool sprinting = false;
     bool flying = false;
     bool crouching = false;
-    World* world = nullptr;
+
 
     // experience is a value between 0 and 0.99*
     float experience = 0.1;
@@ -84,7 +87,13 @@ public:
     mc::inventory::Slot inventory[64];
 
 private:
-    // Private methods
+    World* m_world = nullptr;
+
+    float m_breakPlaceTimeout = 0.f;
+    float m_flyTimer = -1.f;
+
+    bool m_openedCmd = false;
+
     void InitializeInventory();
     void HandleFallDamage();
     void HandleFireDamage();

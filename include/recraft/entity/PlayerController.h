@@ -1,10 +1,33 @@
 #pragma once
 
+class Player;
+
 #include "Player.h"
 #include "../misc/InputData.h"
 #include "../gui/DebugUI.h"
 //mclib
 #include <mclib/common/Vector.h>
+
+class Input {
+public:
+    float keys[23];
+    bool keysup[23];
+    bool keysdown[23];
+
+    float IsKeyDown(int combo, Input *input) {
+        return input->keys[combo];
+    }
+
+    bool WasKeyReleased(int combo, Input *input) {
+        return input->keysup[combo];
+    }
+
+    bool WasKeyPressed(int combo, Input *input) {
+        return input->keysdown[combo];
+    }
+};
+
+void convertPlatformInput(InputData *input, float ctrls[], bool keysdown[], bool keysup[]);
 
 class PlayerControlScheme {
 public:
@@ -31,21 +54,17 @@ public:
                         int swLeft, int swRight, int cmd, int crch);
 };
 
+
+
 class PlayerController {
 private:
     PlayerControlScheme m_controlScheme;
-    float m_breakPlaceTimeout = 0.f;
-    bool m_openedCmd = false;
-    float m_flyTimer = -1.f;
-
 public:
     Player* player;
     PlayerController(Player* player);
-    void Update(DebugUI* debugUi, InputData input, float dt);
 
     // Getter/setter if needed
     PlayerControlScheme& GetControlScheme() { return m_controlScheme; }
-
 
     mc::Vector3d movement;
 };

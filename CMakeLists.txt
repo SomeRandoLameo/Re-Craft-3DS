@@ -61,7 +61,6 @@ add_executable(${PROJECT_NAME}
     source/recraft/rendering/Renderer.cpp
     source/recraft/rendering/TextureMap.cpp
     source/recraft/rendering/VBOCache.cpp
-    source/recraft/rendering/VertexFmt.cpp
     source/recraft/rendering/WorldRenderer.cpp
     source/recraft/world/ChunkWorker.cpp
     source/recraft/world/CT_Chunk.cpp

@@ -26,6 +26,3 @@ typedef struct {
 #define SHADER_RGB_MIX(a, b) SHADER_RGB((SHADER_R(a) + SHADER_R(b)) / 2, (SHADER_G(a) + SHADER_G(b)) / 2, (SHADER_B(a) + SHADER_B(b)) / 2)
 
 #define SHADER_RGB_DARKEN(a, f) SHADER_RGB(((int)SHADER_R(a)) * f / 16, ((int)SHADER_G(a)) * f / 16, ((int)SHADER_B(a)) * f / 16)
-
-int16_t HSV16_ToRGB(int16_t hsv);
-int16_t RGB16_ToHSV(uint16_t rgb);

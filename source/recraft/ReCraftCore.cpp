@@ -52,7 +52,7 @@ ReCraftCore::ReCraftCore() {
 
     WorldSelect_Init();
 
-    m_savemgr.Init(m_player);
+    m_savemgr.Init(m_player, m_world);
     m_chunkWorker.AddHandler(
         WorkerItemType_Load,
         (WorkerFuncObj) {SaveManager::LoadChunkCallback, &m_savemgr, true}
@@ -176,7 +176,7 @@ void ReCraftCore::Main() {
             m_timeAccum = -20.f;
         }
 
-        m_playerCtrl->Update(m_debugUI, inputData, Delta() * 0.001);
+        m_player->UpdateMovement(m_playerCtrl->GetControlScheme(),inputData, Delta() * 0.001);
 
         m_world->UpdateChunkCache(
             WorldToChunkCoord(FastFloor(m_player->position.x)),
@@ -190,7 +190,7 @@ void ReCraftCore::Main() {
                 m_player->position = client->GetPlayerController()->GetPosition();
 
                 //dimension = client->GetConnection()->GetDimension();
-                m_playerCtrl->Update(m_debugUI, inputData, Delta() * 0.001);
+                m_player->UpdateMovement(m_playerCtrl->GetControlScheme(), inputData, Delta() * 0.001);
 
                 // TODO: This is baaaad :D
 

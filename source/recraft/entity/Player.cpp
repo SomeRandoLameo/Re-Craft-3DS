@@ -3,13 +3,14 @@
 #include "entity/Damage.h"
 #include "gui/DebugUI.h"
 #include "mcbridge/MCBridge.h"
+#include "entity/PlayerController.h"
 
 const float MaxWalkVelocity = 4.3f;
 const float MaxFallVelocity = -50.f;
 const float GravityPlusFriction = 10.f;
 
 Player::Player(World* world) {
-    this->world = world;
+    m_world = world;
 
     InitializeInventory();
 }
@@ -69,7 +70,7 @@ void Player::Update(void* dmg) {
     view.y = sinf(pitch);
     view.z = -cosf(yaw) * cosf(pitch);
 
-    blockInSight = Raycast_Cast(world, position + mc::Vector3d(0,PLAYER_EYEHEIGHT,0), view, &viewRayCast);
+    blockInSight = Raycast_Cast(m_world, position + mc::Vector3d(0,PLAYER_EYEHEIGHT,0), view, &viewRayCast);
     blockInActionRange = blockInSight && viewRayCast.distSqr < 3.5f * 3.5f * 3.5f;
 
     if(gamemode != 1){
@@ -81,10 +82,115 @@ void Player::Update(void* dmg) {
     HandleRespawn(dmg);
 }
 
+void Player::UpdateMovement(PlayerControlScheme m_controlScheme, InputData input, float dt) {
+    Damage dmg;
+
+    Input in = {0};
+    convertPlatformInput(&input, in.keys, in.keysdown, in.keysup);
+
+    float jump          = in.IsKeyDown(m_controlScheme.jump, &in);
+    float crouch        = in.IsKeyDown(m_controlScheme.crouch, &in);
+
+    float forward       = in.IsKeyDown(m_controlScheme.forward, &in);
+    float backward      = in.IsKeyDown(m_controlScheme.backward, &in);
+    float strafeLeft    = in.IsKeyDown(m_controlScheme.strafeLeft, &in);
+    float strafeRight   = in.IsKeyDown(m_controlScheme.strafeRight, &in);
+
+    mc::Vector3d forwardVec(-sinf(yaw), 0.f, -cosf(yaw));
+    mc::Vector3d rightVec = Vector3d_crs(forwardVec, mc::Vector3d(0, 1, 0));
+
+    mc::Vector3d movement(0, 0, 0);
+    movement = movement + Vector3d_Scale(forwardVec, forward);
+    movement = movement - Vector3d_Scale(forwardVec, backward);
+    movement = movement + Vector3d_Scale(rightVec, strafeRight);
+    movement = movement - Vector3d_Scale(rightVec, strafeLeft);
+
+    if (flying) {
+        movement = movement + mc::Vector3d(0.f, jump, 0.f);
+        movement = movement + mc::Vector3d(0.f, crouch, 0.f);
+    }
+
+    if (Vector3d_MagSqr(movement) > 0.f) {
+        float speed = 4.3f * Vector3d_mag(mc::Vector3d(-strafeLeft + strafeRight, -crouch + jump, -forward + backward));
+        bobbing += speed * 1.5f * dt;
+        movement.Normalize();
+        movement = Vector3d_Scale(movement, speed);
+    }
+
+    float lookLeft  = in.IsKeyDown(m_controlScheme.lookLeft, &in);
+    float lookRight = in.IsKeyDown(m_controlScheme.lookRight, &in);
+    float lookUp    = in.IsKeyDown(m_controlScheme.lookUp, &in);
+    float lookDown  = in.IsKeyDown(m_controlScheme.lookDown, &in);
+
+    yaw += (lookLeft + -lookRight) * 160.f * DEG_TO_RAD * dt;
+    pitch += (-lookDown + lookUp) * 160.f * DEG_TO_RAD * dt;
+    pitch = CLAMP(pitch, -DEG_TO_RAD * 89.9f, DEG_TO_RAD * 89.9f);
+
+    float placeBlock = in.IsKeyDown(m_controlScheme.placeBlock, &in);
+    float breakBlock = in.IsKeyDown(m_controlScheme.breakBlock, &in);
+
+    if (placeBlock > 0.f) {
+        PlaceBlock();
+    }
+
+    if (breakBlock > 0.f) {
+        BreakBlock();
+    }
+
+
+    if (jump > 0.f) {
+        Jump(mc::Vector3d(movement.x, movement.y, movement.z));
+    }
+
+
+    bool releasedJump = in.WasKeyReleased(m_controlScheme.jump, &in);
+    if (m_flyTimer >= 0.f) {
+        if (jump > 0.f) {
+            flying ^= true;
+        }
+
+        m_flyTimer += dt;
+        if (m_flyTimer > 0.25f) {
+            m_flyTimer = -1.f;
+        }
+
+    } else if (releasedJump) {
+        m_flyTimer = 0.f;
+    }
+
+    bool releasedCrouch = in.WasKeyReleased(m_controlScheme.crouch, &in);
+    crouching ^= !flying && releasedCrouch;
+
+    bool switchBlockLeft  = in.WasKeyPressed(m_controlScheme.switchBlockLeft, &in);
+    bool switchBlockRight = in.WasKeyPressed(m_controlScheme.switchBlockRight, &in);
+
+    if (switchBlockLeft && --quickSelectBarSlot == -1) {
+        quickSelectBarSlot = 8;
+    }
+
+    if (switchBlockRight && ++quickSelectBarSlot == 9) {
+        quickSelectBarSlot = 0;
+    }
+/*
+    if (m_openedCmd) {
+        dt = 0.f;
+        m_openedCmd = false;
+    }
+
+    bool cmdLine = WasKeyPressed(m_controlScheme.openCmd, &agnosticInput);
+    if (cmdLine) {
+        CommandLine_Activate(world, this, debugUi);
+        m_openedCmd = true;
+    }
+*/
+    Move(dt, mc::Vector3d(movement.x, movement.y, movement.z));
+    Update(&dmg);
+}
+
 void Player::HandleFallDamage() {
     if (velocity.y <= -12) {
         rndy = round(velocity.y);
-        if (world->GetBlock(mc::Vector3i(position.x, position.y - 1, position.z)) != Block_Air) {
+        if (m_world->GetBlock(mc::Vector3i(position.x, position.y - 1, position.z)) != Block_Air) {
             hp = hp + rndy;
             rndy = 0;
         }
@@ -92,7 +198,7 @@ void Player::HandleFallDamage() {
 }
 
 void Player::HandleFireDamage() {
-    if (world->GetBlock(ToVector3i(position)) == Block_Lava) {
+    if (m_world->GetBlock(ToVector3i(position)) == Block_Lava) {
       //  DebugUI_Log("ur burning lol");
         OvertimeDamage("Fire", 10);
     }
@@ -129,10 +235,10 @@ void Player::HandleRespawn(void* arg1) {
                 position.x = 0.0;
 
                 int spawnY = 1;
-                while (world->GetBlock( mc::ToVector3i(spawnPos)) != Block_Air)
+                while (m_world->GetBlock( mc::ToVector3i(spawnPos)) != Block_Air)
                     spawnY++;
 
-                bool shouldOffset = world->GetGenSettings().type != WorldGen_SuperFlat;
+                bool shouldOffset = m_world->GetGenSettings().type != WorldGen_SuperFlat;
                 position.y = shouldOffset ? spawnY + 1 : spawnY;
                 position.z = 0.0;
             }
@@ -145,10 +251,10 @@ void Player::HandleRespawn(void* arg1) {
                 position.x = spawnPos.x;
 
                 int spawnY = 1;
-                while (world->GetBlock(ToVector3i(spawnPos)) != Block_Air)
+                while (m_world->GetBlock(ToVector3i(spawnPos)) != Block_Air)
                     spawnY++;
 
-                bool shouldOffset = world->GetGenSettings().type != WorldGen_SuperFlat;
+                bool shouldOffset = m_world->GetGenSettings().type != WorldGen_SuperFlat;
                 position.y = shouldOffset ? spawnY + 1 : spawnY;
                 position.z = spawnPos.z;
             }
@@ -171,9 +277,9 @@ bool Player::CanMove(mc::Vector3d newVec) {
                     FastFloor(newVec.z) + z
                 );
 
-                if (world->GetBlock(blockPos) != Block_Air &&
-                    world->GetBlock(blockPos) != Block_Lava &&
-                    world->GetBlock(blockPos) != Block_Water) {
+                if (m_world->GetBlock(blockPos) != Block_Air &&
+                    m_world->GetBlock(blockPos) != Block_Lava &&
+                    m_world->GetBlock(blockPos) != Block_Water) {
                     if (AABB_Overlap(
                             newVec.x - PLAYER_COLLISIONBOX_SIZE / 2.f,
                             newVec.y,
@@ -264,9 +370,9 @@ void Player::Move(float dt, mc::Vector3d accl) {
                             FastFloor(axisStep.z) + z
                         );
 
-                        if (world->GetBlock(blockPos) != Block_Air &&
-                            world->GetBlock(blockPos) != Block_Lava &&
-                            world->GetBlock(blockPos) != Block_Water) {
+                        if (m_world->GetBlock(blockPos) != Block_Air &&
+                            m_world->GetBlock(blockPos) != Block_Lava &&
+                            m_world->GetBlock(blockPos) != Block_Water) {
                             Box blockBox = Box_Create(blockPos.x, blockPos.y, blockPos.z, 1, 1, 1);
 
                             mc::Vector3d normal(0.f, 0.f, 0.f);
@@ -311,14 +417,14 @@ void Player::Move(float dt, mc::Vector3d accl) {
             mc::Vector3d nrmDiff = newPos - position;
             nrmDiff.Normalize();
 
-            Block block = world->GetBlock(
+            Block block = m_world->GetBlock(
                 mc::Vector3i(
                     FastFloor(finalPos.x + nrmDiff.x),
                     FastFloor(finalPos.y + nrmDiff.y) + 2,
                     FastFloor(finalPos.z + nrmDiff.z)
                 )
             );
-            Block landingBlock = world->GetBlock(
+            Block landingBlock = m_world->GetBlock(
                 mc::Vector3i(
                     FastFloor(finalPos.x + nrmDiff.x),
                     FastFloor(finalPos.y + nrmDiff.y) + 1,
@@ -366,7 +472,7 @@ void Player::Move(float dt, mc::Vector3d accl) {
 }
 
 void Player::PlaceBlock() {
-    if (world && blockInActionRange && breakPlaceTimeout < 0.f) {
+    if (m_world && blockInActionRange && breakPlaceTimeout < 0.f) {
         const int* offset = DirectionToOffset[viewRayCast.direction];
 
         if (AABB_Overlap(
@@ -378,7 +484,7 @@ void Player::PlaceBlock() {
             return;
 
         //TODO: Remove Ducttape
-        world->SetBlockAndMeta(
+        m_world->SetBlockAndMeta(
                 mc::Vector3i(
                         (int)viewRayCast.x + offset[0],
                         (int)viewRayCast.y + offset[1],
@@ -395,8 +501,8 @@ void Player::PlaceBlock() {
 }
 
 void Player::BreakBlock() {
-    if (world && blockInActionRange && breakPlaceTimeout < 0.f) {
-        world->SetBlock(mc::Vector3i(viewRayCast.x, viewRayCast.y, viewRayCast.z), Block_Air);
+    if (m_world && blockInActionRange && breakPlaceTimeout < 0.f) {
+        m_world->SetBlock(mc::Vector3i(viewRayCast.x, viewRayCast.y, viewRayCast.z), Block_Air);
     }
 
     if (breakPlaceTimeout < 0.f) {

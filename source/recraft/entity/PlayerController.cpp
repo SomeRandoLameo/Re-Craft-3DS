@@ -1,6 +1,5 @@
 #include "entity/PlayerController.h"
 
-#include "misc/CommandLine.h"
 #include "misc/NumberUtils.h"
 
 #include <unistd.h>
@@ -81,13 +80,9 @@ static const PlayerControlScheme
                         K3DS_Y             // crouch
     );
 
-typedef struct {
-    float keys[23];
-    bool keysup[23];
-    bool keysdown[23];
-} PlatformAgnosticInput;
 
-static void convertPlatformInput(InputData *input, float ctrls[], bool keysdown[], bool keysup[]) {
+
+void convertPlatformInput(InputData *input, float ctrls[], bool keysdown[], bool keysup[]) {
     ctrls[0] = 0.f;
     keysdown[0] = 0;
     keysup[0] = 0;
@@ -164,17 +159,7 @@ static void convertPlatformInput(InputData *input, float ctrls[], bool keysdown[
 }
 
 // Utility functions
-static inline float IsKeyDown(int combo, PlatformAgnosticInput *input) {
-  return input->keys[combo];
-}
 
-static inline bool WasKeyReleased(int combo, PlatformAgnosticInput *input) {
-  return input->keysup[combo];
-}
-
-static inline bool WasKeyPressed(int combo, PlatformAgnosticInput *input) {
-  return input->keysdown[combo];
-}
 
 PlayerControlScheme::PlayerControlScheme(int fwd, int bwd, int sLeft,
                                          int sRight, int lLeft, int lRight,
@@ -291,110 +276,4 @@ PlayerController::PlayerController(Player *player) : player(player) {
                 player->autoJumpEnabled);
         fclose(f);
     }
-}
-
-void PlayerController::Update(DebugUI *debugUi, InputData input, float dt) {
-    Damage dmg;
-
-    PlatformAgnosticInput agnosticInput = {0};
-    convertPlatformInput(&input, agnosticInput.keys, agnosticInput.keysdown, agnosticInput.keysup);
-
-    float jump          = IsKeyDown(m_controlScheme.jump, &agnosticInput);
-    float crouch        = IsKeyDown(m_controlScheme.crouch, &agnosticInput);
-
-    float forward       = IsKeyDown(m_controlScheme.forward, &agnosticInput);
-    float backward      = IsKeyDown(m_controlScheme.backward, &agnosticInput);
-    float strafeLeft    = IsKeyDown(m_controlScheme.strafeLeft, &agnosticInput);
-    float strafeRight   = IsKeyDown(m_controlScheme.strafeRight, &agnosticInput);
-
-    mc::Vector3d forwardVec(-sinf(player->yaw), 0.f, -cosf(player->yaw));
-    mc::Vector3d rightVec = Vector3d_crs(forwardVec, mc::Vector3d(0, 1, 0));
-
-    movement = mc::Vector3d(0, 0, 0);
-    movement = movement + Vector3d_Scale(forwardVec, forward);
-    movement = movement - Vector3d_Scale(forwardVec, backward);
-    movement = movement + Vector3d_Scale(rightVec, strafeRight);
-    movement = movement - Vector3d_Scale(rightVec, strafeLeft);
-
-    if (player->flying) {
-        movement = movement + mc::Vector3d(0.f, jump, 0.f);
-        movement = movement + mc::Vector3d(0.f, crouch, 0.f);
-    }
-
-    if (Vector3d_MagSqr(movement) > 0.f) {
-        float speed = 4.3f * Vector3d_mag(mc::Vector3d(-strafeLeft + strafeRight, -crouch + jump, -forward + backward));
-        player->bobbing += speed * 1.5f * dt;
-        movement.Normalize();
-        movement = Vector3d_Scale(movement, speed);
-    }
-
-    float lookLeft =  IsKeyDown(m_controlScheme.lookLeft, &agnosticInput);
-    float lookRight = IsKeyDown(m_controlScheme.lookRight, &agnosticInput);
-    float lookUp =    IsKeyDown(m_controlScheme.lookUp, &agnosticInput);
-    float lookDown =  IsKeyDown(m_controlScheme.lookDown, &agnosticInput);
-
-    player->yaw += (lookLeft + -lookRight) * 160.f * DEG_TO_RAD * dt;
-    player->pitch += (-lookDown + lookUp) * 160.f * DEG_TO_RAD * dt;
-    player->pitch = CLAMP(player->pitch, -DEG_TO_RAD * 89.9f, DEG_TO_RAD * 89.9f);
-
-    float placeBlock = IsKeyDown(m_controlScheme.placeBlock, &agnosticInput);
-    float breakBlock = IsKeyDown(m_controlScheme.breakBlock, &agnosticInput);
-
-    if (placeBlock > 0.f) {
-        player->PlaceBlock();
-    }
-
-    if (breakBlock > 0.f) {
-        player->BreakBlock();
-    }
-
-
-    if (jump > 0.f) {
-        player->Jump(mc::Vector3d(movement.x, movement.y, movement.z));
-    }
-
-
-    bool releasedJump = WasKeyReleased(m_controlScheme.jump, &agnosticInput);
-    if (m_flyTimer >= 0.f) {
-        if (jump > 0.f) {
-            player->flying ^= true;
-        }
-
-        m_flyTimer += dt;
-        if (m_flyTimer > 0.25f) {
-            m_flyTimer = -1.f;
-        }
-
-    } else if (releasedJump) {
-        m_flyTimer = 0.f;
-    }
-
-    bool releasedCrouch = WasKeyReleased(m_controlScheme.crouch, &agnosticInput);
-    player->crouching ^= !player->flying && releasedCrouch;
-
-    // Hotbar left-right switching
-    bool switchBlockLeft  = WasKeyPressed(m_controlScheme.switchBlockLeft, &agnosticInput);
-    bool switchBlockRight = WasKeyPressed(m_controlScheme.switchBlockRight, &agnosticInput);
-
-    if (switchBlockLeft && --player->quickSelectBarSlot == -1) {
-        player->quickSelectBarSlot = 8;
-    }
-
-    if (switchBlockRight && ++player->quickSelectBarSlot == 9) {
-        player->quickSelectBarSlot = 0;
-    }
-
-    if (m_openedCmd) {
-        dt = 0.f;
-        m_openedCmd = false;
-    }
-
-    bool cmdLine = WasKeyPressed(m_controlScheme.openCmd, &agnosticInput);
-    if (cmdLine) {
-        CommandLine_Activate(player->world, player, debugUi);
-        m_openedCmd = true;
-    }
-
-    player->Move(dt, mc::Vector3d(movement.x, movement.y, movement.z));
-    player->Update(&dmg);
 }
