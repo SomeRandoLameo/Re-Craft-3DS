@@ -33,44 +33,40 @@ class ReCraftCore;
 
 class Renderer {
 public:
-    Renderer(World *world_, Player *player_, WorkQueue *queue);
+    Renderer(World* world_, Player* player_, WorkQueue* queue);
     ~Renderer();
 
-    void Render(DebugUI *debugUi);
+    void Render(DebugUI* debugUi);
 
-    C3D_RenderTarget *GetTopTarget() const { return m_renderTargets[0]; }
-    C3D_RenderTarget *GetBottomTarget() const { return m_lowerScreen; }
+    C3D_RenderTarget* GetTopTarget() const { return Top[0]->Ptr(); }
+    C3D_RenderTarget* GetBottomTarget() const { return Bottom->Ptr(); }
 
 private:
-    Clouds *m_clouds = nullptr;
-    C3D_RenderTarget *m_renderTargets[2]{ nullptr, nullptr };
-    C3D_RenderTarget *m_lowerScreen = nullptr;
+    Clouds* m_clouds = nullptr;
+    C3D::Screen* Top[2]{nullptr, nullptr};
+    C3D::Screen* Bottom = nullptr;
 
-    DVLB_s *m_world_dvlb = nullptr;
-    DVLB_s *m_gui_dvlb = nullptr;
-
-    shaderProgram_s m_world_shader, m_gui_shader;
+    Amy::C3D::Shader::Ref pWorldShader = nullptr;
+    Amy::C3D::Shader::Ref pGuiShader = nullptr;
 
     int m_world_shader_uLocProjection = 0;
     int m_gui_shader_uLocProjection = 0;
 
-    C3D_AttrInfo m_world_vertexAttribs, m_gui_vertexAttribs;
-
     C3D_Tex m_logoTex;
 
-    World *m_world;
+    World* m_world;
 
-    Player *m_player;
-    WorldRenderer *m_worldRenderer = nullptr;
-    WorkQueue *m_workqueue;
+    Player* m_player;
+    WorldRenderer* m_worldRenderer = nullptr;
+    WorkQueue* m_workqueue;
 
-    ImGuiIO *m_io;
+    ImGuiIO* m_io;
     bool m_show_demo_window;
     std::string m_cstyle;
     std::vector<std::string> m_styles;
 
     void RenderFrame(int eyeIndex, float iod);
-    void RenderLowerScreen(DebugUI *debugUi);
+    void RenderLowerScreen(DebugUI* debugUi);
     void RenderImGui();
 
     void RenderExpBar();

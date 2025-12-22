@@ -11,5 +11,5 @@ public:
     void Log(const char *text, ...);
     void Draw();
 
-    Iron::Drawlist* RenderData;
+    Iron::Drawlist::Ref RenderData;
 };

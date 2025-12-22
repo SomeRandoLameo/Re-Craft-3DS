@@ -13,23 +13,6 @@ set(APP_AUTHOR "SomeRandoLameo")
 set(APP_ICON "${CMAKE_SOURCE_DIR}/icon.png")
 set(APP_ROMFS "${CMAKE_SOURCE_DIR}/romfs")
 
-find_program(PICASSO NAMES picasso REQUIRED)
-
-function(make_shader arg1 arg2)
-    # These only exist cause i was stupid
-    set(__FILE ${arg1})
-    set(__NAME ${arg2})
-    # Need to build shaders during config stage :(
-    execute_process(
-        COMMAND ${PICASSO} -o "${CMAKE_BINARY_DIR}/${__NAME}.shbin" "${__FILE}"
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    )
-    dkp_add_embedded_binary_library(${__NAME}_asm "${CMAKE_BINARY_DIR}/${__NAME}.shbin")
-endfunction()
-
-make_shader("${CMAKE_SOURCE_DIR}/source/recraft/rendering/world.v.pica" "world")
-make_shader("${CMAKE_SOURCE_DIR}/source/recraft/rendering/gui.v.pica" "gui")
-
 add_subdirectory(vendor)
 
 add_executable(${PROJECT_NAME}
@@ -95,10 +78,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     imgui-ctr
     stb
     amethyst
-    world_asm # World Shader
-    gui_asm # gui shader
 )
-add_dependencies(${PROJECT_NAME} world_asm gui_asm imgui_impl_c3d_asm)
 
 # Generate 3DSX
 ctr_generate_smdh(

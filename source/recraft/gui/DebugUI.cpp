@@ -13,36 +13,36 @@
 #define LOG_LINE_LENGTH 128
 #define STATUS_LINE_LENGTH 128
 
-static char *statusLines[STATUS_LINES];
-static char *logLines[LOG_LINES];
+static char* statusLines[STATUS_LINES];
+static char* logLines[LOG_LINES];
 static int currentStatusLine = 0;
 
 DebugUI::DebugUI() {
-    for (auto & logLine : logLines) {
-        logLine = (char *)malloc(LOG_LINE_LENGTH);
+    for (auto& logLine : logLines) {
+        logLine = (char*)malloc(LOG_LINE_LENGTH);
         memset(logLine, 0x0, LOG_LINE_LENGTH);
     }
-    for (auto & statusLine : statusLines) {
-        statusLine = (char *)malloc(STATUS_LINE_LENGTH);
+    for (auto& statusLine : statusLines) {
+        statusLine = (char*)malloc(STATUS_LINE_LENGTH);
         memset(statusLine, 0x0, STATUS_LINE_LENGTH);
     }
-    RenderData = new Iron::Drawlist();
-        //TODO: MC Bitmap pixel font loaded from assets :D
+    RenderData = Iron::Drawlist::New();
+    // TODO: MC Bitmap pixel font loaded from assets :D
     RenderData->SetFont(ReCraftCore::GetInstance()->GetAssetManager()->Get<Iron::Font>("font"));
 }
 
 DebugUI::~DebugUI() {
-    for (int i = 0; i < LOG_LINES; i++){
+    for (int i = 0; i < LOG_LINES; i++) {
         free(logLines[i]);
     }
-    for (int i = 0; i < STATUS_LINES; i++){
+    for (int i = 0; i < STATUS_LINES; i++) {
         free(statusLines[i]);
     }
 
-    delete RenderData;
+    RenderData.reset();
 }
 
-void DebugUI::Text(const char *text, ...) {
+void DebugUI::Text(const char* text, ...) {
     if (currentStatusLine >= STATUS_LINES) {
         return;
     }
@@ -55,8 +55,8 @@ void DebugUI::Text(const char *text, ...) {
     va_end(args);
 }
 
-void DebugUI::Log(const char *text, ...) {
-    char *lastLine = logLines[LOG_LINES - 1];
+void DebugUI::Log(const char* text, ...) {
+    char* lastLine = logLines[LOG_LINES - 1];
     for (int i = LOG_LINES - 1; i > 0; i--) {
         logLines[i] = logLines[i - 1];
     }
@@ -72,17 +72,18 @@ void DebugUI::Log(const char *text, ...) {
 }
 
 void DebugUI::Draw() {
+    RenderData->SetFontScale(0.5);
     int yOffset = (240 / 3) * 2;
-    for (auto & logLine : logLines) {
-        int step = 15;
+    for (auto& logLine : logLines) {
+        int step = 12;
         RenderData->DrawText(Amy::fvec2(0, yOffset), logLine, 0xffffffff);
         yOffset += step;
         if (yOffset >= 240)
-          break;
+            break;
     }
     yOffset = 0;
-    for (auto & statusLine : statusLines) {
-        int step = 15;
+    for (auto& statusLine : statusLines) {
+        int step = 12;
         RenderData->DrawText(Amy::fvec2(0, yOffset), statusLine, 0xffffffff);
         yOffset += step;
 
