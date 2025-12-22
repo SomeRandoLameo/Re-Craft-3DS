@@ -8,6 +8,7 @@
 #include "Cursor.h"
 #include "Hand.h"
 #include "Clouds.h"
+#include "CubeRenderer.h"
 #include <citro3d.h>
 
 //mclib
@@ -41,6 +42,7 @@ private:
     void RenderWorld();
 
     Hand* m_hand;
+    CubeRenderer* m_cubeRenderer;
     Clouds* m_clouds;
     Player* m_player;
     World* m_world;

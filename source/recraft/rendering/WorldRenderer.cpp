@@ -26,6 +26,8 @@ WorldRenderer::WorldRenderer(Player* player, World* world, WorkQueue* workqueue,
 
     m_hand = new Hand();
 
+    m_cubeRenderer = new CubeRenderer();
+
     // what the hell is event that.
     float data[256];
     for (int i = 0; i <= 128; i++) {
@@ -55,6 +57,7 @@ WorldRenderer::~WorldRenderer() {
     m_cursor = nullptr;
 
     m_hand->~Hand();
+    m_cubeRenderer->~CubeRenderer();
     m_clouds->~Clouds();
 }
 
@@ -182,6 +185,8 @@ void WorldRenderer::Render(float iod) {
     RenderWorld();
 
     m_clouds->Draw(m_projectionUniform, m_cam.GetVP(), m_world, m_player->position.x, m_player->position.z);
+
+    m_cubeRenderer->Draw(m_projectionUniform, m_cam.GetVP(), m_world, m_player->position);
 
     if (m_player->blockInActionRange) {
         m_cursor->Draw(m_projectionUniform, m_cam.GetVP(), m_world, m_player->viewRayCast.x, m_player->viewRayCast.y,

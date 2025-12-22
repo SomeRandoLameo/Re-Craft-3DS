@@ -39,6 +39,7 @@ add_executable(${PROJECT_NAME}
     source/recraft/rendering/Camera.cpp
     source/recraft/rendering/Frustum.cpp
     source/recraft/rendering/Clouds.cpp
+    source/recraft/rendering/CubeRenderer.cpp
     source/recraft/rendering/Cursor.cpp
     source/recraft/rendering/Hand.cpp
     source/recraft/rendering/PolyGen.cpp
