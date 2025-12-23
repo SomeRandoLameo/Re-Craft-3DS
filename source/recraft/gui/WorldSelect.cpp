@@ -186,6 +186,7 @@ bool WorldSelect_Update(char* out_worldpath, char* out_name, WorldGenType* world
 		menustate = MenuState_WorldOptions;
 	}
 	if(clicked_mp_connect){
+        clicked_mp_connect = false;
 		*isMP = true;
 		*newWorld = false;
 		menustate = MenuState_SelectWorld;

@@ -1,0 +1,50 @@
+CT Block & MCLib Block.
+
+- What is a CT Block?
+A Craftus block is a uint8_t that represents the ID of the block
+Every other attribute of the block (transparency, bounding box, etc) is hardcoded inside Craftus.
+The transparency is determined, if the block id matches a number out of "The Block ID enum".
+Craftus assumes by default that every block has full collision. no exceptions.
+
+- How does Craftus "register" Blocks?
+Blocks are not registered inside Craftus. Everything is hardcoded.
+It binds Textures to hardcoded Texture_MapIcon's inside a hardcoded icon struct.
+(Every block is hardcoded and has a hardcoded Texture_MapIcon)
+
+Block IDs are hardcoded inside an enum.
+To get the Texture of a block, there is a Switch with the Block ItemID that maps to the Hardcoded Texture_MapIcon.
+
+This is a terrible unflexible system.
+There are multiple lists of hardcoded blocks. (Block IDs, Block Textures, Block Properties)
+
+
+
+
+
+- What is a MCLib Block?
+A MCLib block is a class with a string name, uint32_t data, bool solid and AABB bounding box.
+
+- How does MCLib "register" Blocks?
+Blocks are registered inside a BlockRegistry.
+You need to initialize the BlockRegistry with a Protocol version.
+
+Blocks are "registered" to the Minecraft Protocol version.
+Blocks pre 1.12 have different properties than Blocks post 1.12. (See the Flattening update)
+
+These Blocks are pure data, so parts like textures need to be added manually.
+Meaning, you need to add the protocol version in order to determine what block is the correct one.
+it is not avoidable to have some form of dynamic mapping to get the right texture for a block.
+this can be problematic when there will be new blocks. Also quite challenging if the pre flattened block searchs for (example) "stone:34" but there are 33 other stone types.
+
+
+we could start by rewriting the Block to be mc::Block instead of the uint8_t.
+we can just set the type to the ID for now.
+This is sadly not possible.
+
+Every Block needs to be a block pointer from an origin (perhaps the MClib BlockRegistry),
+Because these pointers can be manipulated. Blocks itself cannot... (thanks MCLIB, i learned that after rewriting the codebase ... )
+
+To implement this properly, we need to save a Protocol version when creating the world. At the same time, we are instantiating the BlockRegistry with that saved version.
+This means, we can (for now) only use one MC version of blocks.
+When the world gets exitted, we can deinitialize the block registry.
+

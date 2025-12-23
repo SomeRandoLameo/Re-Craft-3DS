@@ -106,6 +106,7 @@ static struct {
 	Texture_MapIcon furnace_top;
 } icon;
 
+// This is not really a block initializer, rather it initializes Block Textures
 void Block_Init() {
 	Texture_MapInit(&textureMap, blockTextures, sizeof(blockTextures) / sizeof(blockTextures[0]));
 
@@ -157,6 +158,7 @@ void Block_Init() {
     icon.furnace_top         = Texture_MapGetIcon(&textureMap, blockTextures[45]);
 
 }
+// This is not really a block deinitializer, rather it deinitializes Block Textures
 void Block_Deinit() { C3D_TexDelete(&textureMap.texture); }
 
 void* Block_GetTextureMap() { return &textureMap.texture; }
@@ -355,10 +357,6 @@ void Block_GetTexture(mc::inventory::Slot block, Direction direction, int16_t* o
 	out_uv[1] = i.v;
 }
 
-#define extractR(c) ((c >> 16) & 0xff)
-#define extractG(c) (((c) >> 8) & 0xff)
-#define extractB(c) ((c)&0xff)
-
 void Block_GetColor(Block block, uint8_t metadata, Direction direction, uint8_t out_rgb[]) {
 	if ((block == Block_Grass && direction == Direction_Top) || block == Block_Leaves) {
 		out_rgb[0] = 140;
@@ -370,9 +368,9 @@ void Block_GetColor(Block block, uint8_t metadata, Direction direction, uint8_t 
 	const uint32_t dies[] = {(16777215), (14188339), (11685080), (6724056), (15066419), (8375321), (15892389), (5000268),
 				 (10066329), (5013401),  (8339378),  (3361970), (6704179),  (6717235), (10040115), (1644825)};
 	if (block == Block_Wool) {
-		out_rgb[0] = extractR(dies[metadata]);
-		out_rgb[1] = extractG(dies[metadata]);
-		out_rgb[2] = extractB(dies[metadata]);
+		out_rgb[0] = ((dies[metadata] >> 16) & 0xff);
+		out_rgb[1] = (((dies[metadata]) >> 8) & 0xff);
+		out_rgb[2] = ((dies[metadata]) & 0xff);
 	} else {
 		out_rgb[0] = 255;
 		out_rgb[1] = 255;

@@ -28,33 +28,44 @@ extern "C" {
 #include "world/OnlineWorld.h"
 
 class ReCraftCore : public Amy::App {
- public:
-  ReCraftCore();
-  ~ReCraftCore();
-  static ReCraftCore* GetInstance() { return m_theReCraftCore; }
+public:
+    ReCraftCore();
+    ~ReCraftCore();
+    static ReCraftCore* GetInstance() { return m_theReCraftCore; }
 
-  void Main() override;
+    void Main() override;
 
-  GameState* GetGameState() { return &m_gamestate; }
-  Amy::AssetMgr* GetAssetManager() { return &m_AssetMgr; }
+    GameState* GetGameState() { return &m_gamestate; }
+    Amy::AssetMgr* GetAssetManager() { return &m_AssetMgr; }
 
- private:
-  static ReCraftCore* m_theReCraftCore;
-  SuperFlatGen m_flatGen;
-  SmeaGen m_smeaGen;
-  SaveManager m_savemgr;
-  ChunkWorker m_chunkWorker;
-  MCBridge m_mcBridge;
-  DebugUI* m_debugUI = nullptr;
-  Player* m_player = nullptr;
-  World* m_world = nullptr;
-  PlayerController* m_playerCtrl = nullptr;
-  Renderer* m_renderer = nullptr;
-  GuiChat* m_chat = nullptr;
-  OnlineWorld* m_onlineWorld = nullptr;
-  GameState m_gamestate;
-  Amy::AssetMgr m_AssetMgr;
-  float m_timeAccum = 0.f;
-  void ReleaseWorld(ChunkWorker* chunkWorker, SaveManager* savemgr,
-                    World* world);
+private:
+    static ReCraftCore* m_theReCraftCore;
+    SuperFlatGen m_flatGen;
+    SmeaGen m_smeaGen;
+    SaveManager m_savemgr;
+    ChunkWorker m_chunkWorker;
+    MCBridge m_mcBridge;
+    DebugUI* m_debugUI = nullptr;
+    Player* m_player = nullptr;
+    World* m_world = nullptr;
+    PlayerController* m_playerCtrl = nullptr;
+    Renderer* m_renderer = nullptr;
+    GuiChat* m_chat = nullptr;
+    OnlineWorld* m_onlineWorld = nullptr;
+    GameState m_gamestate;
+    Amy::AssetMgr m_AssetMgr;
+    float m_timeAccum = 0.f;
+
+    //TODO: MOVE INTO WORLD FOR *** SAKE
+    void ReleaseWorld(ChunkWorker* chunkWorker, SaveManager* savemgr, World* world);
+
+    void InitSinglePlayer(char* path, char* name, WorldGenType* worldType, bool newWorld);
+    void RunSinglePlayer(InputData inputData);
+    void ExitSinglePlayer();
+
+    void InitMultiPlayer();
+    void RunMultiPlayer(InputData inputData);
+    void ExitMultiplayer();
+
+    void RunSelectWorld();
 };
