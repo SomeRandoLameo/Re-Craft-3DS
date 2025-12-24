@@ -138,7 +138,7 @@ void SpriteBatch_PushIcon(mc::inventory::Slot block, int x, int y, int z) {
 #define halfTexel (6)
 
 		uint8_t color[3];
-		Block_GetColor(MCBridge::MCLIBSlotToCTItemStack(block).block, MCBridge::MCLIBSlotToCTItemStack(block).meta, (Direction)i, color);
+		Block_GetColor(MCBridge::MCLIBSlotToCTItemStack(block).block, color);
 
 		for (int j = 0; j < 5; j++) {
 			int k = i * 6 + j;

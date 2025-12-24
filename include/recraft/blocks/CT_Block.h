@@ -15,4 +15,4 @@ void* Block_GetTextureMap();
 
 void Block_GetTexture(mc::block::BlockPtr block, Direction direction, int16_t* out_uv);
 
-void Block_GetColor(mc::block::BlockPtr block, uint8_t metadata, Direction direction, uint8_t out_rgb[]);
+void Block_GetColor(mc::block::BlockPtr block, uint8_t out_rgb[]);

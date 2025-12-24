@@ -320,51 +320,41 @@ void Block_GetTexture(mc::block::BlockPtr block, Direction direction, int16_t* o
     };
 
     //TODO: Add missing texture for default
-
 	out_uv[0] = i.u;
 	out_uv[1] = i.v;
 }
 
-void Block_GetColor(mc::block::BlockPtr block, uint8_t metadata, Direction direction, uint8_t out_rgb[]) {
-    /**
-     * TODO: Rewrite to precompiled hash table (performenc)
-     *
-    if ((block == Block_Grass && direction == Direction_Top) || block == Block_Leaves) {
-		out_rgb[0] = 140;
-		out_rgb[1] = 214;
-		out_rgb[2] = 123;
-		return;
-	}
-	//  purple, blue, green, red, black
-	const uint32_t dies[] = {, , , , , , , ,
-				 , ,  ,  , ,  , , };
+void Block_GetColor(mc::block::BlockPtr block, uint8_t out_rgb[]) {
+    auto name = block->GetName();
 
-	    "minecraft:white_wool",         (16777215)
-        "minecraft:orange_wool",        (14188339)
-        "minecraft:magenta_wool",       (11685080)
-        "minecraft:light_blue_wool",    (6724056)
-        "minecraft:yellow_wool",        (15066419)
-        "minecraft:lime_wool",          (8375321)
-        "minecraft:pink_wool",          (15892389)
-        "minecraft:gray_wool",          (5000268)
-        "minecraft:light_gray_wool",    (10066329)
-        "minecraft:cyan_wool",          (5013401)
-        "minecraft:purple_wool",        (8339378)
-        "minecraft:blue_wool",          (3361970)
-        "minecraft:brown_wool",         (6704179)
-        "minecraft:green_wool",         (6717235)
-        "minecraft:red_wool",           (10040115)
-        "minecraft:black_wool",         (1644825)
+    static const std::unordered_map<std::string, uint32_t> wool_colors = {
+        {"minecraft:white_wool",      0xFFFFFF},  // 16777215
+        {"minecraft:orange_wool",     0xD87F33},  // 14188339
+        {"minecraft:magenta_wool",    0xB24CD8},  // 11685080
+        {"minecraft:light_blue_wool", 0x6699D8},  // 6724056
+        {"minecraft:yellow_wool",     0xE5E533},  // 15066419
+        {"minecraft:lime_wool",       0x7FCC19},  // 8375321
+        {"minecraft:pink_wool",       0xF27FA5},  // 15892389
+        {"minecraft:gray_wool",       0x4C4C4C},  // 5000268
+        {"minecraft:light_gray_wool", 0x999999},  // 10066329
+        {"minecraft:cyan_wool",       0x4C7F99},  // 5013401
+        {"minecraft:purple_wool",     0x7F3FB2},  // 8339378
+        {"minecraft:blue_wool",       0x334CB2},  // 3361970
+        {"minecraft:brown_wool",      0x664C33},  // 6704179
+        {"minecraft:green_wool",      0x667F33},  // 6717235
+        {"minecraft:red_wool",        0x993333},  // 10040115
+        {"minecraft:black_wool",      0x191919}   // 1644825
+    };
 
-        Use the flattened blocks instead of:
-    if (block->GetName() == Block_Wool) {
-		out_rgb[0] = ((dies[metadata] >> 16) & 0xff);
-		out_rgb[1] = (((dies[metadata]) >> 8) & 0xff);
-		out_rgb[2] = ((dies[metadata]) & 0xff);
-	} else {
-		out_rgb[0] = 255;
-		out_rgb[1] = 255;
-		out_rgb[2] = 255;
-	}*/
+    auto it = wool_colors.find(name);
+    if (it != wool_colors.end()) {
+        uint32_t color = it->second;
+        out_rgb[0] = (color >> 16) & 0xFF;
+        out_rgb[1] = (color >> 8) & 0xFF;
+        out_rgb[2] = color & 0xFF;
+    } else {
+        out_rgb[0] = 255;
+        out_rgb[1] = 255;
+        out_rgb[2] = 255;
+    }
 }
-

@@ -359,7 +359,7 @@ void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context) 
 #define halfTexel (6)
 
 					uint8_t color[3];
-					Block_GetColor(face.block, face.metadata, face.direction, color);
+					Block_GetColor(face.block, color);
 
 					for (int k = 0; k < 6; k++) {
 						data[k].xyz[0] += offsetX;
