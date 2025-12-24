@@ -163,211 +163,201 @@ void Block_Deinit() { C3D_TexDelete(&textureMap.texture); }
 
 void* Block_GetTextureMap() { return &textureMap.texture; }
 
-//TODO: Blocks are all blocks, not inventory blocks (slots), but for now this works...
-void Block_GetTexture(mc::inventory::Slot block, Direction direction, int16_t* out_uv) {
+//TODO: find a smarter solution
+void Block_GetTexture(mc::block::BlockPtr block, Direction direction, int16_t* out_uv) {
 	Texture_MapIcon i = {0, 0, 0};
-	switch (block.GetItemId()) {
-		case Block_Air:
-			return;
-		case Block_Dirt:
-			i = icon.dirt;
-			break;
-		case Block_Stone:
-			i = icon.stone;
-			break;
-		case Block_Grass:
-			switch (direction) {
-				case Direction_Top:
-					i = icon.grass_top;
-					break;
-				case Direction_Bottom:
-					i = icon.dirt;
-					break;
-				default:
-					i = icon.grass_side;
-					break;
-			}
-			break;
-		case Block_Cobblestone:
-			i = icon.cobblestone;
-			break;
-		case Block_Log:
-			switch (direction) {
-				case Direction_Bottom:
-				case Direction_Top:
-					i = icon.oaklog_top;
-					break;
-				default:
-					i = icon.oaklog_side;
-					break;
-			}
-			break;
-		case Block_Gravel:
-			i = icon.gravel;
-			break;
-		case Block_Sand:
-			i = icon.sand;
-			break;
-		case Block_Leaves:
-			i = icon.leaves_oak;
-			break;
-		case Block_Glass:
-			i = icon.glass;
-			break;
-		case Block_Stonebrick:
-			i = icon.stonebrick;
-			break;
-		case Block_Brick:
-			i = icon.brick;
-			break;
-		case Block_Planks:
-			i = icon.oakplanks;
-			break;
-		case Block_Wool:
-			i = icon.wool;
-			break;
-		case Block_Bedrock:
-			i = icon.bedrock;
-			break;
-		case Block_Coarse:
-			i = icon.coarse;
-			break;
-		case Block_Door_Top:
-			i = icon.door_top;
-			break;
-		case Block_Door_Bottom:
-			i = icon.door_bottom;
-			break;
-		case Block_Snow_Grass:
-			switch (direction) {
-				case Direction_Top:
-					i = icon.snow;
-					break;
-				case Direction_Bottom:
-					i = icon.dirt;
-					break;
-				default:
-					i = icon.snow_grass_side;
-					break;
-			}
-			break;
-		case Block_Snow:
-			i = icon.snow;
-			break;
-		case Block_Obsidian:
-			i = icon.obsidian;
-			break;
-		case Block_Netherrack:
-			i = icon.netherrack;
-			break;
-		case Block_Sandstone:
-			switch (direction) {
-				case Direction_Bottom:
-					i = icon.sandstone_bottom;
-					break;
-				case Direction_Top:
-					i = icon.sandstone_top;
-					break;
-				default:
-					i = icon.sandstone_side;
-					break;
-			}
-			break;
-		case Block_Smooth_Stone:
-			i = icon.smooth_stone;
-			break;
-		case Block_Crafting_Table:
-			switch (direction) {
-				case Direction_Bottom:
-					i = icon.oakplanks;
-					break;
-				case Direction_Top:
-					i = icon.crafting_table_top;
-					break;
-				default:
-					i = icon.crafting_table_side;
-					break;
-			}
-			break;
-		case Block_Lava:
-			i=icon.lava;
-			break;
-		case Block_Water:
-			i=icon.water;
-			break;
-		case Block_Grass_Path:
-			switch (direction) {
-				case Direction_Bottom:
-					i = icon.dirt;
-					break;
-				case Direction_Top:
-					i = icon.grass_path_top;
-					break;
-				default:
-					i = icon.grass_path_side;
-					break;
-			}
-			break;
-		case Block_Gold_Block:
-			i=icon.gold_block;
-			break;
-		case Block_Gold_Ore:
-			i=icon.gold_ore;
-			break;
-		case Block_Coal_Block:
-			i=icon.coal_block;
-			break;
-		case Block_Coal_Ore:
-			i=icon.coal_ore;
-			break;
-		case Block_Iron_Block:
-			i=icon.iron_block;
-			break;
-		case Block_Iron_Ore:
-			i=icon.iron_ore;
-			break;
-		case Block_Diamond_Block:
-			i=icon.diamond_block;
-			break;
-		case Block_Diamond_Ore:
-			i=icon.diamond_ore;
-			break;
-		case Block_Emerald_Block:
-			i=icon.emerald_block;
-			break;
-		case Block_Emerald_Ore:
-			i=icon.emerald_ore;
-			break;
-		case Block_Furnace:
-			switch (direction) {
-				case Direction_South:
-					i = icon.furnace_front;
-					break;
-				case Direction_Top:
-					i=icon.furnace_top;
-					break;
-				default:
-					i = icon.furnace_side;
-					break;
-			}
-			break;
-		default: break;
-	}
+    auto name = block->GetName();
+
+    if(name == "minecraft:air") return;
+    if(name == "minecraft:dirt") i = icon.dirt;
+    if(name == "minecraft:stone") i = icon.stone;
+    if(name == "minecraft:grass_block") {
+        switch (direction) {
+        case Direction_Top:
+            i = icon.grass_top;
+            break;
+        case Direction_Bottom:
+            i = icon.dirt;
+            break;
+        default:
+            i = icon.grass_side;
+            break;
+        }
+    }
+    if(name == "minecraft:cobblestone") i = icon.cobblestone;
+    if(name == "minecraft:oak_log") {
+        switch (direction) {
+        case Direction_Bottom:
+        case Direction_Top:
+            i = icon.oaklog_top;
+            break;
+        default:
+            i = icon.oaklog_side;
+            break;
+        }
+    }
+    if(name == "minecraft:gravel") i = icon.gravel;
+    if(name == "minecraft:sand") i = icon.sand;
+    if(name == "minecraft:oak_leaves") i = icon.leaves_oak;
+    if(name == "minecraft:glass") i = icon.glass;
+    if(name == "minecraft:stone_bricks") i = icon.stonebrick;
+    if(name == "minecraft:bricks") i = icon.brick;
+    if(name == "minecraft:oak_planks") i = icon.oakplanks;
+
+    // TODO: wool in craftus is metadata driven, so same texture for now
+    if(name == "minecraft:white_wool") i = icon.wool;
+    if(name == "minecraft:orange_wool") i = icon.wool;
+    if(name == "minecraft:magenta_wool") i = icon.wool;
+    if(name == "minecraft:light_blue_wool") i = icon.wool;
+    if(name == "minecraft:yellow_wool") i = icon.wool;
+    if(name == "minecraft:lime_wool") i = icon.wool;
+    if(name == "minecraft:pink_wool") i = icon.wool;
+    if(name == "minecraft:gray_wool") i = icon.wool;
+    if(name == "minecraft:light_gray_wool") i = icon.wool;
+    if(name == "minecraft:cyan_wool") i = icon.wool;
+    if(name == "minecraft:purple_wool") i = icon.wool;
+    if(name == "minecraft:blue_wool") i = icon.wool;
+    if(name == "minecraft:brown_wool") i = icon.wool;
+    if(name == "minecraft:green_wool") i = icon.wool;
+    if(name == "minecraft:red_wool") i = icon.wool;
+    if(name == "minecraft:black_wool") i = icon.wool;
+
+    if(name == "minecraft:bedrock") i = icon.bedrock;
+    if(name == "minecraft:coarse_dirt") i = icon.coarse;
+
+    /* TODO: How the hell do i represend top & bottom doors, if only full doors exist...
+    //	case Block_Door_Top:
+    //		i = icon.door_top;
+    //		break;
+    //	case Block_Door_Bottom:
+    //		i = icon.door_bottom;
+    //		break;
+    */
+
+    /* TODO: Block_Snow_Grass is a metadata thingy of grass_block. i cannot represent it, thus it doesnt exist for now...
+    //  case Block_Snow_Grass:
+    //      switch (direction) {
+    //      case Direction_Top:
+    //          i = icon.snow;
+    //          break;
+    //      case Direction_Bottom:
+    //          i = icon.dirt;
+    //          break;
+    //      default:
+    //          i = icon.snow_grass_side;
+    //          break;
+    //      }
+    //      break;
+    */
+
+    if(name == "minecraft:snow_block") i = icon.snow;
+    if(name == "minecraft:obsidian") i = icon.obsidian;
+    if(name == "minecraft:netherrack") i = icon.netherrack;
+    if(name == "minecraft:sandstone") {
+        switch (direction) {
+        case Direction_Bottom:
+            i = icon.sandstone_bottom;
+            break;
+        case Direction_Top:
+            i = icon.sandstone_top;
+            break;
+        default:
+            i = icon.sandstone_side;
+            break;
+        }
+    }
+    if(name == "minecraft:smooth_sandstone") i = icon.smooth_stone;
+    if(name == "minecraft:crafting_table") {
+        switch (direction) {
+        case Direction_Bottom:
+            i = icon.oakplanks;
+            break;
+        case Direction_Top:
+            i = icon.crafting_table_top;
+            break;
+        default:
+            i = icon.crafting_table_side;
+            break;
+        }
+    }
+    if(name == "minecraft:lava") i=icon.lava;
+    if(name == "minecraft:water") i=icon.water;
+    if(name == "minecraft:grass_path") {
+        switch (direction) {
+        case Direction_Bottom:
+            i = icon.dirt;
+            break;
+        case Direction_Top:
+            i = icon.grass_path_top;
+            break;
+        default:
+            i = icon.grass_path_side;
+            break;
+        }
+    }
+    if(name == "minecraft:gold_block") i=icon.gold_block;
+    if(name == "minecraft:gold_ore") i=icon.gold_ore;
+    if(name == "minecraft:coal_block") i=icon.coal_block;
+    if(name == "minecraft:coal_ore") i=icon.coal_ore;
+    if(name == "minecraft:iron_block") i=icon.iron_block;
+    if(name == "minecraft:iron_ore") i=icon.iron_ore;
+    if(name == "minecraft:diamond_block") i=icon.diamond_block;
+    if(name == "minecraft:diamond_ore") i=icon.diamond_ore;
+    if(name == "minecraft:emerald_block") i=icon.emerald_block;
+    if(name == "minecraft:emerald_ore") i=icon.emerald_ore;
+    if(name == "minecraft:furnace") {
+        switch (direction) {
+        case Direction_South:
+            i = icon.furnace_front;
+            break;
+        case Direction_Top:
+            i=icon.furnace_top;
+            break;
+        default:
+            i = icon.furnace_side;
+            break;
+        }
+    };
+
+    //TODO: Add missing texture for default
+
 	out_uv[0] = i.u;
 	out_uv[1] = i.v;
 }
 
-void Block_GetColor(Block block, uint8_t metadata, Direction direction, uint8_t out_rgb[]) {
-	if ((block == Block_Grass && direction == Direction_Top) || block == Block_Leaves) {
+void Block_GetColor(mc::block::BlockPtr block, uint8_t metadata, Direction direction, uint8_t out_rgb[]) {
+    /**
+     * TODO: Rewrite to precompiled hash table (performenc)
+     *
+    if ((block == Block_Grass && direction == Direction_Top) || block == Block_Leaves) {
 		out_rgb[0] = 140;
 		out_rgb[1] = 214;
 		out_rgb[2] = 123;
 		return;
 	}
-	// white, orange, magenta, light blue, yellow, lime, pink, gray, silver, cyan, purple, blue, green, red, black
-	const uint32_t dies[] = {(16777215), (14188339), (11685080), (6724056), (15066419), (8375321), (15892389), (5000268),
-				 (10066329), (5013401),  (8339378),  (3361970), (6704179),  (6717235), (10040115), (1644825)};
-	if (block == Block_Wool) {
+	//  purple, blue, green, red, black
+	const uint32_t dies[] = {, , , , , , , ,
+				 , ,  ,  , ,  , , };
+
+	    "minecraft:white_wool",         (16777215)
+        "minecraft:orange_wool",        (14188339)
+        "minecraft:magenta_wool",       (11685080)
+        "minecraft:light_blue_wool",    (6724056)
+        "minecraft:yellow_wool",        (15066419)
+        "minecraft:lime_wool",          (8375321)
+        "minecraft:pink_wool",          (15892389)
+        "minecraft:gray_wool",          (5000268)
+        "minecraft:light_gray_wool",    (10066329)
+        "minecraft:cyan_wool",          (5013401)
+        "minecraft:purple_wool",        (8339378)
+        "minecraft:blue_wool",          (3361970)
+        "minecraft:brown_wool",         (6704179)
+        "minecraft:green_wool",         (6717235)
+        "minecraft:red_wool",           (10040115)
+        "minecraft:black_wool",         (1644825)
+
+        Use the flattened blocks instead of:
+    if (block->GetName() == Block_Wool) {
 		out_rgb[0] = ((dies[metadata] >> 16) & 0xff);
 		out_rgb[1] = (((dies[metadata]) >> 8) & 0xff);
 		out_rgb[2] = ((dies[metadata]) & 0xff);
@@ -375,7 +365,6 @@ void Block_GetColor(Block block, uint8_t metadata, Direction direction, uint8_t 
 		out_rgb[0] = 255;
 		out_rgb[1] = 255;
 		out_rgb[2] = 255;
-	}
+	}*/
 }
 
-bool Block_Opaque(Block block, uint8_t metadata) { return block != Block_Air && block != Block_Glass && block != Block_Door_Top && block != Block_Door_Bottom; }

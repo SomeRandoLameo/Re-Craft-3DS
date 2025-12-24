@@ -18,6 +18,7 @@ Player::Player(World* world) {
 //TODO: Separate from player
 void Player::InitializeInventory() {
     int l = 0;
+    /*
     inventory[l++] = mc::inventory::Slot(Block_Stone,1,0);
     inventory[l++] = mc::inventory::Slot(Block_Dirt, 1, 0);
     inventory[l++] = mc::inventory::Slot(Block_Grass, 1, 0);
@@ -62,7 +63,7 @@ void Player::InitializeInventory() {
     for (auto & i : quickSelectBar) {
         i = mc::inventory::Slot(Block_Air, 0, 0);
     }
-
+*/
 }
 
 void Player::Update(Damage* dmg) {
@@ -190,7 +191,7 @@ void Player::UpdateMovement(PlayerControlScheme m_controlScheme, InputData input
 void Player::HandleFallDamage() {
     if (velocity.y <= -12) {
         rndy = round(velocity.y);
-        if (m_world->GetBlock(mc::Vector3i(position.x, position.y - 1, position.z)) != Block_Air) {
+        if (m_world->GetBlock(mc::Vector3i(position.x, position.y - 1, position.z))->GetName() != "minecraft:air") {
             hp = hp + rndy;
             rndy = 0;
         }
@@ -198,7 +199,7 @@ void Player::HandleFallDamage() {
 }
 
 void Player::HandleFireDamage() {
-    if (m_world->GetBlock(ToVector3i(position)) == Block_Lava) {
+    if (m_world->GetBlock(ToVector3i(position))->GetName() == "minecraft:lava") {
       //  DebugUI_Log("ur burning lol");
         OvertimeDamage("Fire", 10);
     }
@@ -233,7 +234,7 @@ void Player::HandleRespawn(Damage* dmg) {
                 position.x = 0.0;
 
                 int spawnY = 1;
-                while (m_world->GetBlock( mc::ToVector3i(spawnPos)) != Block_Air)
+                while (m_world->GetBlock( mc::ToVector3i(spawnPos))->GetName() != "minecraft:air")
                     spawnY++;
 
                 bool shouldOffset = m_world->GetGenSettings().type != WorldGen_SuperFlat;
@@ -249,7 +250,7 @@ void Player::HandleRespawn(Damage* dmg) {
                 position.x = spawnPos.x;
 
                 int spawnY = 1;
-                while (m_world->GetBlock(ToVector3i(spawnPos)) != Block_Air)
+                while (m_world->GetBlock(ToVector3i(spawnPos))->GetName() != "minecraft:air")
                     spawnY++;
 
                 bool shouldOffset = m_world->GetGenSettings().type != WorldGen_SuperFlat;
@@ -275,9 +276,9 @@ bool Player::CanMove(mc::Vector3d newVec) {
                     FastFloor(newVec.z) + z
                 );
 
-                if (m_world->GetBlock(blockPos) != Block_Air &&
-                    m_world->GetBlock(blockPos) != Block_Lava &&
-                    m_world->GetBlock(blockPos) != Block_Water) {
+                if (m_world->GetBlock(blockPos)->GetName() != "minecraft:air"  &&
+                    m_world->GetBlock(blockPos)->GetName() != "minecraft:lava" &&
+                    m_world->GetBlock(blockPos)->GetName() != "minecraft:water") {
                     if (AABB_Overlap(
                             newVec.x - PLAYER_COLLISIONBOX_SIZE / 2.f,
                             newVec.y,
@@ -368,9 +369,9 @@ void Player::Move(float dt, mc::Vector3d accl) {
                             FastFloor(axisStep.z) + z
                         );
 
-                        if (m_world->GetBlock(blockPos) != Block_Air &&
-                            m_world->GetBlock(blockPos) != Block_Lava &&
-                            m_world->GetBlock(blockPos) != Block_Water) {
+                        if (m_world->GetBlock(blockPos)->GetName() != "minecraft:air"  &&
+                            m_world->GetBlock(blockPos)->GetName() != "minecraft:lava" &&
+                            m_world->GetBlock(blockPos)->GetName() != "minecraft:water"){
                             Box blockBox = Box_Create(blockPos.x, blockPos.y, blockPos.z, 1, 1, 1);
 
                             mc::Vector3d normal(0.f, 0.f, 0.f);
@@ -415,14 +416,14 @@ void Player::Move(float dt, mc::Vector3d accl) {
             mc::Vector3d nrmDiff = newPos - position;
             nrmDiff.Normalize();
 
-            Block block = m_world->GetBlock(
+            mc::block::BlockPtr block = m_world->GetBlock(
                 mc::Vector3i(
                     FastFloor(finalPos.x + nrmDiff.x),
                     FastFloor(finalPos.y + nrmDiff.y) + 2,
                     FastFloor(finalPos.z + nrmDiff.z)
                 )
             );
-            Block landingBlock = m_world->GetBlock(
+            mc::block::BlockPtr landingBlock = m_world->GetBlock(
                 mc::Vector3i(
                     FastFloor(finalPos.x + nrmDiff.x),
                     FastFloor(finalPos.y + nrmDiff.y) + 1,
@@ -430,8 +431,8 @@ void Player::Move(float dt, mc::Vector3d accl) {
                 )
             );
 
-            if ((block == Block_Air || block == Block_Lava || block == Block_Water) &&
-                landingBlock != Block_Air && landingBlock != Block_Lava && landingBlock != Block_Water) {
+            if ((block->GetName() == "minecraft:air" || block->GetName() == "minecraft:lava" || block->GetName() == "minecraft:water") &&
+                landingBlock->GetName() != "minecraft:air" && landingBlock->GetName() != "minecraft:lava" && landingBlock->GetName() != "minecraft:water") {
                 Jump(accl);
             }
         }
@@ -500,7 +501,7 @@ void Player::PlaceBlock() {
 
 void Player::BreakBlock() {
     if (m_world && blockInActionRange && breakPlaceTimeout < 0.f) {
-        m_world->SetBlock(mc::Vector3i(viewRayCast.x, viewRayCast.y, viewRayCast.z), Block_Air);
+        m_world->SetBlock(mc::Vector3i(viewRayCast.x, viewRayCast.y, viewRayCast.z), mc::block::BlockRegistry::GetInstance()->GetBlock("minecraft:air"));
     }
 
     if (breakPlaceTimeout < 0.f) {

@@ -44,7 +44,7 @@ void Cursor::Draw(int projUniform, C3D_Mtx* projectionview, World* world,
 		const int* offset = DirectionToOffset[i];
 
 		// Only draw faces that are exposed to air
-		if (world->GetBlock(mc::Vector3i(x + offset[0], y + offset[1], z + offset[2])) == Block_Air) {
+		if (world->GetBlock(mc::Vector3i(x + offset[0], y + offset[1], z + offset[2]))->GetName() == "minecraft:air") {
 			memcpy(vtx, &cube_sides_lut[i * 6], sizeof(WorldVertex) * 6);
 
 			// Set color - brighter for highlighted face

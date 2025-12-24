@@ -16,7 +16,7 @@
 class Chunk {
 public:
 	int y;
-	Block blocks[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
+	mc::block::BlockPtr blocks[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
 	uint8_t metadataLight[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];  // first half metadata, second half light
 
 	uint32_t revision;
@@ -83,10 +83,10 @@ public:
 
     void SetMetadata(mc::Vector3i position, uint8_t metadata);
 
-    Block GetBlock(mc::Vector3i position);
+    mc::block::BlockPtr GetBlock(mc::Vector3i position);
 
-    void SetBlock(mc::Vector3i position, Block block);
+    void SetBlock(mc::Vector3i position, mc::block::BlockPtr block);
 
-    void SetBlockAndMeta(mc::Vector3i position, Block block, uint8_t metadata);
+    void SetBlockAndMeta(mc::Vector3i position, mc::block::BlockPtr block, uint8_t metadata);
 };
 

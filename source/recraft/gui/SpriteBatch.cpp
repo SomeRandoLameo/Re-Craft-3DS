@@ -132,7 +132,7 @@ void SpriteBatch_PushIcon(mc::inventory::Slot block, int x, int y, int z) {
 	for (int i = 0; i < 6; i++) {
 		if (i != Direction_Top && i != Direction_South && i != Direction_West) continue;
 		int16_t iconUV[2];
-		Block_GetTexture(block, (Direction)i,  iconUV);
+		Block_GetTexture(MCBridge::MCLIBSlotToMCLIBBlock(block), (Direction)i,  iconUV);
 
 #define oneDivIconsPerRow (32768 / 8)
 #define halfTexel (6)

@@ -82,11 +82,11 @@ ChunkColumn* World::GetChunkColumn(int x, int z) {
 	return nullptr;
 }
 
-Block World::GetBlock( mc::Vector3i position) {
-	if (position.y < 0 || position.y >= CHUNK_HEIGHT) return Block_Air;
+mc::block::BlockPtr World::GetBlock( mc::Vector3i position) {
+	if (position.y < 0 || position.y >= CHUNK_HEIGHT) return mc::block::BlockRegistry::GetInstance()->GetBlock( "minecraft:air");
 	ChunkColumn* chunk = GetChunkColumn(WorldToChunkCoord(position.x), WorldToChunkCoord(position.z));
 	if (chunk) return chunk->GetBlock(mc::Vector3i(WorldToLocalCoord(position.x), position.y, WorldToLocalCoord(position.z)));
-	return Block_Air;
+	return mc::block::BlockRegistry::GetInstance()->GetBlock( "minecraft:air");
 }
 
 static void NotifyNeighbor(int axis, int comp, World* world, int cX, int cZ, int y, int xDiff, int zDiff) {
@@ -112,7 +112,7 @@ static void NotifyAllNeighbors(ChunkColumn* column, World* world, int cX, int cZ
     }
 }
 
-void World::SetBlock(mc::Vector3i position, Block block) {
+void World::SetBlock(mc::Vector3i position, mc::block::BlockPtr block) {
 	if (position.y < 0 || position.y >= CHUNK_HEIGHT) return;
 	int cX = WorldToChunkCoord(position.x);
 	int cZ = WorldToChunkCoord(position.z);
@@ -126,7 +126,7 @@ void World::SetBlock(mc::Vector3i position, Block block) {
 	}
 }
 
-void World::SetBlockAndMeta(mc::Vector3i position, Block block, uint8_t metadata) {
+void World::SetBlockAndMeta(mc::Vector3i position, mc::block::BlockPtr block, uint8_t metadata) {
 	if (position.y < 0 || position.y >= CHUNK_HEIGHT) return;
 	int cX = WorldToChunkCoord(position.x);
 	int cZ = WorldToChunkCoord(position.z);

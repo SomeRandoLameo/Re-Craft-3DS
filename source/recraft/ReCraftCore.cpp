@@ -5,7 +5,7 @@ ReCraftCore *ReCraftCore::m_theReCraftCore = nullptr;
 
 ReCraftCore::ReCraftCore() {
     m_theReCraftCore = this;
-    this->m_gamestate = GameState_SelectWorld;
+    m_gamestate = GameState_SelectWorld;
     gfxInitDefault();
     // Enable N3DS 804MHz operation, where available
     osSetSpeedupEnable(true);
@@ -126,6 +126,9 @@ void ReCraftCore::InitSinglePlayer(char* path, char* name, WorldGenType* worldTy
     strcpy(m_world->name, name);
     m_world->genSettings.type = *worldType;
 
+    //Would be really cool to make this world specific, for now this is hardcoded :D
+    mc::block::BlockRegistry::GetInstance()->RegisterVanillaBlocks(mc::protocol::Version::Minecraft_1_13_2);
+
     m_savemgr.Load(path);
 
     m_chunkWorker.SetHandlerActive(
@@ -140,6 +143,7 @@ void ReCraftCore::InitSinglePlayer(char* path, char* name, WorldGenType* worldTy
 
     m_world->cacheTranslationX = WorldToChunkCoord(FastFloor(m_player->position.x));
     m_world->cacheTranslationZ = WorldToChunkCoord(FastFloor(m_player->position.z));
+
     for (int i = 0; i < CHUNKCACHE_SIZE; i++) {
         for (int j = 0; j < CHUNKCACHE_SIZE; j++) {
             m_world->chunkCache[i][j] = m_world->LoadChunk(
@@ -187,6 +191,7 @@ void ReCraftCore::RunSinglePlayer(InputData inputData) {
 }
 void ReCraftCore::ExitSinglePlayer() {
     ReleaseWorld(&m_chunkWorker, &m_savemgr, m_world);
+    mc::block::BlockRegistry::GetInstance()->ClearRegistry();
 }
 
 void ReCraftCore::InitMultiPlayer() {
@@ -351,13 +356,10 @@ void ReCraftCore::Main() {
     m_timeAccum += Delta();
     if (m_gamestate == GameState_Playing) {
         RunSinglePlayer(inputData);
-
     } else if (m_gamestate == GameState_Playing_OnLine) {
-       RunMultiPlayer(inputData);
-
+        RunMultiPlayer(inputData);
     } else if (m_gamestate == GameState_SelectWorld) {
         RunSelectWorld();
-
     }
     Gui::InputData(inputData);
 }

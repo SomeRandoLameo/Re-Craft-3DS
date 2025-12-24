@@ -66,6 +66,7 @@ void MCBridge::disconnect() {
     LightLock_Lock(&m_clientMutex);
     m_client.reset();
     m_dispatcher.reset();
+    mc::block::BlockRegistry::GetInstance()->ClearRegistry();
     LightLock_Unlock(&m_clientMutex);
     std::cout << "Disconnected from server\n";
 }
@@ -154,11 +155,19 @@ void MCBridge::backgroundLoop() {
     std::cout << "Background loop ended\n";
 }
 
+// TODO: yös... REMOVE THESE FFS
+mc::block::BlockPtr MCBridge::MCLIBSlotToMCLIBBlock(mc::inventory::Slot in) {
+    return mc::block::BlockRegistry::GetInstance()->GetBlock(in.GetItemId());
+}
 
 mc::inventory::Slot MCBridge::CTItemStackToMCLIBSlot(ItemStack in){
-    return mc::inventory::Slot(in.block,in.amount,in.meta);
+    return mc::inventory::Slot(in.block->GetType(),in.amount,in.meta);
 }
 
 ItemStack MCBridge::MCLIBSlotToCTItemStack(mc::inventory::Slot in){
-    return (ItemStack){in.GetItemId(),in.GetItemDamage(),in.GetItemCount()};
+    return ItemStack(
+        mc::block::BlockRegistry::GetInstance()->GetBlock(in.GetItemId()),
+        static_cast<u8>(in.GetItemDamage()),
+        in.GetItemCount()
+    );
 }

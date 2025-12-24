@@ -16,7 +16,7 @@
 
 class ItemStack {
 public:
-    Block block;
+    mc::block::BlockPtr block;
     u8 meta; // ItemDamage
     u8 amount;
 

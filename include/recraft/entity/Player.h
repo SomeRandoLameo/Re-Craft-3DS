@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <stdbool.h>
+
 
 //mclib
 #include <mclib/common/Vector.h>

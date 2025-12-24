@@ -7,7 +7,7 @@ void BlockEvent_RandomTick(World* world, ChunkColumn* chunk, int x[], int y[], i
 
             auto defaultPosition = mc::Vector3i(x[k], y[k] + i * CHUNK_SIZE, z[k]);
 
-            Block block = chunk->GetBlock(defaultPosition);
+            mc::block::BlockPtr block = chunk->GetBlock(defaultPosition);
 
             auto blockPosition = mc::Vector3i(
                     defaultPosition.x,
@@ -15,31 +15,22 @@ void BlockEvent_RandomTick(World* world, ChunkColumn* chunk, int x[], int y[], i
                     defaultPosition.z
             );
 
-            switch (block) {
-				case Block_Dirt:
-					if (!Block_Opaque(chunk->GetBlock(blockPosition),chunk->GetMetadata(blockPosition))) {
-                        chunk->SetBlock(defaultPosition, Block_Grass);
-					}
-					break;
-				case Block_Grass:
-					if (Block_Opaque(chunk->GetBlock(blockPosition), chunk->GetMetadata(blockPosition))) {
-                        chunk->SetBlock(defaultPosition, Block_Dirt);
-					}
-					break;
-				case Block_Snow_Grass:
-					if (Block_Opaque(chunk->GetBlock(blockPosition), chunk->GetMetadata(blockPosition))) {
-                        chunk->SetBlock(defaultPosition, Block_Dirt);
-					}
-					break;
-				case Block_Grass_Path:
+            if(block->GetName() == "minecraft:dirt"){
+                if (!chunk->GetBlock(blockPosition)->IsOpaque()) {
+                    chunk->SetBlock(defaultPosition, mc::block::BlockRegistry::GetInstance()->GetBlock("minecraft:grass_block"));
+                }
+            }
+            if(block->GetName() == "minecraft:grass_block"){
+                if (!chunk->GetBlock(blockPosition)->IsOpaque()) {
+                    chunk->SetBlock(defaultPosition, mc::block::BlockRegistry::GetInstance()->GetBlock("minecraft:dirt"));
+                }
+            }
+            if(block->GetName() == "minecraft:grass_path"){
+                if (!chunk->GetBlock(blockPosition)->IsOpaque()) {
+                    chunk->SetBlock(defaultPosition, mc::block::BlockRegistry::GetInstance()->GetBlock("minecraft:dirt"));
+                }
+            }
 
-					if (Block_Opaque(chunk->GetBlock(blockPosition), chunk->GetMetadata(blockPosition))) {
-                        chunk->SetBlock(defaultPosition, Block_Dirt);
-					}
-					break;
-				default:
-					break;
-			}
 			k++;
 		}
 	}

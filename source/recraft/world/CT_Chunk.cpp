@@ -59,7 +59,7 @@ void ChunkColumn::GenerateHeightmap() {
                 for (int i = CLUSTER_PER_CHUNK - 1; i >= 0; --i) {
                     if (chunks[i].IsEmpty()) continue;
                     for (int j = CHUNK_SIZE - 1; j >= 0; --j) {
-                        if (chunks[i].blocks[x][j][z] != Block_Air) {
+                        if (chunks[i].blocks[x][j][z]->GetName() != "minecraft:air") {
                             heightmap[x][z] = i * CHUNK_SIZE + j + 1;
                             i = -1;
                             break;
@@ -90,19 +90,19 @@ void ChunkColumn::SetMetadata(mc::Vector3i position, uint8_t metadata) {
     ++revision;
 }
 
-Block ChunkColumn::GetBlock(mc::Vector3i position) {
+mc::block::BlockPtr ChunkColumn::GetBlock(mc::Vector3i position) {
     return chunks[position.y / CHUNK_SIZE].blocks[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z];
 }
 
 
 // resets the meta data
-void ChunkColumn::SetBlock(mc::Vector3i position, Block block) {
+void ChunkColumn::SetBlock(mc::Vector3i position, mc::block::BlockPtr block) {
     Chunk* cluster = &chunks[position.y / CHUNK_SIZE];
     cluster->blocks[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z] = block;
     SetMetadata(position, 0);
 }
 
-void ChunkColumn::SetBlockAndMeta(mc::Vector3i position, Block block, uint8_t metadata) {
+void ChunkColumn::SetBlockAndMeta(mc::Vector3i position, mc::block::BlockPtr block, uint8_t metadata) {
     Chunk* cluster = &chunks[position.y / CHUNK_SIZE];
     cluster->blocks[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z] = block;
     metadata &= 0xf;

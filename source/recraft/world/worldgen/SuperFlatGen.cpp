@@ -6,22 +6,22 @@ void SuperFlatGen::Init(World* world) {
 
 void SuperFlatGen::Generate(WorkQueue* queue, WorkerItem item, void* context) {
 	for (int y = 0; y < 17; y++) {
-		Block block = Block_Air;
+		mc::block::BlockPtr block;
 		switch (y) {
 			case 0:
-				block = Block_Bedrock;
+				block = mc::block::BlockRegistry::GetInstance()->GetBlock("minecraft:bedrock");
 				break;
 			case 1 ... 10:
-				block = Block_Stone;
+				block = mc::block::BlockRegistry::GetInstance()->GetBlock("minecraft:stone");
 				break;
 			case 11 ... 15:
-				block = Block_Dirt;
+                block = mc::block::BlockRegistry::GetInstance()->GetBlock("minecraft:dirt");
 				break;
 			case 16:
-				block = Block_Grass;
+				block = mc::block::BlockRegistry::GetInstance()->GetBlock("minecraft:grass_block");
 				break;
 			default:
-				block = Block_Air;
+				block = mc::block::BlockRegistry::GetInstance()->GetBlock("minecraft:air");
 				break;
 		}
 		for (int x = 0; x < CHUNK_SIZE; x++) {

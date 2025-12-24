@@ -2,7 +2,7 @@
 extern "C" {
 #include <c3d/texture.h>
 }
-#include <stdint.h>
+#include <cstdint>
 
 void Texture_Load(C3D_Tex* result, const char* filename);
 

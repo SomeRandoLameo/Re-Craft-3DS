@@ -54,7 +54,7 @@ public:
 
     static mc::inventory::Slot CTItemStackToMCLIBSlot(ItemStack in);
     static ItemStack MCLIBSlotToCTItemStack(mc::inventory::Slot in);
-
+    static mc::block::BlockPtr MCLIBSlotToMCLIBBlock(mc::inventory::Slot in);
 private:
     static void threadFunc(void* arg);
     void backgroundLoop();
@@ -73,4 +73,5 @@ private:
     static constexpr size_t THREAD_STACK_SIZE = 64 * 1024;
     static constexpr int THREAD_PRIORITY = 0x30;
     static constexpr int THREAD_CORE = -2;
+
 };

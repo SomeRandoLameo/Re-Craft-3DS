@@ -22,12 +22,12 @@ void SmeaGen::Generate(WorkQueue* queue, WorkerItem item, void* context) {
 				     (smeasChunkHeight * smeasClusterSize / 2);
 
 			for (int y = 0; y < height - 3; y++) {
-                item.chunk->SetBlock(mc::Vector3i(x, y, z), Block_Stone);
+                item.chunk->SetBlock(mc::Vector3i(x, y, z), mc::block::BlockRegistry::GetInstance()->GetBlock("minecraft:stone"));
 			}
 			for (int y = height - 3; y < height; y++) {
-                item.chunk->SetBlock(mc::Vector3i(x, y, z), Block_Dirt);
+                item.chunk->SetBlock(mc::Vector3i(x, y, z), mc::block::BlockRegistry::GetInstance()->GetBlock("minecraft:dirt"));
 			}
-            item.chunk->SetBlock(mc::Vector3i(x, height, z), Block_Grass);
+            item.chunk->SetBlock(mc::Vector3i(x, height, z), mc::block::BlockRegistry::GetInstance()->GetBlock("minecraft:grass_block"));
 		}
 	}
 }

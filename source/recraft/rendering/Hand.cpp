@@ -1,4 +1,5 @@
 #include "rendering/Hand.h"
+#include "mcbridge/MCBridge.h"
 
 int16_t toTexCoord(int x, int tw) {
     return (int16_t)(((float)(x) / (float)(tw)) * (float)(1 << 15));
@@ -40,8 +41,8 @@ void Hand::Draw(int projUniform, C3D_Mtx* projection, mc::inventory::Slot stack,
 		if (stack.GetItemCount() > 0) {
 			int16_t iconUV[2];
 			uint8_t color[3];
-			Block_GetTexture(stack, (Direction)i, iconUV);
-			Block_GetColor(stack.GetItemId(), stack.GetItemDamage(), (Direction)i, color);
+			Block_GetTexture(MCBridge::MCLIBSlotToMCLIBBlock(stack), (Direction)i, iconUV);
+			Block_GetColor(MCBridge::MCLIBSlotToMCLIBBlock(stack), stack.GetItemDamage(), (Direction)i, color);
 
 #define oneDivIconsPerRow (32768 / 8)
 #define halfTexel (6)
@@ -61,6 +62,7 @@ void Hand::Draw(int projUniform, C3D_Mtx* projection, mc::inventory::Slot stack,
 
 			if (i == Direction_East ||
 			    i == Direction_West) {  // eines der dümmsten Dinge, die ich jemals in meinem Leben getan habe
+                                        // Keine Sorge, wir fixen das :D
 				const int16_t uvRotationTable[2][2][2][2] = {
 				    {{{0, 1}, {0, 0}}, {{1, 1}, {1, 0}}}, {{{1, 0}, {1, 1}}, {{0, 0}, {0, 1}}},
 				};

@@ -40,12 +40,12 @@ public:
 
     ChunkColumn* GetChunkColumn(int x, int z);
 
-    Block GetBlock(mc::Vector3i position);
-    void SetBlock(mc::Vector3i position, Block block);
+    mc::block::BlockPtr GetBlock(mc::Vector3i position);
+    void SetBlock(mc::Vector3i position, mc::block::BlockPtr block);
     uint8_t GetMetadata(mc::Vector3i position);
     void SetMetadata(mc::Vector3i position, uint8_t metadata);
 
-    void SetBlockAndMeta(mc::Vector3i position, Block block, uint8_t metadata);
+    void SetBlockAndMeta(mc::Vector3i position, mc::block::BlockPtr block, uint8_t metadata);
 
     void UpdateChunkCache(int originX, int originZ);
 
