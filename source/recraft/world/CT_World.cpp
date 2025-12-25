@@ -17,8 +17,6 @@ World::World(WorkQueue *workqueue) {
     genSettings.seed = 28112000;
     genSettings.type = WorldGen_SuperFlat;
 
-    m_freeChunks.clear();
-
     Reset();
 }
 

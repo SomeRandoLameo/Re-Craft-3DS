@@ -12,6 +12,9 @@ ReCraftCore::ReCraftCore() {
     gfxSet3D(true);
     romfsInit();
 
+    //Would be really cool to make this world specific, for now this is hardcoded :D
+    mc::block::BlockRegistry::GetInstance()->RegisterVanillaBlocks(mc::protocol::Version::Minecraft_1_13_2);
+
     SuperChunk_InitPools();
     m_savemgr.InitFileSystem();
 
@@ -107,6 +110,7 @@ ReCraftCore::~ReCraftCore() {
         ExitMultiplayer();
     }
 
+
     m_savemgr.~SaveManager();
     SuperChunk_DeinitPools();
 
@@ -118,6 +122,9 @@ ReCraftCore::~ReCraftCore() {
     delete m_renderer;
     m_chunkWorker.~ChunkWorker();
 
+    //TODO:
+    mc::block::BlockRegistry::GetInstance()->ClearRegistry();
+
     romfsExit();
     gfxExit();
 }
@@ -125,9 +132,6 @@ ReCraftCore::~ReCraftCore() {
 void ReCraftCore::InitSinglePlayer(char* path, char* name, WorldGenType* worldType, bool newWorld) {
     strcpy(m_world->name, name);
     m_world->genSettings.type = *worldType;
-
-    //Would be really cool to make this world specific, for now this is hardcoded :D
-    mc::block::BlockRegistry::GetInstance()->RegisterVanillaBlocks(mc::protocol::Version::Minecraft_1_13_2);
 
     m_savemgr.Load(path);
 
@@ -191,7 +195,6 @@ void ReCraftCore::RunSinglePlayer(InputData inputData) {
 }
 void ReCraftCore::ExitSinglePlayer() {
     ReleaseWorld(&m_chunkWorker, &m_savemgr, m_world);
-    mc::block::BlockRegistry::GetInstance()->ClearRegistry();
 }
 
 void ReCraftCore::InitMultiPlayer() {
