@@ -48,3 +48,13 @@ To implement this properly, we need to save a Protocol version when creating the
 This means, we can (for now) only use one MC version of blocks.
 When the world gets exitted, we can deinitialize the block registry.
 
+
+
+
+
+
+
+
+I encountered a problem. The Problem meaning std::bad_alloc in the block-rewrite branch.
+The worst that could be would be runing out of memory, meaning i need to rewrite mclib-3ds, Best case: I allocated a pointer wrong because the Emulator doesnt report too much memory being utillized.
+For now, i will focus on a different branch. Reworking the Chunk engine and minor changes on the main branch.
