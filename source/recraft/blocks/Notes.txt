@@ -49,12 +49,10 @@ This means, we can (for now) only use one MC version of blocks.
 When the world gets exitted, we can deinitialize the block registry.
 
 
-
-
-
-
-
-
 I encountered a problem. The Problem meaning std::bad_alloc in the block-rewrite branch.
 The worst that could be would be runing out of memory, meaning i need to rewrite mclib-3ds, Best case: I allocated a pointer wrong because the Emulator doesnt report too much memory being utillized.
 For now, i will focus on a different branch. Reworking the Chunk engine and minor changes on the main branch.
+
+We need to keep blocks as data. Blocks shouldnt have functions. All actions can be triggered by other ways (for example a chest open, We cast a ray at the block, get the id and click, then we get the data related to that block)
+Other ways to improve performance would be reducing collision percision, mclib blocks shouldnt come with their own AABB. That should be handlöed separated.
+Low level optimisations :D
