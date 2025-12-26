@@ -1,3 +1,5 @@
+// source/recraft/world/CT_Chunk.cpp - Fixed initialization
+
 #include <climits>
 #include "world/CT_Chunk.h"
 
@@ -22,14 +24,27 @@ bool ChunkCanBeSeenThrough(uint16_t visiblity, Direction in, Direction out) {
 }
 
 ChunkColumn::ChunkColumn() {
-    memset(this, 0, sizeof(ChunkColumn));
+
 
     this->x = INT_MAX;
     this->z = INT_MAX;
+
+    // Get air block pointer once for efficiency
+    mc::block::BlockPtr airBlock = mc::block::BlockRegistry::GetInstance()->GetBlock("minecraft:air");
+
     for (int i = 0; i < CLUSTER_PER_CHUNK; i++) {
         this->chunks[i].y = i;
         this->chunks[i].seeThrough = UINT16_MAX;
         this->chunks[i].empty = true;
+
+        // Initialize all blocks to air
+        for (int x = 0; x < CHUNK_SIZE; x++) {
+            for (int y = 0; y < CHUNK_SIZE; y++) {
+                for (int z = 0; z < CHUNK_SIZE; z++) {
+                    this->chunks[i].blocks[x][y][z] = airBlock;
+                }
+            }
+        }
     }
     this->uuid = Xorshift32_Next(&uuidGenerator);
 }
@@ -39,10 +54,23 @@ ChunkColumn::ChunkColumn(int x, int z) {
 
     this->x = x;
     this->z = z;
+
+    // Get air block pointer once for efficiency
+    mc::block::BlockPtr airBlock = mc::block::BlockRegistry::GetInstance()->GetBlock("minecraft:air");
+
     for (int i = 0; i < CLUSTER_PER_CHUNK; i++) {
         this->chunks[i].y = i;
         this->chunks[i].seeThrough = UINT16_MAX;
         this->chunks[i].empty = true;
+
+        // Initialize all blocks to air
+        for (int x = 0; x < CHUNK_SIZE; x++) {
+            for (int y = 0; y < CHUNK_SIZE; y++) {
+                for (int z = 0; z < CHUNK_SIZE; z++) {
+                    this->chunks[i].blocks[x][y][z] = airBlock;
+                }
+            }
+        }
     }
     this->uuid = Xorshift32_Next(&uuidGenerator);
 }
@@ -53,13 +81,16 @@ void ChunkColumn::RequestGraphicsUpdate(int cluster) {
 }
 
 void ChunkColumn::GenerateHeightmap() {
-	if (heightmapRevision != revision) {
-		for (int x = 0; x < CHUNK_SIZE; x++) {
+    if (heightmapRevision != revision) {
+        for (int x = 0; x < CHUNK_SIZE; x++) {
             for (int z = 0; z < CHUNK_SIZE; z++) {
+                heightmap[x][z] = 0;  // Default to 0
                 for (int i = CLUSTER_PER_CHUNK - 1; i >= 0; --i) {
                     if (chunks[i].IsEmpty()) continue;
                     for (int j = CHUNK_SIZE - 1; j >= 0; --j) {
-                        if (chunks[i].blocks[x][j][z]->GetName() != "minecraft:air") {
+                        // Now safe - blocks are guaranteed to be initialized
+                        if (chunks[i].blocks[x][j][z] &&
+                            chunks[i].blocks[x][j][z]->GetName() != "minecraft:air") {
                             heightmap[x][z] = i * CHUNK_SIZE + j + 1;
                             i = -1;
                             break;
@@ -69,7 +100,7 @@ void ChunkColumn::GenerateHeightmap() {
             }
         }
     }
-	heightmapRevision = revision;
+    heightmapRevision = revision;
 }
 
 uint8_t ChunkColumn::GetHeightMap(int x, int z) {
@@ -94,7 +125,6 @@ mc::block::BlockPtr ChunkColumn::GetBlock(mc::Vector3i position) {
     return chunks[position.y / CHUNK_SIZE].blocks[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z];
 }
 
-
 // resets the meta data
 void ChunkColumn::SetBlock(mc::Vector3i position, mc::block::BlockPtr block) {
     Chunk* cluster = &chunks[position.y / CHUNK_SIZE];
@@ -114,12 +144,21 @@ void ChunkColumn::SetBlockAndMeta(mc::Vector3i position, mc::block::BlockPtr blo
 }
 
 bool Chunk::IsEmpty() {
-	if (emptyRevision == revision) return empty;
-	empty = false;
-	emptyRevision = revision;
-	for (int i = 0; i < sizeof(blocks) / sizeof(uint32_t); i++) {
-		if (((uint32_t*)blocks)[i] != 0) return false;
-	}
-	empty = true;
-	return true;
+    if (emptyRevision == revision) return empty;
+
+    mc::block::BlockPtr airBlock = mc::block::BlockRegistry::GetInstance()->GetBlock("minecraft:air");
+    empty = true;
+
+    for (int x = 0; x < CHUNK_SIZE && empty; x++) {
+        for (int y = 0; y < CHUNK_SIZE && empty; y++) {
+            for (int z = 0; z < CHUNK_SIZE && empty; z++) {
+                if (blocks[x][y][z] != airBlock) {
+                    empty = false;
+                }
+            }
+        }
+    }
+
+    emptyRevision = revision;
+    return empty;
 }

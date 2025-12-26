@@ -2,35 +2,30 @@
 
 #include "CT_Chunk.h"
 #include "WorkQueue.h"
-
 #include "../misc/NumberUtils.h"
 #include "../misc/Xorshift.h"
 
-
 #define CHUNKCACHE_SIZE (9)
 
-#define UNDEADCHUNKS_COUNT (2 * CHUNKCACHE_SIZE + CHUNKCACHE_SIZE * CHUNKCACHE_SIZE)
-
-#define CHUNKPOOL_SIZE (CHUNKCACHE_SIZE * CHUNKCACHE_SIZE + UNDEADCHUNKS_COUNT)
-
 typedef enum { WorldGen_Smea, WorldGen_SuperFlat, WorldGenTypes_Count } WorldGenType;
-typedef enum { Gamemode_Survival, Gamemode_Creative,Gamemode_Adventure,Gamemode_Spectator,Gamemode_Count } gamemode;
+typedef enum { Gamemode_Survival, Gamemode_Creative, Gamemode_Adventure, Gamemode_Spectator, Gamemode_Count } gamemode;
+
 typedef struct {
-	uint64_t seed;
-	WorldGenType type;
-	//gamemode type;
-	union {
-		struct {
-			// Keine Einstellungen...
-		} superflat;
-	} settings;
+    uint64_t seed;
+    WorldGenType type;
+    union {
+        struct {
+            // No settings...
+        } superflat;
+    } settings;
 } GeneratorSettings;
 
 #define WORLD_NAME_SIZE 12
+
 class World {
 public:
     World(WorkQueue* workqueue);
-    ~World() = default;
+    ~World();
 
     void Reset();
     void Tick();
@@ -51,7 +46,6 @@ public:
 
     int GetHeight(int x, int z);
 
-    // Public member access (if needed)
     int GetHighestBlock() const { return m_HighestBlock; }
     const char* GetName() const { return name; }
     const GeneratorSettings& GetGenSettings() const { return genSettings; }
@@ -63,19 +57,13 @@ public:
 
     ChunkColumn* chunkCache[CHUNKCACHE_SIZE][CHUNKCACHE_SIZE];
     char name[WORLD_NAME_SIZE];
+
 private:
     int m_HighestBlock;
-
-    ChunkColumn m_chunkPool[CHUNKPOOL_SIZE];
-    std::vector<ChunkColumn*> m_freeChunks;
-
     WorkQueue* m_workqueue;
-
     Xorshift32 m_randomTickGen;
-
     int m_weather;
 };
 
-// Helper functions remain as free functions
 int WorldToChunkCoord(int x);
 int WorldToLocalCoord(int x);

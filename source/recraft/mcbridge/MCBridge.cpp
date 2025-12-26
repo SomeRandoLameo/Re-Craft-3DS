@@ -1,4 +1,4 @@
-#include "mcbridge/MCBridge.h"
+    #include "mcbridge/MCBridge.h"
 #include <iostream>
 
 MCBridge::MCBridge()
@@ -18,7 +18,7 @@ bool MCBridge::connect() {
         return true;
     }
 
-    const std::string server("192.168.2.186");
+    const std::string server("192.168.2.192");
     const u16 port = 25565;
     const std::string username("Nintendo3DS");
     const std::string password("");
