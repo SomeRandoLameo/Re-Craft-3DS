@@ -50,7 +50,6 @@ Renderer::Renderer(World* world, Player* player, WorkQueue* queue) {
     pGuiShader->Input(GPU_SHORT, 3);
     pGuiShader->Input(GPU_SHORT, 3);
 
-
     PolyGen_Init(world, player);
 
     m_worldRenderer = new WorldRenderer(player, world, m_workqueue, m_world_shader_uLocProjection);
@@ -188,7 +187,7 @@ void Renderer::RenderHunger() {
         int l6 = 16;
         int j7 = 0;
         /*
-                //whatever this is
+                // Hunger Effect
                 if (entityplayer.isPotionActive(MobEffects.HUNGER))
                 {
                     l6 += 36;

@@ -182,23 +182,22 @@ SuperChunk* SaveManager::FetchSuperChunk(int x, int z) {
 }
 
 void SaveManager::LoadChunk(WorkQueue* queue, WorkerItem item) {
-    int x = ChunkToSuperChunkCoord(item.chunk->x);
-    int z = ChunkToSuperChunkCoord(item.chunk->z);
+    int x = ChunkToSuperChunkCoord(item.column->x);
+    int z = ChunkToSuperChunkCoord(item.column->z);
     SuperChunk* superchunk = FetchSuperChunk(x, z);
 
-    SuperChunk_LoadChunk(superchunk, item.chunk);
+    SuperChunk_LoadChunk(superchunk, item.column);
 }
 
 void SaveManager::SaveChunk(WorkQueue* queue, WorkerItem item) {
-    int x = ChunkToSuperChunkCoord(item.chunk->x);
-    int z = ChunkToSuperChunkCoord(item.chunk->z);
+    int x = ChunkToSuperChunkCoord(item.column->x);
+    int z = ChunkToSuperChunkCoord(item.column->z);
 
     SuperChunk* superchunk = FetchSuperChunk(x, z);
 
-    SuperChunk_SaveChunk(superchunk, item.chunk);
+    SuperChunk_SaveChunk(superchunk, item.column);
 }
 
-// Static callback wrappers for WorkQueue
 void SaveManager::LoadChunkCallback(WorkQueue* queue, WorkerItem item, void* context) {
     auto* mgr = static_cast<SaveManager*>(context);
     mgr->LoadChunk(queue, item);

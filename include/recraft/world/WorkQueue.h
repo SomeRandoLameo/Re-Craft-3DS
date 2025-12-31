@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "CT_Chunk.h"
 #include "../misc/Xorshift.h"
 
@@ -19,7 +18,7 @@ typedef enum {
 
 typedef struct {
 	WorkerItemType type;
-	ChunkColumn* chunk;
+	ChunkColumnPtr column;
 	uint32_t uuid;
 } WorkerItem;
 

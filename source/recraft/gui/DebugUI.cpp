@@ -27,7 +27,6 @@ DebugUI::DebugUI() {
         memset(statusLine, 0x0, STATUS_LINE_LENGTH);
     }
     RenderData = Iron::Drawlist::New();
-    // TODO: MC Bitmap pixel font loaded from assets :D
     RenderData->SetFont(ReCraftCore::GetInstance()->GetAssetManager()->Get<Iron::Font>("font"));
 }
 

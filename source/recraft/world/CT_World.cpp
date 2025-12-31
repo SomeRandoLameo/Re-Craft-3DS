@@ -17,7 +17,7 @@ World::World(WorkQueue *workqueue) {
     genSettings.seed = 28112000;
     genSettings.type = WorldGen_SuperFlat;
 
-    m_freeChunks.clear();
+    m_freeChunkColums.clear();
 
     Reset();
 }
@@ -26,79 +26,94 @@ void World::Reset() {
 	cacheTranslationX = 0;
 	cacheTranslationZ = 0;
 
-	m_freeChunks.clear();
+    m_freeChunkColums.clear();
 
 	for (size_t i = 0; i < CHUNKPOOL_SIZE; i++) {
-		m_chunkPool[i].x = INT_MAX;
-		m_chunkPool[i].z = INT_MAX;
-		m_freeChunks.push_back(&m_chunkPool[i]);
+        m_chunkChunkPool[i].x = INT_MAX;
+        m_chunkChunkPool[i].z = INT_MAX;
+        m_freeChunkColums.push_back(&m_chunkChunkPool[i]);
 	}
 
 	m_randomTickGen = Xorshift32_New();
 }
 
-ChunkColumn* World::LoadChunk(int x, int z) {
-	for (int i = 0; i < m_freeChunks.size(); i++) {
-		if (m_freeChunks[i]->x == x && m_freeChunks[i]->z == z) {
-			ChunkColumn* chunk = m_freeChunks[i];
-            m_freeChunks.erase(m_freeChunks.begin() + i);
-
-			chunk->references++;
-			return chunk;
+ChunkColumnPtr World::LoadChunk(int x, int z) {
+	for (int i = 0; i < m_freeChunkColums.size(); i++) {
+		if (m_freeChunkColums[i]->x == x && m_freeChunkColums[i]->z == z) {
+            ChunkColumnPtr column = m_freeChunkColums[i];
+            m_freeChunkColums.erase(m_freeChunkColums.begin() + i);
+            for (int j = 0; j < CLUSTER_PER_CHUNK; j++) {
+                column->RequestGraphicsUpdate(j);
+            }
+            column->references++;
+			return column;
 		}
 	}
 
-	for (int i = 0; i < m_freeChunks.size(); i++) {
-		if (!m_freeChunks[i]->tasksRunning) {
-			ChunkColumn* chunk = m_freeChunks[i];
-            m_freeChunks.erase(m_freeChunks.begin() + i);
+	for (int i = 0; i < m_freeChunkColums.size(); i++) {
+		if (!m_freeChunkColums[i]->tasksRunning) {
+            ChunkColumnPtr column = m_freeChunkColums[i];
+            m_freeChunkColums.erase(m_freeChunkColums.begin() + i);
 
-            chunk->~ChunkColumn();
-            new (chunk) ChunkColumn(x, z);
-			WorkQueue_AddItem(m_workqueue, (WorkerItem){WorkerItemType_Load, chunk});
+            column->~ChunkColumn();
+            new (column) ChunkColumn(x, z);
+			WorkQueue_AddItem(m_workqueue, (WorkerItem){WorkerItemType_Load, column});
 
-			chunk->references++;
-			return chunk;
+            column->references++;
+			return column;
 		}
 	}
 
 	return NULL;
 }
 
-void World::UnloadChunk(ChunkColumn* chunk) {
+void World::UnloadChunk(ChunkColumnPtr column) {
     // TODO: unloaded chunks should be removed from the cache, there seems to be a bug with saving or a buffer
-	WorkQueue_AddItem(m_workqueue, (WorkerItem){WorkerItemType_Save, chunk});
-	m_freeChunks.push_back(chunk);
-	chunk->references--;
+	WorkQueue_AddItem(m_workqueue, (WorkerItem){WorkerItemType_Save, column});
+    m_freeChunkColums.push_back(column);
+
+    for (int i = 0; i < CLUSTER_PER_CHUNK; ++i) {
+        if(column->chunks[i].vertices){
+            vboCache.Free(column->chunks[i].vbo);
+            column->chunks[i].vbo.memory = nullptr;
+            column->chunks[i].vbo.size = 0;
+        }
+        if(column->chunks[i].transparentVertices){
+            vboCache.Free(column->chunks[i].transparentVBO);
+            column->chunks[i].transparentVBO.memory = nullptr;
+            column->chunks[i].transparentVBO.size = 0;
+        }
+    }
+    column->references--;
 }
 
-ChunkColumn* World::GetChunkColumn(int x, int z) {
+ChunkColumnPtr World::GetChunkColumn(int x, int z) {
 	int halfS = CHUNKCACHE_SIZE / 2;
 	int lowX = cacheTranslationX - halfS;
 	int lowZ = cacheTranslationZ - halfS;
 	int highX = cacheTranslationX + halfS;
 	int highZ = cacheTranslationZ + halfS;
-	if (x >= lowX && z >= lowZ && x <= highX && z <= highZ) return chunkCache[x - lowX][z - lowZ];
+	if (x >= lowX && z >= lowZ && x <= highX && z <= highZ) return columnCache[x - lowX][z - lowZ];
 	return nullptr;
 }
 
 Block World::GetBlock( mc::Vector3i position) {
 	if (position.y < 0 || position.y >= CHUNK_HEIGHT) return Block_Air;
-	ChunkColumn* chunk = GetChunkColumn(WorldToChunkCoord(position.x), WorldToChunkCoord(position.z));
+	ChunkColumnPtr chunk = GetChunkColumn(WorldToChunkCoord(position.x), WorldToChunkCoord(position.z));
 	if (chunk) return chunk->GetBlock(mc::Vector3i(WorldToLocalCoord(position.x), position.y, WorldToLocalCoord(position.z)));
 	return Block_Air;
 }
 
 static void NotifyNeighbor(int axis, int comp, World* world, int cX, int cZ, int y, int xDiff, int zDiff) {
     if (axis == comp) {
-        ChunkColumn* neighborChunk = world->GetChunkColumn(cX + xDiff, cZ + zDiff);
+        ChunkColumnPtr neighborChunk = world->GetChunkColumn(cX + xDiff, cZ + zDiff);
         if (neighborChunk) {
             neighborChunk->RequestGraphicsUpdate(y / CHUNK_SIZE);
         }
     }
 }
 
-static void NotifyAllNeighbors(ChunkColumn* column, World* world, int cX, int cZ, int lX, int lZ, int y) {
+static void NotifyAllNeighbors(ChunkColumnPtr column, World* world, int cX, int cZ, int lX, int lZ, int y) {
     NotifyNeighbor(lX, 0, world, cX, cZ, y, -1, 0);
     NotifyNeighbor(lX, 15, world, cX, cZ, y, 1, 0);
     NotifyNeighbor(lZ, 0, world, cX, cZ, y, 0, -1);
@@ -116,13 +131,13 @@ void World::SetBlock(mc::Vector3i position, Block block) {
 	if (position.y < 0 || position.y >= CHUNK_HEIGHT) return;
 	int cX = WorldToChunkCoord(position.x);
 	int cZ = WorldToChunkCoord(position.z);
-	ChunkColumn* chunk = GetChunkColumn(cX, cZ);
-	if (chunk) {
+	ChunkColumnPtr column = GetChunkColumn(cX, cZ);
+	if (column) {
 		int lX = WorldToLocalCoord(position.x);
 		int lZ = WorldToLocalCoord(position.z);
-        chunk->SetBlock(mc::Vector3i(lX, position.y, lZ), block);
+        column->SetBlock(mc::Vector3i(lX, position.y, lZ), block);
 
-        NotifyAllNeighbors(chunk,this, cX,cZ,lX,lZ,position.y);
+        NotifyAllNeighbors(column,this, cX,cZ,lX,lZ,position.y);
 	}
 }
 
@@ -130,7 +145,7 @@ void World::SetBlockAndMeta(mc::Vector3i position, Block block, uint8_t metadata
 	if (position.y < 0 || position.y >= CHUNK_HEIGHT) return;
 	int cX = WorldToChunkCoord(position.x);
 	int cZ = WorldToChunkCoord(position.z);
-	ChunkColumn* chunk = GetChunkColumn(cX, cZ);
+	ChunkColumnPtr chunk = GetChunkColumn(cX, cZ);
 	if (chunk) {
 		int lX = WorldToLocalCoord(position.x);
 		int lZ = WorldToLocalCoord(position.z);
@@ -142,7 +157,7 @@ void World::SetBlockAndMeta(mc::Vector3i position, Block block, uint8_t metadata
 
 uint8_t World::GetMetadata(mc::Vector3i position) {
 	if (position.y < 0 || position.y >= CHUNK_HEIGHT) return 0;
-	ChunkColumn* chunk = GetChunkColumn(WorldToChunkCoord(position.x), WorldToChunkCoord(position.z));
+	ChunkColumnPtr chunk = GetChunkColumn(WorldToChunkCoord(position.x), WorldToChunkCoord(position.z));
 	if (chunk) return chunk->GetMetadata(mc::Vector3i(WorldToLocalCoord(position.x), position.y, WorldToLocalCoord(position.z)));
 	return 0;
 }
@@ -151,7 +166,7 @@ void World::SetMetadata(mc::Vector3i position, uint8_t metadata) {
 	if (position.y < 0 || position.y >= CHUNK_HEIGHT) return;
 	int cX = WorldToChunkCoord(position.x);
 	int cZ = WorldToChunkCoord(position.z);
-	ChunkColumn* chunk = GetChunkColumn(cX, cZ);
+	ChunkColumnPtr chunk = GetChunkColumn(cX, cZ);
 	if (chunk) {
 		int lX = WorldToLocalCoord(position.x);
 		int lZ = WorldToLocalCoord(position.z);
@@ -164,7 +179,7 @@ void World::SetMetadata(mc::Vector3i position, uint8_t metadata) {
 int World::GetHeight(int x, int z) {
 	int cX = WorldToChunkCoord(x);
 	int cZ = WorldToChunkCoord(z);
-	ChunkColumn* chunk = GetChunkColumn(cX, cZ);
+	ChunkColumnPtr chunk = GetChunkColumn(cX, cZ);
 	if (chunk) {
 		int lX = WorldToLocalCoord(x);
 		int lZ = WorldToLocalCoord(z);
@@ -176,8 +191,8 @@ int World::GetHeight(int x, int z) {
 
 void World::UpdateChunkCache(int orginX, int orginZ) {
 	if (orginX != cacheTranslationX || orginZ != cacheTranslationZ) {
-		ChunkColumn* tmpBuffer[CHUNKCACHE_SIZE][CHUNKCACHE_SIZE];
-		memcpy(tmpBuffer, chunkCache, sizeof(tmpBuffer));
+		ChunkColumnPtr tmpBuffer[CHUNKCACHE_SIZE][CHUNKCACHE_SIZE];
+		memcpy(tmpBuffer, columnCache, sizeof(tmpBuffer));
 
 		int oldBufferStartX = cacheTranslationX - CHUNKCACHE_SIZE / 2;
 		int oldBufferStartZ = cacheTranslationZ - CHUNKCACHE_SIZE / 2;
@@ -191,10 +206,10 @@ void World::UpdateChunkCache(int orginX, int orginZ) {
 				int wz = orginZ + (j - CHUNKCACHE_SIZE / 2);
 				if (wx >= oldBufferStartX && wx < oldBufferStartX + CHUNKCACHE_SIZE && wz >= oldBufferStartZ &&
 				    wz < oldBufferStartZ + CHUNKCACHE_SIZE) {
-					chunkCache[i][j] = tmpBuffer[i + diffX][j + diffZ];
+                    columnCache[i][j] = tmpBuffer[i + diffX][j + diffZ];
 					tmpBuffer[i + diffX][j + diffZ] = NULL;
 				} else {
-					chunkCache[i][j] = LoadChunk(wx, wz);
+                    columnCache[i][j] = LoadChunk(wx, wz);
 				}
 			}
 		}
@@ -215,7 +230,7 @@ void World::UpdateChunkCache(int orginX, int orginZ) {
 void World::Tick() {
 	for (int x = 0; x < CHUNKCACHE_SIZE; x++) {
         for (int z = 0; z < CHUNKCACHE_SIZE; z++) {
-            ChunkColumn *chunk = chunkCache[x][z];
+            ChunkColumn *chunk = columnCache[x][z];
 
             if (chunk->genProgress == ChunkGen_Empty && !chunk->tasksRunning) {
                 WorkQueue_AddItem(m_workqueue, (WorkerItem) {WorkerItemType_BaseGen, chunk});
@@ -227,7 +242,7 @@ void World::Tick() {
                 bool clear = true;
                 for (int xOff = -1; xOff < 2 && clear; xOff++) {
                     for (int zOff = -1; zOff < 2 && clear; zOff++) {
-                        ChunkColumn *borderChunk = chunkCache[x + xOff][z + zOff];
+                        ChunkColumn *borderChunk = columnCache[x + xOff][z + zOff];
                         if (borderChunk->genProgress == ChunkGen_Empty || !borderChunk->tasksRunning) clear = false;
                     }
                 }

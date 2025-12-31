@@ -142,7 +142,7 @@ void ReCraftCore::InitSinglePlayer(char* path, char* name, WorldGenType* worldTy
     m_world->cacheTranslationZ = WorldToChunkCoord(FastFloor(m_player->position.z));
     for (int i = 0; i < CHUNKCACHE_SIZE; i++) {
         for (int j = 0; j < CHUNKCACHE_SIZE; j++) {
-            m_world->chunkCache[i][j] = m_world->LoadChunk(
+            m_world->columnCache[i][j] = m_world->LoadChunk(
                 i - CHUNKCACHE_SIZE / 2 + m_world->cacheTranslationX,
                 j - CHUNKCACHE_SIZE / 2 + m_world->cacheTranslationZ
             );
@@ -303,7 +303,7 @@ void ReCraftCore::RunSelectWorld() {
 void ReCraftCore::ReleaseWorld(ChunkWorker *chunkWorker, SaveManager *savemgr, World *world) {
     for (int i = 0; i < CHUNKCACHE_SIZE; i++) {
         for (int j = 0; j < CHUNKCACHE_SIZE; j++) {
-            world->UnloadChunk(world->chunkCache[i][j]);
+            world->UnloadChunk(world->columnCache[i][j]);
         }
     }
     chunkWorker->Finish();

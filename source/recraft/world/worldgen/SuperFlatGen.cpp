@@ -26,7 +26,7 @@ void SuperFlatGen::Generate(WorkQueue* queue, WorkerItem item, void* context) {
 		}
 		for (int x = 0; x < CHUNK_SIZE; x++) {
 			for (int z = 0; z < CHUNK_SIZE; z++) {
-                item.chunk->SetBlock(mc::Vector3i(x, y, z), block);
+                item.column->SetBlock(mc::Vector3i(x, y, z), block);
             }
         }
 	}

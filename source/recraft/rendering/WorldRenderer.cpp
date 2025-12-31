@@ -16,8 +16,7 @@
 int sky_time = 0;
 
 WorldRenderer::WorldRenderer(Player* player, World* world, WorkQueue* workqueue, int projectionUniform) :
-    m_player(player), m_world(world), m_workqueue(workqueue), m_projectionUniform(projectionUniform),
-    m_cursor(nullptr) {
+    m_player(player), m_world(world), m_workqueue(workqueue), m_projectionUniform(projectionUniform){
 
     m_renderingQueue.clear();
     m_transparentClusters.clear();
@@ -72,9 +71,11 @@ void WorldRenderer::RenderWorld() {
     m_transparentClusters.clear();
 
     int pY = CLAMP(WorldToChunkCoord(FastFloor(m_player->position.y)), 0, CLUSTER_PER_CHUNK - 1);
-    ChunkColumn* pChunk = m_world->GetChunkColumn(WorldToChunkCoord(FastFloor(m_player->position.x)),
-                                                  WorldToChunkCoord(FastFloor(m_player->position.z)));
-    m_renderingQueue.push_back(RenderStep{&pChunk->chunks[pY], pChunk, Direction_Invalid});
+
+    ChunkColumnPtr columnPtr = m_world->GetChunkColumn(WorldToChunkCoord(FastFloor(m_player->position.x)), WorldToChunkCoord(FastFloor(m_player->position.z)));
+
+    m_renderingQueue.push_back(RenderStep{&columnPtr->chunks[pY], columnPtr, Direction_Invalid});
+
     ClusterRenderedRef(CHUNKCACHE_SIZE / 2 + m_world->cacheTranslationX, pY,
                        CHUNKCACHE_SIZE / 2 + m_world->cacheTranslationZ) = 1;
 
@@ -83,27 +84,27 @@ void WorldRenderer::RenderWorld() {
     while (!m_renderingQueue.empty()) {
         RenderStep step = m_renderingQueue.back();
         m_renderingQueue.pop_back();
-        ChunkColumn* chunk = step.chunk;
-        Chunk* cluster = step.cluster;
+        ChunkColumnPtr column = step.column;
+        ChunkPtr chunk = step.chunk;
 
-        if (cluster->vertices > 0 && cluster->vbo.size) {
-            ClusterRenderedRef(chunk->x, cluster->y, chunk->z) |= 2;
+        if (chunk->vertices > 0 && chunk->vbo.size) {
+            ClusterRenderedRef(column->x, chunk->y, column->z) |= 2;
 
-            C3D::BufCfg<4>(cluster->vbo.memory, sizeof(WorldVertex));
-            C3D::DrawArrays(0, cluster->vertices);
+            C3D::BufCfg<4>(chunk->vbo.memory, sizeof(WorldVertex));
+            C3D::DrawArrays(0, chunk->vertices);
 
-            polysTotal += cluster->vertices;
+            polysTotal += chunk->vertices;
             clustersDrawn++;
         }
-        if (cluster->transparentVertices > 0 && cluster->transparentVBO.size) {
-            m_transparentClusters.push_back(TransparentRender{cluster, chunk});
+        if (chunk->transparentVertices > 0 && chunk->transparentVBO.size) {
+            m_transparentClusters.push_back(TransparentRender{chunk, column});
         }
 
         for (int i = 0; i < 6; i++) {
             Direction dir = (Direction)i;
             const int* offset = DirectionToOffset[dir];
 
-            int newX = chunk->x + offset[0], newY = cluster->y + offset[1], newZ = chunk->z + offset[2];
+            int newX = column->x + offset[0], newY = chunk->y + offset[1], newZ = column->z + offset[2];
             if (newX < m_world->cacheTranslationX - CHUNKCACHE_SIZE / 2 + 1 ||
                 newX > m_world->cacheTranslationX + CHUNKCACHE_SIZE / 2 - 1 ||
                 newZ < m_world->cacheTranslationZ - CHUNKCACHE_SIZE / 2 + 1 ||
@@ -120,7 +121,7 @@ void WorldRenderer::RenderWorld() {
             if (ClusterRenderedRef(newX, newY, newZ) & 1)
                 continue;
 
-            if (!ChunkCanBeSeenThrough(cluster->seeThrough, step.enteredFrom, (Direction)i) &&
+            if (!ChunkCanBeSeenThrough(chunk->seeThrough, step.enteredFrom, (Direction)i) &&
                 step.enteredFrom != Direction_Invalid)
                 continue;
 
@@ -130,26 +131,29 @@ void WorldRenderer::RenderWorld() {
 
             ClusterRenderedRef(newX, newY, newZ) |= 1;
 
-            ChunkColumn* newChunk = m_world->GetChunkColumn(newX, newZ);
-            RenderStep nextStep = (RenderStep){&newChunk->chunks[newY], newChunk, DirectionOpposite[dir]};
-            if (newChunk)
-                m_renderingQueue.push_back(nextStep);
+            ChunkColumnPtr newColumn = m_world->GetChunkColumn(newX, newZ);
+            RenderStep nextStep = (RenderStep){&newColumn->chunks[newY], newColumn, DirectionOpposite[dir]};
+            if (newColumn) m_renderingQueue.push_back(nextStep);
         }
     }
 
     for (int x = 1; x < CHUNKCACHE_SIZE - 1; x++) {
         for (int z = 1; z < CHUNKCACHE_SIZE - 1; z++) {
-            ChunkColumn* chunk = m_world->chunkCache[x][z];
+            ChunkColumnPtr column = m_world->columnCache[x][z];
 
-            if ((chunk->revision != chunk->displayRevision || chunk->forceVBOUpdate) && !chunk->tasksRunning) {
+            if ((column->revision != column->displayRevision || column->forceVBOUpdate) && !column->tasksRunning) {
                 bool clear = true;
-                for (int xOff = -1; xOff < 2 && clear; xOff++)
-                    for (int zOff = -1; zOff < 2 && clear; zOff++)
-                        if (m_world->chunkCache[x + xOff][z + zOff]->genProgress == ChunkGen_Empty)
+                for (int xOff = -1; xOff < 2 && clear; xOff++) {
+                    for (int zOff = -1; zOff < 2 && clear; zOff++) {
+                        if (m_world->columnCache[x + xOff][z + zOff]->genProgress == ChunkGen_Empty) {
                             clear = false;
+                        }
+                    }
+                }
 
-                if (clear)
-                    WorkQueue_AddItem(m_workqueue, (WorkerItem){WorkerItemType_PolyGen, chunk});
+                if (clear) {
+                    WorkQueue_AddItem(m_workqueue, (WorkerItem){WorkerItemType_PolyGen, column});
+                }
             }
         }
     }
@@ -159,11 +163,12 @@ void WorldRenderer::RenderWorld() {
     for (auto& m_transparentCluster : std::ranges::reverse_view(m_transparentClusters)) {
         TransparentRender* render = &m_transparentCluster;
 
-        C3D::BufCfg<4>(render->cluster->transparentVBO.memory, sizeof(WorldVertex));
-        C3D::DrawArrays(0, render->cluster->transparentVertices);
+        C3D::BufCfg<4>(render->chunk->transparentVBO.memory, sizeof(WorldVertex));
+        C3D::DrawArrays(0, render->chunk->transparentVertices);
 
-        polysTotal += render->cluster->transparentVertices;
+        polysTotal += render->chunk->transparentVertices;
     }
+
     C3D_AlphaTest(false, GPU_GREATER, 0);
 
     // DebugUI_Text("Clusters drawn %d with %d steps. %d vertices", clustersDrawn, steps, polysTotal);

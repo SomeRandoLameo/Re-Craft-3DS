@@ -169,11 +169,11 @@ static void freeSectors(SuperChunk* superchunk, uint32_t address, uint8_t size) 
     }
 }
 
-void SuperChunk_SaveChunk(SuperChunk* superchunk, ChunkColumn* chunk) {
-    int x = ChunkToLocalSuperChunkCoord(chunk->x);
-    int z = ChunkToLocalSuperChunkCoord(chunk->z);
+void SuperChunk_SaveChunk(SuperChunk* superchunk, ChunkColumnPtr column) {
+    int x = ChunkToLocalSuperChunkCoord(column->x);
+    int z = ChunkToLocalSuperChunkCoord(column->z);
 
-    if (superchunk->grid[x][z].revision != chunk->revision) {
+    if (superchunk->grid[x][z].revision != column->revision) {
         mpack_writer_t writer;
         mpack_writer_init(&writer, decompressBuffer, decompressBufferSize);
 
@@ -182,19 +182,19 @@ void SuperChunk_SaveChunk(SuperChunk* superchunk, ChunkColumn* chunk) {
         mpack_write_cstr(&writer, "clusters");
         mpack_start_array(&writer, CLUSTER_PER_CHUNK);
         for (int i = 0; i < CLUSTER_PER_CHUNK; i++) {
-            bool empty = chunk->chunks[i].IsEmpty();
+            bool empty = column->chunks[i].IsEmpty();
 
             mpack_start_map(&writer, empty ? 2 : 4);
 
             if (!empty) {
                 mpack_write_cstr(&writer, "blocks");
-                mpack_write_bin(&writer, (char*)chunk->chunks[i].blocks, sizeof(chunk->chunks[i].blocks));
+                mpack_write_bin(&writer, (char*)column->chunks[i].blocks, sizeof(column->chunks[i].blocks));
                 mpack_write_cstr(&writer, "metadataLight");
-                mpack_write_bin(&writer, (char*)chunk->chunks[i].metadataLight, sizeof(chunk->chunks[i].metadataLight));
+                mpack_write_bin(&writer, (char*)column->chunks[i].metadataLight, sizeof(column->chunks[i].metadataLight));
             }
 
             mpack_write_cstr(&writer, "revision");
-            mpack_write_u32(&writer, chunk->chunks[i].revision);
+            mpack_write_u32(&writer, column->chunks[i].revision);
 
             mpack_write_cstr(&writer, "empty");
             mpack_write_bool(&writer, empty);
@@ -204,15 +204,15 @@ void SuperChunk_SaveChunk(SuperChunk* superchunk, ChunkColumn* chunk) {
         mpack_finish_array(&writer);
 
         mpack_write_cstr(&writer, "genProgress");
-        mpack_write_int(&writer, chunk->genProgress);
+        mpack_write_int(&writer, column->genProgress);
 
         mpack_write_cstr(&writer, "heightmap");
-        mpack_write_bin(&writer, (char*)chunk->heightmap, sizeof(chunk->heightmap));
+        mpack_write_bin(&writer, (char*)column->heightmap, sizeof(column->heightmap));
 
         mpack_finish_map(&writer);
         mpack_error_t err = mpack_writer_destroy(&writer);
         if (err != mpack_ok) {
-            Crash("MPack error %d while saving chunk(%d, %d) to superchunk", err, chunk->x, chunk->z);
+            Crash("MPack error %d while saving chunk(%d, %d) to superchunk", err, column->x, column->z);
         }
 
         size_t uncompressedSize = mpack_writer_buffer_used(&writer);
@@ -229,14 +229,14 @@ void SuperChunk_SaveChunk(SuperChunk* superchunk, ChunkColumn* chunk) {
             if (fwrite(fileBuffer, compressedSize, 1, superchunk->dataFile) != 1)
                 Crash("Couldn't write complete chunk data to file");
 
-            superchunk->grid[x][z] = (ChunkInfo){address, compressedSize, uncompressedSize, static_cast<uint8_t>(blockSize), chunk->revision};
+            superchunk->grid[x][z] = (ChunkInfo){address, compressedSize, uncompressedSize, static_cast<uint8_t>(blockSize), column->revision};
         }
     }
 }
 
-void SuperChunk_LoadChunk(SuperChunk* superchunk, ChunkColumn* chunk) {
-    int x = ChunkToLocalSuperChunkCoord(chunk->x);
-    int z = ChunkToLocalSuperChunkCoord(chunk->z);
+void SuperChunk_LoadChunk(SuperChunk* superchunk, ChunkColumnPtr column) {
+    int x = ChunkToLocalSuperChunkCoord(column->x);
+    int z = ChunkToLocalSuperChunkCoord(column->z);
     ChunkInfo chunkInfo = superchunk->grid[x][z];
     if (chunkInfo.actualSize > 0) {
         fseek(superchunk->dataFile, chunkInfo.position * SectorSize, SEEK_SET);
@@ -253,41 +253,42 @@ void SuperChunk_LoadChunk(SuperChunk* superchunk, ChunkColumn* chunk) {
             for (int i = 0; i < CLUSTER_PER_CHUNK; i++) {
                 mpack_node_t cluster = mpack_node_array_at(clusters, i);
 
-                chunk->chunks[i].revision = mpack_node_u32(mpack_node_map_cstr(cluster, "revision"));
+                column->chunks[i].revision = mpack_node_u32(mpack_node_map_cstr(cluster, "revision"));
 
                 mpack_node_t emptyNode = mpack_node_map_cstr_optional(cluster, "empty");
                 if (mpack_node_type(emptyNode) != mpack_type_nil) {
-                    chunk->chunks[i].emptyRevision = chunk->chunks[i].revision;
-                    chunk->chunks[i].empty = mpack_node_bool(emptyNode);
+                    column->chunks[i].emptyRevision = column->chunks[i].revision;
+                    column->chunks[i].empty = mpack_node_bool(emptyNode);
                 } else {
-                    chunk->chunks[i].emptyRevision = 0;
-                    chunk->chunks[i].empty = false;
+                    column->chunks[i].emptyRevision = 0;
+                    column->chunks[i].empty = false;
                 }
 
                 mpack_node_t blocksNode = mpack_node_map_cstr_optional(cluster, "blocks");
                 if (mpack_node_type(blocksNode) == mpack_type_bin)  // preserve savedata, in case of a wrong empty flag
-                    memcpy(chunk->chunks[i].blocks, mpack_node_data(blocksNode), sizeof(chunk->chunks[i].blocks));
+                    memcpy(column->chunks[i].blocks, mpack_node_data(blocksNode), sizeof(column->chunks[i].blocks));
                 mpack_node_t metadataNode = mpack_node_map_cstr_optional(cluster, "metadataLight");
                 if (mpack_node_type(metadataNode) == mpack_type_bin)
-                    memcpy(chunk->chunks[i].metadataLight, mpack_node_data(metadataNode),
-                           sizeof(chunk->chunks[i].metadataLight));
+                    memcpy(column->chunks[i].metadataLight, mpack_node_data(metadataNode),
+                           sizeof(column->chunks[i].metadataLight));
             }
 
-            chunk->genProgress = (ChunkGenProgress)mpack_node_int(mpack_node_map_cstr(root, "genProgress"));
+            column->genProgress = (ChunkGenProgress)mpack_node_int(mpack_node_map_cstr(root, "genProgress"));
 
             mpack_node_t heightmapNode = mpack_node_map_cstr(root, "heightmap");
             if (mpack_node_type(heightmapNode) != mpack_type_nil) {
-                memcpy(chunk->heightmap, mpack_node_data(heightmapNode), sizeof(chunk->heightmap));
-                chunk->heightmapRevision = chunkInfo.revision;
-            } else
-                chunk->heightmapRevision = 0;
+                memcpy(column->heightmap, mpack_node_data(heightmapNode), sizeof(column->heightmap));
+                column->heightmapRevision = chunkInfo.revision;
+            } else {
+                column->heightmapRevision = 0;
+            }
 
             mpack_error_t err = mpack_tree_destroy(&tree);
             if (err != mpack_ok) {
-                Crash("MPack error %d while loading chunk(%d %d) from superchunk", err, chunk->x, chunk->z);
+                Crash("MPack error %d while loading chunk(%d %d) from superchunk", err, column->x, column->z);
             }
 
-            chunk->revision = chunkInfo.revision;
+            column->revision = chunkInfo.revision;
         }
     }
 }

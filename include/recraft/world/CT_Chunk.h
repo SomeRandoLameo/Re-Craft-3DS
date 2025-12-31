@@ -34,6 +34,8 @@ public:
     bool IsEmpty();
 };
 
+typedef Chunk* ChunkPtr;
+
 typedef enum {
 	ChunkGen_Empty,  //
 	ChunkGen_Terrain,
@@ -90,3 +92,4 @@ public:
     void SetBlockAndMeta(mc::Vector3i position, Block block, uint8_t metadata);
 };
 
+typedef ChunkColumn* ChunkColumnPtr;

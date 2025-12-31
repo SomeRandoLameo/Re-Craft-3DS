@@ -83,10 +83,10 @@ uint8_t ChunkColumn::GetMetadata(mc::Vector3i position) {
 
 void ChunkColumn::SetMetadata(mc::Vector3i position, uint8_t metadata) {
     metadata &= 0xf;
-    Chunk* cluster = &chunks[position.y / CHUNK_SIZE];
-    uint8_t* addr = &cluster->metadataLight[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z];
+    ChunkPtr chunk = &chunks[position.y / CHUNK_SIZE];
+    uint8_t* addr = &chunk->metadataLight[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z];
     *addr = (*addr & 0xf0) | metadata;
-    ++cluster->revision;
+    ++chunk->revision;
     ++revision;
 }
 
@@ -97,19 +97,19 @@ Block ChunkColumn::GetBlock(mc::Vector3i position) {
 
 // resets the meta data
 void ChunkColumn::SetBlock(mc::Vector3i position, Block block) {
-    Chunk* cluster = &chunks[position.y / CHUNK_SIZE];
-    cluster->blocks[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z] = block;
+    ChunkPtr chunk = &chunks[position.y / CHUNK_SIZE];
+    chunk->blocks[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z] = block;
     SetMetadata(position, 0);
 }
 
 void ChunkColumn::SetBlockAndMeta(mc::Vector3i position, Block block, uint8_t metadata) {
-    Chunk* cluster = &chunks[position.y / CHUNK_SIZE];
-    cluster->blocks[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z] = block;
+    ChunkPtr chunk = &chunks[position.y / CHUNK_SIZE];
+    chunk->blocks[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z] = block;
     metadata &= 0xf;
-    uint8_t* addr = &cluster->metadataLight[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z];
+    uint8_t* addr = &chunk->metadataLight[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z];
     *addr = (*addr & 0xf0) | metadata;
 
-    ++cluster->revision;
+    ++chunk->revision;
     ++revision;
 }
 

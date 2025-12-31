@@ -37,6 +37,7 @@ typedef struct {
     uint32_t revision;
 } ChunkInfo;
 
+// TODO: Turn this into a class
 typedef struct {
     int x, z;
     FILE* dataFile;
@@ -54,5 +55,5 @@ void SuperChunk_Init(SuperChunk* superchunk, int x, int z);
 void SuperChunk_Deinit(SuperChunk* superchunk);
 void SuperChunk_SaveIndex(SuperChunk* superchunk);
 
-void SuperChunk_SaveChunk(SuperChunk* superchunk, ChunkColumn* chunk);
-void SuperChunk_LoadChunk(SuperChunk* superchunk, ChunkColumn* chunk);
+void SuperChunk_SaveChunk(SuperChunk* superchunk, ChunkColumnPtr column);
+void SuperChunk_LoadChunk(SuperChunk* superchunk, ChunkColumnPtr column);

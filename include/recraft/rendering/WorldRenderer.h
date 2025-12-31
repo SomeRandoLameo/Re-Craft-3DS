@@ -14,18 +14,15 @@
 //mclib
 #include <mclib/common/Vector.h>
 
-
-
-
 struct RenderStep {
-    Chunk* cluster;
-    ChunkColumn* chunk;
+    ChunkPtr chunk;
+    ChunkColumnPtr column;
     Direction enteredFrom;
 };
 
 struct TransparentRender {
-    Chunk* cluster;
-    ChunkColumn* chunk;
+    ChunkPtr chunk;
+    ChunkColumnPtr column;
 };
 
 class WorldRenderer {
@@ -41,22 +38,22 @@ public:
 private:
     void RenderWorld();
 
-    Hand* m_hand;
-    CubeRenderer* m_cubeRenderer;
-    Clouds* m_clouds;
-    Player* m_player;
-    World* m_world;
-    WorkQueue* m_workqueue;
+    Hand* m_hand = nullptr;
+    CubeRenderer* m_cubeRenderer = nullptr;
+    Clouds* m_clouds = nullptr;
+    Player* m_player = nullptr;
+    World* m_world = nullptr;
+    WorkQueue* m_workqueue = nullptr;
+    Cursor* m_cursor = nullptr;
     Camera m_cam;
-    int m_projectionUniform;
-
-    Cursor* m_cursor;
 
     std::vector<RenderStep> m_renderingQueue;
+
     uint8_t m_chunkRendered[CHUNKCACHE_SIZE][CLUSTER_PER_CHUNK][CHUNKCACHE_SIZE];
     std::vector<TransparentRender> m_transparentClusters;
-
     C3D_FogLut m_fogLut;
+
+    int m_projectionUniform;
 
     inline bool ClusterWasRendered(int x, int y, int z) const {
         return m_chunkRendered[x - (m_world->cacheTranslationX - (CHUNKCACHE_SIZE / 2))][y]

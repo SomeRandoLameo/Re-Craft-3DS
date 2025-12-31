@@ -87,7 +87,7 @@ void ChunkWorker::Mainloop() {
 			WorkerItem item = privateQueue.back();
 			privateQueue.pop_back();
 
-			if (item.uuid == item.chunk->uuid) {
+			if (item.uuid == item.column->uuid) {
 
 				for (auto& h : m_handler[item.type]) {
 					if (h.active) {
@@ -98,18 +98,18 @@ void ChunkWorker::Mainloop() {
 
 				switch (item.type) {
 					case WorkerItemType_BaseGen:
-						item.chunk->genProgress = ChunkGen_Terrain;
+						item.column->genProgress = ChunkGen_Terrain;
 						break;
 					case WorkerItemType_Decorate:
-						item.chunk->genProgress = ChunkGen_Finished;
+						item.column->genProgress = ChunkGen_Finished;
 						break;
 					default:
 						break;
 				}
 
-				--item.chunk->tasksRunning;
+				--item.column->tasksRunning;
 				if (item.type == WorkerItemType_PolyGen) {
-					--item.chunk->graphicalTasksRunning;
+					--item.column->graphicalTasksRunning;
 				}
 
 				svcSleepThread(1000);

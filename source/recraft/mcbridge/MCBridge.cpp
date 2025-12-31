@@ -1,12 +1,6 @@
 #include "mcbridge/MCBridge.h"
 #include <iostream>
 
-MCBridge::MCBridge()
-        : m_running(false)
-        , m_connected(false)
-        , m_shouldStop(false) {
-}
-
 MCBridge::~MCBridge() {
     stopBackgroundThread();
     disconnect();

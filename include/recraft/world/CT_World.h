@@ -35,10 +35,10 @@ public:
     void Reset();
     void Tick();
 
-    ChunkColumn* LoadChunk(int x, int z);
-    void UnloadChunk(ChunkColumn* chunk);
+    ChunkColumnPtr LoadChunk(int x, int z);
+    void UnloadChunk(ChunkColumnPtr chunk);
 
-    ChunkColumn* GetChunkColumn(int x, int z);
+    ChunkColumnPtr GetChunkColumn(int x, int z);
 
     Block GetBlock(mc::Vector3i position);
     void SetBlock(mc::Vector3i position, Block block);
@@ -61,13 +61,15 @@ public:
     int cacheTranslationX, cacheTranslationZ;
     GeneratorSettings genSettings;
 
-    ChunkColumn* chunkCache[CHUNKCACHE_SIZE][CHUNKCACHE_SIZE];
+    ChunkColumnPtr columnCache[CHUNKCACHE_SIZE][CHUNKCACHE_SIZE];
     char name[WORLD_NAME_SIZE];
+
+    VBOCache vboCache;
 private:
     int m_HighestBlock;
 
-    ChunkColumn m_chunkPool[CHUNKPOOL_SIZE];
-    std::vector<ChunkColumn*> m_freeChunks;
+    ChunkColumn m_chunkChunkPool[CHUNKPOOL_SIZE];
+    std::vector<ChunkColumnPtr> m_freeChunkColums;
 
     WorkQueue* m_workqueue;
 

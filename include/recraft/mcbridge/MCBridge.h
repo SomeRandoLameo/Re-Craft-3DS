@@ -18,7 +18,7 @@
 
 class MCBridge {
 public:
-    MCBridge();
+    MCBridge() = default;
     ~MCBridge();
 
     bool connect();
@@ -66,9 +66,9 @@ private:
     void* m_threadStack;
     LightLock m_clientMutex;
 
-    std::atomic<bool> m_running;
-    std::atomic<bool> m_connected;
-    std::atomic<bool> m_shouldStop;
+    std::atomic<bool> m_running = false;
+    std::atomic<bool> m_connected = false;
+    std::atomic<bool> m_shouldStop = false;
 
     static constexpr size_t THREAD_STACK_SIZE = 64 * 1024;
     static constexpr int THREAD_PRIORITY = 0x30;
