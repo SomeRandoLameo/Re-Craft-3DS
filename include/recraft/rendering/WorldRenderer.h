@@ -49,7 +49,7 @@ private:
 
     std::vector<RenderStep> m_renderingQueue;
 
-    uint8_t m_chunkRendered[CHUNKCACHE_SIZE][CLUSTER_PER_CHUNK][CHUNKCACHE_SIZE];
+    uint8_t m_chunkRendered[CHUNKCACHE_SIZE][CHUNKS_PER_COLUMN][CHUNKCACHE_SIZE];
     std::vector<TransparentRender> m_transparentClusters;
     C3D_FogLut m_fogLut;
 

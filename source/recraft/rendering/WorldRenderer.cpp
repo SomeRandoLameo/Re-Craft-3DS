@@ -70,11 +70,11 @@ void WorldRenderer::RenderWorld() {
     m_renderingQueue.clear();
     m_transparentClusters.clear();
 
-    int pY = CLAMP(WorldToChunkCoord(FastFloor(m_player->position.y)), 0, CLUSTER_PER_CHUNK - 1);
+    int pY = CLAMP(WorldToChunkCoord(FastFloor(m_player->position.y)), 0, CHUNKS_PER_COLUMN - 1);
 
     ChunkColumnPtr columnPtr = m_world->GetChunkColumn(WorldToChunkCoord(FastFloor(m_player->position.x)), WorldToChunkCoord(FastFloor(m_player->position.z)));
 
-    m_renderingQueue.push_back(RenderStep{&columnPtr->chunks[pY], columnPtr, Direction_Invalid});
+    m_renderingQueue.push_back(RenderStep{columnPtr->GetChunk(pY), columnPtr, Direction_Invalid});
 
     ClusterRenderedRef(CHUNKCACHE_SIZE / 2 + m_world->cacheTranslationX, pY,
                        CHUNKCACHE_SIZE / 2 + m_world->cacheTranslationZ) = 1;
@@ -108,7 +108,7 @@ void WorldRenderer::RenderWorld() {
             if (newX < m_world->cacheTranslationX - CHUNKCACHE_SIZE / 2 + 1 ||
                 newX > m_world->cacheTranslationX + CHUNKCACHE_SIZE / 2 - 1 ||
                 newZ < m_world->cacheTranslationZ - CHUNKCACHE_SIZE / 2 + 1 ||
-                newZ > m_world->cacheTranslationZ + CHUNKCACHE_SIZE / 2 - 1 || newY < 0 || newY >= CLUSTER_PER_CHUNK)
+                newZ > m_world->cacheTranslationZ + CHUNKCACHE_SIZE / 2 - 1 || newY < 0 || newY >= CHUNKS_PER_COLUMN)
                 continue;
 
             mc::Vector3d dist = mc::Vector3d(newX * CHUNK_SIZE + CHUNK_SIZE / 2, newY * CHUNK_SIZE + CHUNK_SIZE / 2,
@@ -132,7 +132,7 @@ void WorldRenderer::RenderWorld() {
             ClusterRenderedRef(newX, newY, newZ) |= 1;
 
             ChunkColumnPtr newColumn = m_world->GetChunkColumn(newX, newZ);
-            RenderStep nextStep = (RenderStep){&newColumn->chunks[newY], newColumn, DirectionOpposite[dir]};
+            RenderStep nextStep = (RenderStep){newColumn->GetChunk(newY), newColumn, DirectionOpposite[dir]};
             if (newColumn) m_renderingQueue.push_back(nextStep);
         }
     }

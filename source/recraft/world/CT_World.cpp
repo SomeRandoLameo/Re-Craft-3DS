@@ -42,7 +42,7 @@ ChunkColumnPtr World::LoadChunk(int x, int z) {
 		if (m_freeChunkColums[i]->x == x && m_freeChunkColums[i]->z == z) {
             ChunkColumnPtr column = m_freeChunkColums[i];
             m_freeChunkColums.erase(m_freeChunkColums.begin() + i);
-            for (int j = 0; j < CLUSTER_PER_CHUNK; j++) {
+            for (int j = 0; j < CHUNKS_PER_COLUMN; j++) {
                 column->RequestGraphicsUpdate(j);
             }
             column->references++;
@@ -72,16 +72,17 @@ void World::UnloadChunk(ChunkColumnPtr column) {
 	WorkQueue_AddItem(m_workqueue, (WorkerItem){WorkerItemType_Save, column});
     m_freeChunkColums.push_back(column);
 
-    for (int i = 0; i < CLUSTER_PER_CHUNK; ++i) {
-        if(column->chunks[i].vertices){
-            vboCache.Free(column->chunks[i].vbo);
-            column->chunks[i].vbo.memory = nullptr;
-            column->chunks[i].vbo.size = 0;
+    for (int i = 0; i < CHUNKS_PER_COLUMN; ++i) {
+        auto chunk = column->GetChunk(i);
+        if(chunk->vertices){
+            vboCache.Free(chunk->vbo);
+            chunk->vbo.memory = nullptr;
+            chunk->vbo.size = 0;
         }
-        if(column->chunks[i].transparentVertices){
-            vboCache.Free(column->chunks[i].transparentVBO);
-            column->chunks[i].transparentVBO.memory = nullptr;
-            column->chunks[i].transparentVBO.size = 0;
+        if(chunk->transparentVertices){
+            vboCache.Free(chunk->transparentVBO);
+            chunk->transparentVBO.memory = nullptr;
+            chunk->transparentVBO.size = 0;
         }
     }
     column->references--;
@@ -122,7 +123,7 @@ static void NotifyAllNeighbors(ChunkColumnPtr column, World* world, int cX, int 
     if (WorldToLocalCoord(y) == 0 && y / CHUNK_SIZE - 1 >= 0) {
         column->RequestGraphicsUpdate(y / CHUNK_SIZE - 1);
     }
-    if (WorldToLocalCoord(y) == 15 && y / CHUNK_SIZE + 1 < CLUSTER_PER_CHUNK) {
+    if (WorldToLocalCoord(y) == 15 && y / CHUNK_SIZE + 1 < CHUNKS_PER_COLUMN) {
         column->RequestGraphicsUpdate(y / CHUNK_SIZE + 1);
     }
 }

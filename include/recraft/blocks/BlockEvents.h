@@ -4,5 +4,5 @@
 #include "../world/CT_World.h"
 
 #define RANDOMTICKS_PER_CLUSTER (3)
-#define RANDOMTICKS_PER_CHUNK (CLUSTER_PER_CHUNK * RANDOMTICKS_PER_CLUSTER)
+#define RANDOMTICKS_PER_CHUNK (CHUNKS_PER_COLUMN * RANDOMTICKS_PER_CLUSTER)
 void BlockEvent_RandomTick(World* world, ChunkColumnPtr chunk, int x[], int y[], int z[]);

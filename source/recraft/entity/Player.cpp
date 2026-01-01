@@ -200,7 +200,7 @@ void Player::HandleFallDamage() {
 void Player::HandleFireDamage() {
     if (m_world->GetBlock(ToVector3i(position)) == Block_Lava) {
       //  DebugUI_Log("ur burning lol");
-        OvertimeDamage("Fire", 10);
+        //OvertimeDamage("Fire", 10);
     }
 }
 

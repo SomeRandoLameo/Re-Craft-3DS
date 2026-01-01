@@ -152,13 +152,13 @@ void WorldSelect_Render() {
         Gui::Offset(0, 10);
 
         Gui::BeginRowCenter(Gui::RelativeWidth(0.9f), 3);
-        Gui::Label(0.45f, true, INT16_MAX, false, "Game Mode:");
-        Gui::Space(0.1f);
-        if (Gui::Button(0.45f, "%s", gamemodestr[gamemode1])) {
-            gamemode1 = static_cast<gamemode>(static_cast<int>(gamemode1) + 1);
-            if (gamemode1 == Gamemode_Count)
-                gamemode1 = static_cast<gamemode>(0);
-        }
+            Gui::Label(0.45f, true, INT16_MAX, false, "Game Mode:");
+            Gui::Space(0.1f);
+            if (Gui::Button(0.45f, "%s", gamemodestr[gamemode1])) {
+                gamemode1 = static_cast<gamemode>(static_cast<int>(gamemode1) + 1);
+                if (gamemode1 == Gamemode_Count)
+                    gamemode1 = static_cast<gamemode>(0);
+            }
         Gui::EndRow();
 
         Gui::BeginRowCenter(Gui::RelativeWidth(0.9f), 3);

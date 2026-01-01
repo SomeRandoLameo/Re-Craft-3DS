@@ -152,19 +152,19 @@ void PolyGen_Harvest(DebugUI* debugUi) {
 
                     ChunkColumnPtr column = world->GetChunkColumn(update.x, update.z);
 					if (column) {
-						if (column->chunks[update.y].vertices > 0) {
-                            world->vboCache.Free(column->chunks[update.y].vbo);
+						if (column->GetChunk(update.y)->vertices > 0) {
+                            world->vboCache.Free(column->GetChunk(update.y)->vbo);
                         }
 
-						if (column->chunks[update.y].transparentVertices > 0) {
-                            world->vboCache.Free(column->chunks[update.y].transparentVBO);
+						if (column->GetChunk(update.y)->transparentVertices > 0) {
+                            world->vboCache.Free(column->GetChunk(update.y)->transparentVBO);
                         }
 
-                        column->chunks[update.y].vbo = update.vbo;
-                        column->chunks[update.y].vertices = update.vertices;
-                        column->chunks[update.y].transparentVBO = update.transparentVBO;
-                        column->chunks[update.y].transparentVertices = update.transparentVertices;
-                        column->chunks[update.y].seeThrough = update.visibility;
+                        column->GetChunk(update.y)->vbo = update.vbo;
+                        column->GetChunk(update.y)->vertices = update.vertices;
+                        column->GetChunk(update.y)->transparentVBO = update.transparentVBO;
+                        column->GetChunk(update.y)->transparentVertices = update.transparentVertices;
+                        column->GetChunk(update.y)->seeThrough = update.visibility;
 					}
 				}
 		}
@@ -229,8 +229,8 @@ static uint16_t floodFill(World* world, ChunkColumnPtr chunk, Chunk* cluster, in
 }
 
 void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context) {
-	for (int i = 0; i < CLUSTER_PER_CHUNK; i++) {
-		ChunkPtr chunk = &item.column->chunks[i];
+	for (int i = 0; i < CHUNKS_PER_COLUMN; i++) {
+		ChunkPtr chunk = item.column->GetChunk(i);
 
 		if (chunk->revision != chunk->vboRevision || chunk->forceVBOUpdate) {
             chunk->vboRevision = chunk->revision;
