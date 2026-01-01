@@ -180,21 +180,21 @@ void SuperChunk_SaveChunk(SuperChunk* superchunk, ChunkColumnPtr column) {
         mpack_start_map(&writer, 3);
 
         mpack_write_cstr(&writer, "clusters");
-        mpack_start_array(&writer, CLUSTER_PER_CHUNK);
-        for (int i = 0; i < CLUSTER_PER_CHUNK; i++) {
-            bool empty = column->chunks[i].IsEmpty();
+        mpack_start_array(&writer, CHUNKS_PER_COLUMN);
+        for (int i = 0; i < CHUNKS_PER_COLUMN; i++) {
+            bool empty = column->GetChunk(i)->IsEmpty();
 
             mpack_start_map(&writer, empty ? 2 : 4);
 
             if (!empty) {
                 mpack_write_cstr(&writer, "blocks");
-                mpack_write_bin(&writer, (char*)column->chunks[i].blocks, sizeof(column->chunks[i].blocks));
+                mpack_write_bin(&writer, (char*)column->GetChunk(i)->blocks, sizeof(column->GetChunk(i)->blocks));
                 mpack_write_cstr(&writer, "metadataLight");
-                mpack_write_bin(&writer, (char*)column->chunks[i].metadataLight, sizeof(column->chunks[i].metadataLight));
+                mpack_write_bin(&writer, (char*)column->GetChunk(i)->metadataLight, sizeof(column->GetChunk(i)->metadataLight));
             }
 
             mpack_write_cstr(&writer, "revision");
-            mpack_write_u32(&writer, column->chunks[i].revision);
+            mpack_write_u32(&writer, column->GetChunk(i)->revision);
 
             mpack_write_cstr(&writer, "empty");
             mpack_write_bool(&writer, empty);
@@ -250,27 +250,28 @@ void SuperChunk_LoadChunk(SuperChunk* superchunk, ChunkColumnPtr column) {
             mpack_node_t root = mpack_tree_root(&tree);
 
             mpack_node_t clusters = mpack_node_map_cstr(root, "clusters");
-            for (int i = 0; i < CLUSTER_PER_CHUNK; i++) {
+            for (int i = 0; i < CHUNKS_PER_COLUMN; i++) {
+                auto chunk = column->GetChunk(i);
                 mpack_node_t cluster = mpack_node_array_at(clusters, i);
 
-                column->chunks[i].revision = mpack_node_u32(mpack_node_map_cstr(cluster, "revision"));
+                chunk->revision = mpack_node_u32(mpack_node_map_cstr(cluster, "revision"));
 
                 mpack_node_t emptyNode = mpack_node_map_cstr_optional(cluster, "empty");
                 if (mpack_node_type(emptyNode) != mpack_type_nil) {
-                    column->chunks[i].emptyRevision = column->chunks[i].revision;
-                    column->chunks[i].empty = mpack_node_bool(emptyNode);
+                    chunk->emptyRevision = chunk->revision;
+                    chunk->empty = mpack_node_bool(emptyNode);
                 } else {
-                    column->chunks[i].emptyRevision = 0;
-                    column->chunks[i].empty = false;
+                    chunk->emptyRevision = 0;
+                    chunk->empty = false;
                 }
 
                 mpack_node_t blocksNode = mpack_node_map_cstr_optional(cluster, "blocks");
                 if (mpack_node_type(blocksNode) == mpack_type_bin)  // preserve savedata, in case of a wrong empty flag
-                    memcpy(column->chunks[i].blocks, mpack_node_data(blocksNode), sizeof(column->chunks[i].blocks));
+                    memcpy(chunk->blocks, mpack_node_data(blocksNode), sizeof(chunk->blocks));
                 mpack_node_t metadataNode = mpack_node_map_cstr_optional(cluster, "metadataLight");
                 if (mpack_node_type(metadataNode) == mpack_type_bin)
-                    memcpy(column->chunks[i].metadataLight, mpack_node_data(metadataNode),
-                           sizeof(column->chunks[i].metadataLight));
+                    memcpy(chunk->metadataLight, mpack_node_data(metadataNode),
+                           sizeof(chunk->metadataLight));
             }
 
             column->genProgress = (ChunkGenProgress)mpack_node_int(mpack_node_map_cstr(root, "genProgress"));

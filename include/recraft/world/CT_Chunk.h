@@ -11,7 +11,7 @@
 
 #define CHUNK_SIZE (16)
 #define CHUNK_HEIGHT (256)
-#define CLUSTER_PER_CHUNK (CHUNK_HEIGHT / CHUNK_SIZE)
+#define CHUNKS_PER_COLUMN (CHUNK_HEIGHT / CHUNK_SIZE)
 
 class Chunk {
 public:
@@ -59,7 +59,6 @@ public:
     ChunkGenProgress genProgress;
 
     int x, z;
-    Chunk chunks[CLUSTER_PER_CHUNK];
 
     uint8_t heightmap[CHUNK_SIZE][CHUNK_SIZE];
     uint32_t heightmapRevision;
@@ -79,6 +78,8 @@ public:
 
     void GenerateHeightmap();
 
+    ChunkPtr GetChunk(int y);
+
     uint8_t GetHeightMap(int x, int z);
 
     uint8_t GetMetadata(mc::Vector3i position);
@@ -90,6 +91,8 @@ public:
     void SetBlock(mc::Vector3i position, Block block);
 
     void SetBlockAndMeta(mc::Vector3i position, Block block, uint8_t metadata);
+private:
+    Chunk m_chunks[CHUNKS_PER_COLUMN];
 };
 
 typedef ChunkColumn* ChunkColumnPtr;
