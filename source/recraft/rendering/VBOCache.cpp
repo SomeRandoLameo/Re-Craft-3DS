@@ -41,23 +41,11 @@ VBO_Block VBOCache::Alloc(size_t size) {
 	return block;
 }
 
-int VBOCache::SortBySize(const void* a, const void* b) {
-    return ((VBO_Block*)b)->size - ((VBO_Block*)a)->size;
-}
-
 void VBOCache::Free(VBO_Block block) {
 	if (block.size > 0 && block.memory != NULL) {
 		LightLock_Lock(&lock);
 
-		freedBlocks.push_back(block);
-
-		std::sort(
-				freedBlocks.begin(),
-				freedBlocks.end(),
-				[](const VBO_Block& a, const VBO_Block& b) {
-					return b.size < a.size;
-				}
-		);
+        linearFree(block.memory);
 
 		LightLock_Unlock(&lock);
 	}

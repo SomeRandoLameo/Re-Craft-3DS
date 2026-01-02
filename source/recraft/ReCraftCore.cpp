@@ -193,7 +193,7 @@ void ReCraftCore::InitMultiPlayer() {
     m_mcBridge.connect();
     m_player->gamemode = 1;  // Creative for now
     m_chat = new GuiChat(m_mcBridge.getClient()->GetDispatcher(), m_mcBridge.getClient());
-    m_onlineWorld = new OnlineWorld();
+   // m_onlineWorld = new OnlineWorld();
     m_mcBridge.startBackgroundThread();
     m_gamestate = GameState_Playing_OnLine;
 }

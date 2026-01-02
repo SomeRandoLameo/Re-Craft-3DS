@@ -72,7 +72,16 @@ void WorldRenderer::RenderWorld() {
 
     int pY = CLAMP(WorldToChunkCoord(FastFloor(m_player->position.y)), 0, CHUNKS_PER_COLUMN - 1);
 
-    ChunkColumnPtr columnPtr = m_world->GetChunkColumn(WorldToChunkCoord(FastFloor(m_player->position.x)), WorldToChunkCoord(FastFloor(m_player->position.z)));
+    ChunkColumnPtr columnPtr = m_world->GetChunkColumn(
+        WorldToChunkCoord(FastFloor(m_player->position.x)),
+        WorldToChunkCoord(FastFloor(m_player->position.z))
+    );
+
+    if (!columnPtr) {
+        // Player is in an invalid/unloaded chunk!
+        return;
+    }
+
 
     m_renderingQueue.push_back(RenderStep{columnPtr->GetChunk(pY), columnPtr, Direction_Invalid});
 
@@ -132,8 +141,13 @@ void WorldRenderer::RenderWorld() {
             ClusterRenderedRef(newX, newY, newZ) |= 1;
 
             ChunkColumnPtr newColumn = m_world->GetChunkColumn(newX, newZ);
-            RenderStep nextStep = (RenderStep){newColumn->GetChunk(newY), newColumn, DirectionOpposite[dir]};
-            if (newColumn) m_renderingQueue.push_back(nextStep);
+            if (!newColumn) {
+                continue; // Column doesn't exist, skip this neighbor
+            }
+
+            ChunkPtr nextChunk = newColumn->GetChunk(newY);
+            RenderStep nextStep = (RenderStep){nextChunk, newColumn, DirectionOpposite[dir]};
+            m_renderingQueue.push_back(nextStep);
         }
     }
 
