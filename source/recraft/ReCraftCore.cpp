@@ -189,10 +189,12 @@ void ReCraftCore::ExitSinglePlayer() {
     ReleaseWorld(&m_chunkWorker, &m_savemgr, m_world);
 }
 
+//TODO: Something prevents the 03DS from connecting. It isnt memory. My guess is that world data takes too long to load and then server timeout?
 void ReCraftCore::InitMultiPlayer() {
     m_mcBridge.connect();
     m_player->gamemode = 1;  // Creative for now
     m_chat = new GuiChat(m_mcBridge.getClient()->GetDispatcher(), m_mcBridge.getClient());
+    m_networkWorld = new NetworkWorld(m_world, m_mcBridge.getClient()->GetDispatcher());
    // m_onlineWorld = new OnlineWorld();
     m_mcBridge.startBackgroundThread();
     m_gamestate = GameState_Playing_OnLine;
@@ -212,7 +214,7 @@ void ReCraftCore::RunMultiPlayer(InputData inputData) {
 
             //dimension = client->GetConnection()->GetDimension();
             m_player->UpdateMovement(m_playerCtrl->GetControlScheme(), inputData, Delta() * 0.001);
-
+            m_player->velocity = mc::Vector3d(0, 0, 0); // this is temporary
             // TODO: This is baaaad :D
 
             client->GetPlayerController()->Move(

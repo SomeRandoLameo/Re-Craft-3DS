@@ -1,7 +1,5 @@
 #include "rendering/VBOCache.h"
 #include <3ds.h>
-#include <vector>
-#include <algorithm>
 
 static LightLock lock;
 

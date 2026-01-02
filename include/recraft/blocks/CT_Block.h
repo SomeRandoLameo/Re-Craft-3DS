@@ -8,7 +8,7 @@
 #include "mclib/block/Block.h"
 #include "mclib/inventory/Slot.h"
 
-typedef uint8_t Block;
+typedef u16 Block;
 
 //TODO: Instead of ENUM IDs, use the "flattened" strings
 enum { Block_Air,

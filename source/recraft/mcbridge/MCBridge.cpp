@@ -148,6 +148,12 @@ void MCBridge::backgroundLoop() {
     std::cout << "Background loop ended\n";
 }
 
+// TODO: make it stop...
+u16 MCBridge::MCLibBlockToCTBlock(u32 BlockType){
+    if(BlockType == 14) return Block_Gold_Ore;
+    if(BlockType == 112) return Block_Bedrock;
+    else return (u16)BlockType;
+}
 
 mc::inventory::Slot MCBridge::CTItemStackToMCLIBSlot(ItemStack in){
     return mc::inventory::Slot(in.block,in.amount,in.meta);

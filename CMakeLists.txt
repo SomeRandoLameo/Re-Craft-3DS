@@ -58,7 +58,6 @@ add_executable(${PROJECT_NAME}
     source/recraft/world/worldgen/SmeaGen.cpp
     source/recraft/world/worldgen/SuperFlatGen.cpp
     source/recraft/gui/ImGuiManager.cpp
-    source/recraft/world/OnlineWorld.cpp
 )
 target_include_directories(${PROJECT_NAME} PUBLIC
     include/recraft

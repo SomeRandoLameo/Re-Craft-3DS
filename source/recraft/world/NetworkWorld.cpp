@@ -1,5 +1,6 @@
 #include "world/NetworkWorld.h"
 #include "gui/DebugUI.h"
+#include "mcbridge/MCBridge.h"
 
 NetworkWorld::NetworkWorld(World* world, mc::protocol::packets::PacketDispatcher* dispatcher)
     : mc::protocol::packets::PacketHandler(dispatcher)
@@ -19,23 +20,28 @@ NetworkWorld::~NetworkWorld() {
     GetDispatcher()->UnregisterHandler(this);
 }
 
-//TODO: We still need some form of block registry to propperly read chunk block data and match it with craftus blocks.
+//TODO: We still need some form of block registry to propperly read chunk block data and match it with craftus blocks. This is temporarly redirected through the MCBridge.
 void NetworkWorld::HandlePacket(mc::protocol::packets::in::ChunkDataPacket* packet) {
-    // for every chunk in the column
-    //for (s16 i = 0; i < CHUNKS_PER_COLUMN; ++i) {
-        // for each block in the chunk
-        for (s32 x = 0; x < 16; ++x) {
-            for (s32 y = 0; y < 16; ++y) {
-                for (s32 z = 0; z < 16; ++z) {
-                    auto position = mc::Vector3i(x,y,z);
-                    //if(block->GetType() != 0) DebugUI::Log("FOUND: %d", block->GetType());
+    auto sourceColumn = packet->GetChunkColumn();
 
-                    m_world->SetBlock(position, packet->GetChunkColumn()->GetBlock(position)->GetType());
-                }
+    for (s32 x = 0; x < 16; ++x) {
+        for (s32 z = 0; z < 16; ++z) {
+            for (s32 y = 0; y < 16; ++y) {
+
+                mc::Vector3i localPos(x, y, z);
+
+                ChunkColumnPtr column = m_world->GetChunkColumn(0, 0);
+                if (!column) continue;
+
+                ChunkPtr chunk = column->GetChunk(y);
+                if (!chunk) continue;
+
+                auto sourceBlock = sourceColumn->GetBlock(localPos);
+                chunk->blocks[x][y][z] = MCBridge::MCLibBlockToCTBlock(sourceBlock->GetType());
+                column->SetMetadata(localPos, 0);
             }
         }
-    //}
-
+    }
 }
 
 void NetworkWorld::HandlePacket(mc::protocol::packets::in::UnloadChunkPacket* packet) {

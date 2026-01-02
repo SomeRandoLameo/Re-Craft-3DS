@@ -88,6 +88,7 @@ void World::UnloadChunk(ChunkColumnPtr column) {
     column->references--;
 }
 
+// Do we really need to cache chunks in general?
 ChunkColumnPtr World::GetChunkColumn(int x, int z) {
 	int halfS = CHUNKCACHE_SIZE / 2;
 	int lowX = cacheTranslationX - halfS;
