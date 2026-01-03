@@ -13,7 +13,7 @@ ReCraftCore::ReCraftCore() {
     romfsInit();
 
     SuperChunk_InitPools();
-    m_savemgr.InitFileSystem();
+    SaveManager::InitFileSystem();
 
     m_chunkWorker.AddHandler(
         WorkerItemType_PolyGen,
@@ -122,7 +122,7 @@ ReCraftCore::~ReCraftCore() {
     gfxExit();
 }
 
-void ReCraftCore::InitSinglePlayer(char* path, char* name, WorldGenType* worldType, bool newWorld) {
+void ReCraftCore::InitSinglePlayer(char* path, char* name, const WorldGenType* worldType, bool newWorld) {
     strcpy(m_world->name, name);
     m_world->genSettings.type = *worldType;
 
@@ -157,13 +157,16 @@ void ReCraftCore::InitSinglePlayer(char* path, char* name, WorldGenType* worldTy
     }
 
     if (newWorld) {
-        int highestblock = 0;
-        for (int x = -1; x < 1; x++) {
-            for (int z = -1; z < 1; z++) {
-                int height = m_world->GetHeight(x, z);
-                if (height > highestblock) highestblock = height;
-            }
-        }
+        //TODO: This doesnt work well. SMEA worlds will spawn underground.
+        //int highestblock = 0;
+        //for (int x = -1; x < 1; x++) {
+        //    for (int z = -1; z < 1; z++) {
+        //        int height = m_world->GetHeight(x, z);
+        //        if (height > highestblock) highestblock = height;
+        //    }
+        //}
+
+        int highestblock = 20;
 
         m_player->hunger = 20;
         m_player->hp = 20;

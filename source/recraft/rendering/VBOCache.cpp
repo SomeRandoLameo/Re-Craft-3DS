@@ -7,14 +7,14 @@ VBOCache::VBOCache() {
     LightLock_Init(&lock);
 }
 
-VBO_Block VBOCache::Alloc(size_t size) {
-    VBO_Block block;
+VBOBlock VBOCache::Alloc(size_t size) {
+    VBOBlock block;
     block.memory = linearAlloc(size);
     block.size = size;
     return block;
 }
 
-void VBOCache::Free(VBO_Block block) {
+void VBOCache::Free(VBOBlock block) {
     if (block.size > 0 && block.memory != NULL) {
         linearFree(block.memory);
     }
