@@ -68,7 +68,7 @@ const WorldVertex cube_sides_lut[] = {
 };
 
 typedef struct {
-	VBO_Block vbo, transparentVBO;
+	VBOBlock vbo, transparentVBO;
 	int x, y, z;
 	size_t vertices, transparentVertices;
 	uint8_t delay;
@@ -338,9 +338,9 @@ void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context) 
 			VBOUpdate update;
 
 			if (currentFace) {
-				VBO_Block memBlock;
+				VBOBlock memBlock;
 				if (verticesTotal > 0) memBlock = world->vboCache.Alloc(verticesTotal * sizeof(WorldVertex));
-				VBO_Block transparentMem;
+				VBOBlock transparentMem;
 				if (transparentFaces > 0) transparentMem = world->vboCache.Alloc(transparentVertices * sizeof(WorldVertex));
 
 				WorldVertex* opaqueData = (WorldVertex*)memBlock.memory;

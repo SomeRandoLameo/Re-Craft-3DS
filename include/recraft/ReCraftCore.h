@@ -60,7 +60,7 @@ private:
     //TODO: MOVE INTO WORLD FOR *** SAKE
     void ReleaseWorld(ChunkWorker* chunkWorker, SaveManager* savemgr, World* world);
 
-    void InitSinglePlayer(char* path, char* name, WorldGenType* worldType, bool newWorld);
+    void InitSinglePlayer(char* path, char* name, const WorldGenType* worldType, bool newWorld);
     void RunSinglePlayer(InputData inputData);
     void ExitSinglePlayer();
 

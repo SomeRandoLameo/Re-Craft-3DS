@@ -130,3 +130,11 @@ bool Chunk::IsEmpty() {
 	empty = true;
 	return true;
 }
+
+Block Chunk::GetBlock(mc::Vector3i position) {
+    return blocks[position.x][position.y][position.z];
+}
+
+void Chunk::SetBlock(mc::Vector3i position, Block block) {
+    blocks[position.x][position.y][position.z] = block;
+}

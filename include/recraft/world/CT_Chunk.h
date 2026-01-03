@@ -26,10 +26,13 @@ public:
 	bool empty;
 	uint32_t emptyRevision;
 
-	VBO_Block vbo, transparentVBO;
+    VBOBlock vbo, transparentVBO;
 	size_t vertices, transparentVertices;
 	uint32_t vboRevision;
 	bool forceVBOUpdate;
+
+    Block GetBlock(mc::Vector3i position);
+    void SetBlock(mc::Vector3i position, Block block);
 
     bool IsEmpty();
 };
