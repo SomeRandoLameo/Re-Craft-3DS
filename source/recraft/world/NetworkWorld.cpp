@@ -23,25 +23,58 @@ NetworkWorld::~NetworkWorld() {
 //TODO: We still need some form of block registry to propperly read chunk block data and match it with craftus blocks. This is temporarly redirected through the MCBridge.
 void NetworkWorld::HandlePacket(mc::protocol::packets::in::ChunkDataPacket* packet) {
     auto sourceColumn = packet->GetChunkColumn();
+    auto meta = sourceColumn->GetMetadata();
+    int chunkX = meta.x;
+    int chunkZ = meta.z;
 
-    for (s32 x = 0; x < 16; ++x) {
-        for (s32 z = 0; z < 16; ++z) {
-            for (s32 y = 0; y < 16; ++y) {
+    ChunkColumnPtr column = m_world->GetChunkColumn(chunkX, chunkZ);
 
-                mc::Vector3i localPos(x, y, z);
-
-                ChunkColumnPtr column = m_world->GetChunkColumn(0, 0);
-                if (!column) continue;
-
-                ChunkPtr chunk = column->GetChunk(y);
-                if (!chunk) continue;
-
-                auto sourceBlock = sourceColumn->GetBlock(localPos);
-                chunk->blocks[x][y][z] = MCBridge::MCLibBlockToCTBlock(sourceBlock->GetType());
-                column->SetMetadata(localPos, 0);
+    // If not in cache, we need to allocate or find a free chunk
+    if (!column) {
+        for (int i = 0; i < CHUNKPOOL_SIZE; i++) {
+            if (m_world->m_chunkChunkPool[i].x == chunkX &&
+                m_world->m_chunkChunkPool[i].z == chunkZ) {
+                column = &m_world->m_chunkChunkPool[i];
+                break;
             }
         }
+
+        if (!column && !m_world->m_freeChunkColums.empty()) {
+            column = m_world->m_freeChunkColums.back();
+            m_world->m_freeChunkColums.pop_back();
+
+            column->~ChunkColumn();
+            new (column) ChunkColumn(chunkX, chunkZ);
+            column->genProgress = ChunkGen_Empty;
+            column->references++;
+        }
+
+        if (!column) {
+            return;
+        }
     }
+
+    for (s32 sectionY = 0; sectionY < CHUNKS_PER_COLUMN; ++sectionY) {
+        ChunkPtr chunk = column->GetChunk(sectionY);
+        if (!chunk) continue;
+
+        for (s32 x = 0; x < CHUNK_SIZE; ++x) {
+            for (s32 z = 0; z < CHUNK_SIZE; ++z) {
+                for (s32 y = 0; y < CHUNK_SIZE; ++y) {
+                    mc::Vector3i sourcePos(x, y, z);
+                    auto sourceBlock = sourceColumn->GetBlock(sourcePos);
+
+                    chunk->blocks[x][y][z] = MCBridge::MCLibBlockToCTBlock(sourceBlock->GetType());
+                    chunk->metadataLight[x][y][z] = 0;
+                }
+            }
+        }
+
+        ++chunk->revision;
+    }
+
+    ++column->revision;
+    column->genProgress = ChunkGen_Finished;
 }
 
 void NetworkWorld::HandlePacket(mc::protocol::packets::in::UnloadChunkPacket* packet) {

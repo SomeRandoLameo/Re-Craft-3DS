@@ -22,7 +22,6 @@ extern "C" {
 #include "world/CT_World.h"
 #include "world/ChunkWorker.h"
 #include "world/NetworkWorld.h"
-#include "world/OnlineWorld.h"
 #include "world/savegame/SaveManager.h"
 #include "world/savegame/SuperChunk.h"
 #include "world/worldgen/SmeaGen.h"

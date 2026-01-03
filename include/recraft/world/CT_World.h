@@ -64,12 +64,12 @@ public:
     ChunkColumnPtr columnCache[CHUNKCACHE_SIZE][CHUNKCACHE_SIZE];
     char name[WORLD_NAME_SIZE];
 
+    ChunkColumn m_chunkChunkPool[CHUNKPOOL_SIZE];
+    std::vector<ChunkColumnPtr> m_freeChunkColums;
+
     VBOCache vboCache;
 private:
     int m_HighestBlock;
-
-    ChunkColumn m_chunkChunkPool[CHUNKPOOL_SIZE];
-    std::vector<ChunkColumnPtr> m_freeChunkColums;
 
     WorkQueue* m_workqueue;
 

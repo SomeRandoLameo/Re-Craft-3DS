@@ -192,10 +192,34 @@ void ReCraftCore::ExitSinglePlayer() {
 //TODO: Something prevents the 03DS from connecting. It isnt memory. My guess is that world data takes too long to load and then server timeout?
 void ReCraftCore::InitMultiPlayer() {
     m_mcBridge.connect();
-    m_player->gamemode = 1;  // Creative for now
+    m_player->gamemode = 1;
     m_chat = new GuiChat(m_mcBridge.getClient()->GetDispatcher(), m_mcBridge.getClient());
     m_networkWorld = new NetworkWorld(m_world, m_mcBridge.getClient()->GetDispatcher());
-   // m_onlineWorld = new OnlineWorld();
+
+    m_world->cacheTranslationX = 0;
+    m_world->cacheTranslationZ = 0;
+
+    int poolIndex = 0;
+    for (int i = 0; i < CHUNKCACHE_SIZE; i++) {
+        for (int j = 0; j < CHUNKCACHE_SIZE; j++) {
+            int wx = i - CHUNKCACHE_SIZE / 2;
+            int wz = j - CHUNKCACHE_SIZE / 2;
+
+            ChunkColumnPtr column = &m_world->m_chunkChunkPool[poolIndex++];
+            column->~ChunkColumn();
+            new (column) ChunkColumn(wx, wz);
+            column->genProgress = ChunkGen_Empty;
+            column->references++;
+
+            m_world->columnCache[i][j] = column;
+        }
+    }
+
+    m_world->m_freeChunkColums.clear();
+    for (int i = poolIndex; i < CHUNKPOOL_SIZE; i++) {
+        m_world->m_freeChunkColums.push_back(&m_world->m_chunkChunkPool[i]);
+    }
+
     m_mcBridge.startBackgroundThread();
     m_gamestate = GameState_Playing_OnLine;
 }
