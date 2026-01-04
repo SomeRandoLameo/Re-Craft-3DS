@@ -86,7 +86,30 @@ void WorldSelect_Init() {
 
 void WorldSelect_Deinit() { worlds.clear(); }
 
-void WorldSelect_Render() {
+void WorldSelect_RenderTop(Clouds* m_clouds, int m_world_shader_uLocProjection, int eyeIndex, float iod, World* m_world, C3D_Tex* m_logoTex) {
+    C3D_Mtx projection;
+    Mtx_PerspStereoTilt(&projection, C3D_AngleFromDegrees(90.f), ((400.f) / (240.f)), 0.22f, 4.f * CHUNK_SIZE,
+                        !eyeIndex ? -iod : iod, 3.f, false);
+
+    C3D_Mtx view;
+    Mtx_Identity(&view);
+    Mtx_Translate(&view, 0.f, -70.f, 0.f, false);
+
+    Mtx_RotateX(&view, -C3D_AngleFromDegrees(30.f), true);
+
+    C3D_Mtx vp;
+    Mtx_Multiply(&vp, &projection, &view);
+
+    m_clouds->Draw(m_world_shader_uLocProjection, &vp, m_world, 0.f, 0.f);
+
+    SpriteBatch_BindTexture(m_logoTex);
+
+    SpriteBatch_SetScale(2);
+    SpriteBatch_PushQuad(100 / 2 - 76 / 2, 120 / 2, 0, 256, 64, 0, 0, 128, 32);
+
+    SpriteBatch_PushText(0, 0, 0, INT16_MAX, true, INT_MAX, NULL, GIT_COMMIT "-" GIT_BRANCH);
+}
+void WorldSelect_RenderBot() {
 	SpriteBatch_SetScale(2);
 
 	SpriteBatch_BindGuiTexture(GuiTexture_MenuBackground);
@@ -180,6 +203,7 @@ void WorldSelect_Render() {
 		confirmed_world_options = Gui::Button(0.45f, "Continue");
 	}
 }
+
 void WorldSelect_Update(Player* player) {
 
     if (clicked_new_world) {

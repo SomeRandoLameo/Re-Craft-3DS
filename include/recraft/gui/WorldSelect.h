@@ -1,10 +1,12 @@
 #pragma once
 
+#include <c3d/texture.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include "../entity/Player.h"
 
 #include "../world/CT_World.h"
+#include "rendering/Clouds.h"
 
 typedef struct {
     char worldName[WORLD_NAME_SIZE];
@@ -59,7 +61,9 @@ static bool newWorld = false;
 void WorldSelect_Init();
 void WorldSelect_Deinit();
 
-void WorldSelect_Render();
+void WorldSelect_RenderTop(Clouds* m_clouds, int m_world_shader_uLocProjection, int eyeIndex, float iod, World* m_world, C3D_Tex* m_logoTex);
+void WorldSelect_RenderBot();
+
 void WorldSelect_Update(Player* player);
 
 void WorldSelect_ScanWorlds();

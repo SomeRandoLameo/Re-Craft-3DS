@@ -285,40 +285,14 @@ void Renderer::RenderFrame(int eyeIndex, float iod) {
     C3D_DepthTest(true, GPU_GREATER, GPU_WRITE_ALL);
     C3D_CullFace(GPU_CULL_BACK_CCW);
 
-    if (*ReCraftCore::GetInstance()->GetGameState() == GameState_Playing) {
-        C3D_TexBind(0, (C3D_Tex*)Block_GetTextureMap());
-
-        m_worldRenderer->Render(!eyeIndex ? -iod : iod);
-
-        RenderGameOverlay();
-    } else if (*ReCraftCore::GetInstance()->GetGameState() == GameState_Playing_OnLine) {
+    if (*ReCraftCore::GetInstance()->GetGameState() != GameState_SelectWorld) {
         C3D_TexBind(0, (C3D_Tex*)Block_GetTextureMap());
 
         m_worldRenderer->Render(!eyeIndex ? -iod : iod);
 
         RenderGameOverlay();
     } else {
-        C3D_Mtx projection;
-        Mtx_PerspStereoTilt(&projection, C3D_AngleFromDegrees(90.f), ((400.f) / (240.f)), 0.22f, 4.f * CHUNK_SIZE,
-                            !eyeIndex ? -iod : iod, 3.f, false);
-
-        C3D_Mtx view;
-        Mtx_Identity(&view);
-        Mtx_Translate(&view, 0.f, -70.f, 0.f, false);
-
-        Mtx_RotateX(&view, -C3D_AngleFromDegrees(30.f), true);
-
-        C3D_Mtx vp;
-        Mtx_Multiply(&vp, &projection, &view);
-
-        m_clouds->Draw(m_world_shader_uLocProjection, &vp, m_world, 0.f, 0.f);
-
-        SpriteBatch_BindTexture(&m_logoTex);
-
-        SpriteBatch_SetScale(2);
-        SpriteBatch_PushQuad(100 / 2 - 76 / 2, 120 / 2, 0, 256, 64, 0, 0, 128, 32);
-
-        SpriteBatch_PushText(0, 0, 0, INT16_MAX, true, INT_MAX, NULL, GIT_COMMIT "-" GIT_BRANCH);
+        WorldSelect_RenderTop(m_clouds, m_world_shader_uLocProjection, eyeIndex, iod, m_world, &m_logoTex);
     }
 
     pGuiShader->Use();
@@ -333,7 +307,7 @@ void Renderer::RenderLowerScreen(DebugUI* debugUi) {
     SpriteBatch_StartFrame(320, 240);
 
     if (*ReCraftCore::GetInstance()->GetGameState() == GameState_SelectWorld) {
-        WorldSelect_Render();
+        WorldSelect_RenderBot();
     } else {
         SpriteBatch_SetScale(2);
 
