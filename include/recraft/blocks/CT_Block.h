@@ -8,7 +8,7 @@
 #include "mclib/block/Block.h"
 #include "mclib/inventory/Slot.h"
 
-typedef u16 Block;
+typedef u8 Block; // TODO: Convert to u16 once the o3DS hardware supports it
 
 //TODO: Instead of ENUM IDs, use the "flattened" strings
 enum { Block_Air,
