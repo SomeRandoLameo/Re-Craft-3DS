@@ -1,7 +1,7 @@
 #include "ReCraftCore.h"
 
 bool showDebugInfo = true;
-ReCraftCore *ReCraftCore::m_theReCraftCore = nullptr;
+ReCraftCore* ReCraftCore::m_theReCraftCore = nullptr;
 
 ReCraftCore::ReCraftCore() {
     m_theReCraftCore = this;
@@ -15,20 +15,11 @@ ReCraftCore::ReCraftCore() {
     SuperChunk_InitPools();
     SaveManager::InitFileSystem();
 
-    m_chunkWorker.AddHandler(
-        WorkerItemType_PolyGen,
-        (WorkerFuncObj) {&PolyGen_GeneratePolygons, nullptr, true}
-    );
+    m_chunkWorker.AddHandler(WorkerItemType_PolyGen, (WorkerFuncObj){&PolyGen_GeneratePolygons, nullptr, true});
 
-    m_chunkWorker.AddHandler(
-        WorkerItemType_BaseGen,
-        (WorkerFuncObj) {&SuperFlatGen::Generate, &m_flatGen, true}
-    );
+    m_chunkWorker.AddHandler(WorkerItemType_BaseGen, (WorkerFuncObj){&SuperFlatGen::Generate, &m_flatGen, true});
 
-    m_chunkWorker.AddHandler(
-        WorkerItemType_BaseGen,
-        (WorkerFuncObj) {&SmeaGen::Generate, &m_smeaGen, true}
-    );
+    m_chunkWorker.AddHandler(WorkerItemType_BaseGen, (WorkerFuncObj){&SmeaGen::Generate, &m_smeaGen, true});
 
     sino_init();
 
@@ -45,7 +36,7 @@ ReCraftCore::ReCraftCore() {
 
     m_AssetMgr.AutoLoad("GuiTexture_Widgets", "romfs:/assets/textures/gui/widgets.png");
 
-    //m_AssetMgr.AutoLoad("font", "romfs:/ComicNeue.ttf");
+    // m_AssetMgr.AutoLoad("font", "romfs:/ComicNeue.ttf");
 
     m_renderer = new Renderer(m_world, m_player, &m_chunkWorker.GetQueue());
     m_debugUI = new DebugUI();
@@ -53,15 +44,9 @@ ReCraftCore::ReCraftCore() {
     WorldSelect_Init();
 
     m_savemgr.Init(m_player, m_world);
-    m_chunkWorker.AddHandler(
-        WorkerItemType_Load,
-        (WorkerFuncObj) {SaveManager::LoadChunkCallback, &m_savemgr, true}
-    );
+    m_chunkWorker.AddHandler(WorkerItemType_Load, (WorkerFuncObj){SaveManager::LoadChunkCallback, &m_savemgr, true});
 
-    m_chunkWorker.AddHandler(
-        WorkerItemType_Save,
-        (WorkerFuncObj) {SaveManager::SaveChunkCallback, &m_savemgr, true}
-    );
+    m_chunkWorker.AddHandler(WorkerItemType_Save, (WorkerFuncObj){SaveManager::SaveChunkCallback, &m_savemgr, true});
 
     ImGuiManager::GetInstance()->RegisterCallback("DebugUI", [=, this]() {
         ImGui::Begin("Game Info");
@@ -72,19 +57,17 @@ ReCraftCore::ReCraftCore() {
         ImGui::Text("CPU: %5.2f%%", C3D_GetProcessingTime() * 6.f);
         ImGui::Text("GPU: %5.2f%%", C3D_GetDrawingTime() * 6.f);
         ImGui::Text("Buffer: %5.2f%%", C3D_GetCmdBufUsage() * 100.f);
-        ImGui::Text("Linear Memory: %s",
-                    Amy::Utils::FormatBytes(linearSpaceFree()).c_str());
+        ImGui::Text("Heap: %s [%d] Allocations", Amy::Utils::FormatBytes(Amy::Memory::GetTotalAllocated()).c_str(),
+                    Amy::Memory::GetAllocationCount());
+        ImGui::Text("Linear Heap: %s", Amy::Utils::FormatBytes(linearSpaceFree()).c_str());
         ImGui::Separator();
         ImGui::Text("Player");
         ImGui::Spacing();
-        ImGui::Text("Position: %.2f, %.2f, %.2f", m_player->position.x,
-                    m_player->position.y, m_player->position.z);
-        ImGui::Text("Spawn: %.2f, %.2f, %.2f", m_player->spawnPos.x,
-                    m_player->spawnPos.y, m_player->spawnPos.z);
+        ImGui::Text("Position: %.2f, %.2f, %.2f", m_player->position.x, m_player->position.y, m_player->position.z);
+        ImGui::Text("Spawn: %.2f, %.2f, %.2f", m_player->spawnPos.x, m_player->spawnPos.y, m_player->spawnPos.z);
         ImGui::Text("HP: %i", m_player->hp);
         ImGui::Text("Hunger: %i (Timer: %i)", m_player->hunger, m_player->hungertimer);
-        ImGui::Text("Velocity Y: %.3f, RndY: %.3f", m_player->velocity.y,
-                    m_player->rndy);
+        ImGui::Text("Velocity Y: %.3f, RndY: %.3f", m_player->velocity.y, m_player->rndy);
         ImGui::Separator();
         ImGui::Text("Inventory");
         ImGui::Spacing();
@@ -128,49 +111,39 @@ void ReCraftCore::InitSinglePlayer(char* path, char* name, const WorldGenType* w
 
     m_savemgr.Load(path);
 
-    m_chunkWorker.SetHandlerActive(
-        WorkerItemType_BaseGen, &m_flatGen,
-        m_world->genSettings.type == WorldGen_SuperFlat
-    );
+    m_chunkWorker.SetHandlerActive(WorkerItemType_BaseGen, &m_flatGen, m_world->genSettings.type == WorldGen_SuperFlat);
 
-    m_chunkWorker.SetHandlerActive(
-        WorkerItemType_BaseGen, &m_smeaGen,
-        m_world->genSettings.type == WorldGen_Smea
-    );
+    m_chunkWorker.SetHandlerActive(WorkerItemType_BaseGen, &m_smeaGen, m_world->genSettings.type == WorldGen_Smea);
 
     m_world->cacheTranslationX = WorldToChunkCoord(FastFloor(m_player->position.x));
     m_world->cacheTranslationZ = WorldToChunkCoord(FastFloor(m_player->position.z));
     for (int i = 0; i < CHUNKCACHE_SIZE; i++) {
         for (int j = 0; j < CHUNKCACHE_SIZE; j++) {
-            m_world->columnCache[i][j] = m_world->LoadChunk(
-                i - CHUNKCACHE_SIZE / 2 + m_world->cacheTranslationX,
-                j - CHUNKCACHE_SIZE / 2 + m_world->cacheTranslationZ
-            );
+            m_world->columnCache[i][j] = m_world->LoadChunk(i - CHUNKCACHE_SIZE / 2 + m_world->cacheTranslationX,
+                                                            j - CHUNKCACHE_SIZE / 2 + m_world->cacheTranslationZ);
         }
     }
 
     for (int i = 0; i < 3; i++) {
         while (m_chunkWorker.IsWorking() || !m_chunkWorker.GetQueue().queue.empty()) {
-            svcSleepThread(50000000);  // 1 Tick
+            svcSleepThread(50000000); // 1 Tick
         }
         m_world->Tick();
     }
 
     if (newWorld) {
-        //TODO: This doesnt work well. SMEA worlds will spawn underground.
-        //int highestblock = 0;
-        //for (int x = -1; x < 1; x++) {
-        //    for (int z = -1; z < 1; z++) {
-        //        int height = m_world->GetHeight(x, z);
-        //        if (height > highestblock) highestblock = height;
-        //    }
-        //}
-
-        int highestblock = 20;
+        int highestblock = 0;
+        for (int x = -1; x < 1; x++) {
+            for (int z = -1; z < 1; z++) {
+                int height = m_world->GetHeight(x, z);
+                if (height > highestblock)
+                    highestblock = height;
+            }
+        }
 
         m_player->hunger = 20;
         m_player->hp = 20;
-        m_player->position.y = (float) highestblock + 0.2f;
+        m_player->position.y = (float)highestblock + 0.2f;
     }
     m_gamestate = GameState_Playing;
 }
@@ -181,46 +154,28 @@ void ReCraftCore::RunSinglePlayer(InputData inputData) {
         m_timeAccum = -20.f;
     }
 
-    m_player->UpdateMovement(m_playerCtrl->GetControlScheme(),inputData, Delta() * 0.001);
+    m_player->UpdateMovement(m_playerCtrl->GetControlScheme(), inputData, Delta() * 0.001);
 
-    m_world->UpdateChunkCache(
-            WorldToChunkCoord(FastFloor(m_player->position.x)),
-            WorldToChunkCoord(FastFloor(m_player->position.z))
-    );
+    m_world->UpdateChunkCache(WorldToChunkCoord(FastFloor(m_player->position.x)),
+                              WorldToChunkCoord(FastFloor(m_player->position.z)));
 }
-void ReCraftCore::ExitSinglePlayer() {
-    ReleaseWorld(&m_chunkWorker, &m_savemgr, m_world);
-}
+void ReCraftCore::ExitSinglePlayer() { ReleaseWorld(&m_chunkWorker, &m_savemgr, m_world); }
 
-//TODO: Something prevents the 03DS from connecting. It isnt memory. My guess is that world data takes too long to load and then server timeout?
+// TODO: Something prevents the 03DS from connecting. It isnt memory. My guess is that world data takes too long to load
+// and then server timeout?
 void ReCraftCore::InitMultiPlayer() {
     m_mcBridge.connect();
     m_player->gamemode = 1;
     m_chat = new GuiChat(m_mcBridge.getClient()->GetDispatcher(), m_mcBridge.getClient());
     m_networkWorld = new NetworkWorld(m_world, m_mcBridge.getClient()->GetDispatcher());
 
-    m_world->cacheTranslationX = 0;
-    m_world->cacheTranslationZ = 0;
-
-    int poolIndex = 0;
+    m_world->cacheTranslationX = WorldToChunkCoord(FastFloor(m_player->position.x));
+    m_world->cacheTranslationZ = WorldToChunkCoord(FastFloor(m_player->position.z));
     for (int i = 0; i < CHUNKCACHE_SIZE; i++) {
         for (int j = 0; j < CHUNKCACHE_SIZE; j++) {
-            int wx = i - CHUNKCACHE_SIZE / 2;
-            int wz = j - CHUNKCACHE_SIZE / 2;
-
-            ChunkColumnPtr column = &m_world->m_chunkChunkPool[poolIndex++];
-            column->~ChunkColumn();
-            new (column) ChunkColumn(wx, wz);
-            column->genProgress = ChunkGen_Empty;
-            column->references++;
-
-            m_world->columnCache[i][j] = column;
+            m_world->columnCache[i][j] = m_world->LoadChunk(i - CHUNKCACHE_SIZE / 2 + m_world->cacheTranslationX,
+                                                            j - CHUNKCACHE_SIZE / 2 + m_world->cacheTranslationZ);
         }
-    }
-
-    m_world->m_freeChunkColums.clear();
-    for (int i = poolIndex; i < CHUNKPOOL_SIZE; i++) {
-        m_world->m_freeChunkColums.push_back(&m_world->m_chunkChunkPool[i]);
     }
 
     m_mcBridge.startBackgroundThread();
@@ -233,23 +188,19 @@ void ReCraftCore::ExitMultiplayer() {
 }
 
 
-
 void ReCraftCore::RunMultiPlayer(InputData inputData) {
     if (m_mcBridge.isConnected()) {
-        m_mcBridge.withClient([&](mc::core::Client *client, mc::protocol::packets::PacketDispatcher * dispatcher) {
+        m_mcBridge.withClient([&](mc::core::Client* client, mc::protocol::packets::PacketDispatcher* dispatcher) {
             m_player->position = client->GetPlayerController()->GetPosition();
 
-            //dimension = client->GetConnection()->GetDimension();
+            // dimension = client->GetConnection()->GetDimension();
             m_player->UpdateMovement(m_playerCtrl->GetControlScheme(), inputData, Delta() * 0.001);
             m_player->velocity = mc::Vector3d(0, 0, 0); // this is temporary
             // TODO: This is baaaad :D
 
-            client->GetPlayerController()->Move(
-                    mc::Vector3d(-m_playerCtrl->movement.x * (0.125 / 2),
-                                 -m_playerCtrl->movement.y * (0.125 / 2),
-                                 -m_playerCtrl->movement.z * (0.125 / 2)
-                    )
-            );
+            client->GetPlayerController()->Move(mc::Vector3d(-m_playerCtrl->movement.x * (0.125 / 2),
+                                                             -m_playerCtrl->movement.y * (0.125 / 2),
+                                                             -m_playerCtrl->movement.z * (0.125 / 2)));
 
             client->GetPlayerController()->SetPitch(-m_playerCtrl->player->pitch);
             client->GetPlayerController()->SetYaw(-m_playerCtrl->player->yaw);
@@ -261,7 +212,7 @@ void ReCraftCore::RunMultiPlayer(InputData inputData) {
                debugUI->Text("%d ", item.GetItemId());
              }
      */
-            bool showChat = true;  // TODO: Move somewhere into render to show globally instead
+            bool showChat = true; // TODO: Move somewhere into render to show globally instead
             // of console_activate & console_log, this is just temp
             m_chat->Render(&showChat);
 
@@ -305,15 +256,13 @@ void ReCraftCore::RunMultiPlayer(InputData inputData) {
                                 */
         });
 
-        m_world->UpdateChunkCache(
-            WorldToChunkCoord(FastFloor(m_player->position.x)),
-            WorldToChunkCoord(FastFloor(m_player->position.z))
-        );
+        m_world->UpdateChunkCache(WorldToChunkCoord(FastFloor(m_player->position.x)),
+                                  WorldToChunkCoord(FastFloor(m_player->position.z)));
     }
 }
 
 // TODO: Why isnt this in world?
-void ReCraftCore::ReleaseWorld(ChunkWorker *chunkWorker, SaveManager *savemgr, World *world) {
+void ReCraftCore::ReleaseWorld(ChunkWorker* chunkWorker, SaveManager* savemgr, World* world) {
     for (int i = 0; i < CHUNKCACHE_SIZE; i++) {
         for (int j = 0; j < CHUNKCACHE_SIZE; j++) {
             world->UnloadChunk(world->columnCache[i][j]);
@@ -355,18 +304,15 @@ void ReCraftCore::Main() {
     touchPosition touchPos;
     hidTouchRead(&touchPos);
 
-    InputData inputData = (InputData) {
-        keysheld, keysdown, hidKeysUp(),
-        circlePos.dx, circlePos.dy, touchPos.px,
-        touchPos.py, cstickPos.dx, cstickPos.dy
-    };
+    InputData inputData = (InputData){keysheld,    keysdown,    hidKeysUp(),  circlePos.dx, circlePos.dy,
+                                      touchPos.px, touchPos.py, cstickPos.dx, cstickPos.dy};
 
     m_timeAccum += Delta();
     if (m_gamestate == GameState_Playing) {
         RunSinglePlayer(inputData);
 
     } else if (m_gamestate == GameState_Playing_OnLine) {
-       RunMultiPlayer(inputData);
+        RunMultiPlayer(inputData);
 
     } else if (m_gamestate == GameState_SelectWorld) {
         WorldSelect_Update(m_player);

@@ -7,6 +7,8 @@
 
 #include "misc/Crash.h"
 
+#include <amethyst.hpp>
+
 static const int SectorSize = 2048;
 static mpack_node_data_t* nodeDataPool = NULL;
 static const int nodeDataPoolSize = 2048;
@@ -29,14 +31,14 @@ int vec_expand_(char **data, int *length, int *capacity, int memsz) {
 }
 
 void SuperChunk_InitPools() {
-    nodeDataPool = (mpack_node_data_t*)malloc(sizeof(mpack_node_data_t) * nodeDataPoolSize);
-    fileBuffer = (char*)malloc(fileBufferSize);  // 4kb
-    decompressBuffer = (char*)malloc(decompressBufferSize);
+    nodeDataPool = (mpack_node_data_t*)Amy::Malloc(sizeof(mpack_node_data_t) * nodeDataPoolSize);
+    fileBuffer = (char*)Amy::Malloc(fileBufferSize);  // 4kb
+    decompressBuffer = (char*)Amy::Malloc(decompressBufferSize);
 }
 void SuperChunk_DeinitPools() {
-    free(nodeDataPool);
-    free(decompressBuffer);
-    free(fileBuffer);
+    Amy::Free(nodeDataPool);
+    Amy::Free(decompressBuffer);
+    Amy::Free(fileBuffer);
 }
 
 void SuperChunk_Init(SuperChunk* superchunk, int x, int z) {

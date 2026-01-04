@@ -19,11 +19,11 @@ static int currentStatusLine = 0;
 
 DebugUI::DebugUI() {
     for (auto& logLine : logLines) {
-        logLine = (char*)malloc(LOG_LINE_LENGTH);
+        logLine = (char*)Amy::Malloc(LOG_LINE_LENGTH);
         memset(logLine, 0x0, LOG_LINE_LENGTH);
     }
     for (auto& statusLine : statusLines) {
-        statusLine = (char*)malloc(STATUS_LINE_LENGTH);
+        statusLine = (char*)Amy::Malloc(STATUS_LINE_LENGTH);
         memset(statusLine, 0x0, STATUS_LINE_LENGTH);
     }
     RenderData = Iron::Drawlist::New();
@@ -32,10 +32,10 @@ DebugUI::DebugUI() {
 
 DebugUI::~DebugUI() {
     for (int i = 0; i < LOG_LINES; i++) {
-        free(logLines[i]);
+        Amy::Free(logLines[i]);
     }
     for (int i = 0; i < STATUS_LINES; i++) {
-        free(statusLines[i]);
+        Amy::Free(statusLines[i]);
     }
 
     RenderData.reset();

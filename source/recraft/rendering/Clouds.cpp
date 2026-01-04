@@ -8,6 +8,8 @@ extern "C" {
 
 #include "rendering/TextureMap.h"
 
+#include <amethyst.hpp>
+
 static WorldVertex vertices[] = {{{-1, 0, -1}, {0, 0}, {255, 255, 255}, {0, 0, 0}},
 				 {{1, 0, -1}, {INT16_MAX, 0}, {255, 255, 255}, {0, 0, 0}},
 				 {{1, 0, 1}, {INT16_MAX, INT16_MAX}, {255, 255, 255}, {0, 0, 0}},
@@ -16,7 +18,7 @@ static WorldVertex vertices[] = {{{-1, 0, -1}, {0, 0}, {255, 255, 255}, {0, 0, 0
 				 {{-1, 0, -1}, {0, 0}, {255, 255, 255}, {0, 0, 0}}};
 
 Clouds::Clouds() {
-	uint8_t* map = (uint8_t*)malloc(TEXTURE_SIZE * TEXTURE_SIZE);
+	uint8_t* map = (uint8_t*)Amy::Malloc(TEXTURE_SIZE * TEXTURE_SIZE);
 	for (int i = 0; i < TEXTURE_SIZE; i++) {
 		for (int j = 0; j < TEXTURE_SIZE; j++) {
 			float noise = sino_2d(j * 0.2f, i * 0.3f);
@@ -30,7 +32,7 @@ Clouds::Clouds() {
 	C3D_TexSetWrap(&m_texture, GPU_REPEAT, GPU_REPEAT);
 	Texture_TileImage8(map, (uint8_t*)m_texture.data, TEXTURE_SIZE);
 
-	free(map);
+	Amy::Free(map);
 
 	m_cloudVBO = (WorldVertex*)linearAlloc(sizeof(vertices));
 	memcpy(m_cloudVBO, vertices, sizeof(vertices));

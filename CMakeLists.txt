@@ -1,18 +1,21 @@
 cmake_minimum_required(VERSION 3.22)
 
 execute_process(
-        COMMAND git rev-parse --short HEAD
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        OUTPUT_VARIABLE GIT_SHORT_HASH
-        OUTPUT_STRIP_TRAILING_WHITESPACE
+    COMMAND git rev-parse --short HEAD
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE GIT_SHORT_HASH
+    OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
 execute_process(
-        COMMAND git rev-parse --abbrev-ref HEAD
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        OUTPUT_VARIABLE GIT_BRANCH
-        OUTPUT_STRIP_TRAILING_WHITESPACE
+    COMMAND git rev-parse --abbrev-ref HEAD
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    OUTPUT_VARIABLE GIT_BRANCH
+    OUTPUT_STRIP_TRAILING_WHITESPACE
 )
+
+find_program(MAKEROM makerom)
+find_program(BANNERTOOL bannertool)
 
 project(Re-Craft-3DS)
 
@@ -24,8 +27,14 @@ set(3DS_IP "" CACHE STRING "3ds IP (make send)")
 set(APP_NAME "Re-Craft-3DS")
 set(APP_DESC "a Minecraft client implemented on the 3DS (and new 3DS)")
 set(APP_AUTHOR "SomeRandoLameo")
-set(APP_ICON "${CMAKE_SOURCE_DIR}/icon.png")
+set(APP_ICON "${CMAKE_SOURCE_DIR}/app/icon.png")
 set(APP_ROMFS "${CMAKE_SOURCE_DIR}/romfs")
+
+# CIA Stuff
+set(APP_BANNER "${CMAKE_SOURCE_DIR}/app/banner.cgfx")
+set(APP_BANNERAUDIO "${CMAKE_SOURCE_DIR}/app/banner-audio.wav")
+set(APP_RSF "${CMAKE_SOURCE_DIR}/app/build-cia.rsf")
+set(APP_LOGO "${CMAKE_SOURCE_DIR}/app/splash.lz")
 
 add_subdirectory(vendor)
 
@@ -117,6 +126,46 @@ ctr_create_3dsx(
     DEPENDS create_resources
 )
 
+if(MAKEROM AND BANNERTOOL)
+    message(STATUS "Found Makerom and Bannertool. Building Cia...")
+
+    add_custom_command(
+        OUTPUT ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.bnr
+        COMMAND ${BANNERTOOL} makebanner
+        -ci ${APP_BANNER}
+        -a ${APP_BANNERAUDIO}
+        -o ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.bnr
+        DEPENDS ${APP_BANNER} ${APP_BANNERAUDIO}
+        COMMENT "Creating Banner for cia file..."
+        VERBATIM
+    )
+
+    add_custom_command(
+        OUTPUT ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.cia
+        COMMAND ${MAKEROM}
+        -f cia -target t -exefslogo
+        -o "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.cia"
+        -elf "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.elf"
+        -rsf ${APP_RSF}
+        -banner "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.bnr"
+        -icon "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.smdh"
+        -logo ${APP_LOGO} -DAPP_ROMFS="${APP_ROMFS}"
+        -major 1 -minor 0 -micro 0
+        -DAPP_VERSION_MAJOR=1
+        DEPENDS ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.elf ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.smdh
+        COMMENT "Creating Cia file..."
+        VERBATIM
+    )
+
+    add_custom_target(make_banner ALL
+        DEPENDS ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.bnr
+    )
+
+    add_custom_target(make_cia ALL
+        DEPENDS make_banner ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.elf ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.cia
+    )
+endif()
+
 # Command to send to console (make send)
 add_custom_target(
     send
@@ -141,9 +190,9 @@ add_custom_target(download-server
 
 # Custom target: start-server
 add_custom_target(start-server
-        COMMAND ${CMAKE_COMMAND} -E echo "Starting Minecraft server..."
-        COMMAND java -Xmx1024M -Xms1024M -jar server.jar
-        WORKING_DIRECTORY "${SERVER_DIR}"
-        COMMENT "Starting Minecraft server"
-        USES_TERMINAL
+    COMMAND ${CMAKE_COMMAND} -E echo "Starting Minecraft server..."
+    COMMAND java -Xmx1024M -Xms1024M -jar server.jar
+    WORKING_DIRECTORY "${SERVER_DIR}"
+    COMMENT "Starting Minecraft server"
+    USES_TERMINAL
 )

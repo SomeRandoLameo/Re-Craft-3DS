@@ -39,7 +39,7 @@ void SpriteBatch_Init(int projUniform_) {
 
 	projUniform = projUniform_;
 
-    font = (Font*)malloc(sizeof(Font));
+    font = (Font*)Amy::Malloc(sizeof(Font));
     FontLoader fontLoader;
     fontLoader.LoadFont(font, "romfs:/assets/textures/font/ascii.png");
 
@@ -64,7 +64,7 @@ void SpriteBatch_Deinit() {
 	linearFree(vertexList[1]);
 
 	C3D_TexDelete(&font->texture);
-	free(font);
+	Amy::Free(font);
 
 	C3D_TexDelete(&whiteTex);
 	C3D_TexDelete(&widgetsTex);

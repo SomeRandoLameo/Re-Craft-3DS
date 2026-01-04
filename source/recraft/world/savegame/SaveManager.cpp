@@ -163,7 +163,7 @@ void SaveManager::Unload() {
 
     for (auto & superchunk : m_superchunks) {
         SuperChunk_Deinit(superchunk);
-        free(superchunk);
+        Amy::Free(superchunk);
     }
     m_superchunks.clear();
 }
@@ -174,7 +174,7 @@ SuperChunk* SaveManager::FetchSuperChunk(int x, int z) {
             return m_superchunks[i];
         }
     }
-    auto* superchunk = (SuperChunk*)malloc(sizeof(SuperChunk));
+    auto* superchunk = (SuperChunk*)Amy::Malloc(sizeof(SuperChunk));
     SuperChunk_Init(superchunk, x, z);
     m_superchunks.push_back(superchunk);
     svcSleepThread(50000);

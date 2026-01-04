@@ -151,7 +151,9 @@ void MCBridge::backgroundLoop() {
 // TODO: make it stop...
 u16 MCBridge::MCLibBlockToCTBlock(u32 BlockType){
     if(BlockType == 14) return Block_Gold_Ore;
-    if(BlockType == 112) return Block_Bedrock;
+    else if(BlockType == 112) return Block_Bedrock;
+    else if(BlockType == 2) return Block_Grass;
+    else if(BlockType == 3) return Block_Dirt;
     else return (u16)BlockType;
 }
 
