@@ -312,22 +312,6 @@ void ReCraftCore::RunMultiPlayer(InputData inputData) {
     }
 }
 
-void ReCraftCore::RunSelectWorld() {
-    char path[256];
-    char name[WORLD_NAME_SIZE] = {'\0'};
-    WorldGenType worldType;
-    bool newWorld = false;
-    bool isMultiplayer = false;
-    if (WorldSelect_Update(path, name, &worldType, m_player, &newWorld,
-                           &isMultiplayer)) {
-        if (!isMultiplayer) {
-            InitSinglePlayer(path, name, &worldType, newWorld);
-        } else {
-            InitMultiPlayer();
-        }
-    }
-}
-
 // TODO: Why isnt this in world?
 void ReCraftCore::ReleaseWorld(ChunkWorker *chunkWorker, SaveManager *savemgr, World *world) {
     for (int i = 0; i < CHUNKCACHE_SIZE; i++) {
@@ -385,7 +369,7 @@ void ReCraftCore::Main() {
        RunMultiPlayer(inputData);
 
     } else if (m_gamestate == GameState_SelectWorld) {
-        RunSelectWorld();
+        WorldSelect_Update(m_player);
 
     }
     Gui::InputData(inputData);

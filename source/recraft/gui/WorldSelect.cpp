@@ -6,8 +6,8 @@
 #include "rendering/VertexFmt.h"
 
 #include <dirent.h>
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include <unistd.h>
 
 #include "entity/Player.h"
@@ -16,6 +16,7 @@
 
 #include <3ds.h>
 
+#include "ReCraftCore.h"
 
 void WorldSelect_ScanWorlds() {
 	worlds.clear();
@@ -179,23 +180,22 @@ void WorldSelect_Render() {
 		confirmed_world_options = Gui::Button(0.45f, "Continue");
 	}
 }
+void WorldSelect_Update(Player* player) {
 
-bool WorldSelect_Update(char* out_worldpath, char* out_name, WorldGenType* worldType, Player* player, bool* newWorld, bool* isMP) {
-	if (clicked_new_world) {
+    if (clicked_new_world) {
 		clicked_new_world = false;
 		menustate = MenuState_WorldOptions;
 	}
 	if(clicked_mp_connect){
         clicked_mp_connect = false;
-		*isMP = true;
-		*newWorld = false;
+		newWorld = false;
 		menustate = MenuState_SelectWorld;
-		return true;
+        ReCraftCore::GetInstance()->InitMultiPlayer();
 		//Crazy shit happens here :D
 	}
 	if (confirmed_world_options) {
 		confirmed_world_options = false;
-		*worldType = worldGenType;
+		worldType = worldGenType;
 		player->gamemode=gamemode1;
 
 		static SwkbdState swkbd;
@@ -237,20 +237,19 @@ bool WorldSelect_Update(char* out_worldpath, char* out_name, WorldGenType* world
 			}
 
 
-			*newWorld = true;
+			newWorld = true;
 
-			return true;
+            ReCraftCore::GetInstance()->InitSinglePlayer(out_worldpath, name, &worldType, newWorld);
 		}
 	}
 	if (clicked_play && selectedWorld != -1) {
 		clicked_play = false;
 		strcpy(out_name, worlds[selectedWorld].name);
 		strcpy(out_worldpath, worlds[selectedWorld].path);
-		*isMP = false;
 
-		*newWorld = false;
+		newWorld = false;
 		menustate = MenuState_SelectWorld;
-		return true;
+        ReCraftCore::GetInstance()->InitSinglePlayer(out_worldpath, out_name, &worldType, newWorld);
 	}
 	if (clicked_delete_world && selectedWorld != -1) {
 		clicked_delete_world = false;
@@ -273,6 +272,4 @@ bool WorldSelect_Update(char* out_worldpath, char* out_name, WorldGenType* world
 		canceled_world_options = false;
 		menustate = MenuState_SelectWorld;
 	}
-
-	return false;
 }

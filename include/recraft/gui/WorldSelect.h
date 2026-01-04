@@ -49,11 +49,17 @@ static MenuState menustate = MenuState_SelectWorld;
 
 static float max_velocity = 20.f;
 
+static char out_worldpath[256];
+static char out_name[WORLD_NAME_SIZE] = {'\0'};
+static WorldGenType worldType;
+static bool newWorld = false;
+
+
 
 void WorldSelect_Init();
 void WorldSelect_Deinit();
 
 void WorldSelect_Render();
-bool WorldSelect_Update(char* out_worldpath, char* out_name, WorldGenType* worldType, Player* player, bool* newWorld, bool* isMP);
+void WorldSelect_Update(Player* player);
 
 void WorldSelect_ScanWorlds();

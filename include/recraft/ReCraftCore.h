@@ -35,9 +35,12 @@ public:
 
     void Main() override;
 
+    void InitSinglePlayer(char* path, char* name, const WorldGenType* worldType, bool newWorld);
+
+    void InitMultiPlayer();
+
     GameState* GetGameState() { return &m_gamestate; }
     Amy::AssetMgr* GetAssetManager() { return &m_AssetMgr; }
-
 private:
     static ReCraftCore* m_theReCraftCore;
     SuperFlatGen m_flatGen;
@@ -60,13 +63,10 @@ private:
     //TODO: MOVE INTO WORLD FOR *** SAKE
     void ReleaseWorld(ChunkWorker* chunkWorker, SaveManager* savemgr, World* world);
 
-    void InitSinglePlayer(char* path, char* name, const WorldGenType* worldType, bool newWorld);
+
     void RunSinglePlayer(InputData inputData);
     void ExitSinglePlayer();
 
-    void InitMultiPlayer();
     void RunMultiPlayer(InputData inputData);
     void ExitMultiplayer();
-
-    void RunSelectWorld();
 };
