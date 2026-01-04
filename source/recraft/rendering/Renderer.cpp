@@ -318,7 +318,7 @@ void Renderer::RenderFrame(int eyeIndex, float iod) {
         SpriteBatch_SetScale(2);
         SpriteBatch_PushQuad(100 / 2 - 76 / 2, 120 / 2, 0, 256, 64, 0, 0, 128, 32);
 
-        SpriteBatch_PushText(0, 0, 0, INT16_MAX, true, INT_MAX, NULL, "v" CRAFTUS_VERSION_STR);
+        SpriteBatch_PushText(0, 0, 0, INT16_MAX, true, INT_MAX, NULL, GIT_COMMIT "-" GIT_BRANCH);
     }
 
     pGuiShader->Use();

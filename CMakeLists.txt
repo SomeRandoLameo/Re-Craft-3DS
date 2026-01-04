@@ -1,5 +1,19 @@
 cmake_minimum_required(VERSION 3.22)
 
+execute_process(
+        COMMAND git rev-parse --short HEAD
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        OUTPUT_VARIABLE GIT_SHORT_HASH
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+execute_process(
+        COMMAND git rev-parse --abbrev-ref HEAD
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        OUTPUT_VARIABLE GIT_BRANCH
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
 project(Re-Craft-3DS)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -63,6 +77,11 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     include/recraft
     ${DEVKITPRO}/portlibs/3ds/include
     ${DEVKITPRO}/portlibs/3ds/include/opus
+)
+target_compile_definitions(${PROJECT_NAME} PUBLIC
+    -D_GNU_SOURCE=1
+    -DGIT_COMMIT="${GIT_SHORT_HASH}"
+    -DGIT_BRANCH="${GIT_BRANCH}"
 )
 target_compile_options(${PROJECT_NAME} PUBLIC
     -Wno-changes-meaning
