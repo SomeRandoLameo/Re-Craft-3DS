@@ -62,7 +62,7 @@ void ChunkColumn::GenerateHeightmap() {
                     auto chunk = GetChunk(i);
                     if (chunk->IsEmpty()) continue;
                     for (int j = CHUNK_SIZE - 1; j >= 0; --j) {
-                        if (chunk->blocks[x][j][z] != Block_Air) {
+                        if (chunk->GetBlock(x,j,z) != Block_Air) {
                             heightmap[x][z] = i * CHUNK_SIZE + j + 1;
                             i = -1;
                             break;
@@ -94,20 +94,20 @@ void ChunkColumn::SetMetadata(mc::Vector3i position, uint8_t metadata) {
 }
 
 Block ChunkColumn::GetBlock(mc::Vector3i position) {
-    return GetChunk(position.y / CHUNK_SIZE)->blocks[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z];
+    return GetChunk(position.y / CHUNK_SIZE)->GetBlock(position.x,position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE),position.z);
 }
 
 
 // resets the meta data
 void ChunkColumn::SetBlock(mc::Vector3i position, Block block) {
     ChunkPtr chunk = GetChunk(position.y / CHUNK_SIZE);
-    chunk->blocks[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z] = block;
+    chunk->SetBlock(position.x,position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE),position.z, block);
     SetMetadata(position, 0);
 }
 
 void ChunkColumn::SetBlockAndMeta(mc::Vector3i position, Block block, uint8_t metadata) {
     ChunkPtr chunk = GetChunk(position.y / CHUNK_SIZE);
-    chunk->blocks[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z] = block;
+    chunk->SetBlock(position.x,position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE),position.z, block);
     metadata &= 0xf;
     uint8_t* addr = &chunk->metadataLight[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z];
     *addr = (*addr & 0xf0) | metadata;
@@ -121,20 +121,19 @@ ChunkPtr ChunkColumn::GetChunk(int y) {
 }
 
 bool Chunk::IsEmpty() {
-	if (emptyRevision == revision) return empty;
-	empty = false;
-	emptyRevision = revision;
-	for (int i = 0; i < sizeof(blocks) / sizeof(uint32_t); i++) {
-		if (((uint32_t*)blocks)[i] != 0) return false;
-	}
-	empty = true;
-	return true;
-}
+    if (emptyRevision == revision) {
+        return empty;
+    }
+    
+    emptyRevision = revision;
 
-Block Chunk::GetBlock(mc::Vector3i position) {
-    return blocks[position.x][position.y][position.z];
-}
+    for (Block block : m_blocks) {
+        if (block != 0) {
+            empty = false;
+            return false;
+        }
+    }
 
-void Chunk::SetBlock(mc::Vector3i position, Block block) {
-    blocks[position.x][position.y][position.z] = block;
+    empty = true;
+    return true;
 }

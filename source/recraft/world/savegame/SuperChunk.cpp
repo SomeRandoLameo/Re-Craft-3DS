@@ -184,13 +184,14 @@ void SuperChunk_SaveChunk(SuperChunk* superchunk, ChunkColumnPtr column) {
         mpack_write_cstr(&writer, "clusters");
         mpack_start_array(&writer, CHUNKS_PER_COLUMN);
         for (int i = 0; i < CHUNKS_PER_COLUMN; i++) {
-            bool empty = column->GetChunk(i)->IsEmpty();
+            auto chunk = column->GetChunk(i);
+            bool empty = chunk->IsEmpty();
 
             mpack_start_map(&writer, empty ? 2 : 4);
 
             if (!empty) {
                 mpack_write_cstr(&writer, "blocks");
-                mpack_write_bin(&writer, (char*)column->GetChunk(i)->blocks, sizeof(column->GetChunk(i)->blocks));
+                mpack_write_bin(&writer, reinterpret_cast<const char*>(chunk->GetBlockData()), Chunk::GetBlockDataSize());
                 mpack_write_cstr(&writer, "metadataLight");
                 mpack_write_bin(&writer, (char*)column->GetChunk(i)->metadataLight, sizeof(column->GetChunk(i)->metadataLight));
             }
@@ -268,8 +269,21 @@ void SuperChunk_LoadChunk(SuperChunk* superchunk, ChunkColumnPtr column) {
                 }
 
                 mpack_node_t blocksNode = mpack_node_map_cstr_optional(cluster, "blocks");
-                if (mpack_node_type(blocksNode) == mpack_type_bin)  // preserve savedata, in case of a wrong empty flag
-                    memcpy(chunk->blocks, mpack_node_data(blocksNode), sizeof(chunk->blocks));
+                if (mpack_node_type(blocksNode) == mpack_type_bin) {
+                    const size_t expectedSize = Chunk::GetBlockDataSize();
+                    const size_t storedSize   = mpack_node_data_len(blocksNode);
+
+                    if (storedSize == expectedSize) {
+                        memcpy(chunk->GetBlockData(),
+                               mpack_node_data(blocksNode),
+                               expectedSize);
+                    } else {
+                        Crash("Block data size mismatch while loading chunk (%zu != %zu)",
+                              storedSize, expectedSize);
+                    }
+                }
+
+
                 mpack_node_t metadataNode = mpack_node_map_cstr_optional(cluster, "metadataLight");
                 if (mpack_node_type(metadataNode) == mpack_type_bin)
                     memcpy(chunk->metadataLight, mpack_node_data(metadataNode),

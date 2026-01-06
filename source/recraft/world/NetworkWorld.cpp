@@ -64,7 +64,7 @@ void NetworkWorld::HandlePacket(mc::protocol::packets::in::ChunkDataPacket* pack
                     mc::Vector3i sourcePos(x, y, z);
                     auto sourceBlock = sourceColumn->GetBlock(sourcePos);
 
-                    chunk->blocks[x][y][z] = MCBridge::MCLibBlockToCTBlock(sourceBlock->GetType());
+                    chunk->SetBlock(x,y,z, MCBridge::MCLibBlockToCTBlock(sourceBlock->GetType()));
                     chunk->metadataLight[x][y][z] = 0;
                 }
             }

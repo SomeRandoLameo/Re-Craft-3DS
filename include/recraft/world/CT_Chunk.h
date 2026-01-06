@@ -5,6 +5,7 @@
 #include "../misc/Xorshift.h"
 #include "../rendering/VBOCache.h"
 
+#include <array>
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
@@ -16,7 +17,6 @@
 class Chunk {
 public:
 	int y;
-	Block blocks[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
 	uint8_t metadataLight[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];  // first half metadata, second half light
 
 	uint32_t revision;
@@ -31,10 +31,33 @@ public:
 	uint32_t vboRevision;
 	bool forceVBOUpdate;
 
-    Block GetBlock(mc::Vector3i position);
-    void SetBlock(mc::Vector3i position, Block block);
+    Block GetBlock(int x, int y, int z) const {
+        return m_blocks[x + y * CHUNK_SIZE + z * CHUNK_SIZE * CHUNK_SIZE];
+    }
+
+    void SetBlock(int x, int y, int z, Block block) {
+        m_blocks[x + y * CHUNK_SIZE + z * CHUNK_SIZE * CHUNK_SIZE] = block;
+    }
 
     bool IsEmpty();
+
+    // raw data access for saving/loading only. Do not use for block manipulation!
+    // this might become replaced with popper save load functions in the future.
+    const Block* GetBlockData() const {
+        return m_blocks.data();
+    }
+
+    Block* GetBlockData() {
+        return m_blocks.data();
+    }
+
+    static constexpr size_t BlockCount = CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE;
+
+    static constexpr size_t GetBlockDataSize() {
+        return BlockCount * sizeof(Block);
+    }
+private:
+    std::array<Block, CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE> m_blocks;
 };
 
 typedef Chunk* ChunkPtr;
