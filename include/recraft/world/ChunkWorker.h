@@ -36,7 +36,7 @@ private:
 
 	Thread m_thread = nullptr;
 	WorkQueue m_queue;
-    std::vector<WorkerFuncObj> m_handler[WorkerItemTypes_Count];
+    std::vector<WorkerFuncObj> m_handler[WorkerItemType::Count];
 	volatile bool m_working = false;
 	volatile bool m_shouldStop = false;
 };

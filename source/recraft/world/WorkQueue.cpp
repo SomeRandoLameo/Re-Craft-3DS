@@ -13,7 +13,7 @@ void WorkQueue_Deinit(WorkQueue* queue) {
 void WorkQueue_AddItem(WorkQueue* queue, WorkerItem item) {
     item.uuid = item.column->uuid;
     ++item.column->tasksRunning;
-    if (item.type == WorkerItemType_PolyGen) ++item.column->graphicalTasksRunning;
+    if (item.type == WorkerItemType::PolyGen) ++item.column->graphicalTasksRunning;
     LightLock_Lock(&queue->listInUse);
     queue->queue.push_back(item);
     LightLock_Unlock(&queue->listInUse);

@@ -97,10 +97,10 @@ void ChunkWorker::Mainloop() {
 				}
 
 				switch (item.type) {
-					case WorkerItemType_BaseGen:
+                    case WorkerItemType::BaseGen:
 						item.column->genProgress = ChunkGen_Terrain;
 						break;
-					case WorkerItemType_Decorate:
+                    case WorkerItemType::Decorate:
 						item.column->genProgress = ChunkGen_Finished;
 						break;
 					default:
@@ -108,7 +108,7 @@ void ChunkWorker::Mainloop() {
 				}
 
 				--item.column->tasksRunning;
-				if (item.type == WorkerItemType_PolyGen) {
+				if (item.type == WorkerItemType::PolyGen) {
 					--item.column->graphicalTasksRunning;
 				}
 

@@ -26,7 +26,7 @@ ChunkColumn::ChunkColumn() {
 
     this->x = INT_MAX;
     this->z = INT_MAX;
-    for (int i = 0; i < CHUNKS_PER_COLUMN; i++) {
+    for (int i = 0; i < ChunksPerColumn; i++) {
         auto chunk = this->GetChunk(i);
         chunk->y = i;
         chunk->seeThrough = UINT16_MAX;
@@ -40,7 +40,7 @@ ChunkColumn::ChunkColumn(int x, int z) {
 
     this->x = x;
     this->z = z;
-    for (int i = 0; i < CHUNKS_PER_COLUMN; i++) {
+    for (int i = 0; i < ChunksPerColumn; i++) {
         auto chunk = this->GetChunk(i);
         chunk->y = i;
         chunk->seeThrough = UINT16_MAX;
@@ -56,14 +56,14 @@ void ChunkColumn::RequestGraphicsUpdate(int cluster) {
 
 void ChunkColumn::GenerateHeightmap() {
 	if (heightmapRevision != revision) {
-		for (int x = 0; x < CHUNK_SIZE; x++) {
-            for (int z = 0; z < CHUNK_SIZE; z++) {
-                for (int i = CHUNKS_PER_COLUMN - 1; i >= 0; --i) {
+		for (int x = 0; x < Chunk::Size; x++) {
+            for (int z = 0; z < Chunk::Size; z++) {
+                for (int i = ChunksPerColumn - 1; i >= 0; --i) {
                     auto chunk = GetChunk(i);
                     if (chunk->IsEmpty()) continue;
-                    for (int j = CHUNK_SIZE - 1; j >= 0; --j) {
+                    for (int j = Chunk::Size - 1; j >= 0; --j) {
                         if (chunk->GetBlock(x,j,z) != Block_Air) {
-                            heightmap[x][z] = i * CHUNK_SIZE + j + 1;
+                            heightmap[x][z] = i * Chunk::Size + j + 1;
                             i = -1;
                             break;
                         }
@@ -81,35 +81,35 @@ uint8_t ChunkColumn::GetHeightMap(int x, int z) {
 }
 
 uint8_t ChunkColumn::GetMetadata(mc::Vector3i position) {
-    return GetChunk(position.y / CHUNK_SIZE)->metadataLight[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z] & 0xf;
+    return GetChunk(position.y / Chunk::Size)->metadataLight[position.x][position.y - (position.y / Chunk::Size * Chunk::Size)][position.z] & 0xf;
 }
 
 void ChunkColumn::SetMetadata(mc::Vector3i position, uint8_t metadata) {
     metadata &= 0xf;
-    ChunkPtr chunk = GetChunk(position.y / CHUNK_SIZE);
-    uint8_t* addr = &chunk->metadataLight[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z];
+    ChunkPtr chunk = GetChunk(position.y / Chunk::Size);
+    uint8_t* addr = &chunk->metadataLight[position.x][position.y - (position.y / Chunk::Size * Chunk::Size)][position.z];
     *addr = (*addr & 0xf0) | metadata;
     ++chunk->revision;
     ++revision;
 }
 
 Block ChunkColumn::GetBlock(mc::Vector3i position) {
-    return GetChunk(position.y / CHUNK_SIZE)->GetBlock(position.x,position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE),position.z);
+    return GetChunk(position.y / Chunk::Size)->GetBlock(position.x,position.y - (position.y / Chunk::Size * Chunk::Size),position.z);
 }
 
 
 // resets the meta data
 void ChunkColumn::SetBlock(mc::Vector3i position, Block block) {
-    ChunkPtr chunk = GetChunk(position.y / CHUNK_SIZE);
-    chunk->SetBlock(position.x,position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE),position.z, block);
+    ChunkPtr chunk = GetChunk(position.y / Chunk::Size);
+    chunk->SetBlock(position.x,position.y - (position.y / Chunk::Size * Chunk::Size),position.z, block);
     SetMetadata(position, 0);
 }
 
 void ChunkColumn::SetBlockAndMeta(mc::Vector3i position, Block block, uint8_t metadata) {
-    ChunkPtr chunk = GetChunk(position.y / CHUNK_SIZE);
-    chunk->SetBlock(position.x,position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE),position.z, block);
+    ChunkPtr chunk = GetChunk(position.y / Chunk::Size);
+    chunk->SetBlock(position.x,position.y - (position.y / Chunk::Size * Chunk::Size),position.z, block);
     metadata &= 0xf;
-    uint8_t* addr = &chunk->metadataLight[position.x][position.y - (position.y / CHUNK_SIZE * CHUNK_SIZE)][position.z];
+    uint8_t* addr = &chunk->metadataLight[position.x][position.y - (position.y / Chunk::Size * Chunk::Size)][position.z];
     *addr = (*addr & 0xf0) | metadata;
 
     ++chunk->revision;

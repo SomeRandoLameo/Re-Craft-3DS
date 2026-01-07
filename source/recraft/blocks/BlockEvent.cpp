@@ -2,10 +2,10 @@
 
 void BlockEvent_RandomTick(World* world, ChunkColumnPtr column, int x[], int y[], int z[]) {
 	int k = 0;
-	for (int i = 0; i < CHUNKS_PER_COLUMN; i++) {
+	for (int i = 0; i < ChunkColumn::ChunksPerColumn; i++) {
 		for (int j = 0; j < RANDOMTICKS_PER_CLUSTER; j++) {
 
-            auto defaultPosition = mc::Vector3i(x[k], y[k] + i * CHUNK_SIZE, z[k]);
+            auto defaultPosition = mc::Vector3i(x[k], y[k] + i * Chunk::Size, z[k]);
 
             Block block = column->GetBlock(defaultPosition);
 

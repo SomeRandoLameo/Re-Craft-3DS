@@ -59,8 +59,8 @@ void Hand::Draw(int projUniform, C3D_Mtx* projection, mc::inventory::Slot stack,
 		} else {
 			C3D_TexBind(0, &m_SkinTexture);
 
-			if (i == Direction_East ||
-			    i == Direction_West) {  // eines der dümmsten Dinge, die ich jemals in meinem Leben getan habe
+			if (i == Direction::East ||
+			    i == Direction::West) {  // eines der dümmsten Dinge, die ich jemals in meinem Leben getan habe
 				const int16_t uvRotationTable[2][2][2][2] = {
 				    {{{0, 1}, {0, 0}}, {{1, 1}, {1, 0}}}, {{{1, 0}, {1, 1}}, {{0, 0}, {0, 1}}},
 				};
@@ -68,8 +68,8 @@ void Hand::Draw(int projUniform, C3D_Mtx* projection, mc::inventory::Slot stack,
 					int idx = i * 6 + j;
 					int u = m_handVBO[idx].uv[0];
 					int v = m_handVBO[idx].uv[1];
-					m_handVBO[idx].uv[0] = uvRotationTable[(i == Direction_West) ? 1 : 0][v][u][0];
-					m_handVBO[idx].uv[1] = uvRotationTable[(i == Direction_East) ? 1 : 0][v][u][1];
+					m_handVBO[idx].uv[0] = uvRotationTable[(i == Direction::West) ? 1 : 0][v][u][0];
+					m_handVBO[idx].uv[1] = uvRotationTable[(i == Direction::East) ? 1 : 0][v][u][1];
 				}
 			}
 			for (int j = 0; j < 6; j++) {

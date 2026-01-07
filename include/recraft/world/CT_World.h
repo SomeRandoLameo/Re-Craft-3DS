@@ -29,6 +29,7 @@ typedef struct {
 #define WORLD_NAME_SIZE 12
 class World {
 public:
+    enum { Height = 256 };
     World(WorkQueue* workqueue);
     ~World() = default;
 

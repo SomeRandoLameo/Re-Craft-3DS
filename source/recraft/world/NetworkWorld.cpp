@@ -54,13 +54,13 @@ void NetworkWorld::HandlePacket(mc::protocol::packets::in::ChunkDataPacket* pack
         }
     }
 
-    for (s32 sectionY = 0; sectionY < CHUNKS_PER_COLUMN; ++sectionY) {
+    for (s32 sectionY = 0; sectionY < ChunkColumn::ChunksPerColumn; ++sectionY) {
         ChunkPtr chunk = column->GetChunk(sectionY);
         if (!chunk) continue;
 
-        for (s32 x = 0; x < CHUNK_SIZE; ++x) {
-            for (s32 z = 0; z < CHUNK_SIZE; ++z) {
-                for (s32 y = 0; y < CHUNK_SIZE; ++y) {
+        for (s32 x = 0; x < Chunk::Size; ++x) {
+            for (s32 z = 0; z < Chunk::Size; ++z) {
+                for (s32 y = 0; y < Chunk::Size; ++y) {
                     mc::Vector3i sourcePos(x, y, z);
                     auto sourceBlock = sourceColumn->GetBlock(sourcePos);
 

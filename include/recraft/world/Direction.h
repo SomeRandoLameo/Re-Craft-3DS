@@ -1,20 +1,20 @@
 #pragma once
 
 typedef enum {
-    Direction_West,
-    Direction_East,
-    Direction_Bottom,
-    Direction_Top,
-    Direction_North,
-    Direction_South,
-    Direction_Invalid
+    West,
+    East,
+    Bottom,
+    Top,
+    North,
+    South,
+    Invalid
 } Direction;
 
 typedef enum {
-    Axis_X,
-    Axis_Y,
-    Axis_Z
-}Axis;
+    X,
+    Y,
+    Z
+} Axis;
 
 extern int DirectionToOffset[7][3];
 extern Direction DirectionOpposite[7];

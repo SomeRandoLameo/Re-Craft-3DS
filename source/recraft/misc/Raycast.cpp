@@ -7,7 +7,7 @@
 
 #include <citro3d.h>
 
-#define INF (CHUNKCACHE_SIZE / 2 * CHUNK_SIZE)
+#define INF (CHUNKCACHE_SIZE / 2 * Chunk::Size)
 
 bool Raycast_Cast(World* world, mc::Vector3d inpos, mc::Vector3d raydir, Raycast_Result* out) {
     mc::Vector3d map = mc::Vector3d(
@@ -77,21 +77,21 @@ bool Raycast_Cast(World* world, mc::Vector3d inpos, mc::Vector3d raydir, Raycast
 	switch (side) {
 		case 0:  // X Achse
 			if (raydir.x > 0.f)
-				out->direction = Direction_West;
+				out->direction = Direction::West;
 			else
-				out->direction = Direction_East;
+				out->direction = Direction::East;
 			break;
 		case 1:  // Y Achse
 			if (raydir.y > 0.f)
-				out->direction = Direction_Bottom;
+				out->direction = Direction::Bottom;
 			else
-				out->direction = Direction_Top;
+				out->direction = Direction::Top;
 			break;
 		case 2:  // Z Achse
 			if (raydir.z > 0.f)
-				out->direction = Direction_North;
+				out->direction = Direction::North;
 			else
-				out->direction = Direction_South;
+				out->direction = Direction::South;
 			break;
 		default:
 			printf("Unknown axis! %d\n", side);

@@ -8,12 +8,12 @@
 #include <3ds.h>
 
 typedef enum {
-	WorkerItemType_Load,
-	WorkerItemType_Save,
-	WorkerItemType_BaseGen,
-	WorkerItemType_Decorate,
-	WorkerItemType_PolyGen,
-	WorkerItemTypes_Count
+	Load,
+	Save,
+	BaseGen,
+	Decorate,
+	PolyGen,
+	Count
 } WorkerItemType;
 
 typedef struct {

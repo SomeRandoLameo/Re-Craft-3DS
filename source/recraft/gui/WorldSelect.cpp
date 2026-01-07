@@ -88,7 +88,7 @@ void WorldSelect_Deinit() { worlds.clear(); }
 
 void WorldSelect_RenderTop(Clouds* m_clouds, int m_world_shader_uLocProjection, int eyeIndex, float iod, World* m_world, C3D_Tex* m_logoTex) {
     C3D_Mtx projection;
-    Mtx_PerspStereoTilt(&projection, C3D_AngleFromDegrees(90.f), ((400.f) / (240.f)), 0.22f, 4.f * CHUNK_SIZE,
+    Mtx_PerspStereoTilt(&projection, C3D_AngleFromDegrees(90.f), ((400.f) / (240.f)), 0.22f, 4.f * Chunk::Size,
                         !eyeIndex ? -iod : iod, 3.f, false);
 
     C3D_Mtx view;

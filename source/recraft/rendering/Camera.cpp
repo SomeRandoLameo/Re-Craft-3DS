@@ -9,7 +9,7 @@ Camera::Camera() {
 
 	m_fov = C3D_AngleFromDegrees(60.f);
 	m_near = 0.2f;
-	m_far = 8.f * CHUNK_SIZE;
+	m_far = 8.f * Chunk::Size;
 
 	Mtx_PerspTilt(&m_projection, m_fov, (400.f / 240.f), m_near, m_far, false);
 }

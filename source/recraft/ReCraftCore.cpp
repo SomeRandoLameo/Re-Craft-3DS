@@ -15,11 +15,11 @@ ReCraftCore::ReCraftCore() {
     SuperChunk_InitPools();
     SaveManager::InitFileSystem();
 
-    m_chunkWorker.AddHandler(WorkerItemType_PolyGen, (WorkerFuncObj){&PolyGen_GeneratePolygons, nullptr, true});
+    m_chunkWorker.AddHandler(WorkerItemType::PolyGen, (WorkerFuncObj){&PolyGen_GeneratePolygons, nullptr, true});
 
-    m_chunkWorker.AddHandler(WorkerItemType_BaseGen, (WorkerFuncObj){&SuperFlatGen::Generate, &m_flatGen, true});
+    m_chunkWorker.AddHandler(WorkerItemType::BaseGen, (WorkerFuncObj){&SuperFlatGen::Generate, &m_flatGen, true});
 
-    m_chunkWorker.AddHandler(WorkerItemType_BaseGen, (WorkerFuncObj){&SmeaGen::Generate, &m_smeaGen, true});
+    m_chunkWorker.AddHandler(WorkerItemType::BaseGen, (WorkerFuncObj){&SmeaGen::Generate, &m_smeaGen, true});
 
     sino_init();
 
@@ -44,9 +44,9 @@ ReCraftCore::ReCraftCore() {
     WorldSelect_Init();
 
     m_savemgr.Init(m_player, m_world);
-    m_chunkWorker.AddHandler(WorkerItemType_Load, (WorkerFuncObj){SaveManager::LoadChunkCallback, &m_savemgr, true});
+    m_chunkWorker.AddHandler(WorkerItemType::Load, (WorkerFuncObj){SaveManager::LoadChunkCallback, &m_savemgr, true});
 
-    m_chunkWorker.AddHandler(WorkerItemType_Save, (WorkerFuncObj){SaveManager::SaveChunkCallback, &m_savemgr, true});
+    m_chunkWorker.AddHandler(WorkerItemType::Save, (WorkerFuncObj){SaveManager::SaveChunkCallback, &m_savemgr, true});
 
     ImGuiManager::GetInstance()->RegisterCallback("DebugUI", [=, this]() {
         ImGui::Begin("Game Info");
@@ -111,9 +111,9 @@ void ReCraftCore::InitSinglePlayer(char* path, char* name, const WorldGenType* w
 
     m_savemgr.Load(path);
 
-    m_chunkWorker.SetHandlerActive(WorkerItemType_BaseGen, &m_flatGen, m_world->genSettings.type == WorldGen_SuperFlat);
+    m_chunkWorker.SetHandlerActive(WorkerItemType::BaseGen, &m_flatGen, m_world->genSettings.type == WorldGen_SuperFlat);
 
-    m_chunkWorker.SetHandlerActive(WorkerItemType_BaseGen, &m_smeaGen, m_world->genSettings.type == WorldGen_Smea);
+    m_chunkWorker.SetHandlerActive(WorkerItemType::BaseGen, &m_smeaGen, m_world->genSettings.type == WorldGen_Smea);
 
     m_world->cacheTranslationX = WorldToChunkCoord(FastFloor(m_player->position.x));
     m_world->cacheTranslationZ = WorldToChunkCoord(FastFloor(m_player->position.z));

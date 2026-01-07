@@ -77,7 +77,7 @@ typedef struct {
 
 static std::vector<VBOUpdate> vboUpdates;
 
-#define MAX_FACES_PER_CLUSTER (CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE / 2 * 6)
+#define MAX_FACES_PER_CLUSTER (Chunk::Size * Chunk::Size * Chunk::Size / 2 * 6)
 
 typedef struct {
 	int8_t x, y, z;
@@ -89,22 +89,22 @@ typedef struct {
 } Face;
 
 static inline Block fastBlockFetch(World* world, ChunkColumnPtr column, ChunkPtr chunk, int x, int y, int z) {
-	return (x < 0 || y < 0 || z < 0 || x >= CHUNK_SIZE || y >= CHUNK_SIZE || z >= CHUNK_SIZE)
+	return (x < 0 || y < 0 || z < 0 || x >= Chunk::Size || y >= Chunk::Size || z >= Chunk::Size)
 		   ? world->GetBlock(mc::Vector3i(
-                   (column->x * CHUNK_SIZE) + x,
-                   (chunk->y * CHUNK_SIZE) + y,
-                   (column->z * CHUNK_SIZE) + z)
+                   (column->x * Chunk::Size) + x,
+                   (chunk->y * Chunk::Size) + y,
+                   (column->z * Chunk::Size) + z)
                    )
 		   : chunk->GetBlock(x, y, z);
 }
 
 static inline uint8_t fastMetadataFetch(World* world, ChunkColumnPtr column, ChunkPtr chunk, int x, int y, int z) {
-	return (x < 0 || y < 0 || z < 0 || x >= CHUNK_SIZE || y >= CHUNK_SIZE || z >= CHUNK_SIZE)
+	return (x < 0 || y < 0 || z < 0 || x >= Chunk::Size || y >= Chunk::Size || z >= Chunk::Size)
 		   ? world->GetMetadata(
                            mc::Vector3i(
-                               (column->x * CHUNK_SIZE) + x,
-                               (chunk->y * CHUNK_SIZE) + y,
-                               (column->z * CHUNK_SIZE) + z)
+                               (column->x * Chunk::Size) + x,
+                               (chunk->y * Chunk::Size) + y,
+                               (column->z * Chunk::Size) + z)
                            )
 
 
@@ -176,10 +176,10 @@ void PolyGen_Harvest(DebugUI* debugUi) {
 static Face faceBuffer[MAX_FACES_PER_CLUSTER];
 static int currentFace;
 static int transparentFaces;
-static uint8_t floodfill_visited[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
+static uint8_t floodfill_visited[Chunk::Size][Chunk::Size][Chunk::Size];
 
 static inline void addFace(int x, int y, int z, Direction dir, Block block, uint8_t metadata, int ao, bool transparent) {
-	if (x >= 0 && y >= 0 && z >= 0 && x < CHUNK_SIZE && y < CHUNK_SIZE && z < CHUNK_SIZE) {
+	if (x >= 0 && y >= 0 && z >= 0 && x < Chunk::Size && y < Chunk::Size && z < Chunk::Size) {
 		faceBuffer[currentFace++] = Face{static_cast<int8_t>(x), static_cast<int8_t>(y), static_cast<int8_t>(z), dir, block, static_cast<int8_t>(ao), metadata, transparent};
 		transparentFaces += transparent;
 	}
@@ -188,9 +188,9 @@ static inline void addFace(int x, int y, int z, Direction dir, Block block, uint
 static uint16_t floodFill(World* world, ChunkColumnPtr chunk, Chunk* cluster, int x, int y, int z, Direction entrySide0, Direction entrySide1, Direction entrySide2) {
 	if (floodfill_visited[x][y][z] & 1) return 0;
 	uint8_t exitPoints[6] = {false};
-	if (entrySide0 != Direction_Invalid) exitPoints[entrySide0] = true;
-	if (entrySide1 != Direction_Invalid) exitPoints[entrySide1] = true;
-	if (entrySide2 != Direction_Invalid) exitPoints[entrySide2] = true;
+	if (entrySide0 != Direction::Invalid) exitPoints[entrySide0] = true;
+	if (entrySide1 != Direction::Invalid) exitPoints[entrySide1] = true;
+	if (entrySide2 != Direction::Invalid) exitPoints[entrySide2] = true;
     floodfill_queue.clear();
 	floodfill_queue.push_back(QueueElement{static_cast<int8_t>(x), static_cast<int8_t>(y), static_cast<int8_t>(z)});
 
@@ -202,7 +202,7 @@ static uint16_t floodFill(World* world, ChunkColumnPtr chunk, Chunk* cluster, in
         for (int i = 0; i < 6; i++) {
 			const int* offset = DirectionToOffset[i];
 			int x = item.x + offset[0], y = item.y + offset[1], z = item.z + offset[2];
-			if (x < 0 || y < 0 || z < 0 || x >= CHUNK_SIZE || y >= CHUNK_SIZE || z >= CHUNK_SIZE) {
+			if (x < 0 || y < 0 || z < 0 || x >= Chunk::Size || y >= Chunk::Size || z >= Chunk::Size) {
 				exitPoints[i] = true;
 			} else {
 				if (!Block_Opaque(cluster->GetBlock(x,y,z), cluster->metadataLight[x][y][z] & 0xf) &&
@@ -229,7 +229,7 @@ static uint16_t floodFill(World* world, ChunkColumnPtr chunk, Chunk* cluster, in
 }
 
 void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context) {
-	for (int i = 0; i < CHUNKS_PER_COLUMN; i++) {
+	for (int i = 0; i < ChunkColumn::ChunksPerColumn; i++) {
 		ChunkPtr chunk = item.column->GetChunk(i);
 
 		if (chunk->revision != chunk->vboRevision || chunk->forceVBOUpdate) {
@@ -242,20 +242,20 @@ void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context) 
 			uint16_t visibility = 0;
 
 			memset(floodfill_visited, 0, sizeof(floodfill_visited));
-			for (int x = 0; x < CHUNK_SIZE; x += CHUNK_SIZE - 1) {
-				Direction xDir = !x ? Direction_West : Direction_East;
-				for (int z = 0; z < CHUNK_SIZE; z++) {
-					Direction zDir = Direction_Invalid;
+			for (int x = 0; x < Chunk::Size; x += Chunk::Size - 1) {
+				Direction xDir = !x ? Direction::West : Direction::East;
+				for (int z = 0; z < Chunk::Size; z++) {
+					Direction zDir = Direction::Invalid;
 					if (z == 0)
-						zDir = Direction_North;
-					else if (z == CHUNK_SIZE - 1)
-						zDir = Direction_South;
-					for (int y = 0; y < CHUNK_SIZE; y++) {
-						Direction yDir = Direction_Invalid;
+						zDir = Direction::North;
+					else if (z == Chunk::Size - 1)
+						zDir = Direction::South;
+					for (int y = 0; y < Chunk::Size; y++) {
+						Direction yDir = Direction::Invalid;
 						if (y == 0)
-							yDir = Direction_Bottom;
-						else if (y == CHUNK_SIZE - 1)
-							yDir = Direction_Top;
+							yDir = Direction::Bottom;
+						else if (y == Chunk::Size - 1)
+							yDir = Direction::Top;
 
 						if (!Block_Opaque(chunk->GetBlock(x,y,z), chunk->metadataLight[x][y][z] & 0xf))
 							visibility |= floodFill(world, item.column, chunk, x, y, z, xDir, yDir, zDir);
@@ -270,20 +270,20 @@ void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context) 
 					}
 				}
 			}
-			for (int y = 0; y < CHUNK_SIZE; y += CHUNK_SIZE - 1) {
-				Direction yDir = !y ? Direction_Bottom : Direction_Top;
-				for (int x = 0; x < CHUNK_SIZE; x++) {
-					Direction xDir = Direction_Invalid;
+			for (int y = 0; y < Chunk::Size; y += Chunk::Size - 1) {
+				Direction yDir = !y ? Direction::Bottom : Direction::Top;
+				for (int x = 0; x < Chunk::Size; x++) {
+					Direction xDir = Direction::Invalid;
 					if (x == 0)
-						xDir = Direction_West;
-					else if (x == CHUNK_SIZE - 1)
-						xDir = Direction_East;
-					for (int z = 0; z < CHUNK_SIZE; z++) {
-						Direction zDir = Direction_Invalid;
+						xDir = Direction::West;
+					else if (x == Chunk::Size - 1)
+						xDir = Direction::East;
+					for (int z = 0; z < Chunk::Size; z++) {
+						Direction zDir = Direction::Invalid;
 						if (z == 0)
-							zDir = Direction_South;
-						else if (z == CHUNK_SIZE - 1)
-							zDir = Direction_North;
+							zDir = Direction::South;
+						else if (z == Chunk::Size - 1)
+							zDir = Direction::North;
 						if (!Block_Opaque(chunk->GetBlock(x,y,z), chunk->metadataLight[x][y][z] & 0xf))
 							visibility |= floodFill(world, item.column, chunk, x, y, z, xDir, yDir, zDir);
 						Block block = fastBlockFetch(world, item.column, chunk, x, y + (!y ? -1 : 1), z);
@@ -297,20 +297,20 @@ void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context) 
 					}
 				}
 			}
-			for (int z = 0; z < CHUNK_SIZE; z += CHUNK_SIZE - 1) {
-				Direction zDir = !z ? Direction_North : Direction_South;
-				for (int x = 0; x < CHUNK_SIZE; x++) {
-					Direction xDir = Direction_Invalid;
+			for (int z = 0; z < Chunk::Size; z += Chunk::Size - 1) {
+				Direction zDir = !z ? Direction::North : Direction::South;
+				for (int x = 0; x < Chunk::Size; x++) {
+					Direction xDir = Direction::Invalid;
 					if (x == 0)
-						xDir = Direction_West;
-					else if (x == CHUNK_SIZE - 1)
-						xDir = Direction_East;
-					for (int y = 0; y < CHUNK_SIZE; y++) {
-						Direction yDir = Direction_Invalid;
+						xDir = Direction::West;
+					else if (x == Chunk::Size - 1)
+						xDir = Direction::East;
+					for (int y = 0; y < Chunk::Size; y++) {
+						Direction yDir = Direction::Invalid;
 						if (y == 0)
-							yDir = Direction_Bottom;
-						else if (y == CHUNK_SIZE - 1)
-							yDir = Direction_Top;
+							yDir = Direction::Bottom;
+						else if (y == Chunk::Size - 1)
+							yDir = Direction::Top;
 						if (!Block_Opaque(chunk->GetBlock(x,y,z), chunk->metadataLight[x][y][z] & 0xf))
 							visibility |= floodFill(world, item.column, chunk, x, y, z, xDir, yDir, zDir);
 						Block block = fastBlockFetch(world, item.column, chunk, x, y, z + (!z ? -1 : 1));
@@ -330,7 +330,7 @@ void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context) 
 			if (WorldToChunkCoord(px) == item.column->x && WorldToChunkCoord(pz) == item.column->z &&
 			    WorldToChunkCoord(py) == i) {
 				floodFill(world, item.column, chunk, WorldToLocalCoord(px), WorldToLocalCoord(py), WorldToLocalCoord(pz),
-                          Direction_Invalid, Direction_Invalid, Direction_Invalid);
+                          Direction::Invalid, Direction::Invalid, Direction::Invalid);
 			}
 
 			int transparentVertices = transparentFaces * 6;
@@ -348,9 +348,9 @@ void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context) 
 				for (int j = 0; j < currentFace; j++) {
 					Face face = faceBuffer[j];
 
-					int offsetX = face.x + item.column->x * CHUNK_SIZE;
-					int offsetZ = face.z + item.column->z * CHUNK_SIZE;
-					int offsetY = face.y + i * CHUNK_SIZE;
+					int offsetX = face.x + item.column->x * Chunk::Size;
+					int offsetZ = face.z + item.column->z * Chunk::Size;
+					int offsetY = face.y + i * Chunk::Size;
 
 					int16_t iconUV[2];
 					Block_GetTexture(mc::inventory::Slot(face.block,0,face.metadata), face.direction, iconUV);

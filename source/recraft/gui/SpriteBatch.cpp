@@ -130,7 +130,7 @@ void SpriteBatch_PushIcon(mc::inventory::Slot block, int x, int y, int z) {
 	WorldVertex vertices[6 * 6];
 	memcpy(vertices, cube_sides_lut, sizeof(cube_sides_lut));
 	for (int i = 0; i < 6; i++) {
-		if (i != Direction_Top && i != Direction_South && i != Direction_West) continue;
+		if (i != Direction::Top && i != Direction::South && i != Direction::West) continue;
 		int16_t iconUV[2];
 		Block_GetTexture(block, (Direction)i,  iconUV);
 
@@ -157,8 +157,8 @@ void SpriteBatch_PushIcon(mc::inventory::Slot block, int x, int y, int z) {
         C3D_Tex* texture = &((Texture_Map*)Block_GetTextureMap())->texture;
 
 		int16_t color16 = SHADER_RGB(color[0] >> 3, color[1] >> 3, color[2] >> 3);
-		if(i == Direction_South) color16 = SHADER_RGB_DARKEN(color16, 14);
-		else if(i == Direction_West) color16 = SHADER_RGB_DARKEN(color16, 10);
+		if(i == Direction::South) color16 = SHADER_RGB_DARKEN(color16, 14);
+		else if(i == Direction::West) color16 = SHADER_RGB_DARKEN(color16, 10);
 
 #define unpackP(x) (x).xyz[0], (x).xyz[1]
         cmdList.push_back(

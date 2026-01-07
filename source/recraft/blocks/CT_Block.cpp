@@ -177,10 +177,10 @@ void Block_GetTexture(mc::inventory::Slot block, Direction direction, int16_t* o
 			break;
 		case Block_Grass:
 			switch (direction) {
-				case Direction_Top:
+                case Direction::Top:
 					i = icon.grass_top;
 					break;
-				case Direction_Bottom:
+                case Direction::Bottom:
 					i = icon.dirt;
 					break;
 				default:
@@ -193,8 +193,8 @@ void Block_GetTexture(mc::inventory::Slot block, Direction direction, int16_t* o
 			break;
 		case Block_Log:
 			switch (direction) {
-				case Direction_Bottom:
-				case Direction_Top:
+                case Direction::Bottom:
+                case Direction::Top:
 					i = icon.oaklog_top;
 					break;
 				default:
@@ -240,10 +240,10 @@ void Block_GetTexture(mc::inventory::Slot block, Direction direction, int16_t* o
 			break;
 		case Block_Snow_Grass:
 			switch (direction) {
-				case Direction_Top:
+                case Direction::Top:
 					i = icon.snow;
 					break;
-				case Direction_Bottom:
+                case Direction::Bottom:
 					i = icon.dirt;
 					break;
 				default:
@@ -262,10 +262,10 @@ void Block_GetTexture(mc::inventory::Slot block, Direction direction, int16_t* o
 			break;
 		case Block_Sandstone:
 			switch (direction) {
-				case Direction_Bottom:
+                case Direction::Bottom:
 					i = icon.sandstone_bottom;
 					break;
-				case Direction_Top:
+                case Direction::Top:
 					i = icon.sandstone_top;
 					break;
 				default:
@@ -278,10 +278,10 @@ void Block_GetTexture(mc::inventory::Slot block, Direction direction, int16_t* o
 			break;
 		case Block_Crafting_Table:
 			switch (direction) {
-				case Direction_Bottom:
+                case Direction::Bottom:
 					i = icon.oakplanks;
 					break;
-				case Direction_Top:
+                case Direction::Top:
 					i = icon.crafting_table_top;
 					break;
 				default:
@@ -297,10 +297,10 @@ void Block_GetTexture(mc::inventory::Slot block, Direction direction, int16_t* o
 			break;
 		case Block_Grass_Path:
 			switch (direction) {
-				case Direction_Bottom:
+                case Direction::Bottom:
 					i = icon.dirt;
 					break;
-				case Direction_Top:
+                case Direction::Top:
 					i = icon.grass_path_top;
 					break;
 				default:
@@ -340,10 +340,10 @@ void Block_GetTexture(mc::inventory::Slot block, Direction direction, int16_t* o
 			break;
 		case Block_Furnace:
 			switch (direction) {
-				case Direction_South:
+                case Direction::South:
 					i = icon.furnace_front;
 					break;
-				case Direction_Top:
+                case Direction::Top:
 					i=icon.furnace_top;
 					break;
 				default:
@@ -358,7 +358,7 @@ void Block_GetTexture(mc::inventory::Slot block, Direction direction, int16_t* o
 }
 
 void Block_GetColor(Block block, uint8_t metadata, Direction direction, uint8_t out_rgb[]) {
-	if ((block == Block_Grass && direction == Direction_Top) || block == Block_Leaves) {
+	if ((block == Block_Grass && direction == Direction::Top) || block == Block_Leaves) {
 		out_rgb[0] = 140;
 		out_rgb[1] = 214;
 		out_rgb[2] = 123;

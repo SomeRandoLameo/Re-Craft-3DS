@@ -181,9 +181,9 @@ void SuperChunk_SaveChunk(SuperChunk* superchunk, ChunkColumnPtr column) {
 
         mpack_start_map(&writer, 3);
 
-        mpack_write_cstr(&writer, "clusters");
-        mpack_start_array(&writer, CHUNKS_PER_COLUMN);
-        for (int i = 0; i < CHUNKS_PER_COLUMN; i++) {
+        mpack_write_cstr(&writer, "clusters"); // TODO: rename to chunks
+        mpack_start_array(&writer, ChunkColumn::ChunksPerColumn);
+        for (int i = 0; i < ChunkColumn::ChunksPerColumn; i++) {
             auto chunk = column->GetChunk(i);
             bool empty = chunk->IsEmpty();
 
@@ -252,8 +252,8 @@ void SuperChunk_LoadChunk(SuperChunk* superchunk, ChunkColumnPtr column) {
             mpack_tree_init_pool(&tree, decompressBuffer, uncompressedSize, nodeDataPool, nodeDataPoolSize);
             mpack_node_t root = mpack_tree_root(&tree);
 
-            mpack_node_t clusters = mpack_node_map_cstr(root, "clusters");
-            for (int i = 0; i < CHUNKS_PER_COLUMN; i++) {
+            mpack_node_t clusters = mpack_node_map_cstr(root, "clusters"); // TODO: rename to chunks
+            for (int i = 0; i < ChunkColumn::ChunksPerColumn; i++) {
                 auto chunk = column->GetChunk(i);
                 mpack_node_t cluster = mpack_node_array_at(clusters, i);
 
