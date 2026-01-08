@@ -22,14 +22,14 @@ void SmeaGen::Generate(WorkQueue* queue, WorkerItem item, void* context) {
 				     (smeasChunkHeight * smeasClusterSize / 2);
 
 			for (int y = 0; y < height - 3; y++) {
-                item.column->SetBlock(mc::Vector3i(x, y, z), Block_Stone);
+                item.column->SetBlock(mc::Vector3i(x, y, z), Block::Stone);
 			}
 
 			for (int y = height - 3; y < height; y++) {
-                item.column->SetBlock(mc::Vector3i(x, y, z), Block_Dirt);
+                item.column->SetBlock(mc::Vector3i(x, y, z), Block::Dirt);
 			}
 
-            item.column->SetBlock(mc::Vector3i(x, height, z), Block_Grass);
+            item.column->SetBlock(mc::Vector3i(x, height, z), Block::Grass);
 		}
 	}
 }

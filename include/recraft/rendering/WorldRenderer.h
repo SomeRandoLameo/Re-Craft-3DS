@@ -49,19 +49,19 @@ private:
 
     std::vector<RenderStep> m_renderingQueue;
 
-    uint8_t m_chunkRendered[CHUNKCACHE_SIZE][ChunkColumn::ChunksPerColumn][CHUNKCACHE_SIZE];
+    uint8_t m_chunkRendered[World::ChunkCacheSize][ChunkColumn::ChunksPerColumn][World::ChunkCacheSize];
     std::vector<TransparentRender> m_transparentClusters;
     C3D_FogLut m_fogLut;
 
     int m_projectionUniform;
 
     inline bool ClusterWasRendered(int x, int y, int z) const {
-        return m_chunkRendered[x - (m_world->cacheTranslationX - (CHUNKCACHE_SIZE / 2))][y]
-        [z - (m_world->cacheTranslationZ - (CHUNKCACHE_SIZE / 2))];
+        return m_chunkRendered[x - (m_world->cacheTranslationX - (World::ChunkCacheSize / 2))][y]
+        [z - (m_world->cacheTranslationZ - (World::ChunkCacheSize / 2))];
     }
 
     inline uint8_t& ClusterRenderedRef(int x, int y, int z) {
-        return m_chunkRendered[x - (m_world->cacheTranslationX - (CHUNKCACHE_SIZE / 2))][y]
-        [z - (m_world->cacheTranslationZ - (CHUNKCACHE_SIZE / 2))];
+        return m_chunkRendered[x - (m_world->cacheTranslationX - (World::ChunkCacheSize / 2))][y]
+        [z - (m_world->cacheTranslationZ - (World::ChunkCacheSize / 2))];
     }
 };

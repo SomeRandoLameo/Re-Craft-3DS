@@ -28,7 +28,7 @@ void World::Reset() {
 
     m_freeChunkColums.clear();
 
-	for (size_t i = 0; i < CHUNKPOOL_SIZE; i++) {
+	for (size_t i = 0; i < ChunkPoolSize; i++) {
         m_chunkChunkPool[i].x = INT_MAX;
         m_chunkChunkPool[i].z = INT_MAX;
         m_freeChunkColums.push_back(&m_chunkChunkPool[i]);
@@ -90,7 +90,7 @@ void World::UnloadChunk(ChunkColumnPtr column) {
 
 // Do we really need to cache chunks in general?
 ChunkColumnPtr World::GetChunkColumn(int x, int z) {
-	int halfS = CHUNKCACHE_SIZE / 2;
+	int halfS = World::ChunkCacheSize / 2;
 	int lowX = cacheTranslationX - halfS;
 	int lowZ = cacheTranslationZ - halfS;
 	int highX = cacheTranslationX + halfS;
@@ -100,10 +100,10 @@ ChunkColumnPtr World::GetChunkColumn(int x, int z) {
 }
 
 Block World::GetBlock( mc::Vector3i position) {
-	if (position.y < 0 || position.y >= World::Height) return Block_Air;
+	if (position.y < 0 || position.y >= World::Height) return Block::Air;
 	ChunkColumnPtr chunk = GetChunkColumn(WorldToChunkCoord(position.x), WorldToChunkCoord(position.z));
 	if (chunk) return chunk->GetBlock(mc::Vector3i(WorldToLocalCoord(position.x), position.y, WorldToLocalCoord(position.z)));
-	return Block_Air;
+	return Block::Air;
 }
 
 static void NotifyNeighbor(int axis, int comp, World* world, int cX, int cZ, int y, int xDiff, int zDiff) {
@@ -193,21 +193,21 @@ int World::GetHeight(int x, int z) {
 
 void World::UpdateChunkCache(int orginX, int orginZ) {
 	if (orginX != cacheTranslationX || orginZ != cacheTranslationZ) {
-		ChunkColumnPtr tmpBuffer[CHUNKCACHE_SIZE][CHUNKCACHE_SIZE];
+		ChunkColumnPtr tmpBuffer[World::ChunkCacheSize][World::ChunkCacheSize];
 		memcpy(tmpBuffer, columnCache, sizeof(tmpBuffer));
 
-		int oldBufferStartX = cacheTranslationX - CHUNKCACHE_SIZE / 2;
-		int oldBufferStartZ = cacheTranslationZ - CHUNKCACHE_SIZE / 2;
+		int oldBufferStartX = cacheTranslationX - World::ChunkCacheSize / 2;
+		int oldBufferStartZ = cacheTranslationZ - World::ChunkCacheSize / 2;
 
 		int diffX = orginX - cacheTranslationX;
 		int diffZ = orginZ - cacheTranslationZ;
 
-		for (int i = 0; i < CHUNKCACHE_SIZE; i++) {
-			for (int j = 0; j < CHUNKCACHE_SIZE; j++) {
-				int wx = orginX + (i - CHUNKCACHE_SIZE / 2);
-				int wz = orginZ + (j - CHUNKCACHE_SIZE / 2);
-				if (wx >= oldBufferStartX && wx < oldBufferStartX + CHUNKCACHE_SIZE && wz >= oldBufferStartZ &&
-				    wz < oldBufferStartZ + CHUNKCACHE_SIZE) {
+		for (int i = 0; i < World::ChunkCacheSize; i++) {
+			for (int j = 0; j < World::ChunkCacheSize; j++) {
+				int wx = orginX + (i - World::ChunkCacheSize / 2);
+				int wz = orginZ + (j - World::ChunkCacheSize / 2);
+				if (wx >= oldBufferStartX && wx < oldBufferStartX + World::ChunkCacheSize && wz >= oldBufferStartZ &&
+				    wz < oldBufferStartZ + World::ChunkCacheSize) {
                     columnCache[i][j] = tmpBuffer[i + diffX][j + diffZ];
 					tmpBuffer[i + diffX][j + diffZ] = NULL;
 				} else {
@@ -216,8 +216,8 @@ void World::UpdateChunkCache(int orginX, int orginZ) {
 			}
 		}
 
-		for (int i = 0; i < CHUNKCACHE_SIZE; i++) {
-			for (int j = 0; j < CHUNKCACHE_SIZE; j++) {
+		for (int i = 0; i < World::ChunkCacheSize; i++) {
+			for (int j = 0; j < World::ChunkCacheSize; j++) {
 				if (tmpBuffer[i][j] != NULL) {
 					UnloadChunk(tmpBuffer[i][j]);
 				}
@@ -230,8 +230,8 @@ void World::UpdateChunkCache(int orginX, int orginZ) {
 }
 
 void World::Tick() {
-	for (int x = 0; x < CHUNKCACHE_SIZE; x++) {
-        for (int z = 0; z < CHUNKCACHE_SIZE; z++) {
+	for (int x = 0; x < World::ChunkCacheSize; x++) {
+        for (int z = 0; z < World::ChunkCacheSize; z++) {
             ChunkColumn *chunk = columnCache[x][z];
 
             if (chunk->genProgress == ChunkGen_Empty && !chunk->tasksRunning) {
@@ -239,7 +239,7 @@ void World::Tick() {
             }
 
 
-            if (x > 0 && z > 0 && x < CHUNKCACHE_SIZE - 1 && z < CHUNKCACHE_SIZE - 1 &&
+            if (x > 0 && z > 0 && x < World::ChunkCacheSize - 1 && z < World::ChunkCacheSize - 1 &&
                 chunk->genProgress == ChunkGen_Terrain && !chunk->tasksRunning) {
                 bool clear = true;
                 for (int xOff = -1; xOff < 2 && clear; xOff++) {

@@ -31,7 +31,7 @@ void NetworkWorld::HandlePacket(mc::protocol::packets::in::ChunkDataPacket* pack
 
     // If not in cache, we need to allocate or find a free chunk
     if (!column) {
-        for (int i = 0; i < CHUNKPOOL_SIZE; i++) {
+        for (int i = 0; i < World::ChunkPoolSize; i++) {
             if (m_world->m_chunkChunkPool[i].x == chunkX &&
                 m_world->m_chunkChunkPool[i].z == chunkZ) {
                 column = &m_world->m_chunkChunkPool[i];
@@ -90,6 +90,7 @@ void NetworkWorld::HandlePacket(mc::protocol::packets::in::ExplosionPacket* pack
 void NetworkWorld::HandlePacket(mc::protocol::packets::in::UpdateBlockEntityPacket* packet) {}
 
 void NetworkWorld::HandlePacket(mc::protocol::packets::in::RespawnPacket* packet) {}
+
 void NetworkWorld::OnTick(){
 
 }

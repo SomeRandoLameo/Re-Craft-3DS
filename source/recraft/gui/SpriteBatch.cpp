@@ -74,19 +74,19 @@ void SpriteBatch_Deinit() {
 void SpriteBatch_BindTexture(C3D_Tex* texture) { currentTexture = texture; }
 void SpriteBatch_BindGuiTexture(GuiTexture texture) {
 	switch (texture) {
-		case GuiTexture_Blank:
+        case GuiTexture::Blank:
 			currentTexture = &whiteTex;
 			break;
-		case GuiTexture_Font:
+        case GuiTexture::FontTex:
 			currentTexture = &font->texture;
 			break;
-		case GuiTexture_Widgets:
+        case GuiTexture::Widgets:
 			currentTexture = &widgetsTex;
 			break;
-		case GuiTexture_Icons:
+        case GuiTexture::Icons:
 			currentTexture = &iconsTex;
 			break;
-		case GuiTexture_MenuBackground:
+        case GuiTexture::MenuBackground:
 			currentTexture = &menuBackgroundTex;
 			break;
 		default:

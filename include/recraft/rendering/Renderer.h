@@ -33,6 +33,13 @@ class ReCraftCore;
 
 class Renderer {
 public:
+    enum {
+        ScreenWidth = 400,
+        ScreenHeight = 480,
+        FrameBufferScale = 1,
+        SkyClearColor = 0x90d9ffff,
+        BlackClearColor = 0x000000ff
+    };
     Renderer(World* world_, Player* player_, WorkQueue* queue);
     ~Renderer();
 

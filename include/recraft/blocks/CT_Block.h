@@ -1,3 +1,9 @@
+/*
+    TODO: DEPRECATION NOTICE: THIS FILE WILL BE REMOVED AND REPLACED
+        - PLEASE NO BIG MODIFICATIONS TO THIS FILE, AS IT WILL BE REWRITTEN FROM SCRATCH
+        - MINOR MODIFICATIONS FOR BUGFIXES OR "GENERAL" IMPROVEMENTS ARE ALLOWED
+*/
+
 #pragma once
 
 #include <stdbool.h>
@@ -8,49 +14,48 @@
 #include "mclib/block/Block.h"
 #include "mclib/inventory/Slot.h"
 
-typedef u8 Block; // TODO: Convert to u16 once the o3DS hardware supports it
-
 //TODO: Instead of ENUM IDs, use the "flattened" strings
-enum { Block_Air,
-    Block_Stone,
-    Block_Dirt,
-    Block_Grass,
-    Block_Cobblestone,
-    Block_Sand,
-    Block_Log,
-    Block_Gravel,
-    Block_Leaves,
-    Block_Glass,
-   	Block_Stonebrick,
-    Block_Brick,
-    Block_Planks,
-    Block_Wool,
-    Block_Bedrock,
-    Block_Coarse,
-    Block_Door_Top,
-   	Block_Door_Bottom,
-   	Block_Snow_Grass,
-   	Block_Snow,
-   	Block_Obsidian,
-   	Block_Netherrack,
-   	Block_Sandstone,
-   	Block_Smooth_Stone,
-   	Block_Crafting_Table,
-   	Block_Grass_Path,
-   	Block_Water,
-   	Block_Lava,
-	Block_Iron_Ore,
-	Block_Coal_Ore,
-	Block_Diamond_Ore,
-	Block_Gold_Ore,
-	Block_Emerald_Ore,
-	Block_Gold_Block,
-	Block_Diamond_Block,
-	Block_Coal_Block,
-	Block_Iron_Block,
-	Block_Emerald_Block,
-	Block_Furnace,
-	Blocks_Count
+enum class Block : u8 { // TODO: Convert to u16 once the o3DS hardware supports it
+    Air,
+    Stone,
+    Dirt,
+    Grass,
+    Cobblestone,
+    Sand,
+    Log,
+    Gravel,
+    Leaves,
+    Glass,
+   	Stonebrick,
+    Brick,
+    Planks,
+    Wool,
+    Bedrock,
+    Coarse,
+    Door_Top,
+   	Door_Bottom,
+   	Snow_Grass,
+   	Snow,
+   	Obsidian,
+   	Netherrack,
+   	Sandstone,
+   	Smooth_Stone,
+   	Crafting_Table,
+   	Grass_Path,
+   	Water,
+   	Lava,
+	Iron_Ore,
+	Coal_Ore,
+	Diamond_Ore,
+	Gold_Ore,
+	Emerald_Ore,
+	Gold_Block,
+	Diamond_Block,
+	Coal_Block,
+	Iron_Block,
+	Emerald_Block,
+	Furnace,
+	Count
 };
 
 void Block_Init();

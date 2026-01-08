@@ -149,18 +149,18 @@ void MCBridge::backgroundLoop() {
 }
 
 // TODO: make it stop...
-u16 MCBridge::MCLibBlockToCTBlock(u32 BlockType){
-    if(BlockType == 14) return Block_Gold_Ore;
-    else if(BlockType == 112) return Block_Bedrock;
-    else if(BlockType == 2) return Block_Grass;
-    else if(BlockType == 3) return Block_Dirt;
-    else return (u16)BlockType;
+Block MCBridge::MCLibBlockToCTBlock(u32 BlockType){
+    if(BlockType == 14) return Block::Gold_Ore;
+    else if(BlockType == 112) return Block::Bedrock;
+    else if(BlockType == 2) return Block::Grass;
+    else if(BlockType == 3) return Block::Dirt;
+    else return (Block)BlockType;
 }
 
 mc::inventory::Slot MCBridge::CTItemStackToMCLIBSlot(ItemStack in){
-    return mc::inventory::Slot(in.block,in.amount,in.meta);
+    return mc::inventory::Slot(static_cast<s32>(in.block),in.amount,in.meta);
 }
 
 ItemStack MCBridge::MCLIBSlotToCTItemStack(mc::inventory::Slot in){
-    return (ItemStack){in.GetItemId(),in.GetItemDamage(),in.GetItemCount()};
+    return (ItemStack){static_cast<Block>(in.GetItemId()),in.GetItemDamage(),in.GetItemCount()};
 }

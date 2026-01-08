@@ -41,7 +41,7 @@ void Hand::Draw(int projUniform, C3D_Mtx* projection, mc::inventory::Slot stack,
 			int16_t iconUV[2];
 			uint8_t color[3];
 			Block_GetTexture(stack, (Direction)i, iconUV);
-			Block_GetColor(stack.GetItemId(), stack.GetItemDamage(), (Direction)i, color);
+			Block_GetColor(static_cast<Block>(stack.GetItemId()), stack.GetItemDamage(), (Direction)i, color);
 
 #define oneDivIconsPerRow (32768 / 8)
 #define halfTexel (6)

@@ -7,7 +7,7 @@
 
 #include <citro3d.h>
 
-#define INF (CHUNKCACHE_SIZE / 2 * Chunk::Size)
+#define INF (World::ChunkCacheSize / 2 * Chunk::Size)
 
 bool Raycast_Cast(World* world, mc::Vector3d inpos, mc::Vector3d raydir, Raycast_Result* out) {
     mc::Vector3d map = mc::Vector3d(
@@ -68,7 +68,7 @@ bool Raycast_Cast(World* world, mc::Vector3d inpos, mc::Vector3d raydir, Raycast
 			side = 2;
 		}
 
-		if (world->GetBlock(mc::ToVector3i(map)) != Block_Air || world->GetBlock(mc::ToVector3i(map)) == Block_Lava) hit = 1;
+		if (world->GetBlock(mc::ToVector3i(map)) != Block::Air || world->GetBlock(mc::ToVector3i(map)) == Block::Lava) hit = 1;
 		// if (world->errFlags & World_ErrUnloadedBlockRequested) break;
 
 		if (steps++ > INF) break;

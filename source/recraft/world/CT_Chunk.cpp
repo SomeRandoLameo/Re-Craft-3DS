@@ -62,7 +62,7 @@ void ChunkColumn::GenerateHeightmap() {
                     auto chunk = GetChunk(i);
                     if (chunk->IsEmpty()) continue;
                     for (int j = Chunk::Size - 1; j >= 0; --j) {
-                        if (chunk->GetBlock(x,j,z) != Block_Air) {
+                        if (chunk->GetBlock(x,j,z) != Block::Air) {
                             heightmap[x][z] = i * Chunk::Size + j + 1;
                             i = -1;
                             break;
@@ -128,7 +128,7 @@ bool Chunk::IsEmpty() {
     emptyRevision = revision;
 
     for (Block block : m_blocks) {
-        if (block != 0) {
+        if (block != Block::Air) {
             empty = false;
             return false;
         }

@@ -6,22 +6,22 @@ void SuperFlatGen::Init(World* world) {
 
 void SuperFlatGen::Generate(WorkQueue* queue, WorkerItem item, void* context) {
 	for (int y = 0; y < 17; y++) {
-		Block block = Block_Air;
+		Block block = Block::Air;
 		switch (y) {
 			case 0:
-				block = Block_Bedrock;
+				block = Block::Bedrock;
 				break;
 			case 1 ... 10:
-				block = Block_Stone;
+				block = Block::Stone;
 				break;
 			case 11 ... 15:
-				block = Block_Dirt;
+				block = Block::Dirt;
 				break;
 			case 16:
-				block = Block_Grass;
+				block = Block::Grass;
 				break;
 			default:
-				block = Block_Air;
+				block = Block::Air;
 				break;
 		}
 		for (int x = 0; x < Chunk::Size; x++) {

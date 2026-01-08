@@ -12,12 +12,7 @@
 #include "rendering/PolyGen.h"
 #include "rendering/TextureMap.h"
 
-const auto SCREEN_WIDTH = 400.0f;
-const auto SCREEN_HEIGHT = 480.0f;
-const auto FB_SCALE = 1.0f;
 
-#define CLEAR_COLOR_SKY 0x90d9ffff
-#define CLEAR_COLOR_BLACK 0x000000ff
 
 // TODO: Fix this
 extern bool showDebugInfo;
@@ -89,7 +84,7 @@ void Renderer::RenderHealth() {
     int health = m_player->hp;
     int yPos = 99;
     int spriteSize = 9;
-    SpriteBatch_BindGuiTexture(GuiTexture_Icons);
+    SpriteBatch_BindGuiTexture(GuiTexture::Icons);
     for (int amount = 0; amount < 10; ++amount) {
 
         int var6 = 0;
@@ -135,7 +130,7 @@ void Renderer::RenderExpBar() {
     // harcoded cap for now
     int barCap = 10;
 
-    SpriteBatch_BindGuiTexture(GuiTexture_Icons);
+    SpriteBatch_BindGuiTexture(GuiTexture::Icons);
 
     if (barCap > 0) {
         int barLength = 182;
@@ -216,7 +211,7 @@ void Renderer::RenderHunger() {
 }
 
 void Renderer::RenderGameOverlay() {
-    SpriteBatch_BindGuiTexture(GuiTexture_Icons);
+    SpriteBatch_BindGuiTexture(GuiTexture::Icons);
     SpriteBatch_PushQuad(200 / 2 - 16 / 2, 120 / 2 - 16 / 2, 0, 16, 16, 0, 0, 16, 16);
 
     if (m_player->gamemode == 0) {
@@ -231,7 +226,7 @@ void Renderer::Render(DebugUI* debugUi) {
 
     C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 
-    if (*ReCraftCore::GetInstance()->GetGameState() == (GameState_Playing || GameState_Playing_OnLine)) {
+    if (*ReCraftCore::GetInstance()->GetGameState() != GameState::SelectWorld) {
         PolyGen_Harvest(debugUi);
     }
 
@@ -244,8 +239,8 @@ void Renderer::Render(DebugUI* debugUi) {
     RenderLowerScreen(debugUi);
 
     ImGuiIO& io = ImGui::GetIO();
-    io.DisplaySize = ImVec2(SCREEN_WIDTH, SCREEN_HEIGHT);
-    io.DisplayFramebufferScale = ImVec2(FB_SCALE, FB_SCALE);
+    io.DisplaySize = ImVec2(ScreenWidth, ScreenHeight);
+    io.DisplayFramebufferScale = ImVec2(FrameBufferScale, FrameBufferScale);
 
     ImGuiManager::GetInstance()->BeginFrame();
 
@@ -270,7 +265,7 @@ void Renderer::Render(DebugUI* debugUi) {
 }
 
 void Renderer::RenderFrame(int eyeIndex, float iod) {
-    Top[eyeIndex]->Clear(CLEAR_COLOR_SKY);
+    Top[eyeIndex]->Clear(SkyClearColor);
     C3D_FrameDrawOn(Top[eyeIndex]->Ptr());
 
     SpriteBatch_StartFrame(400, 240);
@@ -285,7 +280,7 @@ void Renderer::RenderFrame(int eyeIndex, float iod) {
     C3D_DepthTest(true, GPU_GREATER, GPU_WRITE_ALL);
     C3D_CullFace(GPU_CULL_BACK_CCW);
 
-    if (*ReCraftCore::GetInstance()->GetGameState() != GameState_SelectWorld) {
+    if (*ReCraftCore::GetInstance()->GetGameState() != GameState::SelectWorld) {
         C3D_TexBind(0, (C3D_Tex*)Block_GetTextureMap());
 
         m_worldRenderer->Render(!eyeIndex ? -iod : iod);
@@ -301,12 +296,12 @@ void Renderer::RenderFrame(int eyeIndex, float iod) {
 }
 
 void Renderer::RenderLowerScreen(DebugUI* debugUi) {
-    Bottom->Clear(CLEAR_COLOR_BLACK);
+    Bottom->Clear(BlackClearColor);
     Bottom->Use();
 
     SpriteBatch_StartFrame(320, 240);
 
-    if (*ReCraftCore::GetInstance()->GetGameState() == GameState_SelectWorld) {
+    if (*ReCraftCore::GetInstance()->GetGameState() == GameState::SelectWorld) {
         WorldSelect_RenderBot();
     } else {
         SpriteBatch_SetScale(2);

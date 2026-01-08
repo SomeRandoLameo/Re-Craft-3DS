@@ -5,7 +5,7 @@ ReCraftCore* ReCraftCore::m_theReCraftCore = nullptr;
 
 ReCraftCore::ReCraftCore() {
     m_theReCraftCore = this;
-    this->m_gamestate = GameState_SelectWorld;
+    this->m_gamestate = GameState::SelectWorld;
     gfxInitDefault();
     // Enable N3DS 804MHz operation, where available
     osSetSpeedupEnable(true);
@@ -82,11 +82,11 @@ ReCraftCore::ReCraftCore() {
 ReCraftCore::~ReCraftCore() {
     ImGuiManager::GetInstance()->UnregisterCallback("DebugUI");
 
-    if (m_gamestate == GameState_Playing) {
+    if (m_gamestate == GameState::Playing) {
         ExitSinglePlayer();
     }
 
-    if (m_gamestate == GameState_Playing_OnLine) {
+    if (m_gamestate == GameState::Playing_OnLine) {
         ExitMultiplayer();
     }
 
@@ -117,10 +117,10 @@ void ReCraftCore::InitSinglePlayer(char* path, char* name, const WorldGenType* w
 
     m_world->cacheTranslationX = WorldToChunkCoord(FastFloor(m_player->position.x));
     m_world->cacheTranslationZ = WorldToChunkCoord(FastFloor(m_player->position.z));
-    for (int i = 0; i < CHUNKCACHE_SIZE; i++) {
-        for (int j = 0; j < CHUNKCACHE_SIZE; j++) {
-            m_world->columnCache[i][j] = m_world->LoadChunk(i - CHUNKCACHE_SIZE / 2 + m_world->cacheTranslationX,
-                                                            j - CHUNKCACHE_SIZE / 2 + m_world->cacheTranslationZ);
+    for (int i = 0; i < World::ChunkCacheSize; i++) {
+        for (int j = 0; j < World::ChunkCacheSize; j++) {
+            m_world->columnCache[i][j] = m_world->LoadChunk(i - World::ChunkCacheSize / 2 + m_world->cacheTranslationX,
+                                                            j - World::ChunkCacheSize / 2 + m_world->cacheTranslationZ);
         }
     }
 
@@ -145,7 +145,7 @@ void ReCraftCore::InitSinglePlayer(char* path, char* name, const WorldGenType* w
         m_player->hp = 20;
         m_player->position.y = (float)highestblock + 0.2f;
     }
-    m_gamestate = GameState_Playing;
+    m_gamestate = GameState::Playing;
 }
 void ReCraftCore::RunSinglePlayer(InputData inputData) {
     while (m_timeAccum >= 20.f) {
@@ -171,15 +171,15 @@ void ReCraftCore::InitMultiPlayer() {
 
     m_world->cacheTranslationX = WorldToChunkCoord(FastFloor(m_player->position.x));
     m_world->cacheTranslationZ = WorldToChunkCoord(FastFloor(m_player->position.z));
-    for (int i = 0; i < CHUNKCACHE_SIZE; i++) {
-        for (int j = 0; j < CHUNKCACHE_SIZE; j++) {
-            m_world->columnCache[i][j] = m_world->LoadChunk(i - CHUNKCACHE_SIZE / 2 + m_world->cacheTranslationX,
-                                                            j - CHUNKCACHE_SIZE / 2 + m_world->cacheTranslationZ);
+    for (int i = 0; i < World::ChunkCacheSize; i++) {
+        for (int j = 0; j < World::ChunkCacheSize; j++) {
+            m_world->columnCache[i][j] = m_world->LoadChunk(i - World::ChunkCacheSize / 2 + m_world->cacheTranslationX,
+                                                            j - World::ChunkCacheSize / 2 + m_world->cacheTranslationZ);
         }
     }
 
     m_mcBridge.startBackgroundThread();
-    m_gamestate = GameState_Playing_OnLine;
+    m_gamestate = GameState::Playing_OnLine;
 }
 
 void ReCraftCore::ExitMultiplayer() {
@@ -263,8 +263,8 @@ void ReCraftCore::RunMultiPlayer(InputData inputData) {
 
 // TODO: Why isnt this in world?
 void ReCraftCore::ReleaseWorld(ChunkWorker* chunkWorker, SaveManager* savemgr, World* world) {
-    for (int i = 0; i < CHUNKCACHE_SIZE; i++) {
-        for (int j = 0; j < CHUNKCACHE_SIZE; j++) {
+    for (int i = 0; i < World::ChunkCacheSize; i++) {
+        for (int j = 0; j < World::ChunkCacheSize; j++) {
             world->UnloadChunk(world->columnCache[i][j]);
         }
     }
@@ -280,17 +280,17 @@ void ReCraftCore::Main() {
     hidScanInput();
     u32 keysheld = hidKeysHeld(), keysdown = hidKeysDown();
     if (keysdown & KEY_START) {
-        if (m_gamestate == GameState_SelectWorld)
+        if (m_gamestate == GameState::SelectWorld)
             Exit();
-        else if (m_gamestate == GameState_Playing) {
+        else if (m_gamestate == GameState::Playing) {
             ExitSinglePlayer();
 
-            m_gamestate = GameState_SelectWorld;
+            m_gamestate = GameState::SelectWorld;
 
             WorldSelect_ScanWorlds();
-        } else if (m_gamestate == GameState_Playing_OnLine) {
+        } else if (m_gamestate == GameState::Playing_OnLine) {
             ExitMultiplayer();
-            m_gamestate = GameState_SelectWorld;
+            m_gamestate = GameState::SelectWorld;
             WorldSelect_ScanWorlds();
         }
     }
@@ -308,13 +308,13 @@ void ReCraftCore::Main() {
                                       touchPos.px, touchPos.py, cstickPos.dx, cstickPos.dy};
 
     m_timeAccum += Delta();
-    if (m_gamestate == GameState_Playing) {
+    if (m_gamestate == GameState::Playing) {
         RunSinglePlayer(inputData);
 
-    } else if (m_gamestate == GameState_Playing_OnLine) {
+    } else if (m_gamestate == GameState::Playing_OnLine) {
         RunMultiPlayer(inputData);
 
-    } else if (m_gamestate == GameState_SelectWorld) {
+    } else if (m_gamestate == GameState::SelectWorld) {
         WorldSelect_Update(m_player);
 
     }

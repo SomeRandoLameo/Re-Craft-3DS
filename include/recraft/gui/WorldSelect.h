@@ -9,13 +9,13 @@
 #include "rendering/Clouds.h"
 
 typedef struct {
-    char worldName[WORLD_NAME_SIZE];
+    char worldName[World::NameSize];
     GeneratorSettings settings;    
 } WorldSelect_Result;
 
 typedef struct {
     uint32_t lastPlayed;
-    char name[WORLD_NAME_SIZE];
+    char name[World::NameSize];
     char path[256];
 } WorldInfo;
 
@@ -52,7 +52,7 @@ static MenuState menustate = MenuState_SelectWorld;
 static float max_velocity = 20.f;
 
 static char out_worldpath[256];
-static char out_name[WORLD_NAME_SIZE] = {'\0'};
+static char out_name[World::NameSize] = {'\0'};
 static WorldGenType worldType;
 static bool newWorld = false;
 

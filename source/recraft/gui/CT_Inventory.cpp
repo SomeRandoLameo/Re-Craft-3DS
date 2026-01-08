@@ -31,7 +31,7 @@ void Inventory::handleStackClick(mc::inventory::Slot* stack) {
 }
 
 void Inventory::renderHotbar(int x, int y, mc::inventory::Slot* stacks, int& selected) {
-    SpriteBatch_BindGuiTexture(GuiTexture_Widgets);
+    SpriteBatch_BindGuiTexture(GuiTexture::Widgets);
 
     for (int i = 0; i < 9; ++i) {
         SpriteBatch_SetScale(1);
@@ -49,7 +49,7 @@ void Inventory::renderHotbar(int x, int y, mc::inventory::Slot* stacks, int& sel
             selected = i;
             handleStackClick(&stacks[i]);
 
-            if (*ReCraftCore::GetInstance()->GetGameState() == GameState_Playing_OnLine) {
+            if (*ReCraftCore::GetInstance()->GetGameState() == GameState::Playing_OnLine) {
                 // TODO: client->GetHotbar().SelectSlot(i);
             }
         }
@@ -62,7 +62,7 @@ void Inventory::renderHotbar(int x, int y, mc::inventory::Slot* stacks, int& sel
                     rx / 2 - 2, ry / 2 - 2, 9, 18, 18,
                     SHADER_RGB(20, 5, 2)
             );
-            SpriteBatch_BindGuiTexture(GuiTexture_Widgets);
+            SpriteBatch_BindGuiTexture(GuiTexture::Widgets);
         }
 
         // Draw slot separator (except for last two slots)

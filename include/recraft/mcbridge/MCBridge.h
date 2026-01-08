@@ -55,7 +55,7 @@ public:
     static mc::inventory::Slot CTItemStackToMCLIBSlot(ItemStack in);
     static ItemStack MCLIBSlotToCTItemStack(mc::inventory::Slot in);
 
-    static u16 MCLibBlockToCTBlock(u32 BlockType);
+    static Block MCLibBlockToCTBlock(u32 BlockType);
 
 private:
     static void threadFunc(void* arg);

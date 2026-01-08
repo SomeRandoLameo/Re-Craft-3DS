@@ -34,8 +34,8 @@ void WorldSelect_ScanWorlds() {
 			mpack_tree_init_file(&tree, buffer, 0);
 			mpack_node_t root = mpack_tree_root(&tree);
 
-			char name[WORLD_NAME_SIZE];
-			mpack_node_copy_utf8_cstr(mpack_node_map_cstr(root, "name"), name, WORLD_NAME_SIZE);
+			char name[World::NameSize];
+			mpack_node_copy_utf8_cstr(mpack_node_map_cstr(root, "name"), name, World::NameSize);
 
 			if (mpack_tree_destroy(&tree) != mpack_ok) {
 				continue;
@@ -112,7 +112,7 @@ void WorldSelect_RenderTop(Clouds* m_clouds, int m_world_shader_uLocProjection, 
 void WorldSelect_RenderBot() {
 	SpriteBatch_SetScale(2);
 
-	SpriteBatch_BindGuiTexture(GuiTexture_MenuBackground);
+	SpriteBatch_BindGuiTexture(GuiTexture::MenuBackground);
 	for (int i = 0; i < 160 / 32 + 1; i++) {
 		for (int j = 0; j < 120 / 32 + 1; j++) {
 			bool overlay = j >= 2 && menustate == MenuState_SelectWorld;
@@ -223,10 +223,10 @@ void WorldSelect_Update(Player* player) {
 		player->gamemode=gamemode1;
 
 		static SwkbdState swkbd;
-		static char name[WORLD_NAME_SIZE];
+		static char name[World::NameSize];
 
-		swkbdInit(&swkbd, SWKBD_TYPE_WESTERN, 2, WORLD_NAME_SIZE);
-		swkbdSetValidation(&swkbd, SWKBD_NOTEMPTY_NOTBLANK, 0, WORLD_NAME_SIZE);
+		swkbdInit(&swkbd, SWKBD_TYPE_WESTERN, 2, World::NameSize);
+		swkbdSetValidation(&swkbd, SWKBD_NOTEMPTY_NOTBLANK, 0,  World::NameSize);
 		swkbdSetHintText(&swkbd, "Enter the world name");
 
 		int button = swkbdInputText(&swkbd, name, 12);

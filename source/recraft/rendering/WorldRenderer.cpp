@@ -85,8 +85,8 @@ void WorldRenderer::RenderWorld() {
 
     m_renderingQueue.push_back(RenderStep{columnPtr->GetChunk(pY), columnPtr, Direction::Invalid});
 
-    ClusterRenderedRef(CHUNKCACHE_SIZE / 2 + m_world->cacheTranslationX, pY,
-                       CHUNKCACHE_SIZE / 2 + m_world->cacheTranslationZ) = 1;
+    ClusterRenderedRef(World::ChunkCacheSize / 2 + m_world->cacheTranslationX, pY,
+                       World::ChunkCacheSize / 2 + m_world->cacheTranslationZ) = 1;
 
     mc::Vector3d playerPos = m_player->position;
 
@@ -114,10 +114,10 @@ void WorldRenderer::RenderWorld() {
             const int* offset = DirectionToOffset[dir];
 
             int newX = column->x + offset[0], newY = chunk->y + offset[1], newZ = column->z + offset[2];
-            if (newX < m_world->cacheTranslationX - CHUNKCACHE_SIZE / 2 + 1 ||
-                newX > m_world->cacheTranslationX + CHUNKCACHE_SIZE / 2 - 1 ||
-                newZ < m_world->cacheTranslationZ - CHUNKCACHE_SIZE / 2 + 1 ||
-                newZ > m_world->cacheTranslationZ + CHUNKCACHE_SIZE / 2 - 1 || newY < 0 || newY >= ChunkColumn::ChunksPerColumn)
+            if (newX < m_world->cacheTranslationX - World::ChunkCacheSize / 2 + 1 ||
+                newX > m_world->cacheTranslationX + World::ChunkCacheSize / 2 - 1 ||
+                newZ < m_world->cacheTranslationZ - World::ChunkCacheSize / 2 + 1 ||
+                newZ > m_world->cacheTranslationZ + World::ChunkCacheSize / 2 - 1 || newY < 0 || newY >= ChunkColumn::ChunksPerColumn)
                 continue;
 
             mc::Vector3d dist = mc::Vector3d(newX * Chunk::Size + Chunk::Size / 2, newY * Chunk::Size + Chunk::Size / 2,
@@ -151,8 +151,8 @@ void WorldRenderer::RenderWorld() {
         }
     }
 
-    for (int x = 1; x < CHUNKCACHE_SIZE - 1; x++) {
-        for (int z = 1; z < CHUNKCACHE_SIZE - 1; z++) {
+    for (int x = 1; x < World::ChunkCacheSize - 1; x++) {
+        for (int z = 1; z < World::ChunkCacheSize - 1; z++) {
             ChunkColumnPtr column = m_world->columnCache[x][z];
 
             if ((column->revision != column->displayRevision || column->forceVBOUpdate) && !column->tasksRunning) {

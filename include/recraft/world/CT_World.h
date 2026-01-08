@@ -7,11 +7,9 @@
 #include "../misc/Xorshift.h"
 
 
-#define CHUNKCACHE_SIZE (9)
 
-#define UNDEADCHUNKS_COUNT (2 * CHUNKCACHE_SIZE + CHUNKCACHE_SIZE * CHUNKCACHE_SIZE)
+#define UNDEADCHUNKS_COUNT (2 * World::ChunkCacheSize + World::ChunkCacheSize * World::ChunkCacheSize)
 
-#define CHUNKPOOL_SIZE (CHUNKCACHE_SIZE * CHUNKCACHE_SIZE + UNDEADCHUNKS_COUNT)
 
 typedef enum { WorldGen_Smea, WorldGen_SuperFlat, WorldGenTypes_Count } WorldGenType;
 typedef enum { Gamemode_Survival, Gamemode_Creative,Gamemode_Adventure,Gamemode_Spectator,Gamemode_Count } gamemode;
@@ -26,10 +24,15 @@ typedef struct {
 	} settings;
 } GeneratorSettings;
 
-#define WORLD_NAME_SIZE 12
 class World {
 public:
-    enum { Height = 256 };
+    enum {
+        Height = 256,
+        ChunkCacheSize = 9,
+        ChunkPoolSize = World::ChunkCacheSize * World::ChunkCacheSize + UNDEADCHUNKS_COUNT,
+        NameSize = 12
+    };
+
     World(WorkQueue* workqueue);
     ~World() = default;
 
@@ -62,10 +65,10 @@ public:
     int cacheTranslationX, cacheTranslationZ;
     GeneratorSettings genSettings;
 
-    ChunkColumnPtr columnCache[CHUNKCACHE_SIZE][CHUNKCACHE_SIZE];
-    char name[WORLD_NAME_SIZE];
+    ChunkColumnPtr columnCache[ChunkCacheSize][ChunkCacheSize];
+    char name[NameSize];
 
-    ChunkColumn m_chunkChunkPool[CHUNKPOOL_SIZE];
+    ChunkColumn m_chunkChunkPool[ChunkPoolSize];
     std::vector<ChunkColumnPtr> m_freeChunkColums;
 
     VBOCache vboCache;

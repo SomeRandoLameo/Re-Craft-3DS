@@ -18,49 +18,49 @@ Player::Player(World* world) {
 //TODO: Separate from player
 void Player::InitializeInventory() {
     int l = 0;
-    inventory[l++] = mc::inventory::Slot(Block_Stone,1,0);
-    inventory[l++] = mc::inventory::Slot(Block_Dirt, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Grass, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Cobblestone, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Sand, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Log, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Leaves, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Glass, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Stonebrick, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Brick, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Planks, 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Stone),1,0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Dirt), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Grass), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Cobblestone), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Sand), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Log), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Leaves), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Glass), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Stonebrick), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Brick), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Planks), 1, 0);
     for (int i = 0; i < 16; i++) {
-        inventory[l++] = mc::inventory::Slot(Block_Wool, 1,static_cast<u8>(i));
+        inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Wool), 1,static_cast<u8>(i));
     }
-    inventory[l++] = mc::inventory::Slot(Block_Bedrock, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Gravel, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Coarse, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Door_Top, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Door_Bottom, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Snow_Grass, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Snow, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Obsidian, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Netherrack, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Sandstone, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Smooth_Stone, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Crafting_Table, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Grass_Path, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Lava, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Water, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Iron_Block, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Iron_Ore, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Coal_Block, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Coal_Ore, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Gold_Block, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Gold_Ore, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Diamond_Block, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Diamond_Ore, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Emerald_Block, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Emerald_Ore, 1, 0);
-    inventory[l++] = mc::inventory::Slot(Block_Furnace, 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Bedrock), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Gravel), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Coarse), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Door_Top), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Door_Bottom), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Snow_Grass), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Snow), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Obsidian), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Netherrack), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Sandstone), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Smooth_Stone), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Crafting_Table), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Grass_Path), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Lava), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Water), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Iron_Block), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Iron_Ore), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Coal_Block), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Coal_Ore), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Gold_Block), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Gold_Ore), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Diamond_Block), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Diamond_Ore), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Emerald_Block), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Emerald_Ore), 1, 0);
+    inventory[l++] = mc::inventory::Slot(static_cast<s32>(Block::Furnace), 1, 0);
 
     for (auto & i : quickSelectBar) {
-        i = mc::inventory::Slot(Block_Air, 0, 0);
+        i = mc::inventory::Slot(static_cast<s32>(Block::Air), 0, 0);
     }
 
 }
@@ -190,7 +190,7 @@ void Player::UpdateMovement(PlayerControlScheme m_controlScheme, InputData input
 void Player::HandleFallDamage() {
     if (velocity.y <= -12) {
         rndy = round(velocity.y);
-        if (m_world->GetBlock(mc::Vector3i(position.x, position.y - 1, position.z)) != Block_Air) {
+        if (m_world->GetBlock(mc::Vector3i(position.x, position.y - 1, position.z)) != Block::Air) {
             hp = hp + rndy;
             rndy = 0;
         }
@@ -198,7 +198,7 @@ void Player::HandleFallDamage() {
 }
 
 void Player::HandleFireDamage() {
-    if (m_world->GetBlock(ToVector3i(position)) == Block_Lava) {
+    if (m_world->GetBlock(ToVector3i(position)) == Block::Lava) {
       //  DebugUI_Log("ur burning lol");
         //OvertimeDamage("Fire", 10);
     }
@@ -233,7 +233,7 @@ void Player::HandleRespawn(Damage* dmg) {
                 position.x = 0.0;
 
                 int spawnY = 1;
-                while (m_world->GetBlock( mc::ToVector3i(spawnPos)) != Block_Air)
+                while (m_world->GetBlock( mc::ToVector3i(spawnPos)) != Block::Air)
                     spawnY++;
 
                 bool shouldOffset = m_world->GetGenSettings().type != WorldGen_SuperFlat;
@@ -249,7 +249,7 @@ void Player::HandleRespawn(Damage* dmg) {
                 position.x = spawnPos.x;
 
                 int spawnY = 1;
-                while (m_world->GetBlock(ToVector3i(spawnPos)) != Block_Air)
+                while (m_world->GetBlock(ToVector3i(spawnPos)) != Block::Air)
                     spawnY++;
 
                 bool shouldOffset = m_world->GetGenSettings().type != WorldGen_SuperFlat;
@@ -275,9 +275,9 @@ bool Player::CanMove(mc::Vector3d newVec) {
                     FastFloor(newVec.z) + z
                 );
 
-                if (m_world->GetBlock(blockPos) != Block_Air &&
-                    m_world->GetBlock(blockPos) != Block_Lava &&
-                    m_world->GetBlock(blockPos) != Block_Water) {
+                if (m_world->GetBlock(blockPos) != Block::Air &&
+                    m_world->GetBlock(blockPos) != Block::Lava &&
+                    m_world->GetBlock(blockPos) != Block::Water) {
                     if (AABB_Overlap(
                             newVec.x - PLAYER_COLLISIONBOX_SIZE / 2.f,
                             newVec.y,
@@ -368,9 +368,9 @@ void Player::Move(float dt, mc::Vector3d accl) {
                             FastFloor(axisStep.z) + z
                         );
 
-                        if (m_world->GetBlock(blockPos) != Block_Air &&
-                            m_world->GetBlock(blockPos) != Block_Lava &&
-                            m_world->GetBlock(blockPos) != Block_Water) {
+                        if (m_world->GetBlock(blockPos) != Block::Air &&
+                            m_world->GetBlock(blockPos) != Block::Lava &&
+                            m_world->GetBlock(blockPos) != Block::Water) {
                             Box blockBox = Box_Create(blockPos.x, blockPos.y, blockPos.z, 1, 1, 1);
 
                             mc::Vector3d normal(0.f, 0.f, 0.f);
@@ -430,8 +430,8 @@ void Player::Move(float dt, mc::Vector3d accl) {
                 )
             );
 
-            if ((block == Block_Air || block == Block_Lava || block == Block_Water) &&
-                landingBlock != Block_Air && landingBlock != Block_Lava && landingBlock != Block_Water) {
+            if ((block == Block::Air || block == Block::Lava || block == Block::Water) &&
+                landingBlock != Block::Air && landingBlock != Block::Lava && landingBlock != Block::Water) {
                 Jump(accl);
             }
         }
@@ -500,7 +500,7 @@ void Player::PlaceBlock() {
 
 void Player::BreakBlock() {
     if (m_world && blockInActionRange && breakPlaceTimeout < 0.f) {
-        m_world->SetBlock(mc::Vector3i(viewRayCast.x, viewRayCast.y, viewRayCast.z), Block_Air);
+        m_world->SetBlock(mc::Vector3i(viewRayCast.x, viewRayCast.y, viewRayCast.z), Block::Air);
     }
 
     if (breakPlaceTimeout < 0.f) {

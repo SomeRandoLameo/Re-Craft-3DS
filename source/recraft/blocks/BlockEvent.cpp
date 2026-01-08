@@ -16,25 +16,24 @@ void BlockEvent_RandomTick(World* world, ChunkColumnPtr column, int x[], int y[]
             );
 
             switch (block) {
-				case Block_Dirt:
+            case Block::Dirt:
 					if (!Block_Opaque(column->GetBlock(blockPosition),column->GetMetadata(blockPosition))) {
-                        column->SetBlock(defaultPosition, Block_Grass);
+                        column->SetBlock(defaultPosition, Block::Grass);
 					}
 					break;
-				case Block_Grass:
+            case Block::Grass:
 					if (Block_Opaque(column->GetBlock(blockPosition), column->GetMetadata(blockPosition))) {
-                        column->SetBlock(defaultPosition, Block_Dirt);
+                        column->SetBlock(defaultPosition, Block::Dirt);
 					}
 					break;
-				case Block_Snow_Grass:
+            case Block::Snow_Grass:
 					if (Block_Opaque(column->GetBlock(blockPosition), column->GetMetadata(blockPosition))) {
-                        column->SetBlock(defaultPosition, Block_Dirt);
+                        column->SetBlock(defaultPosition, Block::Dirt);
 					}
 					break;
-				case Block_Grass_Path:
-
+            case Block::Grass_Path:
 					if (Block_Opaque(column->GetBlock(blockPosition), column->GetMetadata(blockPosition))) {
-                        column->SetBlock(defaultPosition, Block_Dirt);
+                        column->SetBlock(defaultPosition, Block::Dirt);
 					}
 					break;
 				default:
