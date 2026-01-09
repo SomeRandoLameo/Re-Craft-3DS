@@ -6,9 +6,11 @@ extern "C" {
 
 void Texture_Load(C3D_Tex* result, const char* filename);
 
-#define TEXTURE_MAPSIZE 128
-#define TEXTURE_TILESIZE 16
-#define TEXTURE_MAPTILES (TEXTURE_MAPSIZE / TEXTURE_TILESIZE)
+enum Texture {
+    MapSize = 128,
+    TileSize = 16,
+    MapTiles = MapSize / TileSize
+};
 
 typedef struct {
 	uint32_t textureHash;
@@ -17,7 +19,7 @@ typedef struct {
 
 typedef struct {
 	C3D_Tex texture;
-	Texture_MapIcon icons[TEXTURE_MAPTILES * TEXTURE_MAPTILES];
+	Texture_MapIcon icons[Texture::MapTiles * Texture::MapTiles];
 } Texture_Map;
 
 void Texture_MapInit(Texture_Map* map, const char** files, int num_files);

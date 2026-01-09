@@ -136,7 +136,7 @@ void Texture_MapInit(Texture_Map* map, const char** files, int num_files) {
     // printf("TextureMapInit %s\n", files);
 
     const int mipmapLevels = 2;
-    const int maxSize = 4 * TEXTURE_MAPSIZE * TEXTURE_MAPSIZE;
+    const int maxSize = 4 * Texture::MapSize * Texture::MapSize;
 
     uint32_t* buffer = (uint32_t*)linearAlloc(maxSize);
     for (int i = 0; i < maxSize; i++) buffer[i] = 0x000000FF;
@@ -144,17 +144,17 @@ void Texture_MapInit(Texture_Map* map, const char** files, int num_files) {
     int filei = 0;
     const char* filename = files[filei];
     int c = 0;
-    while (filename != NULL && c < (TEXTURE_MAPTILES * TEXTURE_MAPTILES) && filei < num_files) {
+    while (filename != NULL && c < (Texture::MapTiles * Texture::MapTiles) && filei < num_files) {
         int w = 0, h = 0, c1 = 0;
         unsigned char* image = stbi_load(filename, &w, &h, &c1, 4);
 
-        if (image != NULL && w == TEXTURE_TILESIZE && h == TEXTURE_TILESIZE) {
+        if (image != NULL && w == Texture::TileSize && h == Texture::TileSize) {
             /* image is a byte buffer with 4 bytes per pixel (RGBA). Convert per-pixel to u32 then store swapped. */
-            for (int x = 0; x < TEXTURE_TILESIZE; x++) {
-                for (int y = 0; y < TEXTURE_TILESIZE; y++) {
-                    size_t idx = (x + ((TEXTURE_TILESIZE - y - 1) * TEXTURE_TILESIZE)) * 4;
+            for (int x = 0; x < Texture::TileSize; x++) {
+                for (int y = 0; y < Texture::TileSize; y++) {
+                    size_t idx = (x + ((Texture::TileSize - y - 1) * Texture::TileSize)) * 4;
                     uint32_t pixel = *((uint32_t*)(image + idx));
-                    buffer[(locX + x) + ((y + locY) * TEXTURE_MAPSIZE)] = __builtin_bswap32(pixel);
+                    buffer[(locX + x) + ((y + locY) * Texture::MapSize)] = __builtin_bswap32(pixel);
                 }
             }
 
@@ -163,9 +163,9 @@ void Texture_MapInit(Texture_Map* map, const char** files, int num_files) {
             icon->u = 256 * locX;
             icon->v = 256 * locY;
 
-            locX += TEXTURE_TILESIZE;
-            if (locX == TEXTURE_MAPSIZE) {
-                locY += TEXTURE_TILESIZE;
+            locX += Texture::TileSize;
+            if (locX == Texture::MapSize) {
+                locY += Texture::TileSize;
                 locX = 0;
             }
         } else {
@@ -178,17 +178,17 @@ void Texture_MapInit(Texture_Map* map, const char** files, int num_files) {
 
     GSPGPU_FlushDataCache(buffer, maxSize);
     if (!C3D_TexInitWithParams(&map->texture, NULL,
-                   (C3D_TexInitParams){TEXTURE_MAPSIZE, TEXTURE_MAPSIZE, mipmapLevels, GPU_RGBA8, GPU_TEX_2D, true}))
+                   (C3D_TexInitParams){Texture::MapSize, Texture::MapSize, mipmapLevels, GPU_RGBA8, GPU_TEX_2D, true}))
         printf("Couldn't alloc texture memory\n");
     C3D_TexSetFilter(&map->texture, GPU_NEAREST, GPU_NEAREST);
 
     C3D_SyncDisplayTransfer(
-        buffer, GX_BUFFER_DIM(TEXTURE_MAPSIZE, TEXTURE_MAPSIZE), (u32*)map->texture.data, GX_BUFFER_DIM(TEXTURE_MAPSIZE, TEXTURE_MAPSIZE),
+        buffer, GX_BUFFER_DIM(Texture::MapSize, Texture::MapSize), (u32*)map->texture.data, GX_BUFFER_DIM(Texture::MapSize, Texture::MapSize),
         (GX_TRANSFER_FLIP_VERT(1) | GX_TRANSFER_OUT_TILED(1) | GX_TRANSFER_RAW_COPY(0) | GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGBA8) |
          GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGBA8) | GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO)));
 
-    int size = TEXTURE_MAPSIZE / 2;
-    ptrdiff_t offset = TEXTURE_MAPSIZE * TEXTURE_MAPSIZE;
+    int size = Texture::MapSize / 2;
+    ptrdiff_t offset = Texture::MapSize * Texture::MapSize;
 
     u32* tiledImage = (u32*)linearAlloc(size * size * 4);
 
@@ -212,7 +212,7 @@ void Texture_MapInit(Texture_Map* map, const char** files, int num_files) {
 
 Texture_MapIcon Texture_MapGetIcon(Texture_Map* map, const char* filename) {
     uint32_t h = hash(filename);
-    for (size_t i = 0; i < TEXTURE_MAPTILES * TEXTURE_MAPTILES; i++) {
+    for (size_t i = 0; i < Texture::MapTiles * Texture::MapTiles; i++) {
         if (h == map->icons[i].textureHash) {
             return map->icons[i];
         }

@@ -70,7 +70,7 @@ void Player::Update(Damage* dmg) {
     view.y = sinf(pitch);
     view.z = -cosf(yaw) * cosf(pitch);
 
-    blockInSight = Raycast_Cast(m_world, position + mc::Vector3d(0,PLAYER_EYEHEIGHT,0), view, &viewRayCast);
+    blockInSight = Raycast_Cast(m_world, position + mc::Vector3d(0, EyeHeight, 0), view, &viewRayCast);
     blockInActionRange = blockInSight && viewRayCast.distSqr < 3.5f * 3.5f * 3.5f;
 
     if(gamemode != 1){
@@ -279,12 +279,12 @@ bool Player::CanMove(mc::Vector3d newVec) {
                     m_world->GetBlock(blockPos) != Block::Lava &&
                     m_world->GetBlock(blockPos) != Block::Water) {
                     if (AABB_Overlap(
-                            newVec.x - PLAYER_COLLISIONBOX_SIZE / 2.f,
+                            newVec.x - CollisionBoxSize / 2.f,
                             newVec.y,
-                            newVec.z - PLAYER_COLLISIONBOX_SIZE / 2.f,
-                            PLAYER_COLLISIONBOX_SIZE,
-                            PLAYER_HEIGHT,
-                            PLAYER_COLLISIONBOX_SIZE,
+                            newVec.z - CollisionBoxSize / 2.f,
+                            CollisionBoxSize,
+                            Height,
+                            CollisionBoxSize,
                             blockPos.x,
                             blockPos.y,
                             blockPos.z,
@@ -351,12 +351,12 @@ void Player::Move(float dt, mc::Vector3d accl) {
             axisStep.values[i] = newPos.values[i];
 
             Box playerBox = Box_Create(
-                    axisStep.x - PLAYER_COLLISIONBOX_SIZE / 2.f,
+                    axisStep.x - CollisionBoxSize / 2.f,
                     axisStep.y,
-                    axisStep.z - PLAYER_COLLISIONBOX_SIZE / 2.f,
-                    PLAYER_COLLISIONBOX_SIZE,
-                    PLAYER_HEIGHT,
-                    PLAYER_COLLISIONBOX_SIZE
+                    axisStep.z - CollisionBoxSize / 2.f,
+                    CollisionBoxSize,
+                    Height,
+                    CollisionBoxSize
             );
 
             for (int x = -1; x < 2; x++) {
@@ -474,9 +474,9 @@ void Player::PlaceBlock() {
         const int* offset = DirectionToOffset[viewRayCast.direction];
 
         if (AABB_Overlap(
-                position.x - PLAYER_COLLISIONBOX_SIZE / 2.f, position.y,
-                position.z - PLAYER_COLLISIONBOX_SIZE / 2.f,
-                PLAYER_COLLISIONBOX_SIZE, PLAYER_HEIGHT, PLAYER_COLLISIONBOX_SIZE,
+                position.x - CollisionBoxSize / 2.f, position.y,
+                position.z - CollisionBoxSize / 2.f,
+                CollisionBoxSize, Height, CollisionBoxSize,
                 viewRayCast.x + offset[0], viewRayCast.y + offset[1],
                 viewRayCast.z + offset[2], 1.f, 1.f, 1.f))
             return;
@@ -494,7 +494,7 @@ void Player::PlaceBlock() {
     }
 
     if (breakPlaceTimeout < 0.f) {
-        breakPlaceTimeout = PLAYER_PLACE_REPLACE_TIMEOUT;
+        breakPlaceTimeout = PlaceReplaceTimeout;
     }
 }
 
@@ -504,6 +504,6 @@ void Player::BreakBlock() {
     }
 
     if (breakPlaceTimeout < 0.f) {
-        breakPlaceTimeout = PLAYER_PLACE_REPLACE_TIMEOUT;
+        breakPlaceTimeout = PlaceReplaceTimeout;
     }
 }

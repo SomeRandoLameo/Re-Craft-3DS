@@ -23,8 +23,8 @@ void Hand::Draw(int projUniform, C3D_Mtx* projection, mc::inventory::Slot stack,
 	Mtx_RotateX(&model, M_PI / 18.f + (stack.GetItemCount() == 0) * M_PI / 5.f, true);
 	Mtx_RotateY(&model, M_PI / 18.f, true);
 	if (player->breakPlaceTimeout > -0.1f) {
-		float dist = sinf((player->breakPlaceTimeout + 0.1f) / (PLAYER_PLACE_REPLACE_TIMEOUT + 0.1f) * M_PI);
-		float h = cosf((player->breakPlaceTimeout + 0.1f) / (PLAYER_PLACE_REPLACE_TIMEOUT + 0.1f) * M_PI);
+		float dist = sinf((player->breakPlaceTimeout + 0.1f) / (Player::PlaceReplaceTimeout + 0.1f) * M_PI);
+		float h = cosf((player->breakPlaceTimeout + 0.1f) / (Player::PlaceReplaceTimeout + 0.1f) * M_PI);
 		Mtx_RotateX(&model, -dist, true);
 		Mtx_Translate(&model, 0.f, -h * 0.3f, -dist * 0.25f, true);
 	}
@@ -43,9 +43,8 @@ void Hand::Draw(int projUniform, C3D_Mtx* projection, mc::inventory::Slot stack,
 			Block_GetTexture(stack, (Direction)i, iconUV);
 			Block_GetColor(static_cast<Block>(stack.GetItemId()), stack.GetItemDamage(), (Direction)i, color);
 
-#define oneDivIconsPerRow (32768 / 8)
-#define halfTexel (6)
-
+            const int oneDivIconsPerRow = (32768 / 8);
+            
 			for (int j = 0; j < 6; j++) {
 				int idx = i * 6 + j;
 

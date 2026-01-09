@@ -77,7 +77,7 @@ typedef struct {
 
 static std::vector<VBOUpdate> vboUpdates;
 
-#define MAX_FACES_PER_CLUSTER (Chunk::Size * Chunk::Size * Chunk::Size / 2 * 6)
+static const int MAX_FACES_PER_CLUSTER = (Chunk::Size * Chunk::Size * Chunk::Size / 2 * 6);
 
 typedef struct {
 	int8_t x, y, z;
@@ -358,8 +358,7 @@ void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context) 
 					WorldVertex* data = face.transparent ? transparentData : opaqueData;
 					memcpy(data, &cube_sides_lut[face.direction * 6], sizeof(WorldVertex) * 6);
 
-#define oneDivIconsPerRow (32768 / 8)
-#define halfTexel (6)
+                    const int oneDivIconsPerRow = (32768 / 8);
 
 					uint8_t color[3];
 					Block_GetColor(face.block, face.metadata, face.direction, color);

@@ -115,13 +115,13 @@ void WorldSelect_RenderBot() {
 	SpriteBatch_BindGuiTexture(GuiTexture::MenuBackground);
 	for (int i = 0; i < 160 / 32 + 1; i++) {
 		for (int j = 0; j < 120 / 32 + 1; j++) {
-			bool overlay = j >= 2 && menustate == MenuState_SelectWorld;
+			bool overlay = j >= 2 && menustate == MenuState::WorldSelect;
 			SpriteBatch_PushQuadColor(i * 32, j * 32, overlay ? -4 : -10, 32, 32, 0, 0, 32, 32,
 						  overlay ? INT16_MAX : SHADER_RGB(12, 12, 12));
 		}
 	}
 
-	if (menustate == MenuState_SelectWorld) {
+	if (menustate == MenuState::WorldSelect) {
 		int movementX = 0, movementY = 0;
 		Gui::GetCursorMovement(&movementX, &movementY);
 		if (Gui::IsCursorInside(0, 0, 160, 2 * 32)) {
@@ -132,20 +132,20 @@ void WorldSelect_RenderBot() {
 		velocity *= 0.75f;
 		if (ABS(velocity) < 0.001f) velocity = 0.f;
 
-		int maximumSize = CHAR_HEIGHT * 2 * worlds.size();
+		int maximumSize = SpriteBatch::CharHeight * 2 * worlds.size();
 		if (scroll < -maximumSize) scroll = -maximumSize;
 		if (scroll > 0) scroll = 0;
 
 		for (size_t i = 0; i < worlds.size(); i++) {
 			WorldInfo& info = worlds[i];
-			int y = i * (CHAR_HEIGHT + CHAR_HEIGHT) + 10 + scroll;
+			int y = i * (SpriteBatch::CharHeight + SpriteBatch::CharHeight) + 10 + scroll;
 			if (selectedWorld == (int)i) {
 				SpriteBatch_PushSingleColorQuad(10, y - 3, -7, 140, 1, SHADER_RGB(20, 20, 20));
-				SpriteBatch_PushSingleColorQuad(10, y + CHAR_HEIGHT + 2, -7, 140, 1, SHADER_RGB(20, 20, 20));
-				SpriteBatch_PushSingleColorQuad(10, y - 3, -7, 1, CHAR_HEIGHT + 6, SHADER_RGB(20, 20, 20));
-				SpriteBatch_PushSingleColorQuad(10 + 140, y - 3, -7, 1, CHAR_HEIGHT + 6, SHADER_RGB(20, 20, 20));
+				SpriteBatch_PushSingleColorQuad(10, y + SpriteBatch::CharHeight + 2, -7, 140, 1, SHADER_RGB(20, 20, 20));
+				SpriteBatch_PushSingleColorQuad(10, y - 3, -7, 1, SpriteBatch::CharHeight + 6, SHADER_RGB(20, 20, 20));
+				SpriteBatch_PushSingleColorQuad(10 + 140, y - 3, -7, 1, SpriteBatch::CharHeight + 6, SHADER_RGB(20, 20, 20));
 			}
-			if (Gui::EnteredCursorInside(10, y - 3, 140, CHAR_HEIGHT + 6) && y < 32 * 2) {
+			if (Gui::EnteredCursorInside(10, y - 3, 140, SpriteBatch::CharHeight + 6) && y < 32 * 2) {
 				selectedWorld = (int)i;
 			}
 			SpriteBatch_PushText(20, y, -6, INT16_MAX, true, INT_MAX, nullptr, "%s", info.name, movementY);
@@ -161,7 +161,7 @@ void WorldSelect_RenderBot() {
             clicked_delete_world = Gui::Button(0.333f, "Del Wrld");
             clicked_mp_connect = Gui::Button(0.333f, "MP CON");
         Gui::EndRow();
-	} else if (menustate == MenuState_ConfirmDeletion) {
+	} else if (menustate == MenuState::ConfirmDeletion) {
         Gui::Offset(0, 10);
         Gui::BeginRow(SpriteBatch_GetWidth(), 1);
             Gui::Label(0.f, true, INT16_MAX, true, "Are you sure?");
@@ -172,7 +172,7 @@ void WorldSelect_RenderBot() {
             Gui::Space(0.2f);
             confirmed_deletion = Gui::Button(0.4f, "Yes");
         Gui::EndRow();
-	} else if (menustate == MenuState_WorldOptions) {
+	} else if (menustate == MenuState::WorldOptions) {
         Gui::Offset(0, 10);
 
         Gui::BeginRowCenter(Gui::RelativeWidth(0.9f), 3);
@@ -208,12 +208,12 @@ void WorldSelect_Update(Player* player) {
 
     if (clicked_new_world) {
 		clicked_new_world = false;
-		menustate = MenuState_WorldOptions;
+		menustate = MenuState::WorldOptions;
 	}
 	if(clicked_mp_connect){
         clicked_mp_connect = false;
 		newWorld = false;
-		menustate = MenuState_SelectWorld;
+		menustate = MenuState::WorldSelect;
         ReCraftCore::GetInstance()->InitMultiPlayer();
 		//Crazy shit happens here :D
 	}
@@ -232,7 +232,7 @@ void WorldSelect_Update(Player* player) {
 		int button = swkbdInputText(&swkbd, name, 12);
 
 		strcpy(out_name, name);
-		menustate = MenuState_SelectWorld;
+		menustate = MenuState::WorldSelect;
 		if (button == SWKBD_BUTTON_CONFIRM) {
 			strcpy(out_worldpath, out_name);
 
@@ -272,12 +272,12 @@ void WorldSelect_Update(Player* player) {
 		strcpy(out_worldpath, worlds[selectedWorld].path);
 
 		newWorld = false;
-		menustate = MenuState_SelectWorld;
+		menustate = MenuState::WorldSelect;
         ReCraftCore::GetInstance()->InitSinglePlayer(out_worldpath, out_name, &worldType, newWorld);
 	}
 	if (clicked_delete_world && selectedWorld != -1) {
 		clicked_delete_world = false;
-		menustate = MenuState_ConfirmDeletion;
+		menustate = MenuState::ConfirmDeletion;
 	}
 	if (confirmed_deletion) {
 		confirmed_deletion = false;
@@ -286,14 +286,14 @@ void WorldSelect_Update(Player* player) {
 		delete_folder(buffer);
 
 		WorldSelect_ScanWorlds();
-		menustate = MenuState_SelectWorld;
+		menustate = MenuState::WorldSelect;
 	}
 	if (canceled_deletion) {
 		canceled_deletion = false;
-		menustate = MenuState_SelectWorld;
+		menustate = MenuState::WorldSelect;
 	}
 	if (canceled_world_options) {
 		canceled_world_options = false;
-		menustate = MenuState_SelectWorld;
+		menustate = MenuState::WorldSelect;
 	}
 }

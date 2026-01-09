@@ -2,39 +2,35 @@
 #include "rendering/VertexFmt.h"
 
 #include "gui/DebugUI.h"
-#undef CHAR_HEIGHT
 #include "ReCraftCore.h"
 
 #include <stdarg.h>
 #include <stdlib.h>
 
-#define STATUS_LINES (240 / 8)
-#define LOG_LINES 40
-#define LOG_LINE_LENGTH 128
-#define STATUS_LINE_LENGTH 128
 
-static char* statusLines[STATUS_LINES];
-static char* logLines[LOG_LINES];
+
+static char* statusLines[DebugUI::StatusLines];
+static char* logLines[DebugUI::LogLines];
 static int currentStatusLine = 0;
 
 DebugUI::DebugUI() {
     for (auto& logLine : logLines) {
-        logLine = (char*)Amy::Malloc(LOG_LINE_LENGTH);
-        memset(logLine, 0x0, LOG_LINE_LENGTH);
+        logLine = (char*)Amy::Malloc(LineLength);
+        memset(logLine, 0x0, LineLength);
     }
     for (auto& statusLine : statusLines) {
-        statusLine = (char*)Amy::Malloc(STATUS_LINE_LENGTH);
-        memset(statusLine, 0x0, STATUS_LINE_LENGTH);
+        statusLine = (char*)Amy::Malloc(LineLength);
+        memset(statusLine, 0x0, LineLength);
     }
     RenderData = Iron::Drawlist::New();
     RenderData->SetFont(ReCraftCore::GetInstance()->GetAssetManager()->Get<Iron::Font>("font"));
 }
 
 DebugUI::~DebugUI() {
-    for (int i = 0; i < LOG_LINES; i++) {
+    for (int i = 0; i < LogLines; i++) {
         Amy::Free(logLines[i]);
     }
-    for (int i = 0; i < STATUS_LINES; i++) {
+    for (int i = 0; i < StatusLines; i++) {
         Amy::Free(statusLines[i]);
     }
 
@@ -42,7 +38,7 @@ DebugUI::~DebugUI() {
 }
 
 void DebugUI::Text(const char* text, ...) {
-    if (currentStatusLine >= STATUS_LINES) {
+    if (currentStatusLine >= StatusLines) {
         return;
     }
 
@@ -55,8 +51,8 @@ void DebugUI::Text(const char* text, ...) {
 }
 
 void DebugUI::Log(const char* text, ...) {
-    char* lastLine = logLines[LOG_LINES - 1];
-    for (int i = LOG_LINES - 1; i > 0; i--) {
+    char* lastLine = logLines[LogLines - 1];
+    for (int i = LogLines - 1; i > 0; i--) {
         logLines[i] = logLines[i - 1];
     }
 
@@ -86,7 +82,7 @@ void DebugUI::Draw() {
         RenderData->DrawText(Amy::fvec2(0, yOffset), statusLine, 0xffffffff);
         yOffset += step;
 
-        memset(statusLine, 0x0, STATUS_LINE_LENGTH);
+        memset(statusLine, 0x0, LineLength);
     }
     currentStatusLine = 0;
 }

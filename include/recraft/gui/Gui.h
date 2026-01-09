@@ -9,6 +9,8 @@
 //TODO: COreUI
 class Gui {
 public:
+    enum { SliceSize = 8 };
+
     static void Init();
     static void Deinit();
 

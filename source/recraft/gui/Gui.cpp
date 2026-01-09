@@ -86,8 +86,6 @@ void Gui::Label(float size, bool shadow, int16_t color, bool center, const char*
 }
 
 bool Gui::Button(float size, const char* label, ...) {
-#define SLICE_SIZE 8
-
 	va_list vl;
 	va_start(vl, label);
 
@@ -95,16 +93,16 @@ bool Gui::Button(float size, const char* label, ...) {
 
 	int x = windowX + relativeX;
 	int y = windowY + relativeY - BUTTON_TEXT_PADDING;
-	int w = (size <= 0.f) ? textWidth + SLICE_SIZE : relativeToAbsoluteSize(size);
+	int w = (size <= 0.f) ? textWidth + SliceSize : relativeToAbsoluteSize(size);
 
 	bool pressed = Gui::IsCursorInside(x, y, w, BUTTON_HEIGHT);
 
-	int middlePieceSize = w - SLICE_SIZE * 2;
+	int middlePieceSize = w - SliceSize * 2;
 
 	SpriteBatch_BindGuiTexture(GuiTexture::Widgets);
-    SpriteBatch_PushQuad(x, y, -3, SLICE_SIZE, 20, 0, 46 + (pressed * BUTTON_HEIGHT * 2), SLICE_SIZE, 20);
-    SpriteBatch_PushQuad(x + SLICE_SIZE, y, -3, middlePieceSize, 20, SLICE_SIZE, 46 + (pressed * BUTTON_HEIGHT * 2), middlePieceSize,20);
-    SpriteBatch_PushQuad(x + SLICE_SIZE + middlePieceSize, y, -3, SLICE_SIZE, 20, 192, 46 + (pressed * BUTTON_HEIGHT * 2), SLICE_SIZE,20);
+    SpriteBatch_PushQuad(x, y, -3, SliceSize, 20, 0, 46 + (pressed * BUTTON_HEIGHT * 2), SliceSize, 20);
+    SpriteBatch_PushQuad(x + SliceSize, y, -3, middlePieceSize, 20, SliceSize, 46 + (pressed * BUTTON_HEIGHT * 2), middlePieceSize, 20);
+    SpriteBatch_PushQuad(x + SliceSize + middlePieceSize, y, -3, SliceSize, 20, 192, 46 + (pressed * BUTTON_HEIGHT * 2), SliceSize, 20);
     //RenderData->DrawTex(ReCraftCore::GetInstance()->GetAssetManager()->Get<Amy::Texture>("GuiTexture_Widgets"));
    // RenderData->DrawRectFilled(Amy::fvec2(x, y), Amy::fvec2(SLICE_SIZE, 20), Amy::Color(255, 255, 255, 255));
    // RenderData->DrawRectFilled(Amy::fvec2(x + SLICE_SIZE, y), Amy::fvec2(middlePieceSize, 20), Amy::Color(255, 255, 255, 255));

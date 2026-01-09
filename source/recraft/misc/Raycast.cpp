@@ -7,7 +7,7 @@
 
 #include <citro3d.h>
 
-#define INF (World::ChunkCacheSize / 2 * Chunk::Size)
+static constexpr int INF = (World::ChunkCacheSize / 2 * Chunk::Size);
 
 bool Raycast_Cast(World* world, mc::Vector3d inpos, mc::Vector3d raydir, Raycast_Result* out) {
     mc::Vector3d map = mc::Vector3d(

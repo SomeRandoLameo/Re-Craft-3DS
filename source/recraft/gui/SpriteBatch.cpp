@@ -134,9 +134,6 @@ void SpriteBatch_PushIcon(mc::inventory::Slot block, int x, int y, int z) {
 		int16_t iconUV[2];
 		Block_GetTexture(block, (Direction)i,  iconUV);
 
-#define oneDivIconsPerRow (32768 / 8)
-#define halfTexel (6)
-
 		uint8_t color[3];
 		Block_GetColor(MCBridge::MCLIBSlotToCTItemStack(block).block, MCBridge::MCLIBSlotToCTItemStack(block).meta, (Direction)i, color);
 
@@ -170,8 +167,8 @@ void SpriteBatch_PushIcon(mc::inventory::Slot block, int x, int y, int z) {
                     unpackP(bottomLeft),
                     unpackP(bottomRight),
                     static_cast<int16_t>(iconUV[0] / 256),
-                    static_cast<int16_t>(iconUV[1] / 256 + TEXTURE_TILESIZE),
-                    static_cast<int16_t>(iconUV[0] / 256 + TEXTURE_TILESIZE),
+                    static_cast<int16_t>(iconUV[1] / 256 + Texture::TileSize),
+                    static_cast<int16_t>(iconUV[0] / 256 + Texture::TileSize),
                     static_cast<int16_t>(iconUV[1] / 256),
                     color16
                 }
@@ -191,8 +188,6 @@ int SpriteBatch_PushText(int x, int y, int z, int16_t color, bool shadow, int wr
 
 int SpriteBatch_PushTextVargs(int x, int y, int z, int16_t color, bool shadow, int wrap, int* ySize, const char* fmt, va_list arg) {
 	SpriteBatch_BindTexture(&font->texture);
-#define CHAR_WIDTH 8
-#define TAB_SIZE 4
 
 	char buffer[256];
 	vsprintf(buffer, fmt, arg);
@@ -207,12 +202,12 @@ int SpriteBatch_PushTextVargs(int x, int y, int z, int16_t color, bool shadow, i
 	while (*text != '\0') {
 		bool implicitBreak = offsetX + font->fontWidth[(int)*text] >= wrap;
 		if (*text == '\n' || implicitBreak) {
-			offsetY += CHAR_HEIGHT;
+			offsetY += SpriteBatch::CharHeight;
 			maxWidth = MAX(maxWidth, offsetX);
 			offsetX = 0;
 			if (implicitBreak) --text;
 		} else if (*text == '\t') {
-			offsetX = ((offsetX / CHAR_WIDTH) / TAB_SIZE + 1) * TAB_SIZE * CHAR_WIDTH;
+			offsetX = ((offsetX / CharWidth) / TabSize + 1) * TabSize * CharWidth;
 		} else {
 			if (*text != ' ') {
 				int texX = *text % 16 * 8, texY = *text / 16 * 8;
@@ -228,7 +223,7 @@ int SpriteBatch_PushTextVargs(int x, int y, int z, int16_t color, bool shadow, i
 
 	maxWidth = MAX(maxWidth, offsetX);
 
-	if (ySize != NULL) *ySize = offsetY + CHAR_HEIGHT;
+	if (ySize != NULL) *ySize = offsetY + SpriteBatch::CharHeight;
 
 	return maxWidth;
 }

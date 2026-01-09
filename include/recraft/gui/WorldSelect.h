@@ -22,7 +22,7 @@ typedef struct {
 static std::vector<WorldInfo> worlds;
 
 
-typedef enum { MenuState_SelectWorld, MenuState_ConfirmDeletion, MenuState_WorldOptions } MenuState;
+typedef enum { WorldSelect, ConfirmDeletion, WorldOptions } MenuState;
 
 static int scroll = 0;
 static float velocity = 0.f;
@@ -47,7 +47,7 @@ static const char* gamemodestr[]={"Survival","Creative","Adventure","Spectator"}
 
 static const char* worldGenTypesStr[] = {"Smea", "Superflat"};
 
-static MenuState menustate = MenuState_SelectWorld;
+static MenuState menustate = MenuState::WorldSelect;
 
 static float max_velocity = 20.f;
 

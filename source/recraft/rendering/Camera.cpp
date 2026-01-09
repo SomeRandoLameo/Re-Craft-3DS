@@ -21,7 +21,7 @@ void Camera::Update(Player* player, float iod) {
 	// View bobbing at player head
 	mc::Vector3d playerHead(
 			player->position.x,
-			player->position.y + PLAYER_EYEHEIGHT + sinf(player->bobbing) * 0.1f + player->crouchAdd,
+			player->position.y + Player::EyeHeight + sinf(player->bobbing) * 0.1f + player->crouchAdd,
 			player->position.z
 	);
 

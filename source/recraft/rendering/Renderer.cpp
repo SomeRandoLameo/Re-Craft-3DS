@@ -222,7 +222,7 @@ void Renderer::RenderGameOverlay() {
 }
 
 void Renderer::Render(DebugUI* debugUi) {
-    float iod = osGet3DSliderState() * PLAYER_HALFEYEDIFF;
+    float iod = osGet3DSliderState() * Player::HalfEyeDiff;
 
     C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 

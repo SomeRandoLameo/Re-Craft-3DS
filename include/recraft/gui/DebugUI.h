@@ -4,6 +4,11 @@
 
 class DebugUI {
 public:
+    enum {
+        StatusLines =  (240 / 8),
+        LogLines = 40,
+        LineLength = 128
+    };
     DebugUI();
     ~DebugUI();
 

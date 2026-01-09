@@ -16,11 +16,7 @@
 class PlayerControlScheme;
 class PlayerController;
 
-#define PLAYER_EYEHEIGHT (1.65f)
-#define PLAYER_HEIGHT (1.8f)
-#define PLAYER_COLLISIONBOX_SIZE (0.65f)
-#define PLAYER_HALFEYEDIFF (0.07f)
-#define PLAYER_PLACE_REPLACE_TIMEOUT (0.2f)
+
 
 class Player {
 public:
@@ -87,6 +83,12 @@ public:
     bool blockInActionRange = false;
     mc::inventory::Slot inventory[64];
 
+
+    static constexpr float EyeHeight = 1.65f;
+    static constexpr float Height = 1.8f;
+    static constexpr float CollisionBoxSize = 0.65f;
+    static constexpr float HalfEyeDiff = 0.07f;
+    static constexpr float PlaceReplaceTimeout = 0.2f;
 private:
     World* m_world = nullptr;
 
