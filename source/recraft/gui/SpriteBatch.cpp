@@ -19,7 +19,7 @@ typedef struct {
 
 static std::vector<Sprite> cmdList;
 static C3D_Tex* currentTexture = NULL;
-static GuiVertex* vertexList[2];
+static std::array<GuiVertex*, 2> vertexList;
 static int projUniform;
 
 static Font* font;

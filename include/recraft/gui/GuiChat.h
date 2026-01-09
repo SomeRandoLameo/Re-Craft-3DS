@@ -1,9 +1,9 @@
 #pragma once
+
 #include "gui/ImGuiManager.h"
 #include "mclib/protocol/ProtocolState.h"
 #include "mclib/protocol/packets/PacketDispatcher.h"
 #include "Utility.h"
-
 
 class GuiChat : public mc::protocol::packets::PacketHandler, public mc::core::ClientListener {
 public:

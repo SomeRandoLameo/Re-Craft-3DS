@@ -2,6 +2,7 @@
 extern "C" {
 #include <c3d/texture.h>
 }
+#include <array>
 #include <stdint.h>
 
 void Texture_Load(C3D_Tex* result, const char* filename);
@@ -19,7 +20,7 @@ typedef struct {
 
 typedef struct {
 	C3D_Tex texture;
-	Texture_MapIcon icons[Texture::MapTiles * Texture::MapTiles];
+	std::array<Texture_MapIcon, Texture::MapTiles * Texture::MapTiles> icons;
 } Texture_Map;
 
 void Texture_MapInit(Texture_Map* map, const char** files, int num_files);

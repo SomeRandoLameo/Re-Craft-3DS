@@ -9,7 +9,7 @@
 #include "rendering/Clouds.h"
 
 typedef struct {
-    char worldName[World::NameSize];
+    std::array<char, World::NameSize> worldName;
     GeneratorSettings settings;    
 } WorldSelect_Result;
 
@@ -43,9 +43,8 @@ static WorldGenType worldGenType = WorldGen_SuperFlat;
 
 static gamemode gamemode1=Gamemode_Survival;
 
-static const char* gamemodestr[]={"Survival","Creative","Adventure","Spectator"};
-
-static const char* worldGenTypesStr[] = {"Smea", "Superflat"};
+static constexpr std::array<std::string_view, 4> gamemodestr = {"Survival", "Creative", "Adventure", "Spectator"};
+static constexpr std::array<std::string_view, 2> worldGenTypesStr = {"Smea", "Superflat"};
 
 static MenuState menustate = MenuState::WorldSelect;
 

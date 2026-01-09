@@ -50,7 +50,7 @@ public:
 
 private:
     Clouds* m_clouds = nullptr;
-    C3D::Screen* Top[2]{nullptr, nullptr};
+    std::array<C3D::Screen*, 2> Top = {nullptr, nullptr};
     C3D::Screen* Bottom = nullptr;
 
     Amy::C3D::Shader::Ref pWorldShader = nullptr;

@@ -4,4 +4,4 @@
 typedef struct {
     char* cause;
     int time;
-}Damage;
+} Damage;
