@@ -9,6 +9,7 @@ public:
     NetworkWorld(World* world, mc::protocol::packets::PacketDispatcher* dispatcher);
     ~NetworkWorld();
 
+    void Test();
     void HandlePacket(mc::protocol::packets::in::ChunkDataPacket* packet) override;
     void HandlePacket(mc::protocol::packets::in::UnloadChunkPacket* packet) override;
     void HandlePacket(mc::protocol::packets::in::MultiBlockChangePacket* packet) override;

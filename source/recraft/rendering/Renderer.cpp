@@ -53,7 +53,9 @@ Renderer::Renderer(World* world, Player* player, WorkQueue* queue) {
     SpriteBatch_Init(m_gui_shader_uLocProjection);
     Gui::Init();
     C3D_CullFace(GPU_CULL_BACK_CCW);
+
     Block_Init();
+
     Texture_Load(&m_logoTex, "romfs:/assets/textures/gui/title/craftus.png");
     ImGuiManager::GetInstance()->Initialize();
     m_show_demo_window = false;

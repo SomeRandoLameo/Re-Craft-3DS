@@ -20,8 +20,27 @@ NetworkWorld::~NetworkWorld() {
     GetDispatcher()->UnregisterHandler(this);
 }
 
+//TODO: Load a full chunk (16x16x16) with dirt blocks locally for testing
+void NetworkWorld::Test() {
+
+    ChunkColumnPtr column = m_world->GetChunkColumn(0 , 0);     // Get ChunkColumn at (0,0) from World
+    ChunkPtr chunk = column->GetChunk(0);                       // Get the bottom chunk (y=0) (0 - 16 * 16 => MAX 256 blocks high)
+
+    for (s32 x = 0; x < Chunk::Size; ++x) {                     // 0-15 for x
+        for (s32 z = 0; z < Chunk::Size; ++z) {                 // 0-15 for Y
+            for (s32 y = 0; y < Chunk::Size; ++y) {             // 0-15 for Z
+
+                chunk->SetBlock(x,y,z, Block::Dirt);            // Set Block at (x,y,z) to Dirt
+                chunk->metadataLight[x][y][z] = 0;              // Set metadata light to 0 (no light) (this doesnt really matter)
+            }
+        }
+    }
+}
+
+
 //TODO: We still need some form of block registry to propperly read chunk block data and match it with craftus blocks. This is temporarly redirected through the MCBridge.
 void NetworkWorld::HandlePacket(mc::protocol::packets::in::ChunkDataPacket* packet) {
+    /*
     auto sourceColumn = packet->GetChunkColumn();
     auto meta = sourceColumn->GetMetadata();
     int chunkX = meta.x;
@@ -75,6 +94,7 @@ void NetworkWorld::HandlePacket(mc::protocol::packets::in::ChunkDataPacket* pack
 
     ++column->revision;
     column->genProgress = ChunkGen_Finished;
+     */
 }
 
 void NetworkWorld::HandlePacket(mc::protocol::packets::in::UnloadChunkPacket* packet) {

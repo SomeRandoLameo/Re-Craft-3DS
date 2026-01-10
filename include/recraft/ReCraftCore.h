@@ -24,6 +24,7 @@ extern "C" {
 #include "world/NetworkWorld.h"
 #include "world/savegame/SaveManager.h"
 #include "world/savegame/SuperChunk.h"
+#include "world/worldgen/EmptyGen.h"
 #include "world/worldgen/SmeaGen.h"
 #include "world/worldgen/SuperFlatGen.h"
 
@@ -45,6 +46,7 @@ private:
     static ReCraftCore* m_theReCraftCore;
     SuperFlatGen m_flatGen;
     SmeaGen m_smeaGen;
+    EmptyGen m_emptyGen;
     SaveManager m_savemgr;
     ChunkWorker m_chunkWorker;
     MCBridge m_mcBridge;
