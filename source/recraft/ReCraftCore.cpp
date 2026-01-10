@@ -17,12 +17,6 @@ ReCraftCore::ReCraftCore() {
 
     m_chunkWorker.AddHandler(WorkerItemType::PolyGen, (WorkerFuncObj){&PolyGen_GeneratePolygons, nullptr, true});
 
-    m_chunkWorker.AddHandler(WorkerItemType::BaseGen, (WorkerFuncObj){&SuperFlatGen::Generate, &m_flatGen, true});
-
-    m_chunkWorker.AddHandler(WorkerItemType::BaseGen, (WorkerFuncObj){&SmeaGen::Generate, &m_smeaGen, true});
-
-    m_chunkWorker.AddHandler(WorkerItemType::BaseGen, (WorkerFuncObj){&EmptyGen::Generate, &m_emptyGen, true});
-
     sino_init();
 
     m_world = new World(&m_chunkWorker.GetQueue());
@@ -110,6 +104,11 @@ ReCraftCore::~ReCraftCore() {
 }
 
 void ReCraftCore::InitSinglePlayer(char* path, char* name, const WorldGenType* worldType, bool newWorld) {
+
+    m_chunkWorker.AddHandler(WorkerItemType::BaseGen, (WorkerFuncObj){&SuperFlatGen::Generate, &m_flatGen, true});
+
+    m_chunkWorker.AddHandler(WorkerItemType::BaseGen, (WorkerFuncObj){&SmeaGen::Generate, &m_smeaGen, true});
+
     strcpy(m_world->name, name);
     m_world->genSettings.type = *worldType;
 
@@ -169,11 +168,22 @@ void ReCraftCore::ExitSinglePlayer() { ReleaseWorld(&m_chunkWorker, &m_savemgr, 
 // TODO: Something prevents the 03DS from connecting. It isnt memory. My guess is that world data takes too long to load
 // and then server timeout?
 void ReCraftCore::InitMultiPlayer() {
+
+
+    m_chunkWorker.AddHandler(WorkerItemType::BaseGen, (WorkerFuncObj){&EmptyGen::Generate, &m_emptyGen, true});
+
+
     m_mcBridge.connect();
+    m_world->genSettings.type = WorldGen_Empty;
+
+    m_player->hunger = 20;
+    m_player->hp = 20;
     m_player->gamemode = 1;
+
+    //m_player->position = m_mcBridge.getClient()->GetPlayerController()->GetPosition();
+
     m_chat = new GuiChat(m_mcBridge.getClient()->GetDispatcher(), m_mcBridge.getClient());
     m_networkWorld = new NetworkWorld(m_world, m_mcBridge.getClient()->GetDispatcher());
-
 
     m_chunkWorker.SetHandlerActive(WorkerItemType::BaseGen, &m_emptyGen, true);
 
@@ -194,9 +204,12 @@ void ReCraftCore::InitMultiPlayer() {
         m_world->Tick();
     }
 
-    m_networkWorld->Test(); // Loading test blocks into world
+    //m_networkWorld->Test(); // Loading test blocks into world
+
+    m_player->position = mc::Vector3d(0,63,0);
 
     m_mcBridge.startBackgroundThread();
+    //m_gamestate = GameState::Playing;
     m_gamestate = GameState::Playing_OnLine;
 }
 
@@ -211,29 +224,13 @@ void ReCraftCore::RunMultiPlayer(InputData inputData) {
         m_mcBridge.withClient([&](mc::core::Client* client, mc::protocol::packets::PacketDispatcher* dispatcher) {
             //m_player->position = client->GetPlayerController()->GetPosition();
 
-            // dimension = client->GetConnection()->GetDimension();
-
-            while (m_timeAccum >= 20.f) {
-                m_world->Tick();
-
-                m_timeAccum = -20.f;
-            }
-
-            m_player->UpdateMovement(m_playerCtrl->GetControlScheme(), inputData, Delta() * 0.001);
-
-            m_world->UpdateChunkCache(WorldToChunkCoord(FastFloor(m_player->position.x)),
-                                      WorldToChunkCoord(FastFloor(m_player->position.z)));
-
-            //m_player->velocity = mc::Vector3d(0, 0, 0); // this is temporary
             // TODO: This is baaaad :D
-
             //client->GetPlayerController()->Move(mc::Vector3d(-m_playerCtrl->movement.x * (0.125 / 2),
             //                                                 -m_playerCtrl->movement.y * (0.125 / 2),
              //                                                -m_playerCtrl->movement.z * (0.125 / 2)));
 
-            //this works
-            //client->GetPlayerController()->SetPitch(-m_playerCtrl->player->pitch);
-            //client->GetPlayerController()->SetYaw(-m_playerCtrl->player->yaw);
+            client->GetPlayerController()->SetPitch(-m_playerCtrl->player->pitch);
+            client->GetPlayerController()->SetYaw(-m_playerCtrl->player->yaw);
 
 
             /*
@@ -285,9 +282,20 @@ void ReCraftCore::RunMultiPlayer(InputData inputData) {
                                         to_string(mc::Vector3i(0,0,0)).c_str()
                                 );
                                 debugUI.Text("===============");
-                                */
+*/
         });
     }
+
+    while (m_timeAccum >= 20.f) {
+        m_world->Tick();
+
+        m_timeAccum = -20.f;
+    }
+
+    m_player->UpdateMovement(m_playerCtrl->GetControlScheme(), inputData, Delta() * 0.001);
+
+    m_world->UpdateChunkCache(WorldToChunkCoord(FastFloor(m_player->position.x)),
+                              WorldToChunkCoord(FastFloor(m_player->position.z)));
 }
 
 // TODO: Why isnt this in world?

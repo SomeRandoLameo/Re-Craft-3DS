@@ -11,7 +11,7 @@
 #define UNDEADCHUNKS_COUNT (2 * World::ChunkCacheSize + World::ChunkCacheSize * World::ChunkCacheSize)
 
 
-typedef enum { WorldGen_Smea, WorldGen_SuperFlat, WorldGenTypes_Count } WorldGenType;
+typedef enum { WorldGen_Smea, WorldGen_SuperFlat, WorldGen_Empty, WorldGenTypes_Count } WorldGenType;
 typedef enum { Gamemode_Survival, Gamemode_Creative,Gamemode_Adventure,Gamemode_Spectator,Gamemode_Count } gamemode;
 typedef struct {
 	uint64_t seed;

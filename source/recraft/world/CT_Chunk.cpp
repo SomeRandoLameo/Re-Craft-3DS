@@ -99,6 +99,7 @@ Block ChunkColumn::GetBlock(mc::Vector3i position) {
 
 
 // resets the meta data
+/// DO NOT USE THIS MANUALLY
 void ChunkColumn::SetBlock(mc::Vector3i position, Block block) {
     ChunkPtr chunk = GetChunk(position.y / Chunk::Size);
     chunk->SetBlock(position.x,position.y - (position.y / Chunk::Size * Chunk::Size),position.z, block);

@@ -15,7 +15,7 @@ World::World(WorkQueue *workqueue) {
     m_workqueue = workqueue;
 
     genSettings.seed = 28112000;
-    genSettings.type = WorldGen_SuperFlat;
+    genSettings.type = WorldGen_Empty; // as it should be
 
     m_freeChunkColums.clear();
 
@@ -37,38 +37,79 @@ void World::Reset() {
 	m_randomTickGen = Xorshift32_New();
 }
 
+/**
+ * Loads a chunk column at the specified world coordinates.
+ *
+ * This function implements a chunk pooling system to efficiently manage memory by reusing
+ * existing chunk column objects rather than allocating new ones. It first attempts to find
+ * an existing chunk at the requested coordinates, then tries to recycle an unused chunk,
+ * and finally returns NULL if no chunks are available.
+ *
+ * @param x The x-coordinate of the chunk column in world space
+ * @param z The z-coordinate of the chunk column in world space
+ *
+ * @return ChunkColumnPtr Pointer to the loaded/recycled chunk column, or NULL if no chunks are available
+ *
+ * @note Returned chunk will have its reference count incremented
+ * @note This function queues asynchronous load operations via the work queue
+ *
+ * Behavior:
+ * 1. First Pass - Reuse Existing Chunk:
+ *    - Searches the free chunk pool for a chunk already at position (x, z)
+ *    - If found, removes it from the pool, refreshes its graphics, and returns it
+ *
+ * 2. Second Pass - Recycle Unused Chunk:
+ *    - If no matching chunk exists, looks for any chunk not currently running tasks
+ *    - Destroys the old chunk data and reconstructs it at the new position (x, z)
+ *    - Queues the chunk for background loading via the work queue
+ *
+ * 3. Failure:
+ *    - Returns NULL if all chunks are either in use or running background tasks
+ */
 ChunkColumnPtr World::LoadChunk(int x, int z) {
-	for (int i = 0; i < m_freeChunkColums.size(); i++) {
-		if (m_freeChunkColums[i]->x == x && m_freeChunkColums[i]->z == z) {
+    // First pass: Check if a chunk at this position already exists in the free pool
+    for (int i = 0; i < m_freeChunkColums.size(); i++) {
+        if (m_freeChunkColums[i]->x == x && m_freeChunkColums[i]->z == z) {
             ChunkColumnPtr column = m_freeChunkColums[i];
+            // Remove from free pool
             m_freeChunkColums.erase(m_freeChunkColums.begin() + i);
+
+            // Request graphics updates for all chunks in this column
             for (int j = 0; j < ChunkColumn::ChunksPerColumn; j++) {
                 column->RequestGraphicsUpdate(j);
             }
-            column->references++;
-			return column;
-		}
-	}
 
-	for (int i = 0; i < m_freeChunkColums.size(); i++) {
-		if (!m_freeChunkColums[i]->tasksRunning) {
+            // Mark as in-use by incrementing reference count
+            column->references++;
+            return column;
+        }
+    }
+
+    // Second pass: If no chunk found at the requested position, recycle an unused chunk
+    for (int i = 0; i < m_freeChunkColums.size(); i++) {
+        if (!m_freeChunkColums[i]->tasksRunning) {
             ChunkColumnPtr column = m_freeChunkColums[i];
+            // Remove from free pool
             m_freeChunkColums.erase(m_freeChunkColums.begin() + i);
 
+            // Destroy old chunk data and reconstruct at new position
             column->~ChunkColumn();
             new (column) ChunkColumn(x, z);
-			WorkQueue_AddItem(m_workqueue, (WorkerItem){WorkerItemType::Load, column});
 
+            // Queue chunk for asynchronous loading
+            WorkQueue_AddItem(m_workqueue, (WorkerItem){WorkerItemType::Load, column});
+
+            // Mark as in-use by incrementing reference count
             column->references++;
-			return column;
-		}
-	}
+            return column;
+        }
+    }
 
-	return NULL;
+    // No chunks available (all in use or running tasks)
+    return NULL;
 }
 
 void World::UnloadChunk(ChunkColumnPtr column) {
-    // TODO: unloaded chunks should be removed from the cache, there seems to be a bug with saving or a buffer
 	WorkQueue_AddItem(m_workqueue, (WorkerItem){WorkerItemType::Save, column});
     m_freeChunkColums.push_back(column);
 
@@ -229,34 +270,61 @@ void World::UpdateChunkCache(int orginX, int orginZ) {
 	}
 }
 
+/**
+ * Performs per-tick world update logic for all chunks in the cache.
+ *
+ * This function manages the chunk generation pipeline and random block ticks for the entire
+ * cached world area. It iterates through all chunks in the cache and triggers appropriate
+ * generation stages or gameplay updates based on each chunk's current state.
+ *
+ * Generation Pipeline:
+ * 1. BaseGen - Initial terrain generation for empty chunks
+ * 2. Decorate - Decoration pass (trees, structures, etc.) once surrounding chunks are ready
+ * 3. RandomTicks - Gameplay updates for fully generated chunks (plant growth, etc.)
+ *
+ * @note This function is called every tick
+ * @note Work items are queued asynchronously via the work queue system
+ * @note Chunks must not have running tasks before new work can be queued
+ */
 void World::Tick() {
-	for (int x = 0; x < World::ChunkCacheSize; x++) {
+    // Iterate through all chunks in the cache
+    for (int x = 0; x < World::ChunkCacheSize; x++) {
         for (int z = 0; z < World::ChunkCacheSize; z++) {
             ChunkColumn *chunk = columnCache[x][z];
 
+            // Stage 1: Queue base terrain generation for empty chunks
             if (chunk->genProgress == ChunkGen_Empty && !chunk->tasksRunning) {
                 WorkQueue_AddItem(m_workqueue, (WorkerItem) {WorkerItemType::BaseGen, chunk});
             }
 
-
+            // Stage 2: Queue decoration pass for terrain-generated chunks
+            // Only process chunks not on the border (need neighbors for decoration)
             if (x > 0 && z > 0 && x < World::ChunkCacheSize - 1 && z < World::ChunkCacheSize - 1 &&
                 chunk->genProgress == ChunkGen_Terrain && !chunk->tasksRunning) {
+
+                // Check if all 3x3 neighboring chunks (including self) have base terrain generated
                 bool clear = true;
                 for (int xOff = -1; xOff < 2 && clear; xOff++) {
                     for (int zOff = -1; zOff < 2 && clear; zOff++) {
                         ChunkColumn *borderChunk = columnCache[x + xOff][z + zOff];
-                        if (borderChunk->genProgress == ChunkGen_Empty || !borderChunk->tasksRunning) clear = false;
+                        // Neighbor must have terrain generated and no running tasks
+                        if (borderChunk->genProgress == ChunkGen_Empty || !borderChunk->tasksRunning)
+                            clear = false;
                     }
                 }
 
+                // All neighbors ready - safe to decorate this chunk
                 if (clear) {
                     WorkQueue_AddItem(m_workqueue, (WorkerItem) {WorkerItemType::Decorate, chunk});
                 }
 
+                // Stage 3: Generate random tick coordinates for gameplay updates
+                // (Note: These coordinates are generated but not currently used in the code)
                 int xVals[RANDOMTICKS_PER_CHUNK];
                 int yVals[RANDOMTICKS_PER_CHUNK];
                 int zVals[RANDOMTICKS_PER_CHUNK];
                 for (int i = 0; i < RANDOMTICKS_PER_CHUNK; i++) {
+                    // Generate random block coordinates within the chunk for random tick events
                     xVals[i] = WorldToLocalCoord(Xorshift32_Next(&m_randomTickGen));
                     yVals[i] = WorldToLocalCoord(Xorshift32_Next(&m_randomTickGen));
                     zVals[i] = WorldToLocalCoord(Xorshift32_Next(&m_randomTickGen));

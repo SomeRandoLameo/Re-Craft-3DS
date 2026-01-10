@@ -49,9 +49,9 @@ void Inventory::renderHotbar(int x, int y, mc::inventory::Slot* stacks, int& sel
             selected = i;
             handleStackClick(&stacks[i]);
 
-            if (*ReCraftCore::GetInstance()->GetGameState() == GameState::Playing_OnLine) {
+           // if (*ReCraftCore::GetInstance()->GetGameState() == GameState::Playing_OnLine) {
                 // TODO: client->GetHotbar().SelectSlot(i);
-            }
+            //}
         }
 
         SpriteBatch_SetScale(2);

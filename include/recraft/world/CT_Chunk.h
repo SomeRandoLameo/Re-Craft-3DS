@@ -40,6 +40,7 @@ public:
         return m_blocks[x + y * Size + z * Size * Size];
     }
 
+    /// DO NOT USE THIS MANUALLY
     void SetBlock(int x, int y, int z, Block block) {
         m_blocks[x + y * Size + z * Size * Size] = block;
     }

@@ -22,16 +22,10 @@ NetworkWorld::~NetworkWorld() {
 
 //TODO: Load a full chunk (16x16x16) with dirt blocks locally for testing
 void NetworkWorld::Test() {
-
-    ChunkColumnPtr column = m_world->GetChunkColumn(0 , 0);     // Get ChunkColumn at (0,0) from World
-    ChunkPtr chunk = column->GetChunk(0);                       // Get the bottom chunk (y=0) (0 - 16 * 16 => MAX 256 blocks high)
-
     for (s32 x = 0; x < Chunk::Size; ++x) {                     // 0-15 for x
         for (s32 z = 0; z < Chunk::Size; ++z) {                 // 0-15 for Y
             for (s32 y = 0; y < Chunk::Size; ++y) {             // 0-15 for Z
-
-                chunk->SetBlock(x,y,z, Block::Dirt);            // Set Block at (x,y,z) to Dirt
-                chunk->metadataLight[x][y][z] = 0;              // Set metadata light to 0 (no light) (this doesnt really matter)
+                m_world->SetBlock(mc::Vector3i(x,y,z), Block::Dirt);            // Set Block at (x,y,z) to Dirt
             }
         }
     }
@@ -40,61 +34,37 @@ void NetworkWorld::Test() {
 
 //TODO: We still need some form of block registry to propperly read chunk block data and match it with craftus blocks. This is temporarly redirected through the MCBridge.
 void NetworkWorld::HandlePacket(mc::protocol::packets::in::ChunkDataPacket* packet) {
-    /*
     auto sourceColumn = packet->GetChunkColumn();
     auto meta = sourceColumn->GetMetadata();
     int chunkX = meta.x;
     int chunkZ = meta.z;
 
-    ChunkColumnPtr column = m_world->GetChunkColumn(chunkX, chunkZ);
-
-    // If not in cache, we need to allocate or find a free chunk
-    if (!column) {
-        for (int i = 0; i < World::ChunkPoolSize; i++) {
-            if (m_world->m_chunkChunkPool[i].x == chunkX &&
-                m_world->m_chunkChunkPool[i].z == chunkZ) {
-                column = &m_world->m_chunkChunkPool[i];
-                break;
-            }
-        }
-
-        if (!column && !m_world->m_freeChunkColums.empty()) {
-            column = m_world->m_freeChunkColums.back();
-            m_world->m_freeChunkColums.pop_back();
-
-            column->~ChunkColumn();
-            new (column) ChunkColumn(chunkX, chunkZ);
-            column->genProgress = ChunkGen_Empty;
-            column->references++;
-        }
-
-        if (!column) {
-            return;
-        }
-    }
+    // Calculate the base world position for this chunk column
+    int baseWorldX = chunkX * Chunk::Size;
+    int baseWorldZ = chunkZ * Chunk::Size;
 
     for (s32 sectionY = 0; sectionY < ChunkColumn::ChunksPerColumn; ++sectionY) {
-        ChunkPtr chunk = column->GetChunk(sectionY);
-        if (!chunk) continue;
+        // Calculate base Y position for this chunk section
+        int baseWorldY = sectionY * Chunk::Size;
 
         for (s32 x = 0; x < Chunk::Size; ++x) {
             for (s32 z = 0; z < Chunk::Size; ++z) {
                 for (s32 y = 0; y < Chunk::Size; ++y) {
-                    mc::Vector3i sourcePos(x, y, z);
-                    auto sourceBlock = sourceColumn->GetBlock(sourcePos);
 
-                    chunk->SetBlock(x,y,z, MCBridge::MCLibBlockToCTBlock(sourceBlock->GetType()));
-                    chunk->metadataLight[x][y][z] = 0;
+                    mc::Vector3i columnRelativePos(x, baseWorldY + y, z);
+                    auto sourceBlock = sourceColumn->GetBlock(columnRelativePos);
+
+                    mc::Vector3i worldPos(
+                        baseWorldX + x,
+                        baseWorldY + y,
+                        baseWorldZ + z
+                    );
+
+                    m_world->SetBlock(worldPos, MCBridge::MCLibBlockToCTBlock(sourceBlock->GetType()));
                 }
             }
         }
-
-        ++chunk->revision;
     }
-
-    ++column->revision;
-    column->genProgress = ChunkGen_Finished;
-     */
 }
 
 void NetworkWorld::HandlePacket(mc::protocol::packets::in::UnloadChunkPacket* packet) {
