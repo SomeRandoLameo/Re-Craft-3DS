@@ -15,7 +15,7 @@
 
 class Chunk {
 public:
-    enum { Size = 16 };
+    constexpr static int Size = 16; 
 
 	int y;
 	uint8_t metadataLight[Size][Size][Size];  // first half metadata, second half light
