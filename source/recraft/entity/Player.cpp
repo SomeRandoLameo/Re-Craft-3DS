@@ -237,7 +237,7 @@ void Player::HandleRespawn(Damage* dmg) {
                 while (m_world->GetBlock( mc::ToVector3i(spawnPos)) != Block::Air)
                     spawnY++;
 
-                bool shouldOffset = m_world->GetGenSettings().type != WorldGen_SuperFlat;
+                bool shouldOffset = m_world->GetGenSettings().type != WorldGenType::SuperFlat;
                 position.y = shouldOffset ? spawnY + 1 : spawnY;
                 position.z = 0.0;
             }
@@ -253,7 +253,7 @@ void Player::HandleRespawn(Damage* dmg) {
                 while (m_world->GetBlock(ToVector3i(spawnPos)) != Block::Air)
                     spawnY++;
 
-                bool shouldOffset = m_world->GetGenSettings().type != WorldGen_SuperFlat;
+                bool shouldOffset = m_world->GetGenSettings().type != WorldGenType::SuperFlat;
                 position.y = shouldOffset ? spawnY + 1 : spawnY;
                 position.z = spawnPos.z;
             }

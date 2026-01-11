@@ -44,7 +44,7 @@ void SaveManager::Load(char* path) {
         if (mpack_node_type(worldTypeNode) != mpack_type_nil){
             m_world->genSettings.type = (WorldGenType)mpack_node_uint(worldTypeNode);
         } else {
-            m_world->genSettings.type = WorldGen_SuperFlat;
+            m_world->genSettings.type = WorldGenType::SuperFlat;
         }
 
         mpack_node_t playerNode = mpack_node_array_at(mpack_node_map_cstr(root, "players"), 0);

@@ -25,6 +25,8 @@ public:
     void disconnect();
     void update();
 
+    void SetIPAddress(const std::string& ip) { m_ipAddress = ip; }
+    void SetUsername(const std::string& username) { m_username = username; }
 
     void startBackgroundThread();
     void stopBackgroundThread();
@@ -60,6 +62,9 @@ public:
 private:
     static void threadFunc(void* arg);
     void backgroundLoop();
+
+    std::string m_ipAddress;
+    std::string m_username;
 
     std::unique_ptr<mc::protocol::packets::PacketDispatcher> m_dispatcher;
     std::unique_ptr<mc::core::Client> m_client;

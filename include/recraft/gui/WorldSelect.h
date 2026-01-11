@@ -39,9 +39,9 @@ static bool canceled_world_options = false;
 static bool confirmed_deletion = false;
 static bool canceled_deletion = false;
 
-static WorldGenType worldGenType = WorldGen_SuperFlat;
+static WorldGenType worldGenType = WorldGenType::SuperFlat;
 
-static gamemode gamemode1=Gamemode_Survival;
+static Gamemode gamemode1 = Gamemode::Survival;
 
 static constexpr std::array<std::string_view, 4> gamemodestr = {"Survival", "Creative", "Adventure", "Spectator"};
 static constexpr std::array<std::string_view, 2> worldGenTypesStr = {"Smea", "Superflat"};

@@ -114,9 +114,9 @@ void ReCraftCore::InitSinglePlayer(char* path, char* name, const WorldGenType* w
 
     m_savemgr.Load(path);
 
-    m_chunkWorker.SetHandlerActive(WorkerItemType::BaseGen, &m_flatGen, m_world->genSettings.type == WorldGen_SuperFlat);
+    m_chunkWorker.SetHandlerActive(WorkerItemType::BaseGen, &m_flatGen, m_world->genSettings.type == WorldGenType::SuperFlat);
 
-    m_chunkWorker.SetHandlerActive(WorkerItemType::BaseGen, &m_smeaGen, m_world->genSettings.type == WorldGen_Smea);
+    m_chunkWorker.SetHandlerActive(WorkerItemType::BaseGen, &m_smeaGen, m_world->genSettings.type == WorldGenType::Smea);
 
     // TODO: Potential World::InitChunkCache() function?
     m_world->cacheTranslationX = WorldToChunkCoord(FastFloor(m_player->position.x));
@@ -163,7 +163,7 @@ void ReCraftCore::RunSinglePlayer(InputData inputData) {
     m_world->UpdateChunkCache(WorldToChunkCoord(FastFloor(m_player->position.x)),
                               WorldToChunkCoord(FastFloor(m_player->position.z)));
 }
-void ReCraftCore::ExitSinglePlayer() { ReleaseWorld(&m_chunkWorker, &m_savemgr, m_world); }
+void ReCraftCore::ExitSinglePlayer() { ReleaseWorld(&m_chunkWorker, &m_savemgr,  m_world); }
 
 // TODO: Something prevents the 03DS from connecting. It isnt memory. My guess is that world data takes too long to load
 // and then server timeout?
@@ -172,9 +172,22 @@ void ReCraftCore::InitMultiPlayer() {
 
     m_chunkWorker.AddHandler(WorkerItemType::BaseGen, (WorkerFuncObj){&EmptyGen::Generate, &m_emptyGen, true});
 
+    SwkbdState swkbd;
+    char buffer1[256];
+
+    swkbdInit(&swkbd, SWKBD_TYPE_NORMAL, 2, -1);
+    swkbdSetHintText(&swkbd, "Username");
+    swkbdInputText(&swkbd, buffer1, sizeof(buffer1));
+    m_mcBridge.SetUsername(buffer1);
+
+    char buffer2[256];
+    swkbdInit(&swkbd, SWKBD_TYPE_NORMAL, 2, -1);
+    swkbdSetHintText(&swkbd, "Server IP (xxx.xxx.xxx.xxx)");
+    swkbdInputText(&swkbd, buffer2, sizeof(buffer2));
+    m_mcBridge.SetIPAddress(buffer2);
 
     m_mcBridge.connect();
-    m_world->genSettings.type = WorldGen_Empty;
+    m_world->genSettings.type = WorldGenType::Empty;
 
     m_player->hunger = 20;
     m_player->hp = 20;
@@ -241,48 +254,9 @@ void ReCraftCore::RunMultiPlayer(InputData inputData) {
                debugUI->Text("%d ", item.GetItemId());
              }
      */
-            //bool showChat = true; // TODO: Move somewhere into render to show globally instead
+            bool showChat = true; // TODO: Move somewhere into render to show globally instead
             // of console_activate & console_log, this is just temp
-            //m_chat->Render(&showChat);
-
-            /*
-             *  BUG: When player joins the world, the chunks arent loaded causing
-             this to crash when joining the world.
-             *
-                                debugUI.Text("===============");
-
-
-                                auto chunkpos = mc::ToVector3i(mc::Vector3d(
-                                        player->position.x,
-                                        0,
-                                        player->position.z
-                                ));
-
-                                auto blockpos = mc::ToVector3i(mc::Vector3d(
-                                        player->position.x,
-                                        player->position.y - 1,
-                                        player->position.z
-                                ));
-
-                                auto relativeBlockPos = mc::Vector3i(
-                                        blockpos.x & 15,
-                                        blockpos.y,
-                                        blockpos.z & 15
-                                );
-
-                                auto readBlockPos =
-             client->GetWorld()->GetChunk(chunkpos)->GetBlock(relativeBlockPos);
-
-                                debugUI.Text(
-                                        "%s %d,%f at: %s in chunk: %s",
-                                        readBlockPos->GetName().c_str(),
-                                        readBlockPos->GetType(),
-                                        static_cast<float>(readBlockPos->GetType()),
-                                        to_string(mc::Vector3i(0,3,0)).c_str(),
-                                        to_string(mc::Vector3i(0,0,0)).c_str()
-                                );
-                                debugUI.Text("===============");
-*/
+            m_chat->Render(&showChat);
         });
     }
 

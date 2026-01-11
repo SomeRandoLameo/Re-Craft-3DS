@@ -12,13 +12,11 @@ bool MCBridge::connect() {
         return true;
     }
 
-    const std::string server("192.168.2.192");
     const u16 port = 25565;
-    const std::string username("Nintendo3DS");
     const std::string password("");
 
     try {
-        mc::util::VersionFetcher versionFetcher(server, port);
+        mc::util::VersionFetcher versionFetcher(m_ipAddress, port);
         auto version = versionFetcher.GetVersion();
         mc::block::BlockRegistry::GetInstance()->RegisterVanillaBlocks(version);
 
@@ -37,7 +35,7 @@ bool MCBridge::connect() {
                 .SetViewDistance(static_cast<s32>(1));
 
         mc::core::AuthToken token;
-        m_client->Login(server, port, username, password, mc::core::UpdateMethod::Manual);
+        m_client->Login(m_ipAddress, port, m_username, password, mc::core::UpdateMethod::Manual);
 
         LightLock_Unlock(&m_clientMutex);
 

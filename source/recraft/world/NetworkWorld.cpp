@@ -1,7 +1,7 @@
 #include "world/NetworkWorld.h"
 #include "gui/DebugUI.h"
 #include "mcbridge/MCBridge.h"
-
+//TODO: All of this needs to happen asynchronously in order for consoles not to disconnect due to timeout when loading
 NetworkWorld::NetworkWorld(World* world, mc::protocol::packets::PacketDispatcher* dispatcher)
     : mc::protocol::packets::PacketHandler(dispatcher)
 {
@@ -71,11 +71,27 @@ void NetworkWorld::HandlePacket(mc::protocol::packets::in::UnloadChunkPacket* pa
     //m_world->
 }
 
-void NetworkWorld::HandlePacket(mc::protocol::packets::in::MultiBlockChangePacket* packet) {}
+void NetworkWorld::HandlePacket(mc::protocol::packets::in::MultiBlockChangePacket* packet) {
 
-void NetworkWorld::HandlePacket(mc::protocol::packets::in::BlockChangePacket* packet) {}
+}
 
-void NetworkWorld::HandlePacket(mc::protocol::packets::in::ExplosionPacket* packet) {}
+void NetworkWorld::HandlePacket(mc::protocol::packets::in::BlockChangePacket* packet) {
+    mc::block::BlockPtr newBlock = mc::block::BlockRegistry::GetInstance()->GetBlock((u16)packet->GetBlockId());
+    auto pos = packet->GetPosition();
+    //mc::block::BlockPtr oldBlock = m_world->GetBlock(pos);
+
+    m_world->SetBlock(packet->GetPosition(), MCBridge::MCLibBlockToCTBlock(newBlock->GetType()));
+}
+
+void NetworkWorld::HandlePacket(mc::protocol::packets::in::ExplosionPacket* packet) {
+    mc::Vector3d explosionPos = packet->GetPosition();
+    for (mc::Vector3s offset : packet->GetAffectedBlocks()) {
+        mc::Vector3d absolutePos = explosionPos + mc::ToVector3d(offset);
+
+        // Set all affected blocks to air
+        m_world->SetBlock(mc::ToVector3i(absolutePos), MCBridge::MCLibBlockToCTBlock(0));
+    }
+}
 
 void NetworkWorld::HandlePacket(mc::protocol::packets::in::UpdateBlockEntityPacket* packet) {}
 

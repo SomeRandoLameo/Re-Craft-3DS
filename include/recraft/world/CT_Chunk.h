@@ -83,7 +83,7 @@ bool ChunkCanBeSeenThrough(uint16_t visiblity, Direction in, Direction out);
 
 class ChunkColumn {
 public:
-    enum { ChunksPerColumn = 16 };
+    constexpr static int ChunksPerColumn = 16;
 
     uint32_t tasksRunning;
     uint32_t graphicalTasksRunning;

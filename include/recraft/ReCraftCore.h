@@ -56,7 +56,6 @@ private:
     PlayerController* m_playerCtrl = nullptr;
     Renderer* m_renderer = nullptr;
     GuiChat* m_chat = nullptr;
-
     NetworkWorld* m_networkWorld = nullptr;
     GameState m_gamestate;
     Amy::AssetMgr m_AssetMgr;

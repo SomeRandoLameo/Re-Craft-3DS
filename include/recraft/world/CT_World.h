@@ -11,8 +11,21 @@
 #define UNDEADCHUNKS_COUNT (2 * World::ChunkCacheSize + World::ChunkCacheSize * World::ChunkCacheSize)
 
 
-typedef enum { WorldGen_Smea, WorldGen_SuperFlat, WorldGen_Empty, WorldGenTypes_Count } WorldGenType;
-typedef enum { Gamemode_Survival, Gamemode_Creative,Gamemode_Adventure,Gamemode_Spectator,Gamemode_Count } gamemode;
+typedef enum {
+    Smea,
+    SuperFlat,
+    Empty,
+    WorldGenTypes_Count
+} WorldGenType;
+
+typedef enum {
+    Survival,
+    Creative,
+    adventure,
+    Spectator,
+    Gamemode_Count
+} Gamemode;
+
 typedef struct {
 	uint64_t seed;
 	WorldGenType type;
@@ -26,12 +39,12 @@ typedef struct {
 
 class World {
 public:
-    enum {
-        Height = 256,
-        ChunkCacheSize = 9,
-        ChunkPoolSize = World::ChunkCacheSize * World::ChunkCacheSize + UNDEADCHUNKS_COUNT,
-        NameSize = 12
-    };
+
+    constexpr static int Height = 256;
+    constexpr static int ChunkCacheSize = 9;
+    constexpr static int ChunkPoolSize = World::ChunkCacheSize * World::ChunkCacheSize + UNDEADCHUNKS_COUNT;
+    constexpr static int NameSize = 12;
+
 
     World(WorkQueue* workqueue);
     ~World() = default;

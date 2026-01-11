@@ -15,7 +15,7 @@ World::World(WorkQueue *workqueue) {
     m_workqueue = workqueue;
 
     genSettings.seed = 28112000;
-    genSettings.type = WorldGen_Empty; // as it should be
+    genSettings.type = WorldGenType::Empty; // as it should be
 
     m_freeChunkColums.clear();
 
