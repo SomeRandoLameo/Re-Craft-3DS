@@ -10,7 +10,7 @@
 
 typedef struct {
     std::array<char, World::NameSize> worldName;
-    GeneratorSettings settings;    
+    GeneratorSettings settings;
 } WorldSelect_Result;
 
 typedef struct {
@@ -43,8 +43,8 @@ static WorldGenType worldGenType = WorldGenType::SuperFlat;
 
 static Gamemode gamemode1 = Gamemode::Survival;
 
-static constexpr std::array<std::string_view, 4> gamemodestr = {"Survival", "Creative", "Adventure", "Spectator"};
-static constexpr std::array<std::string_view, 2> worldGenTypesStr = {"Smea", "Superflat"};
+static constexpr std::array<const char*, 4> gamemodestr = {"Survival", "Creative", "Adventure", "Spectator"};
+static constexpr std::array<const char*, 3> worldGenTypesStr = {"Smea", "Superflat", "Empty"};
 
 static MenuState menustate = MenuState::WorldSelect;
 
@@ -56,11 +56,11 @@ static WorldGenType worldType;
 static bool newWorld = false;
 
 
-
 void WorldSelect_Init();
 void WorldSelect_Deinit();
 
-void WorldSelect_RenderTop(Clouds* m_clouds, int m_world_shader_uLocProjection, int eyeIndex, float iod, World* m_world, C3D_Tex* m_logoTex);
+void WorldSelect_RenderTop(Clouds* m_clouds, int m_world_shader_uLocProjection, int eyeIndex, float iod, World* m_world,
+                           C3D_Tex* m_logoTex);
 void WorldSelect_RenderBot();
 
 void WorldSelect_Update(Player* player);
