@@ -76,10 +76,12 @@ cd server
 cd ..
 cmake --build . --target start-server
 ```
+The server runs as an "offline/cracked" server. You can modify `server.properties` in the server folder if needed.
+Online mode is not (yet) supported.
 
-**Configure connection:**
+**Connecting to the Server:**
 ```bash
-# Get your local IP address
+# Get your local IP address (The IP where you ran the java server)
 # Windows:
 ipconfig
 
@@ -90,27 +92,34 @@ ip -4 addr show
 
 # Look for an address like:
 # 192.168.x.x, 172.x.x.x, 10.x.x.x, or 127.0.0.1 (localhost only)
+# Note this address
 ```
 
-**Update MCBridge with your IP:**
-1. Open `MCBridge.cpp` (or relevant file)
-2. Replace the hardcoded IP with your local IP address (the IP from the Minecraft server you started)
-3. Change the username if desired
-4. Rebuild and reinstall:
-```bash
-cd build
-make Re_Craft_3dsx
-make send
-```
+Then think of a username. Eg: "Nintendo3DS".
 
-The server runs as an "offline" superflat server. You can modify `server.properties` in the server folder if needed.
-Online mode is not (yet) supported.
+When you launched the rom, press on MP CON. You will be asked about the IP Address of the server, then your Username.
 
-*SIDENOTE*: In order to connect to the offline dev server, your 3DS *NEEDS TO BE ON THE SAME NETWORK AS THE SERVER*, otherwise this wont connect and may crash
+*SIDENOTE*: In order to connect to the offline dev server, your 3DS *NEEDS TO BE ON THE SAME NETWORK AS THE SERVER*, otherwise this wont connect and will crash
+
+After submitting both, the Game should freeze for about 30 seconds.
+then: 
+- The o3DS will disconnect because it took too long to decode the data 
+- The emulator (azahar in this case) will have a graphical bug and should disconnect as well.
+- The n3DS connects just fine
+
+This is tested and expected behavour.
+
+When the Client disconnects, you are still able to explore the downloaded chunks, but nothing will update and its very likely to crash.
+
+When playing on the server, the actual player wont move, so no new chunks will be downloaded for now. The client still can explore the Downloaded chunks and see changes another player makes.
 
 ### Roadmap
 There is a [project board](https://github.com/users/SomeRandoLameo/projects/2/views/2). if you want to contribute, but dont know where to start, check it out. 
 It has priorities and is organized for easy navigation.
+
+### Communication
+If you have any questions regarding this project or you want to show this project in a youtube video or anywhere else, please contact me on Discord!
+My Tag is "SomeRandoLameo"!
 
 ### Credits
 - Network engine bits from [mclib-3ds](https://github.com/SomeRandoLameo/mclib-3ds)
