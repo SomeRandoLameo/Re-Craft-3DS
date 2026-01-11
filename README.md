@@ -92,18 +92,7 @@ ip -4 addr show
 # 192.168.x.x, 172.x.x.x, 10.x.x.x, or 127.0.0.1 (localhost only)
 ```
 
-**Update MCBridge with your IP:**
-1. Open `MCBridge.cpp` (or relevant file)
-2. Replace the hardcoded IP with your local IP address (the IP from the Minecraft server you started)
-3. Change the username if desired
-4. Rebuild and reinstall:
-```bash
-cd build
-make Re_Craft_3dsx
-make send
-```
-
-The server runs as an "offline" superflat server. You can modify `server.properties` in the server folder if needed.
+The server runs as an "offline/cracked" server. You can modify `server.properties` in the server folder if needed.
 Online mode is not (yet) supported.
 
 *SIDENOTE*: In order to connect to the offline dev server, your 3DS *NEEDS TO BE ON THE SAME NETWORK AS THE SERVER*, otherwise this wont connect and may crash
