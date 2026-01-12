@@ -116,6 +116,7 @@ When playing on the server, the actual player wont move, so no new chunks will b
 ### Roadmap
 There is a [project board](https://github.com/users/SomeRandoLameo/projects/2/views/2). if you want to contribute, but dont know where to start, check it out. 
 It has priorities and is organized for easy navigation.
+Be sure to read the [CONTRIBUTION GUIDELINES](CONTRIBUTING.md) before changing things.
 
 ### Communication
 If you have any questions regarding this project or you want to show this project in a youtube video or anywhere else, please contact me on Discord!
