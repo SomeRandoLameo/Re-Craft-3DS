@@ -43,6 +43,8 @@ public:
     bool jumped = false;
     bool sprinting = false;
     bool flying = false;
+
+    bool releasedCrouch = false;
     bool crouching = false;
 
 
@@ -65,7 +67,7 @@ public:
 
     int difficulty = 1;
 
-    float rndy = 0.f;
+    float rndy = 0.f; // whatever this is
 
     mc::Vector3d spawnPos = mc::Vector3d(0, 0, 0);
 

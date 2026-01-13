@@ -9,6 +9,15 @@ const float MaxWalkVelocity = 4.3f;
 const float MaxFallVelocity = -50.f;
 const float GravityPlusFriction = 10.f;
 
+// TODO: [Server thread/WARN]: Nintendo3DS moved too quickly!
+// This playercontroller needs to be rewritten to move like a proper Minecraft player.
+// This implementation seems off and is just craftus at core.
+// Since we are aiming for Minecraft compatibility, this needs to be fixed and adjusted to controller.
+
+// Also, this player is a mess code-wise.
+// This needs to be restructured into an entity base class and player derived class. (Entity because mobs, Particles, TileEntities etc. will share a lot of code too.)
+// Inventory should also be separated.
+
 Player::Player(World* world) {
     m_world = world;
 
@@ -159,7 +168,7 @@ void Player::UpdateMovement(PlayerControlScheme m_controlScheme, InputData input
         m_flyTimer = 0.f;
     }
 
-    bool releasedCrouch = in.WasKeyReleased(m_controlScheme.crouch, &in);
+    releasedCrouch = in.WasKeyReleased(m_controlScheme.crouch, &in);
     crouching ^= !flying && releasedCrouch;
 
     bool switchBlockLeft  = in.WasKeyPressed(m_controlScheme.switchBlockLeft, &in);

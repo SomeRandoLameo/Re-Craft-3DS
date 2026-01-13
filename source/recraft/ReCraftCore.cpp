@@ -235,16 +235,27 @@ void ReCraftCore::ExitMultiplayer() {
 void ReCraftCore::RunMultiPlayer(InputData inputData) {
     if (m_mcBridge.isConnected()) {
         m_mcBridge.withClient([&](mc::core::Client* client, mc::protocol::packets::PacketDispatcher* dispatcher) {
-            //m_player->position = client->GetPlayerController()->GetPosition();
 
-            // TODO: This is baaaad :D
-            //client->GetPlayerController()->Move(mc::Vector3d(-m_playerCtrl->movement.x * (0.125 / 2),
-            //                                                 -m_playerCtrl->movement.y * (0.125 / 2),
-             //                                                -m_playerCtrl->movement.z * (0.125 / 2)));
+            // TODO: Move this into some NetworkPlayer class that gets updated from here.
+            // NetworkPlayer needs to listen to the server propperly to initialize the player (eg. setting position, rotation and much more)
+            // TODO: Yaw is inverted, Server recieves movement as jittery, might be mclib
+            mc::protocol::packets::out::PlayerPositionAndLookPacket response(m_player->position, m_player->yaw * 180.0f / 3.14159f, m_player->pitch * 180.0f / 3.14159f, m_player->grounded);
+            client->GetConnection()->SendPacket(&response);
 
-            client->GetPlayerController()->SetPitch(-m_playerCtrl->player->pitch);
-            client->GetPlayerController()->SetYaw(-m_playerCtrl->player->yaw);
+            //Experimental, doesnt work
+            //if (m_player->crouching && m_player->releasedCrouch) {
+            //    mc::protocol::packets::out::EntityActionPacket packet(0, mc::protocol::packets::out::EntityActionPacket::Action::StopSneak);
+            //
+            //    client->GetConnection()->SendPacket(&packet);
+            //
+            //    m_player->crouching = false;
+            //} else if (!m_player->crouching && !m_player->releasedCrouch) {
+            //    mc::protocol::packets::out::EntityActionPacket packet(0, mc::protocol::packets::out::EntityActionPacket::Action::StartSneak);
 
+            //    client->GetConnection()->SendPacket(&packet);
+
+            //    m_player->crouching = true;
+            //}
 
             /*
              // TODO: packet spam prevention... This is enough for now

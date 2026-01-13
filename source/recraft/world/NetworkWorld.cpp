@@ -33,6 +33,7 @@ void NetworkWorld::Test() {
 
 
 //TODO: We still need some form of block registry to propperly read chunk block data and match it with craftus blocks. This is temporarly redirected through the MCBridge.
+//TODO: DEAR GOD we need this to be asynchronous otherwise this stuff will freeze as hell when new chunks are being loaded.
 void NetworkWorld::HandlePacket(mc::protocol::packets::in::ChunkDataPacket* packet) {
     auto sourceColumn = packet->GetChunkColumn();
     auto meta = sourceColumn->GetMetadata();
@@ -68,7 +69,7 @@ void NetworkWorld::HandlePacket(mc::protocol::packets::in::ChunkDataPacket* pack
 }
 
 void NetworkWorld::HandlePacket(mc::protocol::packets::in::UnloadChunkPacket* packet) {
-    //m_world->
+    m_world->UnloadChunk(m_world->GetChunkColumn(packet->GetChunkX(), packet->GetChunkZ()));
 }
 
 void NetworkWorld::HandlePacket(mc::protocol::packets::in::MultiBlockChangePacket* packet) {

@@ -109,6 +109,7 @@ ChunkColumnPtr World::LoadChunk(int x, int z) {
     return NULL;
 }
 
+//TODO: if online == true: dont save, else: save.
 void World::UnloadChunk(ChunkColumnPtr column) {
 	WorkQueue_AddItem(m_workqueue, (WorkerItem){WorkerItemType::Save, column});
     m_freeChunkColums.push_back(column);

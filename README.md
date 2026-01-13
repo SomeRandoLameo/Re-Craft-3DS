@@ -109,9 +109,9 @@ then:
 
 This is tested and expected behavour.
 
-When the Client disconnects, you are still able to explore the downloaded chunks, but nothing will update and its very likely to crash.
+When the Client disconnects, you are still able to explore the downloaded chunks, but nothing will update and its very likely to crash. This is normal for now.
 
-When playing on the server, the actual player wont move, so no new chunks will be downloaded for now. The client still can explore the Downloaded chunks and see changes another player makes.
+When playing on the server, new chunks will get loaded when nessessary, causing some lag spikes. Move around if they dont stop. This is normal for as well.
 
 ### Roadmap
 There is a [project board](https://github.com/users/SomeRandoLameo/projects/2/views/2). if you want to contribute, but dont know where to start, check it out. 
