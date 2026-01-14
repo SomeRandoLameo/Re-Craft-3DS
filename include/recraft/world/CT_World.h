@@ -97,6 +97,8 @@ private:
     Xorshift32 m_randomTickGen;
 
     int m_weather;
+
+    void NotifyNeighbors(ChunkColumnPtr column, int chunkX, int chunkZ, int localX, int localZ, int y);
 };
 
 // Helper functions remain as free functions

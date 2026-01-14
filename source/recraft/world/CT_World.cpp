@@ -106,7 +106,7 @@ ChunkColumnPtr World::LoadChunk(int x, int z) {
     }
 
     // No chunks available (all in use or running tasks)
-    return NULL;
+    return nullptr;
 }
 
 
@@ -132,112 +132,172 @@ void World::UnloadChunk(ChunkColumnPtr column) {
     column->references--;
 }
 
-ChunkColumnPtr World::GetChunkColumn(int x, int z) {
-	int halfS = World::ChunkCacheSize / 2;
-	int lowX = cacheTranslationX - halfS;
-	int lowZ = cacheTranslationZ - halfS;
-	int highX = cacheTranslationX + halfS;
-	int highZ = cacheTranslationZ + halfS;
-	if (x >= lowX && z >= lowZ && x <= highX && z <= highZ) return columnCache[x - lowX][z - lowZ];
-	return nullptr;
-}
+ChunkColumnPtr World::GetChunkColumn(int chunkX, int chunkZ) {
+    int halfCacheSize = ChunkCacheSize / 2;
+    int cacheMinX = cacheTranslationX - halfCacheSize;
+    int cacheMinZ = cacheTranslationZ - halfCacheSize;
 
-Block World::GetBlock( mc::Vector3i position) {
-	if (position.y < 0 || position.y >= World::Height) return Block::Air;
-	ChunkColumnPtr chunk = GetChunkColumn(WorldToChunkCoord(position.x), WorldToChunkCoord(position.z));
-	if (chunk) return chunk->GetBlock(mc::Vector3i(WorldToLocalCoord(position.x), position.y, WorldToLocalCoord(position.z)));
-	return Block::Air;
-}
-
-static void NotifyNeighbor(int axis, int comp, World* world, int cX, int cZ, int y, int xDiff, int zDiff) {
-    if (axis == comp) {
-        ChunkColumnPtr neighborChunk = world->GetChunkColumn(cX + xDiff, cZ + zDiff);
-        if (neighborChunk) {
-            neighborChunk->RequestGraphicsUpdate(y / Chunk::Size);
-        }
+    if (chunkX < cacheMinX || chunkZ < cacheMinZ) {
+        return nullptr;
     }
+
+    int cacheIndexX = chunkX - cacheMinX;
+    int cacheIndexZ = chunkZ - cacheMinZ;
+
+    if (cacheIndexX >= ChunkCacheSize || cacheIndexZ >= ChunkCacheSize) {
+        return nullptr;
+    }
+
+    return columnCache[cacheIndexX][cacheIndexZ];
 }
 
-static void NotifyAllNeighbors(ChunkColumnPtr column, World* world, int cX, int cZ, int lX, int lZ, int y) {
-    NotifyNeighbor(lX, 0, world, cX, cZ, y, -1, 0);
-    NotifyNeighbor(lX, 15, world, cX, cZ, y, 1, 0);
-    NotifyNeighbor(lZ, 0, world, cX, cZ, y, 0, -1);
-    NotifyNeighbor(lZ, 15, world, cX, cZ, y, 0, 1);
-
-    if (WorldToLocalCoord(y) == 0 && y / Chunk::Size - 1 >= 0) {
-        column->RequestGraphicsUpdate(y / Chunk::Size - 1);
+Block World::GetBlock(mc::Vector3i position) {
+    if (position.y < 0 || position.y >= World::Height) {
+        return Block::Air;
     }
-    if (WorldToLocalCoord(y) == 15 && y / Chunk::Size + 1 < ChunkColumn::ChunksPerColumn) {
-        column->RequestGraphicsUpdate(y / Chunk::Size + 1);
+
+    ChunkColumnPtr chunk = GetChunkColumn(
+        WorldToChunkCoord(position.x),
+        WorldToChunkCoord(position.z)
+    );
+
+    if (!chunk) {
+        return Block::Air;
+    }
+
+    position.x = WorldToLocalCoord(position.x);
+    position.z = WorldToLocalCoord(position.z);
+    return chunk->GetBlock(position);
+}
+
+/**
+ * Notifies neighboring chunks to update their graphics when a block changes.
+ *
+ * When a block is placed or modified on a chunk boundary, adjacent chunks need to
+ * regenerate their meshes to properly render the change. This function checks if
+ * the block is on any chunk edge and notifies the appropriate neighbors.
+ *
+ * @param column The chunk column containing the modified block
+ * @param chunkX X-coordinate of the chunk in world space
+ * @param chunkZ Z-coordinate of the chunk in world space
+ * @param localX X-coordinate within the chunk (0-15)
+ * @param localZ Z-coordinate within the chunk (0-15)
+ * @param y World-space Y-coordinate of the modified block
+ */
+void World::NotifyNeighbors(ChunkColumnPtr column, int chunkX, int chunkZ, int localX, int localZ, int y) {
+    int chunkY = y / Chunk::Size;
+
+    if (localX == 0) {
+        ChunkColumnPtr chunk = GetChunkColumn(chunkX - 1, chunkZ);
+        if (chunk) chunk->RequestGraphicsUpdate(chunkY);
+    }
+
+    if (localX == 15) {
+        ChunkColumnPtr chunk = GetChunkColumn(chunkX + 1, chunkZ);
+        if (chunk) chunk->RequestGraphicsUpdate(chunkY);
+    }
+
+    if (localZ == 0) {
+        ChunkColumnPtr chunk = GetChunkColumn(chunkX, chunkZ - 1);
+        if (chunk) chunk->RequestGraphicsUpdate(chunkY);
+    }
+
+    if (localZ == 15) {
+        ChunkColumnPtr chunk = GetChunkColumn(chunkX, chunkZ + 1);
+        if (chunk) chunk->RequestGraphicsUpdate(chunkY);
+    }
+
+    int localY = WorldToLocalCoord(y);
+    if (localY == 0 && chunkY > 0) {
+        column->RequestGraphicsUpdate(chunkY - 1);
+    }
+    if (localY == 15 && chunkY + 1 < ChunkColumn::ChunksPerColumn) {
+        column->RequestGraphicsUpdate(chunkY + 1);
     }
 }
 
 void World::SetBlock(mc::Vector3i position, Block block) {
 	if (position.y < 0 || position.y >= World::Height) return;
-	int cX = WorldToChunkCoord(position.x);
-	int cZ = WorldToChunkCoord(position.z);
-	ChunkColumnPtr column = GetChunkColumn(cX, cZ);
-	if (column) {
-		int lX = WorldToLocalCoord(position.x);
-		int lZ = WorldToLocalCoord(position.z);
-        column->SetBlock(mc::Vector3i(lX, position.y, lZ), block);
+	int chunkX = WorldToChunkCoord(position.x);
+	int chunkZ = WorldToChunkCoord(position.z);
 
-        NotifyAllNeighbors(column,this, cX,cZ,lX,lZ,position.y);
+	ChunkColumnPtr column = GetChunkColumn(chunkX, chunkZ);
+	if (column) {
+		int localX = WorldToLocalCoord(position.x);
+		int localZ = WorldToLocalCoord(position.z);
+        column->SetBlock(mc::Vector3i(localX, position.y, localZ), block);
+
+        NotifyNeighbors(column, chunkX, chunkZ, localX, localZ, position.y);
 	}
 }
 
 void World::SetBlockAndMeta(mc::Vector3i position, Block block, uint8_t metadata) {
 	if (position.y < 0 || position.y >= World::Height) return;
-	int cX = WorldToChunkCoord(position.x);
-	int cZ = WorldToChunkCoord(position.z);
-	ChunkColumnPtr chunk = GetChunkColumn(cX, cZ);
-	if (chunk) {
-		int lX = WorldToLocalCoord(position.x);
-		int lZ = WorldToLocalCoord(position.z);
-        chunk->SetBlockAndMeta(mc::Vector3i(lX, position.y, lZ), block, metadata);
+	int chunkX = WorldToChunkCoord(position.x);
+	int chunkZ = WorldToChunkCoord(position.z);
 
-        NotifyAllNeighbors(chunk,this,cX,cZ,lX,lZ,position.y);
+	ChunkColumnPtr chunk = GetChunkColumn(chunkX, chunkZ);
+	if (chunk) {
+		int localX = WorldToLocalCoord(position.x);
+		int localZ = WorldToLocalCoord(position.z);
+        chunk->SetBlockAndMeta(mc::Vector3i(localX, position.y, localZ), block, metadata);
+
+        NotifyNeighbors(chunk, chunkX, chunkZ, localX, localZ, position.y);
 	}
 }
 
 uint8_t World::GetMetadata(mc::Vector3i position) {
-	if (position.y < 0 || position.y >= World::Height) return 0;
-	ChunkColumnPtr chunk = GetChunkColumn(WorldToChunkCoord(position.x), WorldToChunkCoord(position.z));
-	if (chunk) return chunk->GetMetadata(mc::Vector3i(WorldToLocalCoord(position.x), position.y, WorldToLocalCoord(position.z)));
-	return 0;
+    if (position.y < 0 || position.y >= World::Height) {
+        return 0;
+    }
+
+    int chunkX = WorldToChunkCoord(position.x);
+    int chunkZ = WorldToChunkCoord(position.z);
+    ChunkColumnPtr chunk = GetChunkColumn(chunkX, chunkZ);
+
+    if (!chunk) {
+        return 0;
+    }
+
+    int localX = WorldToLocalCoord(position.x);
+    int localZ = WorldToLocalCoord(position.z);
+    return chunk->GetMetadata(mc::Vector3i(localX, position.y, localZ));
 }
 
 void World::SetMetadata(mc::Vector3i position, uint8_t metadata) {
 	if (position.y < 0 || position.y >= World::Height) return;
-	int cX = WorldToChunkCoord(position.x);
-	int cZ = WorldToChunkCoord(position.z);
-	ChunkColumnPtr chunk = GetChunkColumn(cX, cZ);
-	if (chunk) {
-		int lX = WorldToLocalCoord(position.x);
-		int lZ = WorldToLocalCoord(position.z);
-        chunk->SetMetadata(mc::Vector3i(lX, position.y, lZ), metadata);
+	int chunkX = WorldToChunkCoord(position.x);
+	int chunkZ = WorldToChunkCoord(position.z);
 
-        NotifyAllNeighbors(chunk,this,cX,cZ,lX,lZ,position.y);
+	ChunkColumnPtr chunk = GetChunkColumn(chunkX, chunkZ);
+	if (chunk) {
+		int localX = WorldToLocalCoord(position.x);
+		int localZ = WorldToLocalCoord(position.z);
+        chunk->SetMetadata(mc::Vector3i(localX, position.y, localZ), metadata);
+
+        NotifyNeighbors(chunk, chunkX, chunkZ, localX, localZ, position.y);
 	}
 }
 
 int World::GetHeight(int x, int z) {
-	int cX = WorldToChunkCoord(x);
-	int cZ = WorldToChunkCoord(z);
-	ChunkColumnPtr chunk = GetChunkColumn(cX, cZ);
-	if (chunk) {
-		int lX = WorldToLocalCoord(x);
-		int lZ = WorldToLocalCoord(z);
+	int chunkX = WorldToChunkCoord(x);
+	int chunkZ = WorldToChunkCoord(z);
 
-		return chunk->GetHeightMap(lX, lZ);
+	ChunkColumnPtr chunk = GetChunkColumn(chunkX, chunkZ);
+	if (chunk) {
+		int localX = WorldToLocalCoord(x);
+		int localZ = WorldToLocalCoord(z);
+
+		return chunk->GetHeightMap(localX, localZ);
 	}
+
 	return 0;
 }
 
 void World::UpdateChunkCache(int orginX, int orginZ) {
 	if (orginX != cacheTranslationX || orginZ != cacheTranslationZ) {
-		ChunkColumnPtr tmpBuffer[World::ChunkCacheSize][World::ChunkCacheSize];
-		memcpy(tmpBuffer, columnCache, sizeof(tmpBuffer));
+		ChunkColumnPtr newCache[World::ChunkCacheSize][World::ChunkCacheSize];
+		memcpy(newCache, columnCache, sizeof(newCache));
 
 		int oldBufferStartX = cacheTranslationX - World::ChunkCacheSize / 2;
 		int oldBufferStartZ = cacheTranslationZ - World::ChunkCacheSize / 2;
@@ -245,24 +305,24 @@ void World::UpdateChunkCache(int orginX, int orginZ) {
 		int diffX = orginX - cacheTranslationX;
 		int diffZ = orginZ - cacheTranslationZ;
 
-		for (int i = 0; i < World::ChunkCacheSize; i++) {
-			for (int j = 0; j < World::ChunkCacheSize; j++) {
-				int wx = orginX + (i - World::ChunkCacheSize / 2);
-				int wz = orginZ + (j - World::ChunkCacheSize / 2);
-				if (wx >= oldBufferStartX && wx < oldBufferStartX + World::ChunkCacheSize && wz >= oldBufferStartZ &&
-				    wz < oldBufferStartZ + World::ChunkCacheSize) {
-                    columnCache[i][j] = tmpBuffer[i + diffX][j + diffZ];
-					tmpBuffer[i + diffX][j + diffZ] = NULL;
+		for (int x = 0; x < World::ChunkCacheSize; x++) {
+			for (int z = 0; z < World::ChunkCacheSize; z++) {
+				int worldX = orginX + (x - World::ChunkCacheSize / 2);
+				int worldZ = orginZ + (z - World::ChunkCacheSize / 2);
+				if (worldX >= oldBufferStartX && worldX < oldBufferStartX + World::ChunkCacheSize && worldZ >= oldBufferStartZ &&
+                    worldZ < oldBufferStartZ + World::ChunkCacheSize) {
+                    columnCache[x][z] = newCache[x + diffX][z + diffZ];
+                    newCache[x + diffX][z + diffZ] = nullptr;
 				} else {
-                    columnCache[i][j] = LoadChunk(wx, wz);
+                    columnCache[x][z] = LoadChunk(worldX, worldZ);
 				}
 			}
 		}
 
-		for (int i = 0; i < World::ChunkCacheSize; i++) {
-			for (int j = 0; j < World::ChunkCacheSize; j++) {
-				if (tmpBuffer[i][j] != NULL) {
-					UnloadChunk(tmpBuffer[i][j]);
+		for (int x = 0; x < World::ChunkCacheSize; x++) {
+			for (int z = 0; z < World::ChunkCacheSize; z++) {
+				if (newCache[x][z] != nullptr) {
+					UnloadChunk(newCache[x][z]);
 				}
 			}
 		}
@@ -290,6 +350,7 @@ void World::UpdateChunkCache(int orginX, int orginZ) {
  */
 void World::Tick() {
     // Iterate through all chunks in the cache
+    // This logic is ideally only executed on singleplayer worlds, since multiplayer servers handle chunk generation themselves and we just read the data.
     for (int x = 0; x < World::ChunkCacheSize; x++) {
         for (int z = 0; z < World::ChunkCacheSize; z++) {
             ChunkColumn *chunk = columnCache[x][z];
@@ -306,9 +367,9 @@ void World::Tick() {
 
                 // Check if all 3x3 neighboring chunks (including self) have base terrain generated
                 bool clear = true;
-                for (int xOff = -1; xOff < 2 && clear; xOff++) {
-                    for (int zOff = -1; zOff < 2 && clear; zOff++) {
-                        ChunkColumn *borderChunk = columnCache[x + xOff][z + zOff];
+                for (int xOffset = -1; xOffset < 2 && clear; xOffset++) {
+                    for (int zOffset = -1; zOffset < 2 && clear; zOffset++) {
+                        ChunkColumn *borderChunk = columnCache[x + xOffset][z + zOffset];
                         // Neighbor must have terrain generated and no running tasks
                         if (borderChunk->genProgress == ChunkGen_Empty || !borderChunk->tasksRunning)
                             clear = false;
