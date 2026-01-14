@@ -6,6 +6,7 @@ NetworkWorld::NetworkWorld(World* world, mc::protocol::packets::PacketDispatcher
     : mc::protocol::packets::PacketHandler(dispatcher)
 {
     this->m_world = world;
+    this->m_world->online = true;
 
     dispatcher->RegisterHandler(mc::protocol::State::Play, mc::protocol::play::MultiBlockChange, this);
     dispatcher->RegisterHandler(mc::protocol::State::Play, mc::protocol::play::BlockChange, this);
@@ -18,6 +19,7 @@ NetworkWorld::NetworkWorld(World* world, mc::protocol::packets::PacketDispatcher
 
 NetworkWorld::~NetworkWorld() {
     GetDispatcher()->UnregisterHandler(this);
+    this->m_world->online = false;
 }
 
 //TODO: Load a full chunk (16x16x16) with dirt blocks locally for testing
@@ -78,9 +80,6 @@ void NetworkWorld::HandlePacket(mc::protocol::packets::in::MultiBlockChangePacke
 
 void NetworkWorld::HandlePacket(mc::protocol::packets::in::BlockChangePacket* packet) {
     mc::block::BlockPtr newBlock = mc::block::BlockRegistry::GetInstance()->GetBlock((u16)packet->GetBlockId());
-    auto pos = packet->GetPosition();
-    //mc::block::BlockPtr oldBlock = m_world->GetBlock(pos);
-
     m_world->SetBlock(packet->GetPosition(), MCBridge::MCLibBlockToCTBlock(newBlock->GetType()));
 }
 
@@ -88,8 +87,6 @@ void NetworkWorld::HandlePacket(mc::protocol::packets::in::ExplosionPacket* pack
     mc::Vector3d explosionPos = packet->GetPosition();
     for (mc::Vector3s offset : packet->GetAffectedBlocks()) {
         mc::Vector3d absolutePos = explosionPos + mc::ToVector3d(offset);
-
-        // Set all affected blocks to air
         m_world->SetBlock(mc::ToVector3i(absolutePos), MCBridge::MCLibBlockToCTBlock(0));
     }
 }

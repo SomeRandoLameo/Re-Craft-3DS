@@ -109,9 +109,11 @@ ChunkColumnPtr World::LoadChunk(int x, int z) {
     return NULL;
 }
 
-//TODO: if online == true: dont save, else: save.
+
 void World::UnloadChunk(ChunkColumnPtr column) {
-	WorkQueue_AddItem(m_workqueue, (WorkerItem){WorkerItemType::Save, column});
+
+    if(!online) WorkQueue_AddItem(m_workqueue, (WorkerItem){WorkerItemType::Save, column});
+
     m_freeChunkColums.push_back(column);
 
     for (int i = 0; i < ChunkColumn::ChunksPerColumn; ++i) {
@@ -130,7 +132,6 @@ void World::UnloadChunk(ChunkColumnPtr column) {
     column->references--;
 }
 
-// Do we really need to cache chunks in general?
 ChunkColumnPtr World::GetChunkColumn(int x, int z) {
 	int halfS = World::ChunkCacheSize / 2;
 	int lowX = cacheTranslationX - halfS;

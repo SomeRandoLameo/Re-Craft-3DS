@@ -75,18 +75,22 @@ public:
     int GetWeather() const { return m_weather; }
     void SetWeather(int newWeather) { m_weather = newWeather; }
 
+    bool online = false;
+
     int cacheTranslationX, cacheTranslationZ;
     GeneratorSettings genSettings;
 
     ChunkColumnPtr columnCache[ChunkCacheSize][ChunkCacheSize];
     char name[NameSize];
 
-    ChunkColumn m_chunkChunkPool[ChunkPoolSize];
-    std::vector<ChunkColumnPtr> m_freeChunkColums;
+
 
     VBOCache vboCache;
 private:
     int m_HighestBlock;
+
+    ChunkColumn m_chunkChunkPool[ChunkPoolSize];
+    std::vector<ChunkColumnPtr> m_freeChunkColums;
 
     WorkQueue* m_workqueue;
 
