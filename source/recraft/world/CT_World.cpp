@@ -151,6 +151,16 @@ ChunkColumnPtr World::GetChunkColumn(int chunkX, int chunkZ) {
     return columnCache[cacheIndexX][cacheIndexZ];
 }
 
+
+mc::block::BlockEntityPtr World::GetBlockEntity(mc::Vector3i pos) {
+    ChunkColumnPtr col = GetChunkColumn(pos.x, pos.z);
+
+    if (!col) return nullptr;
+
+    return col->GetBlockEntity(pos);
+}
+
+
 Block World::GetBlock(mc::Vector3i position) {
     if (position.y < 0 || position.y >= World::Height) {
         return Block::Air;

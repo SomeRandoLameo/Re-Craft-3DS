@@ -91,7 +91,16 @@ void NetworkWorld::HandlePacket(mc::protocol::packets::in::ExplosionPacket* pack
     }
 }
 
-void NetworkWorld::HandlePacket(mc::protocol::packets::in::UpdateBlockEntityPacket* packet) {}
+void NetworkWorld::HandlePacket(mc::protocol::packets::in::UpdateBlockEntityPacket* packet) {
+    mc::Vector3i pos = packet->GetPosition();
+
+    mc::block::BlockEntityPtr entity = packet->GetBlockEntity();
+
+    if (entity){
+        // this is probably wrong but i cannot test this yet sadly...
+        m_world->GetChunkColumn(pos.x, pos.z)->AddBlockEntity(entity);
+    }
+}
 
 void NetworkWorld::HandlePacket(mc::protocol::packets::in::RespawnPacket* packet) {}
 

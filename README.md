@@ -16,7 +16,6 @@ The game should run in theory. If not: create an issue and steps to recreate it.
 - submodules
   - [mclib-3ds](https://github.com/SomeRandoLameo/mclib-3ds)
   - [amethyst](https://github.com/tobid7/amethyst)
-  - [imgui-ctr](https://github.com/tobid7/imgui-impl-ctr/tree/e67a33579fa6424171ec1a583b6baffa077ee2d3)
   - [imgui-impl-ctr](https://github.com/tobid7/imgui-impl-ctr)
   - [stb](https://github.com/nothings/stb/tree/f1c79c02822848a9bed4315b12c8c8f3761e1296)
 

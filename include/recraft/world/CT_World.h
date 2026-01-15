@@ -57,6 +57,8 @@ public:
 
     ChunkColumnPtr GetChunkColumn(int x, int z);
 
+    mc::block::BlockEntityPtr GetBlockEntity(mc::Vector3i pos);
+
     Block GetBlock(mc::Vector3i position);
     void SetBlock(mc::Vector3i position, Block block);
     uint8_t GetMetadata(mc::Vector3i position);

@@ -4,6 +4,7 @@
 
 #include "../misc/Xorshift.h"
 #include "../rendering/VBOCache.h"
+#include "mclib/block/BlockEntity.h"
 
 #include <array>
 #include <stdbool.h>
@@ -124,8 +125,20 @@ public:
     void SetBlock(mc::Vector3i position, Block block);
 
     void SetBlockAndMeta(mc::Vector3i position, Block block, uint8_t metadata);
+
+    void AddBlockEntity(mc::block::BlockEntityPtr blockEntity) {
+        m_BlockEntities.insert(std::make_pair(blockEntity->GetPosition(), blockEntity));
+    }
+
+    void RemoveBlockEntity(mc::Vector3i pos) {
+        m_BlockEntities.erase(pos);
+    }
+
+    mc::block::BlockEntityPtr GetBlockEntity(mc::Vector3i worldPos);
+    std::vector<mc::block::BlockEntityPtr> GetBlockEntities();
 private:
     std::array<Chunk, ChunksPerColumn> m_chunks;
+    std::map<mc::Vector3i, mc::block::BlockEntityPtr> m_BlockEntities;
 };
 
 typedef ChunkColumn* ChunkColumnPtr;
