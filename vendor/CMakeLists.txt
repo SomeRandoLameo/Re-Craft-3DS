@@ -17,6 +17,7 @@ add_library(sino STATIC sino/sino.c)
 target_include_directories(sino PUBLIC .)
 
 # ImGui
+set(IMGUICTR_IMGUI_VERSION "v1.90.9-docking" CACHE STRING "" FORCE)
 add_subdirectory(imgui-ctr)
 
 # STB Libraries
