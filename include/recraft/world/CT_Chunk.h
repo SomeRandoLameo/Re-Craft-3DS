@@ -37,6 +37,16 @@ public:
 	uint32_t vboRevision;
 	bool forceVBOUpdate;
 
+    Block GetBlock(mc::Vector3i pos) const {
+        return m_blocks[pos.x + pos.y * Size + pos.z * Size * Size];
+    }
+
+    /// DO NOT USE THIS MANUALLY
+    void SetBlock(mc::Vector3i pos, Block block) {
+        m_blocks[pos.x + pos.y * Size + pos.z * Size * Size] = block;
+    }
+
+    //TODO: REMOVE
     Block GetBlock(int x, int y, int z) const {
         return m_blocks[x + y * Size + z * Size * Size];
     }
