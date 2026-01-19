@@ -217,12 +217,9 @@ void ReCraftCore::InitMultiPlayer() {
         m_world->Tick();
     }
 
-    //m_networkWorld->Test(); // Loading test blocks into world
-
     m_player->position = mc::Vector3d(0,63,0);
 
     m_mcBridge.startBackgroundThread();
-    //m_gamestate = GameState::Playing;
     m_gamestate = GameState::Playing_OnLine;
 }
 

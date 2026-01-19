@@ -92,6 +92,7 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC
     -D_GNU_SOURCE=1
     -DGIT_COMMIT="${GIT_SHORT_HASH}"
     -DGIT_BRANCH="${GIT_BRANCH}"
+    -DSAVE_DIR="recraft"
 )
 target_compile_options(${PROJECT_NAME} PUBLIC
     -Wno-changes-meaning

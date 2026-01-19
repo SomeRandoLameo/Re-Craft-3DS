@@ -13,7 +13,7 @@ void Crash(const char* reason, ...) {
 	va_start(vl, reason);
 	vprintf(reason, vl);
 
-	FILE* f = fopen("sdmc:/craftus_redesigned/crash.txt", "w");
+	FILE* f = fopen("sdmc:/" SAVE_DIR "/crash.txt", "w");
 	vfprintf(f, reason, vl);
 	fclose(f);
 
@@ -37,7 +37,7 @@ void Log(const char* reason, ...) {
 	va_start(vl, reason);
 	vprintf(reason, vl);
 
-	FILE* f = fopen("sdmc:/craftus_redesigned/Log.txt", "a");
+	FILE* f = fopen("sdmc:/" SAVE_DIR "/Log.txt", "a");
 	vfprintf(f, reason, vl);
 	fclose(f);
 

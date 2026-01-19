@@ -80,11 +80,11 @@ uint8_t ChunkColumn::GetHeightMap(int x, int z) {
     return heightmap[x][z];
 }
 
-uint8_t ChunkColumn::GetMetadata(mc::Vector3i position) {
+Metadata ChunkColumn::GetMetadata(mc::Vector3i position) {
     return GetChunk(position.y / Chunk::Size)->metadataLight[position.x][position.y - (position.y / Chunk::Size * Chunk::Size)][position.z] & 0xf;
 }
 
-void ChunkColumn::SetMetadata(mc::Vector3i position, uint8_t metadata) {
+void ChunkColumn::SetMetadata(mc::Vector3i position, Metadata metadata) {
     metadata &= 0xf;
     ChunkPtr chunk = GetChunk(position.y / Chunk::Size);
     uint8_t* addr = &chunk->metadataLight[position.x][position.y - (position.y / Chunk::Size * Chunk::Size)][position.z];
@@ -99,18 +99,22 @@ Block ChunkColumn::GetBlock(mc::Vector3i position) {
 
 
 // resets the meta data
-/// DO NOT USE THIS MANUALLY
+/// DO NOT USE THIS MANUALLY, AS THIS WONT UPDATE RENDERING-RELATED DATA
 void ChunkColumn::SetBlock(mc::Vector3i position, Block block) {
     ChunkPtr chunk = GetChunk(position.y / Chunk::Size);
-    chunk->SetBlock(position.x,position.y - (position.y / Chunk::Size * Chunk::Size),position.z, block);
+    mc::Vector3i localPos = position;
+    localPos.y = position.y % Chunk::Size;
+    chunk->SetBlock(localPos, block);
     SetMetadata(position, 0);
 }
 
 void ChunkColumn::SetBlockAndMeta(mc::Vector3i position, Block block, uint8_t metadata) {
     ChunkPtr chunk = GetChunk(position.y / Chunk::Size);
-    chunk->SetBlock(position.x,position.y - (position.y / Chunk::Size * Chunk::Size),position.z, block);
+    mc::Vector3i localPos = position;
+    localPos.y = position.y % Chunk::Size;
+    chunk->SetBlock(localPos, block);
     metadata &= 0xf;
-    uint8_t* addr = &chunk->metadataLight[position.x][position.y - (position.y / Chunk::Size * Chunk::Size)][position.z];
+    uint8_t* addr = &chunk->metadataLight[localPos.x][localPos.y][localPos.z];
     *addr = (*addr & 0xf0) | metadata;
 
     ++chunk->revision;

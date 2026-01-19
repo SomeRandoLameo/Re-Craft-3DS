@@ -21,14 +21,14 @@
 void WorldSelect_ScanWorlds() {
 	worlds.clear();
 
-	DIR* directory = opendir("sdmc:/craftus_redesigned/saves");
+	DIR* directory = opendir("sdmc:/" SAVE_DIR "/saves");
 
 	char buffer[512];
 
 	struct dirent* entry;
 
 	while ((entry = readdir(directory))) {
-		sprintf(buffer, "sdmc:/craftus_redesigned/saves/%s/level.mp", entry->d_name);
+		sprintf(buffer, "sdmc:/" SAVE_DIR "/saves/%s/level.mp", entry->d_name);
 		if (access(buffer, F_OK) != -1) {
 			mpack_tree_t tree;
 			mpack_tree_init_file(&tree, buffer, 0);
@@ -283,7 +283,7 @@ void WorldSelect_Update(Player* player) {
 	if (confirmed_deletion) {
 		confirmed_deletion = false;
 		char buffer[512];
-		sprintf(buffer, "sdmc:/craftus_redesigned/saves/%s", worlds[selectedWorld].path);
+		sprintf(buffer, "sdmc:/" SAVE_DIR "/saves/%s", worlds[selectedWorld].path);
 		delete_folder(buffer);
 
 		WorldSelect_ScanWorlds();

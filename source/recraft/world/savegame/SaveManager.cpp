@@ -15,8 +15,8 @@
 
 
 void SaveManager::InitFileSystem() {
-    mkdir("sdmc:/craftus_redesigned", mkdirFlags);
-    mkdir("sdmc:/craftus_redesigned/saves", mkdirFlags);
+    mkdir("sdmc:/" SAVE_DIR, mkdirFlags);
+    mkdir("sdmc:/" SAVE_DIR "/saves", mkdirFlags);
 }
 
 void SaveManager::Init(Player* player, World* world) {
@@ -27,7 +27,7 @@ void SaveManager::Init(Player* player, World* world) {
 void SaveManager::Load(char* path) {
     char buffer[256];
 
-    sprintf(buffer, "sdmc:/craftus_redesigned/saves/%s", path);
+    sprintf(buffer, "sdmc:/" SAVE_DIR "/saves/%s", path);
     mkdir(buffer, mkdirFlags);
     chdir(buffer);
 

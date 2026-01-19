@@ -19,7 +19,7 @@ public:
     constexpr static int Size = 16; 
 
 	int y;
-	uint8_t metadataLight[Size][Size][Size];  // first half metadata, second half light
+	Metadata metadataLight[Size][Size][Size];  // first half metadata, second half light
 
 	uint32_t revision;
 
@@ -49,11 +49,6 @@ public:
     //TODO: REMOVE
     Block GetBlock(int x, int y, int z) const {
         return m_blocks[x + y * Size + z * Size * Size];
-    }
-
-    /// DO NOT USE THIS MANUALLY
-    void SetBlock(int x, int y, int z, Block block) {
-        m_blocks[x + y * Size + z * Size * Size] = block;
     }
 
     bool IsEmpty();
@@ -126,15 +121,15 @@ public:
 
     uint8_t GetHeightMap(int x, int z);
 
-    uint8_t GetMetadata(mc::Vector3i position);
+    Metadata GetMetadata(mc::Vector3i position);
 
-    void SetMetadata(mc::Vector3i position, uint8_t metadata);
+    void SetMetadata(mc::Vector3i position, Metadata metadata);
 
     Block GetBlock(mc::Vector3i position);
 
     void SetBlock(mc::Vector3i position, Block block);
 
-    void SetBlockAndMeta(mc::Vector3i position, Block block, uint8_t metadata);
+    void SetBlockAndMeta(mc::Vector3i position, Block block, Metadata metadata);
 
     void AddBlockEntity(mc::block::BlockEntityPtr blockEntity) {
         m_BlockEntities.insert(std::make_pair(blockEntity->GetPosition(), blockEntity));

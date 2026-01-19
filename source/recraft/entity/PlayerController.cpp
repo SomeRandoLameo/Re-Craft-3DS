@@ -186,7 +186,7 @@ PlayerController::PlayerController(Player *player) : player(player) {
     }
 
     bool elementMissing = false;
-    const char path[] = "sdmc:/craftus_redesigned/options.ini";
+    const char path[] = "sdmc:/" SAVE_DIR "/options.ini";
 
     if (access(path, F_OK) != -1) {
         ini_t *cfg = ini_load(path);

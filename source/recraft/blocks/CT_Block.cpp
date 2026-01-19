@@ -363,7 +363,7 @@ void Block_GetTexture(mc::inventory::Slot block, Direction direction, int16_t* o
 	out_uv[1] = i.v;
 }
 
-void Block_GetColor(Block block, uint8_t metadata, Direction direction, uint8_t out_rgb[]) {
+void Block_GetColor(Block block, Metadata metadata, Direction direction, Metadata out_rgb[]) {
 	if ((block == Block::Grass && direction == Direction::Top) || block == Block::Leaves) {
 		out_rgb[0] = 140;
 		out_rgb[1] = 214;
@@ -384,4 +384,4 @@ void Block_GetColor(Block block, uint8_t metadata, Direction direction, uint8_t 
 	}
 }
 
-bool Block_Opaque(Block block, uint8_t metadata) { return block != Block::Air && block != Block::Glass && block != Block::Door_Top && block != Block::Door_Bottom; }
+bool Block_Opaque(Block block, Metadata metadata) { return block != Block::Air && block != Block::Glass && block != Block::Door_Top && block != Block::Door_Bottom; }
