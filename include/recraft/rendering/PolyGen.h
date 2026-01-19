@@ -41,9 +41,9 @@ void PolyGen_Deinit();
 void PolyGen_Harvest(DebugUI* debugUi);
 void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context);
 
-Block fastBlockFetch(World* world, ChunkColumnPtr column, ChunkPtr chunk, mc::Vector3i blockPos);
+Block fastBlockFetch(World* world, ChunkColumnPtr column, ChunkPtr chunk, int x, int y, int z);
 
-uint8_t fastMetadataFetch(World* world, ChunkColumnPtr column, ChunkPtr chunk, mc::Vector3i blockPos);
+uint8_t fastMetadataFetch(World* world, ChunkColumnPtr column, ChunkPtr chunk, int x, int y, int z);
 
 void addFace(int x, int y, int z, Direction dir, Block block, uint8_t metadata, int ao, bool transparent);
 

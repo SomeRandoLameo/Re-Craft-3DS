@@ -68,7 +68,7 @@ const WorldVertex cube_sides_lut[] = {
 };
 
 
-static inline Block fastBlockFetch(World* world, ChunkColumnPtr column, ChunkPtr chunk, int x, int y, int z) {
+Block fastBlockFetch(World* world, ChunkColumnPtr column, ChunkPtr chunk, int x, int y, int z) {
     return (x < 0 || y < 0 || z < 0 || x >= Chunk::Size || y >= Chunk::Size || z >= Chunk::Size)
         ? world->GetBlock(mc::Vector3i(
               (column->x * Chunk::Size) + x,
@@ -78,7 +78,7 @@ static inline Block fastBlockFetch(World* world, ChunkColumnPtr column, ChunkPtr
         : chunk->GetBlock(x, y, z);
 }
 
-static inline uint8_t fastMetadataFetch(World* world, ChunkColumnPtr column, ChunkPtr chunk, int x, int y, int z) {
+uint8_t fastMetadataFetch(World* world, ChunkColumnPtr column, ChunkPtr chunk, int x, int y, int z) {
     return (x < 0 || y < 0 || z < 0 || x >= Chunk::Size || y >= Chunk::Size || z >= Chunk::Size)
         ? world->GetMetadata(
               mc::Vector3i(
