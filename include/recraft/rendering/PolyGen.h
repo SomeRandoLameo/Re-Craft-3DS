@@ -48,20 +48,3 @@ uint8_t fastMetadataFetch(World* world, ChunkColumnPtr column, ChunkPtr chunk, i
 void addFace(int x, int y, int z, Direction dir, Block block, uint8_t metadata, int ao, bool transparent);
 
 uint16_t floodFill(World* world, ChunkColumnPtr chunk, Chunk* cluster, int x, int y, int z, Direction entrySide0, Direction entrySide1, Direction entrySide2);
-
-/*
-#pragma once
-
-#include "../world/WorkQueue.h"
-#include "../world/CT_World.h"
-#include "../entity/Player.h"
-#include "../gui/DebugUI.h"
-
-#include "VertexFmt.h"
-
-void PolyGen_Init(World* world_, Player* player_);
-void PolyGen_Deinit();
-
-void PolyGen_Harvest(DebugUI* debugUi);
-void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context);
-*/
