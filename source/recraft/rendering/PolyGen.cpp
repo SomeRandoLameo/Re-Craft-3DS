@@ -67,18 +67,6 @@ const WorldVertex cube_sides_lut[] = {
     {{0, 0, 1}, {0, 0}, {255, 255, 255}, {0, 0, 0}},
 };
 
-static std::vector<VBOUpdate> vboUpdates;
-
-static const int MAX_FACES_PER_CLUSTER = (Chunk::Size * Chunk::Size * Chunk::Size / 2 * 6);
-
-typedef struct {
-    int8_t x, y, z;
-    Direction direction;
-    Block block;
-    int8_t ao;
-    uint8_t metadata;
-    bool transparent;
-} Face;
 
 static inline Block fastBlockFetch(World* world, ChunkColumnPtr column, ChunkPtr chunk, int x, int y, int z) {
     return (x < 0 || y < 0 || z < 0 || x >= Chunk::Size || y >= Chunk::Size || z >= Chunk::Size)
@@ -102,15 +90,6 @@ static inline uint8_t fastMetadataFetch(World* world, ChunkColumnPtr column, Chu
 
         : (chunk->metadataLight[x][y][z] & 0xf);
 }
-
-static World* world;
-static Player* player;
-
-typedef struct { int8_t x, y, z; } QueueElement;
-
-static std::vector<QueueElement> floodfill_queue;
-
-static LightLock updateLock;
 
 void PolyGen_Init(World* world_, Player* player_) {
     world = world_;
@@ -165,19 +144,14 @@ void PolyGen_Harvest(DebugUI* debugUi) {
 	}
 }
 
-static Face faceBuffer[MAX_FACES_PER_CLUSTER];
-static int currentFace;
-static int transparentFaces;
-static uint8_t floodfill_visited[Chunk::Size][Chunk::Size][Chunk::Size];
-
-static inline void addFace(int x, int y, int z, Direction dir, Block block, uint8_t metadata, int ao, bool transparent) {
+void addFace(int x, int y, int z, Direction dir, Block block, uint8_t metadata, int ao, bool transparent) {
     if (x >= 0 && y >= 0 && z >= 0 && x < Chunk::Size && y < Chunk::Size && z < Chunk::Size) {
         faceBuffer[currentFace++] = Face{static_cast<int8_t>(x), static_cast<int8_t>(y), static_cast<int8_t>(z), dir, block, static_cast<int8_t>(ao), metadata, transparent};
         transparentFaces += transparent;
     }
 }
 
-static uint16_t floodFill(World* world, ChunkColumnPtr chunk, Chunk* cluster, int x, int y, int z, Direction entrySide0, Direction entrySide1, Direction entrySide2) {
+uint16_t floodFill(World* world, ChunkColumnPtr chunk, Chunk* cluster, int x, int y, int z, Direction entrySide0, Direction entrySide1, Direction entrySide2) {
     if (floodfill_visited[x][y][z] & 1) return 0;
     uint8_t exitPoints[6] = {false};
     if (entrySide0 != Direction::Invalid) exitPoints[entrySide0] = true;
