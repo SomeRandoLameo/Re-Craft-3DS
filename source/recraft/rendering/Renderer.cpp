@@ -13,7 +13,6 @@
 #include "rendering/TextureMap.h"
 
 
-
 // TODO: Fix this
 extern bool showDebugInfo;
 
@@ -252,6 +251,7 @@ void Renderer::Render(DebugUI* debugUi) {
 
     Top[0]->Use();
     Iron::DrawOn(Top[0]);
+    debugUi->RenderData->DrawRectFilled(0, 50, 0xff00ff00);
     Iron::Draw(debugUi->RenderData->Data());
     debugUi->RenderData->Clear();
 
@@ -308,15 +308,11 @@ void Renderer::RenderLowerScreen(DebugUI* debugUi) {
     } else {
         SpriteBatch_SetScale(2);
 
-        m_inventory->renderHotbar(160 / 2 - 194 / 2,
-            120 - Inventory::QUICKSELECT_HEIGHT,
-            m_player->quickSelectBar, m_player->quickSelectBarSlot
-        );
+        m_inventory->renderHotbar(160 / 2 - 194 / 2, 120 - Inventory::QUICKSELECT_HEIGHT, m_player->quickSelectBar,
+                                  m_player->quickSelectBarSlot);
 
-        m_inventory->draw(
-                ((137 / 2) - (120 / 2)), 10, m_player->inventory,
-                sizeof(m_player->inventory) / sizeof(ItemStack), m_player->inventorySite
-        );
+        m_inventory->draw(((137 / 2) - (120 / 2)), 10, m_player->inventory,
+                          sizeof(m_player->inventory) / sizeof(ItemStack), m_player->inventorySite);
 
         m_player->inventorySite = m_inventory->currentSite;
 

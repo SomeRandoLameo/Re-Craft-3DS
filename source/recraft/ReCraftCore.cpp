@@ -57,6 +57,10 @@ ReCraftCore::ReCraftCore() {
         ImGui::Text("Buffer: %5.2f%%", C3D_GetCmdBufUsage() * 100.f);
         ImGui::Text("Heap: %s [%d] Allocations", Amy::Utils::FormatBytes(Amy::Memory::GetTotalAllocated()).c_str(),
                     Amy::Memory::GetAllocationCount());
+        ImGui::Text("malloc: %lld - free: %lld\ncalloc: %lld - realloc: %lld\nmemalign: %lld",
+                    Amy::Memory::GetMetrics()._malloc, Amy::Memory::GetMetrics()._free,
+                    Amy::Memory::GetMetrics()._calloc, Amy::Memory::GetMetrics()._realloc,
+                    Amy::Memory::GetMetrics()._memalign);
         ImGui::Text("Linear Heap: %s", Amy::Utils::FormatBytes(linearSpaceFree()).c_str());
         ImGui::Separator();
         ImGui::Text("Player");
@@ -114,9 +118,11 @@ void ReCraftCore::InitSinglePlayer(char* path, char* name, const WorldGenType* w
 
     m_savemgr.Load(path);
 
-    m_chunkWorker.SetHandlerActive(WorkerItemType::BaseGen, &m_flatGen, m_world->genSettings.type == WorldGenType::SuperFlat);
+    m_chunkWorker.SetHandlerActive(WorkerItemType::BaseGen, &m_flatGen,
+                                   m_world->genSettings.type == WorldGenType::SuperFlat);
 
-    m_chunkWorker.SetHandlerActive(WorkerItemType::BaseGen, &m_smeaGen, m_world->genSettings.type == WorldGenType::Smea);
+    m_chunkWorker.SetHandlerActive(WorkerItemType::BaseGen, &m_smeaGen,
+                                   m_world->genSettings.type == WorldGenType::Smea);
 
     // TODO: Potential World::InitChunkCache() function?
     m_world->cacheTranslationX = WorldToChunkCoord(FastFloor(m_player->position.x));
@@ -163,7 +169,7 @@ void ReCraftCore::RunSinglePlayer(InputData inputData) {
     m_world->UpdateChunkCache(WorldToChunkCoord(FastFloor(m_player->position.x)),
                               WorldToChunkCoord(FastFloor(m_player->position.z)));
 }
-void ReCraftCore::ExitSinglePlayer() { ReleaseWorld(&m_chunkWorker, &m_savemgr,  m_world); }
+void ReCraftCore::ExitSinglePlayer() { ReleaseWorld(&m_chunkWorker, &m_savemgr, m_world); }
 
 // TODO: Something prevents the 03DS from connecting. It isnt memory. My guess is that world data takes too long to load
 // and then server timeout?
@@ -193,7 +199,7 @@ void ReCraftCore::InitMultiPlayer() {
     m_player->hp = 20;
     m_player->gamemode = 1;
 
-    //m_player->position = m_mcBridge.getClient()->GetPlayerController()->GetPosition();
+    // m_player->position = m_mcBridge.getClient()->GetPlayerController()->GetPosition();
 
     m_chat = new GuiChat(m_mcBridge.getClient()->GetDispatcher(), m_mcBridge.getClient());
     m_networkWorld = new NetworkWorld(m_world, m_mcBridge.getClient()->GetDispatcher());
@@ -217,7 +223,7 @@ void ReCraftCore::InitMultiPlayer() {
         m_world->Tick();
     }
 
-    m_player->position = mc::Vector3d(0,63,0);
+    m_player->position = mc::Vector3d(0, 63, 0);
 
     m_mcBridge.startBackgroundThread();
     m_gamestate = GameState::Playing_OnLine;
@@ -232,22 +238,26 @@ void ReCraftCore::ExitMultiplayer() {
 void ReCraftCore::RunMultiPlayer(InputData inputData) {
     if (m_mcBridge.isConnected()) {
         m_mcBridge.withClient([&](mc::core::Client* client, mc::protocol::packets::PacketDispatcher* dispatcher) {
-
             // TODO: Move this into some NetworkPlayer class that gets updated from here.
-            // NetworkPlayer needs to listen to the server propperly to initialize the player (eg. setting position, rotation and much more)
+            // NetworkPlayer needs to listen to the server propperly to initialize the player (eg. setting position,
+            // rotation and much more)
             // TODO: Yaw is inverted, Server recieves movement as jittery, might be mclib
-            mc::protocol::packets::out::PlayerPositionAndLookPacket response(m_player->position, m_player->yaw * 180.0f / 3.14159f, m_player->pitch * 180.0f / 3.14159f, m_player->grounded);
+            mc::protocol::packets::out::PlayerPositionAndLookPacket response(
+                m_player->position, m_player->yaw * 180.0f / 3.14159f, m_player->pitch * 180.0f / 3.14159f,
+                m_player->grounded);
             client->GetConnection()->SendPacket(&response);
 
-            //Experimental, doesnt work
-            //if (m_player->crouching && m_player->releasedCrouch) {
-            //    mc::protocol::packets::out::EntityActionPacket packet(0, mc::protocol::packets::out::EntityActionPacket::Action::StopSneak);
+            // Experimental, doesnt work
+            // if (m_player->crouching && m_player->releasedCrouch) {
+            //     mc::protocol::packets::out::EntityActionPacket packet(0,
+            //     mc::protocol::packets::out::EntityActionPacket::Action::StopSneak);
             //
-            //    client->GetConnection()->SendPacket(&packet);
+            //     client->GetConnection()->SendPacket(&packet);
             //
-            //    m_player->crouching = false;
-            //} else if (!m_player->crouching && !m_player->releasedCrouch) {
-            //    mc::protocol::packets::out::EntityActionPacket packet(0, mc::protocol::packets::out::EntityActionPacket::Action::StartSneak);
+            //     m_player->crouching = false;
+            // } else if (!m_player->crouching && !m_player->releasedCrouch) {
+            //     mc::protocol::packets::out::EntityActionPacket packet(0,
+            //     mc::protocol::packets::out::EntityActionPacket::Action::StartSneak);
 
             //    client->GetConnection()->SendPacket(&packet);
 
@@ -335,7 +345,6 @@ void ReCraftCore::Main() {
 
     } else if (m_gamestate == GameState::SelectWorld) {
         WorldSelect_Update(m_player);
-
     }
     Gui::InputData(inputData);
 }

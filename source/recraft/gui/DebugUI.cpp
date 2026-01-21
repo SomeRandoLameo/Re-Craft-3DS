@@ -1,12 +1,12 @@
 #include "gui/SpriteBatch.h"
 #include "rendering/VertexFmt.h"
 
-#include "gui/DebugUI.h"
 #include "ReCraftCore.h"
+#include "gui/DebugUI.h"
+
 
 #include <stdarg.h>
 #include <stdlib.h>
-
 
 
 static char* statusLines[DebugUI::StatusLines];
@@ -15,11 +15,11 @@ static int currentStatusLine = 0;
 
 DebugUI::DebugUI() {
     for (auto& logLine : logLines) {
-        logLine = (char*)Amy::Malloc(LineLength);
+        logLine = (char*)malloc(LineLength);
         memset(logLine, 0x0, LineLength);
     }
     for (auto& statusLine : statusLines) {
-        statusLine = (char*)Amy::Malloc(LineLength);
+        statusLine = (char*)malloc(LineLength);
         memset(statusLine, 0x0, LineLength);
     }
     RenderData = Iron::Drawlist::New();
@@ -28,10 +28,10 @@ DebugUI::DebugUI() {
 
 DebugUI::~DebugUI() {
     for (int i = 0; i < LogLines; i++) {
-        Amy::Free(logLines[i]);
+        free(logLines[i]);
     }
     for (int i = 0; i < StatusLines; i++) {
-        Amy::Free(statusLines[i]);
+        free(statusLines[i]);
     }
 
     RenderData.reset();
