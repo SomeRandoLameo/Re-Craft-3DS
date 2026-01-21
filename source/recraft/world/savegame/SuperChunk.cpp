@@ -17,28 +17,29 @@ static char* decompressBuffer;
 static const int fileBufferSize = sizeof(ChunkColumn) * 2;
 static char* fileBuffer;
 
-//TODO: REMOVE AFTER REWRITE!!!
-int vec_expand_(char **data, int *length, int *capacity, int memsz) {
+// TODO: REMOVE AFTER REWRITE!!!
+int vec_expand_(char** data, int* length, int* capacity, int memsz) {
     if (*length + 1 > *capacity) {
-        void *ptr;
+        void* ptr;
         int n = (*capacity == 0) ? 1 : *capacity << 1;
         ptr = realloc(*data, n * memsz);
-        if (ptr == NULL) return -1;
-        *data = static_cast<char *>(ptr);
+        if (ptr == NULL)
+            return -1;
+        *data = static_cast<char*>(ptr);
         *capacity = n;
     }
     return 0;
 }
 
 void SuperChunk_InitPools() {
-    nodeDataPool = (mpack_node_data_t*)Amy::Malloc(sizeof(mpack_node_data_t) * nodeDataPoolSize);
-    fileBuffer = (char*)Amy::Malloc(fileBufferSize);  // 4kb
-    decompressBuffer = (char*)Amy::Malloc(decompressBufferSize);
+    nodeDataPool = (mpack_node_data_t*)malloc(sizeof(mpack_node_data_t) * nodeDataPoolSize);
+    fileBuffer = (char*)malloc(fileBufferSize); // 4kb
+    decompressBuffer = (char*)malloc(decompressBufferSize);
 }
 void SuperChunk_DeinitPools() {
-    Amy::Free(nodeDataPool);
-    Amy::Free(decompressBuffer);
-    Amy::Free(fileBuffer);
+    free(nodeDataPool);
+    free(decompressBuffer);
+    free(fileBuffer);
 }
 
 void SuperChunk_Init(SuperChunk* superchunk, int x, int z) {
@@ -69,11 +70,11 @@ void SuperChunk_Init(SuperChunk* superchunk, int x, int z) {
         for (int i = 0; i < SUPERCHUNK_SIZE * SUPERCHUNK_SIZE; i++) {
             mpack_node_t chunkInfo = mpack_node_array_at(chunkIndices, i);
             superchunk->grid[i % SUPERCHUNK_SIZE][i / SUPERCHUNK_SIZE] =
-                    (ChunkInfo){mpack_node_u32(mpack_node_map_cstr(chunkInfo, "position")),
-                                mpack_node_u32(mpack_node_map_cstr(chunkInfo, "compressedSize")),
-                                mpack_node_u32(mpack_node_map_cstr(chunkInfo, "actualSize")),
-                                mpack_node_u8(mpack_node_map_cstr(chunkInfo, "blockSize")),
-                                mpack_node_u32(mpack_node_map_cstr(chunkInfo, "revision"))};
+                (ChunkInfo){mpack_node_u32(mpack_node_map_cstr(chunkInfo, "position")),
+                            mpack_node_u32(mpack_node_map_cstr(chunkInfo, "compressedSize")),
+                            mpack_node_u32(mpack_node_map_cstr(chunkInfo, "actualSize")),
+                            mpack_node_u8(mpack_node_map_cstr(chunkInfo, "blockSize")),
+                            mpack_node_u32(mpack_node_map_cstr(chunkInfo, "revision"))};
 
             {
                 ChunkInfo chunkInfo = superchunk->grid[i % SUPERCHUNK_SIZE][i / SUPERCHUNK_SIZE];
@@ -97,7 +98,8 @@ void SuperChunk_Init(SuperChunk* superchunk, int x, int z) {
 
     sprintf(buffer, "superchunks/s.%d.%d.dat", x, z);
     superchunk->dataFile = fopen(buffer, "r+b");
-    if (superchunk->dataFile == NULL) superchunk->dataFile = fopen(buffer, "w+b");
+    if (superchunk->dataFile == NULL)
+        superchunk->dataFile = fopen(buffer, "w+b");
 }
 void SuperChunk_Deinit(SuperChunk* superchunk) {
     SuperChunk_SaveIndex(superchunk);
@@ -151,18 +153,21 @@ static uint32_t reserveSectors(SuperChunk* superchunk, int amount) {
     int startValue = -1;
     for (int i = 0; i < superchunk->sectors.length; i++) {
         if (!superchunk->sectors.data[i]) {
-            if (startValue == -1) startValue = i;
+            if (startValue == -1)
+                startValue = i;
             amountFulfilled++;
         } else {
             amountFulfilled = 0;
             startValue = -1;
         }
         if (amountFulfilled == amount) {
-            for (int i = 0; i < amount; i++) superchunk->sectors.data[startValue + i] = true;
+            for (int i = 0; i < amount; i++)
+                superchunk->sectors.data[startValue + i] = true;
             return startValue;
         }
     }
-    for (int i = 0; i < amount; i++) vec_push(&superchunk->sectors, true);
+    for (int i = 0; i < amount; i++)
+        vec_push(&superchunk->sectors, true);
     return superchunk->sectors.length - amount;
 }
 static void freeSectors(SuperChunk* superchunk, uint32_t address, uint8_t size) {
@@ -191,9 +196,11 @@ void SuperChunk_SaveChunk(SuperChunk* superchunk, ChunkColumnPtr column) {
 
             if (!empty) {
                 mpack_write_cstr(&writer, "blocks");
-                mpack_write_bin(&writer, reinterpret_cast<const char*>(chunk->GetBlockData()), Chunk::GetBlockDataSize());
+                mpack_write_bin(&writer, reinterpret_cast<const char*>(chunk->GetBlockData()),
+                                Chunk::GetBlockDataSize());
                 mpack_write_cstr(&writer, "metadataLight");
-                mpack_write_bin(&writer, (char*)column->GetChunk(i)->metadataLight, sizeof(column->GetChunk(i)->metadataLight));
+                mpack_write_bin(&writer, (char*)column->GetChunk(i)->metadataLight,
+                                sizeof(column->GetChunk(i)->metadataLight));
             }
 
             mpack_write_cstr(&writer, "revision");
@@ -232,7 +239,8 @@ void SuperChunk_SaveChunk(SuperChunk* superchunk, ChunkColumnPtr column) {
             if (fwrite(fileBuffer, compressedSize, 1, superchunk->dataFile) != 1)
                 Crash("Couldn't write complete chunk data to file");
 
-            superchunk->grid[x][z] = (ChunkInfo){address, compressedSize, uncompressedSize, static_cast<uint8_t>(blockSize), column->revision};
+            superchunk->grid[x][z] = (ChunkInfo){address, compressedSize, uncompressedSize,
+                                                 static_cast<uint8_t>(blockSize), column->revision};
         }
     }
 }
@@ -247,7 +255,8 @@ void SuperChunk_LoadChunk(SuperChunk* superchunk, ChunkColumnPtr column) {
             Crash("Read chunk data size isn't equal to the expected size");
         mz_ulong uncompressedSize = decompressBufferSize;
 
-        if (uncompress((uint8_t*)decompressBuffer, &uncompressedSize, (uint8_t*)fileBuffer, chunkInfo.compressedSize) == Z_OK) {
+        if (uncompress((uint8_t*)decompressBuffer, &uncompressedSize, (uint8_t*)fileBuffer, chunkInfo.compressedSize) ==
+            Z_OK) {
             mpack_tree_t tree;
             mpack_tree_init_pool(&tree, decompressBuffer, uncompressedSize, nodeDataPool, nodeDataPoolSize);
             mpack_node_t root = mpack_tree_root(&tree);
@@ -271,23 +280,19 @@ void SuperChunk_LoadChunk(SuperChunk* superchunk, ChunkColumnPtr column) {
                 mpack_node_t blocksNode = mpack_node_map_cstr_optional(cluster, "blocks");
                 if (mpack_node_type(blocksNode) == mpack_type_bin) {
                     const size_t expectedSize = Chunk::GetBlockDataSize();
-                    const size_t storedSize   = mpack_node_data_len(blocksNode);
+                    const size_t storedSize = mpack_node_data_len(blocksNode);
 
                     if (storedSize == expectedSize) {
-                        memcpy(chunk->GetBlockData(),
-                               mpack_node_data(blocksNode),
-                               expectedSize);
+                        memcpy(chunk->GetBlockData(), mpack_node_data(blocksNode), expectedSize);
                     } else {
-                        Crash("Block data size mismatch while loading chunk (%zu != %zu)",
-                              storedSize, expectedSize);
+                        Crash("Block data size mismatch while loading chunk (%zu != %zu)", storedSize, expectedSize);
                     }
                 }
 
 
                 mpack_node_t metadataNode = mpack_node_map_cstr_optional(cluster, "metadataLight");
                 if (mpack_node_type(metadataNode) == mpack_type_bin)
-                    memcpy(chunk->metadataLight, mpack_node_data(metadataNode),
-                           sizeof(chunk->metadataLight));
+                    memcpy(chunk->metadataLight, mpack_node_data(metadataNode), sizeof(chunk->metadataLight));
             }
 
             column->genProgress = (ChunkGenProgress)mpack_node_int(mpack_node_map_cstr(root, "genProgress"));
