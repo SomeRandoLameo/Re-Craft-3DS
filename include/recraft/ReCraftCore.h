@@ -61,9 +61,6 @@ private:
     Amy::AssetMgr m_AssetMgr;
     float m_timeAccum = 0.f;
 
-    //TODO: MOVE INTO WORLD FOR *** SAKE
-    void ReleaseWorld(ChunkWorker* chunkWorker, SaveManager* savemgr, World* world);
-
 
     void RunSinglePlayer(InputData inputData);
     void ExitSinglePlayer();

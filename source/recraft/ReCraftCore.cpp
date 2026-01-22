@@ -163,7 +163,7 @@ void ReCraftCore::RunSinglePlayer(InputData inputData) {
     m_world->UpdateChunkCache(WorldToChunkCoord(FastFloor(m_player->position.x)),
                               WorldToChunkCoord(FastFloor(m_player->position.z)));
 }
-void ReCraftCore::ExitSinglePlayer() { ReleaseWorld(&m_chunkWorker, &m_savemgr, m_world); }
+void ReCraftCore::ExitSinglePlayer() { if (m_world) m_world->Release(&m_chunkWorker, &m_savemgr); }
 
 // TODO: Something prevents the 03DS from connecting. It isnt memory. My guess is that world data takes too long to load
 // and then server timeout?
@@ -282,19 +282,6 @@ void ReCraftCore::RunMultiPlayer(InputData inputData) {
 
     m_world->UpdateChunkCache(WorldToChunkCoord(FastFloor(m_player->position.x)),
                               WorldToChunkCoord(FastFloor(m_player->position.z)));
-}
-
-// TODO: Why isnt this in world?
-void ReCraftCore::ReleaseWorld(ChunkWorker* chunkWorker, SaveManager* savemgr, World* world) {
-    for (int i = 0; i < World::ChunkCacheSize; i++) {
-        for (int j = 0; j < World::ChunkCacheSize; j++) {
-            world->UnloadChunk(world->columnCache[i][j]);
-        }
-    }
-    chunkWorker->Finish();
-    world->Reset();
-
-    savemgr->Unload();
 }
 
 void ReCraftCore::Main() {

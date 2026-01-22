@@ -1,3 +1,5 @@
+#include "world/ChunkWorker.h"
+#include "world/savegame/SaveManager.h"
 #include "world/CT_World.h"
 
 #include "blocks/BlockEvents.h"
@@ -342,6 +344,22 @@ void World::UpdateChunkCache(int orginX, int orginZ) {
 	}
 }
 
+void World::Release(ChunkWorker* chunkWorker, SaveManager* savemgr) {
+	for (int i = 0; i < World::ChunkCacheSize; i++) {
+		for (int j = 0; j < World::ChunkCacheSize; j++) {
+			if (columnCache[i][j]) {
+				UnloadChunk(columnCache[i][j]);
+				columnCache[i][j] = nullptr;
+			}
+		}
+	}
+
+	chunkWorker->Finish();
+	Reset();
+
+	if (savemgr) savemgr->Unload();
+}
+
 /**
  * Performs per-tick world update logic for all chunks in the cache.
  *
@@ -402,6 +420,8 @@ void World::Tick() {
                     yVals[i] = WorldToLocalCoord(Xorshift32_Next(&m_randomTickGen));
                     zVals[i] = WorldToLocalCoord(Xorshift32_Next(&m_randomTickGen));
                 }
+
+                BlockEvent_RandomTick(this,chunk,xVals,yVals,zVals);
             }
         }
     }

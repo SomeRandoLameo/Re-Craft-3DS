@@ -37,6 +37,9 @@ typedef struct {
 	} settings;
 } GeneratorSettings;
 
+class ChunkWorker;
+class SaveManager;
+
 class World {
 public:
 
@@ -88,6 +91,8 @@ public:
 
 
     VBOCache vboCache;
+
+    void Release(ChunkWorker* chunkWorker, SaveManager* savemgr);
 private:
     int m_HighestBlock;
 
