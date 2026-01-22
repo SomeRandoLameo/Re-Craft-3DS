@@ -208,7 +208,6 @@ void WorldRenderer::Render(float iod) {
     m_cubeRenderer->Draw(m_projectionUniform, m_cam.GetVP(), m_world, m_player->position);
 
     if (m_player->blockInActionRange) {
-        m_cursor->Draw(m_projectionUniform, m_cam.GetVP(), m_world, m_player->viewRayCast.x, m_player->viewRayCast.y,
-                       m_player->viewRayCast.z, m_player->viewRayCast.direction);
+        m_cursor->Draw(m_projectionUniform, m_cam.GetVP(), m_world, m_player->viewRayCast.hitPos, m_player->viewRayCast.direction);
     }
 }

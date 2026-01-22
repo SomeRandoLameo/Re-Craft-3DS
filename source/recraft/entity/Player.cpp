@@ -92,7 +92,7 @@ void Player::Update(Damage* dmg) {
     HandleRespawn(dmg);
 }
 
-void Player::UpdateMovement(PlayerControlScheme m_controlScheme, InputData input, float dt) {
+void Player::UpdateMovement(DebugUI* dbg, PlayerControlScheme m_controlScheme, InputData input, float dt) {
     Damage dmg;
 
     Input in = {0};
@@ -136,15 +136,30 @@ void Player::UpdateMovement(PlayerControlScheme m_controlScheme, InputData input
     pitch += (-lookDown + lookUp) * 160.f * DEG_TO_RAD * dt;
     pitch = CLAMP(pitch, -DEG_TO_RAD * 89.9f, DEG_TO_RAD * 89.9f);
 
-    float placeBlock = in.IsKeyDown(m_controlScheme.placeBlock, &in);
-    float breakBlock = in.IsKeyDown(m_controlScheme.breakBlock, &in);
+    mc::inventory::Slot curSlot = quickSelectBar[quickSelectBarSlot];
+    auto curStack = MCBridge::MCLIBSlotToCTItemStack(curSlot);
+    bool slotEmpty = (curStack.block == Block::Air);
 
-    if (placeBlock > 0.f) {
-        PlaceBlock();
+    bool hitEntity = viewRayCast.entity;
+
+    float leftAction = in.IsKeyDown(m_controlScheme.placeBlock, &in);
+    float rightAction = in.IsKeyDown(m_controlScheme.breakBlock, &in);
+
+
+    if (leftAction > 0.f) {
+        if (hitEntity) {
+            HurtEntity();
+        } else {
+            BreakBlock();
+        }
     }
 
-    if (breakBlock > 0.f) {
-        BreakBlock();
+    if (rightAction > 0.f) {
+        if (slotEmpty) {
+            Interact(dbg);
+        } else {
+            PlaceBlock();
+        }
     }
 
 
@@ -487,16 +502,16 @@ void Player::PlaceBlock() {
                 position.x - CollisionBoxSize / 2.f, position.y,
                 position.z - CollisionBoxSize / 2.f,
                 CollisionBoxSize, Height, CollisionBoxSize,
-                viewRayCast.x + offset[0], viewRayCast.y + offset[1],
-                viewRayCast.z + offset[2], 1.f, 1.f, 1.f))
+                viewRayCast.hitPos.x + offset[0], viewRayCast.hitPos.y + offset[1],
+                viewRayCast.hitPos.z + offset[2], 1.f, 1.f, 1.f))
             return;
 
         //TODO: Remove Ducttape
         m_world->SetBlockAndMeta(
                 mc::Vector3i(
-                        (int)viewRayCast.x + offset[0],
-                        (int)viewRayCast.y + offset[1],
-                        (int)viewRayCast.z + offset[2]
+                        (int)viewRayCast.hitPos.x + offset[0],
+                        (int)viewRayCast.hitPos.y + offset[1],
+                        (int)viewRayCast.hitPos.z + offset[2]
                 ),
                 MCBridge::MCLIBSlotToCTItemStack(quickSelectBar[quickSelectBarSlot]).block,
                 MCBridge::MCLIBSlotToCTItemStack(quickSelectBar[quickSelectBarSlot]).meta
@@ -510,10 +525,26 @@ void Player::PlaceBlock() {
 
 void Player::BreakBlock() {
     if (m_world && blockInActionRange && breakPlaceTimeout < 0.f) {
-        m_world->SetBlock(mc::Vector3i(viewRayCast.x, viewRayCast.y, viewRayCast.z), Block::Air);
+        m_world->SetBlock(viewRayCast.hitPos, Block::Air);
     }
 
     if (breakPlaceTimeout < 0.f) {
         breakPlaceTimeout = PlaceReplaceTimeout;
+    }
+}
+
+void Player::HurtEntity() {
+    // TODO:
+}
+
+void Player::Interact(DebugUI* dbg) {
+    if (m_world && blockInActionRange && breakPlaceTimeout < 0.f) {
+        Block id = m_world->GetBlock(viewRayCast.hitPos);
+        Metadata meta = m_world->GetMetadata(viewRayCast.hitPos);
+        std::string logMsg = "Target at: " + to_string(viewRayCast.hitPos) +
+            "  ID=" + std::to_string(static_cast<u8>(id)) +
+            "  Meta=" + std::to_string(meta);
+
+        dbg->Log(logMsg.c_str());
     }
 }

@@ -70,12 +70,6 @@ ReCraftCore::ReCraftCore() {
         ImGui::Text("HP: %i", m_player->hp);
         ImGui::Text("Hunger: %i (Timer: %i)", m_player->hunger, m_player->hungertimer);
         ImGui::Text("Velocity Y: %.3f, RndY: %.3f", m_player->velocity.y, m_player->rndy);
-        ImGui::Separator();
-        ImGui::Text("Inventory");
-        ImGui::Spacing();
-        ImGui::Text("Gamemode: %i", m_player->gamemode);
-        ImGui::Text("Quickbar Slot: %i", m_player->quickSelectBarSlot);
-
         ImGui::End();
     });
     // i want to use imgui anywhere
@@ -164,7 +158,7 @@ void ReCraftCore::RunSinglePlayer(InputData inputData) {
         m_timeAccum = -20.f;
     }
 
-    m_player->UpdateMovement(m_playerCtrl->GetControlScheme(), inputData, Delta() * 0.001);
+    m_player->UpdateMovement(m_debugUI, m_playerCtrl->GetControlScheme(), inputData, Delta() * 0.001);
 
     m_world->UpdateChunkCache(WorldToChunkCoord(FastFloor(m_player->position.x)),
                               WorldToChunkCoord(FastFloor(m_player->position.z)));
@@ -284,7 +278,7 @@ void ReCraftCore::RunMultiPlayer(InputData inputData) {
         m_timeAccum = -20.f;
     }
 
-    m_player->UpdateMovement(m_playerCtrl->GetControlScheme(), inputData, Delta() * 0.001);
+    m_player->UpdateMovement(m_debugUI, m_playerCtrl->GetControlScheme(), inputData, Delta() * 0.001);
 
     m_world->UpdateChunkCache(WorldToChunkCoord(FastFloor(m_player->position.x)),
                               WorldToChunkCoord(FastFloor(m_player->position.z)));

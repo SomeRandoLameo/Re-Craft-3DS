@@ -26,11 +26,11 @@ void Cursor::InitializeVertexBuffer() {
 }
 
 void Cursor::Draw(int projUniform, C3D_Mtx* projectionview, World* world,
-				  int x, int y, int z, Direction highlight) {
+				  mc::Vector3i pos, Direction highlight) {
 	// Create model matrix
 	C3D_Mtx model;
 	Mtx_Identity(&model);
-	Mtx_Translate(&model, x, y, z, true);
+	Mtx_Translate(&model, pos.x, pos.y, pos.z, true);
 
 	// Calculate MVP matrix
 	C3D_Mtx mvp;
@@ -44,7 +44,7 @@ void Cursor::Draw(int projUniform, C3D_Mtx* projectionview, World* world,
 		const int* offset = DirectionToOffset[i];
 
 		// Only draw faces that are exposed to air
-		if (world->GetBlock(mc::Vector3i(x + offset[0], y + offset[1], z + offset[2])) == Block::Air) {
+		if (world->GetBlock(mc::Vector3i(pos.x + offset[0], pos.y + offset[1], pos.z + offset[2])) == Block::Air) {
 			memcpy(vtx, &cube_sides_lut[i * 6], sizeof(WorldVertex) * 6);
 
 			// Set color - brighter for highlighted face

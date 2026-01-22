@@ -5,13 +5,14 @@
 //mclib
 #include <mclib/common/Vector.h>
 
-#include "world/CT_World.h"
-#include "gui/CT_Inventory.h"
-#include "inventory/ItemStack.h"
 #include "entity/Damage.h"
+#include "gui/CT_Inventory.h"
+#include "gui/DebugUI.h"
+#include "inventory/ItemStack.h"
+#include "misc/InputData.h"
 #include "misc/Raycast.h"
 #include "misc/VecMath.h"
-#include "misc/InputData.h"
+#include "world/CT_World.h"
 
 class PlayerControlScheme;
 class PlayerController;
@@ -24,10 +25,13 @@ public:
     ~Player() = default;
 
     void Update(Damage* dmg);
-    void UpdateMovement(PlayerControlScheme m_controlScheme, InputData input, float dt);
+    void UpdateMovement(DebugUI* dbg, PlayerControlScheme m_controlScheme, InputData input, float dt);
     void Move(float dt, mc::Vector3d accl);
     void PlaceBlock();
+    void HurtEntity();
     void BreakBlock();
+    void Interact(DebugUI* dbg);
+
     void Jump(mc::Vector3d accl);
     bool CanMove(mc::Vector3d newVec);
 

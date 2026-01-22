@@ -15,7 +15,7 @@ public:
 	Cursor& operator=(const Cursor&) = delete;
 
 	void Draw(int projUniform, C3D_Mtx* projectionview, World* world,
-			  int x, int y, int z, Direction highlight);
+              mc::Vector3i pos, Direction highlight);
 
 private:
 	WorldVertex* m_cursorVBO = nullptr;
