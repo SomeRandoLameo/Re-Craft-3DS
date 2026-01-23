@@ -1,8 +1,8 @@
-#include "gui/SpriteBatch.h"
-#include "rendering/VertexFmt.h"
+#include "gui/SpriteBatch.hpp"
+#include "rendering/VertexFmt.hpp"
 
-#include "ReCraftCore.h"
-#include "gui/DebugUI.h"
+#include "ReCraftCore.hpp"
+#include "gui/DebugUI.hpp"
 
 
 #include <stdarg.h>

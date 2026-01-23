@@ -1,12 +1,12 @@
-#include "gui/Gui.h"
+#include "gui/Gui.hpp"
 
 #include <stdarg.h>
 
-#include "gui/SpriteBatch.h"
-#include "misc/NumberUtils.h"
-#include "rendering/VertexFmt.h"
+#include "ReCraftCore.hpp"
 #include "amethyst/iron.hpp"
-#include "ReCraftCore.h"
+#include "gui/SpriteBatch.hpp"
+#include "misc/NumberUtils.hpp"
+#include "rendering/VertexFmt.hpp"
 
 static InputData oldInput;
 static InputData input;

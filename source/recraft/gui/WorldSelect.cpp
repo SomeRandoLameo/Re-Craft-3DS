@@ -1,22 +1,22 @@
-#include "gui/WorldSelect.h"
+#include "gui/WorldSelect.hpp"
 
-#include "gui/Gui.h"
-#include "gui/SpriteBatch.h"
+#include "gui/Gui.hpp"
+#include "gui/SpriteBatch.hpp"
 
-#include "rendering/VertexFmt.h"
+#include "rendering/VertexFmt.hpp"
 
 #include <dirent.h>
 #include <cstdio>
 #include <cstring>
 #include <unistd.h>
 
-#include "entity/Player.h"
+#include "entity/Player.hpp"
 
 #include <mpack/mpack.h>
 
 #include <3ds.h>
 
-#include "ReCraftCore.h"
+#include "ReCraftCore.hpp"
 
 void WorldSelect_ScanWorlds() {
 	worlds.clear();

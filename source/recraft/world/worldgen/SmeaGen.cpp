@@ -1,4 +1,4 @@
-#include "world/worldgen/SmeaGen.h"
+#include "world/worldgen/SmeaGen.hpp"
 
 extern "C" {
 #include <sino/sino.h>

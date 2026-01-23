@@ -1,12 +1,12 @@
-#include "rendering/Clouds.h"
+#include "rendering/Clouds.hpp"
 
-#include "rendering/VertexFmt.h"
+#include "rendering/VertexFmt.hpp"
 extern "C" {
 #include <sino/sino.h>
 }
 #include <stdint.h>
 
-#include "rendering/TextureMap.h"
+#include "rendering/TextureMap.hpp"
 
 #include <amethyst.hpp>
 

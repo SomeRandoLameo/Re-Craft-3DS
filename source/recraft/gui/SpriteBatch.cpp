@@ -1,10 +1,10 @@
-#include "gui/SpriteBatch.h"
+#include "gui/SpriteBatch.hpp"
 
-#include "gui/DebugUI.h"
-#include "gui/FontLoader.h"
-#include "mcbridge/MCBridge.h"
-#include "rendering/TextureMap.h"
-#include "rendering/VertexFmt.h"
+#include "gui/DebugUI.hpp"
+#include "gui/FontLoader.hpp"
+#include "mcbridge/MCBridge.hpp"
+#include "rendering/TextureMap.hpp"
+#include "rendering/VertexFmt.hpp"
 
 
 #include <stdarg.h>

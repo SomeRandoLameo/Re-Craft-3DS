@@ -1,16 +1,16 @@
-#include "rendering/Renderer.h"
+#include "rendering/Renderer.hpp"
 
-#include "ReCraftCore.h"
-#include "blocks/CT_Block.h"
-#include "gui/CT_Inventory.h"
-#include "gui/Gui.h"
-#include "gui/SpriteBatch.h"
-#include "gui/WorldSelect.h"
-#include "rendering/Camera.h"
-#include "rendering/Clouds.h"
-#include "rendering/Cursor.h"
-#include "rendering/PolyGen.h"
-#include "rendering/TextureMap.h"
+#include "ReCraftCore.hpp"
+#include "blocks/CT_Block.hpp"
+#include "gui/CT_Inventory.hpp"
+#include "gui/Gui.hpp"
+#include "gui/SpriteBatch.hpp"
+#include "gui/WorldSelect.hpp"
+#include "rendering/Camera.hpp"
+#include "rendering/Clouds.hpp"
+#include "rendering/Cursor.hpp"
+#include "rendering/PolyGen.hpp"
+#include "rendering/TextureMap.hpp"
 
 
 // TODO: Fix this

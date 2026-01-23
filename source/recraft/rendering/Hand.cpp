@@ -1,4 +1,4 @@
-#include "rendering/Hand.h"
+#include "rendering/Hand.hpp"
 
 int16_t toTexCoord(int x, int tw) {
     return (int16_t)(((float)(x) / (float)(tw)) * (float)(1 << 15));

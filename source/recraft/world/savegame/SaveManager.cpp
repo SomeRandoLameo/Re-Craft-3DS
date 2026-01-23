@@ -1,12 +1,12 @@
-#include "world/savegame/SaveManager.h"
+#include "world/savegame/SaveManager.hpp"
 
 #include <dirent.h>
 #include <unistd.h>
 
 #include <mpack/mpack.h>
 
-#include "gui/DebugUI.h"
-#include "misc/Crash.h"
+#include "gui/DebugUI.hpp"
+#include "misc/Crash.hpp"
 
 #define mkdirFlags (S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH)
 

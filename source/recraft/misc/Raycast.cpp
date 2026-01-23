@@ -1,5 +1,5 @@
-#include "misc/Raycast.h"
-#include "misc/VecMath.h"
+#include "misc/Raycast.hpp"
+#include "misc/VecMath.hpp"
 
 #include <stdbool.h>
 #include <stdio.h>

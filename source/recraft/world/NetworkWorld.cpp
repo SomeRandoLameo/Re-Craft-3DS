@@ -1,6 +1,6 @@
-#include "world/NetworkWorld.h"
-#include "gui/DebugUI.h"
-#include "mcbridge/MCBridge.h"
+#include "world/NetworkWorld.hpp"
+#include "gui/DebugUI.hpp"
+#include "mcbridge/MCBridge.hpp"
 //TODO: All of this needs to happen asynchronously in order for consoles not to disconnect due to timeout when loading
 NetworkWorld::NetworkWorld(World* world, mc::protocol::packets::PacketDispatcher* dispatcher)
     : mc::protocol::packets::PacketHandler(dispatcher)

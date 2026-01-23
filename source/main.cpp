@@ -1,6 +1,6 @@
 #include <amethyst.hpp>
 
-#include "ReCraftCore.h"
+#include "ReCraftCore.hpp"
 
 int main() {
     Amy::RegisterCxxExceptionHandler();

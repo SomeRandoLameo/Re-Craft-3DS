@@ -1,4 +1,4 @@
-#include "world/WorkQueue.h"
+#include "world/WorkQueue.hpp"
 
 void WorkQueue_Init(WorkQueue* queue) {
     queue->queue.clear();

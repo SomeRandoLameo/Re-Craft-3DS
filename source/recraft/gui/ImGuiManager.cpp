@@ -1,4 +1,4 @@
-#include "gui/ImGuiManager.h"
+#include "gui/ImGuiManager.hpp"
 
 ImGuiManager* ImGuiManager::m_instance = nullptr;
 

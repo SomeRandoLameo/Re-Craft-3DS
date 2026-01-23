@@ -1,10 +1,10 @@
-#include "rendering/CubeRenderer.h"
+#include "rendering/CubeRenderer.hpp"
 
-#include "rendering/VertexFmt.h"
 #include <cstdint>
 #include <cstring>
+#include "rendering/VertexFmt.hpp"
 
-#include "rendering/TextureMap.h"
+#include "rendering/TextureMap.hpp"
 
 // Cube vertices (6 faces, 2 triangles each = 36 vertices)
 static WorldVertex cubeVertices[] = {

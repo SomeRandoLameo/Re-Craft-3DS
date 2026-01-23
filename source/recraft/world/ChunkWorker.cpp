@@ -1,6 +1,6 @@
-#include "world/ChunkWorker.h"
-#include "misc/Crash.h"
+#include "world/ChunkWorker.hpp"
 #include <stdio.h>
+#include "misc/Crash.hpp"
 
 ChunkWorker::ChunkWorker() {
 	WorkQueue_Init(&m_queue);

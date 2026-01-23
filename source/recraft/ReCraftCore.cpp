@@ -1,4 +1,4 @@
-#include "ReCraftCore.h"
+#include "ReCraftCore.hpp"
 
 bool showDebugInfo = true;
 ReCraftCore* ReCraftCore::m_theReCraftCore = nullptr;

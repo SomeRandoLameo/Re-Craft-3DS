@@ -1,4 +1,4 @@
-#include "gui/GuiChat.h"
+#include "gui/GuiChat.hpp"
 #include <cuchar>
 
 GuiChat::GuiChat(mc::protocol::packets::PacketDispatcher *dispatcher, mc::core::Client *client)

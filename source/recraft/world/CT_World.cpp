@@ -1,8 +1,8 @@
-#include "world/ChunkWorker.h"
-#include "world/savegame/SaveManager.h"
-#include "world/CT_World.h"
+#include "world/CT_World.hpp"
+#include "world/ChunkWorker.hpp"
+#include "world/savegame/SaveManager.hpp"
 
-#include "blocks/BlockEvents.h"
+#include "blocks/BlockEvents.hpp"
 
 #include <cstring>
 #include <climits>

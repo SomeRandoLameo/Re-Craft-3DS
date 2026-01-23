@@ -1,6 +1,6 @@
-#include "gui/FontLoader.h"
+#include "gui/FontLoader.hpp"
 
-#include "misc/Crash.h"
+#include "misc/Crash.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>

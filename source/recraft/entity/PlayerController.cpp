@@ -1,6 +1,6 @@
-#include "entity/PlayerController.h"
+#include "entity/PlayerController.hpp"
 
-#include "misc/NumberUtils.h"
+#include "misc/NumberUtils.hpp"
 
 #include <unistd.h>
 

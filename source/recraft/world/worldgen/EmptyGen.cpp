@@ -1,4 +1,4 @@
-#include "world/worldgen/EmptyGen.h"
+#include "world/worldgen/EmptyGen.hpp"
 
 void EmptyGen::Init(World* world) {
     m_world = world;

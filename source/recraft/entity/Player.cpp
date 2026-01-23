@@ -1,9 +1,9 @@
-#include "entity/Player.h"
-#include "misc/Collision.h"
-#include "entity/Damage.h"
-#include "gui/DebugUI.h"
-#include "mcbridge/MCBridge.h"
-#include "entity/PlayerController.h"
+#include "entity/Player.hpp"
+#include "entity/Damage.hpp"
+#include "entity/PlayerController.hpp"
+#include "gui/DebugUI.hpp"
+#include "mcbridge/MCBridge.hpp"
+#include "misc/Collision.hpp"
 
 const float MaxWalkVelocity = 4.3f;
 const float MaxFallVelocity = -50.f;

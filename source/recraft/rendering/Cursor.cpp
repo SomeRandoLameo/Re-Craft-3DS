@@ -1,6 +1,6 @@
-#include "rendering/Cursor.h"
-#include "rendering/VertexFmt.h"
-#include "misc/NumberUtils.h"
+#include "rendering/Cursor.hpp"
+#include "misc/NumberUtils.hpp"
+#include "rendering/VertexFmt.hpp"
 
 Cursor::Cursor() {
 	InitializeVertexBuffer();
