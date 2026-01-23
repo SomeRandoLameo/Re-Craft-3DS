@@ -128,6 +128,7 @@ My Tag is "SomeRandoLameo"!
 ### Credits
 - Network engine bits from [mclib-3ds](https://github.com/SomeRandoLameo/mclib-3ds)
 - Client Engine bits from [craftus](https://github.com/Onixiya/craftus)
+- Research from Official Minecraft PE decompilations [MCPED](https://github.com/ReMinecraftPE/mcped)
 - Dear IMGUI for 3DS (used only for debugging) [imgui-ctr](https://github.com/npid7/imgui-impl-ctr/tree/e67a33579fa6424171ec1a583b6baffa077ee2d3)
 - Learned how to utilize mclib from [Terracotta](https://github.com/plushmonkey/Terracotta)
 - 3DS Compatability layer for IMGUI [imgui-impl-ctr](https://github.com/npid7/imgui-impl-ctr)
@@ -137,8 +138,9 @@ My Tag is "SomeRandoLameo"!
 - Tobid7 ([Amethyst](https://github.com/tobid7/amethyst) and main contributor)
 - RSDuck & Onixia ([Craftus](https://github.com/Onixiya/craftus))
 - Plushmonkey ([original mclib](https://github.com/plushmonkey/mclib) & [Terra](https://github.com/plushmonkey/Terracotta))
-- the people behind [DEAR IMGUI](https://github.com/ocornut/imgui)
-- the people behind [stb](https://github.com/nothings/stb)
+- The people behing [MCPED](https://github.com/ReMinecraftPE/mcped)
+- The people behind [DEAR IMGUI](https://github.com/ocornut/imgui)
+- The people behind [stb](https://github.com/nothings/stb)
 - And many more! (if you think, your code is used here, feel free to commit a change to the readme. We will validate and add it if possible)
 
 ### Licensing
