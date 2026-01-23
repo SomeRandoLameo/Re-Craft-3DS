@@ -1,4 +1,7 @@
 #include "ReCraftCore.hpp"
+#include "gui/screens/GuiInGame.hpp"
+#include "gui/screens/SelectWorldScreen.hpp"
+
 
 bool showDebugInfo = true;
 ReCraftCore* ReCraftCore::m_theReCraftCore = nullptr;
@@ -38,7 +41,9 @@ ReCraftCore::ReCraftCore() {
     m_renderer = new Renderer(m_world, m_player, &m_chunkWorker.GetQueue());
     m_debugUI = new DebugUI();
 
-    WorldSelect_Init();
+    SetScreen(new SelectWorldTopScreen, true);
+    SetScreen(new SelectWorldBotScreen, false);
+    //WorldSelect_Init();
 
     m_savemgr.Init(m_player, m_world);
 
@@ -92,7 +97,7 @@ ReCraftCore::~ReCraftCore() {
     delete m_debugUI;
     delete m_world;
     sino_exit();
-    WorldSelect_Deinit();
+    //WorldSelect_Deinit();
 
     delete m_renderer;
     m_chunkWorker.~ChunkWorker();
@@ -101,8 +106,7 @@ ReCraftCore::~ReCraftCore() {
     gfxExit();
 }
 
-void ReCraftCore::InitSinglePlayer(char* path, char* name, const WorldGenType* worldType, bool newWorld) {
-
+void ReCraftCore::InitSinglePlayer(char* path, char* name, const WorldGenType* worldType, Gamemode mode, bool newWorld) {
     m_chunkWorker.AddHandler(WorkerItemType::BaseGen, (WorkerFuncObj){&SuperFlatGen::Generate, &m_flatGen, true});
 
     m_chunkWorker.AddHandler(WorkerItemType::BaseGen, (WorkerFuncObj){&SmeaGen::Generate, &m_smeaGen, true});
@@ -145,10 +149,14 @@ void ReCraftCore::InitSinglePlayer(char* path, char* name, const WorldGenType* w
             }
         }
 
+        m_player->gamemode = mode;
         m_player->hunger = 20;
         m_player->hp = 20;
         m_player->position.y = (float)highestblock + 0.2f;
     }
+
+    SetScreen(new GuiInGameTop, true);
+    SetScreen(new GuiInGameBot, false);
     m_gamestate = GameState::Playing;
 }
 void ReCraftCore::RunSinglePlayer(InputData inputData) {
@@ -163,13 +171,15 @@ void ReCraftCore::RunSinglePlayer(InputData inputData) {
     m_world->UpdateChunkCache(WorldToChunkCoord(FastFloor(m_player->position.x)),
                               WorldToChunkCoord(FastFloor(m_player->position.z)));
 }
-void ReCraftCore::ExitSinglePlayer() { if (m_world) m_world->Release(&m_chunkWorker, &m_savemgr); }
+void ReCraftCore::ExitSinglePlayer() {
+    if (m_world) m_world->Release(&m_chunkWorker, &m_savemgr);
+    SetScreen(new SelectWorldTopScreen, true);
+    SetScreen(new SelectWorldBotScreen, false);
+}
 
 // TODO: Something prevents the 03DS from connecting. It isnt memory. My guess is that world data takes too long to load
 // and then server timeout?
 void ReCraftCore::InitMultiPlayer() {
-
-
     m_chunkWorker.AddHandler(WorkerItemType::BaseGen, (WorkerFuncObj){&EmptyGen::Generate, &m_emptyGen, true});
 
     SwkbdState swkbd;
@@ -220,12 +230,16 @@ void ReCraftCore::InitMultiPlayer() {
     m_player->position = mc::Vector3d(0, 63, 0);
 
     m_mcBridge.startBackgroundThread();
+    SetScreen(new GuiInGameTop, true);
+    SetScreen(new GuiInGameBot, false);
     m_gamestate = GameState::Playing_OnLine;
 }
 
 void ReCraftCore::ExitMultiplayer() {
     m_mcBridge.stopBackgroundThread();
     m_mcBridge.disconnect();
+    SetScreen(new SelectWorldTopScreen, true);
+    SetScreen(new SelectWorldBotScreen, false);
 }
 
 
@@ -297,11 +311,11 @@ void ReCraftCore::Main() {
 
             m_gamestate = GameState::SelectWorld;
 
-            WorldSelect_ScanWorlds();
+            //WorldSelect_ScanWorlds();
         } else if (m_gamestate == GameState::Playing_OnLine) {
             ExitMultiplayer();
             m_gamestate = GameState::SelectWorld;
-            WorldSelect_ScanWorlds();
+            //WorldSelect_ScanWorlds();
         }
     }
 
@@ -318,6 +332,33 @@ void ReCraftCore::Main() {
                                       touchPos.px, touchPos.py, cstickPos.dx, cstickPos.dy};
 
     m_timeAccum += Delta();
+
+
+        if (m_pTopScreen){
+            m_bTopUsingCurrScreen = true;
+            //m_debugUI->Log("UPDATE TOP");
+            m_pTopScreen->UpdateEvents();
+            m_bTopUsingCurrScreen = false;
+            if (m_bTopHaveQueuedScreen) {
+                SetScreen(m_pTopQueuedScreen, true);
+                m_pTopQueuedScreen = nullptr;
+                m_bTopHaveQueuedScreen = false;
+            }
+           // return;
+        }
+        if (m_pBotScreen){
+            m_bBotUsingCurrScreen = true;
+           // m_debugUI->Log("UPDATE BOT");
+            m_pBotScreen->UpdateEvents();
+            m_bBotUsingCurrScreen = false;
+            if (m_bBotHaveQueuedScreen) {
+                SetScreen(m_pBotQueuedScreen, false);
+                m_pBotQueuedScreen = nullptr;
+                m_bBotHaveQueuedScreen = false;
+            }
+           // return;
+        }
+
     if (m_gamestate == GameState::Playing) {
         RunSinglePlayer(inputData);
 
@@ -325,7 +366,34 @@ void ReCraftCore::Main() {
         RunMultiPlayer(inputData);
 
     } else if (m_gamestate == GameState::SelectWorld) {
-        WorldSelect_Update(m_player);
+        //WorldSelect_Update(m_player);
     }
     Gui::InputData(inputData);
+}
+
+void ReCraftCore::SetScreen(Screen* pScreen, bool top) {
+    bool& usingCurrScreen = top ? m_bTopUsingCurrScreen : m_bBotUsingCurrScreen;
+    bool& haveQueuedScreen = top ? m_bTopHaveQueuedScreen : m_bBotHaveQueuedScreen;
+    Screen*& queuedScreen = top ? m_pTopQueuedScreen : m_pBotQueuedScreen;
+    Screen*& currentScreen = top ? m_pTopScreen : m_pBotScreen;
+
+    int screenWidth = top ? int(400 * 0.5f) : int(320 * 0.5);
+    int screenHeight = int(240 * 0.5);
+
+    if (usingCurrScreen) {
+        haveQueuedScreen = true;
+        queuedScreen = pScreen;
+    } else if (!pScreen || !pScreen->IsErrorScreen()) {
+        if (currentScreen) {
+            currentScreen->Removed();
+            delete currentScreen;
+        }
+
+        currentScreen = pScreen;
+        if (pScreen) {
+            pScreen->Init(this, screenWidth, screenHeight);
+        }
+    } else {
+        delete pScreen;
+    }
 }

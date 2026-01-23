@@ -49,34 +49,23 @@ public:
     C3D_RenderTarget* GetBottomTarget() const { return Bottom->Ptr(); }
 
 private:
-    Clouds* m_clouds = nullptr;
     std::array<C3D::Screen*, 2> Top = {nullptr, nullptr};
     C3D::Screen* Bottom = nullptr;
 
     Amy::C3D::Shader::Ref pWorldShader = nullptr;
     Amy::C3D::Shader::Ref pGuiShader = nullptr;
 
+    int m_mouseX = 0;
+    int m_mouseY = 0;
+
     int m_world_shader_uLocProjection = 0;
     int m_gui_shader_uLocProjection = 0;
 
-    C3D_Tex m_logoTex;
-
-    World* m_world;
-
-    Player* m_player;
     WorldRenderer* m_worldRenderer = nullptr;
     WorkQueue* m_workqueue;
-    Inventory* m_inventory;
-    ImGuiIO* m_io;
-    bool m_show_demo_window;
     std::string m_cstyle;
     std::vector<std::string> m_styles;
 
     void RenderFrame(int eyeIndex, float iod);
     void RenderLowerScreen(DebugUI* debugUi);
-
-    void RenderExpBar();
-    void RenderHealth();
-    void RenderGameOverlay();
-    void RenderHunger();
 };

@@ -203,7 +203,7 @@ void WorldRenderer::Render(float iod) {
 
     RenderWorld();
 
-    m_clouds->Draw(m_projectionUniform, m_cam.GetVP(), m_world, m_player->position.x, m_player->position.z);
+    m_clouds->Draw(m_projectionUniform, m_cam.GetVP(), m_player->position.x, m_player->position.z);
 
     m_cubeRenderer->Draw(m_projectionUniform, m_cam.GetVP(), m_world, m_player->position);
 

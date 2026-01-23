@@ -50,7 +50,6 @@ add_executable(${PROJECT_NAME}
     source/recraft/gui/FontLoader.cpp
     source/recraft/gui/Gui.cpp
     source/recraft/gui/SpriteBatch.cpp
-    source/recraft/gui/WorldSelect.cpp
     source/recraft/gui/GuiChat.cpp
     source/recraft/inventory/ItemStack.cpp
     source/recraft/mcbridge/MCBridge.cpp
@@ -82,6 +81,11 @@ add_executable(${PROJECT_NAME}
     source/recraft/world/worldgen/EmptyGen.cpp
     source/recraft/world/worldgen/SuperFlatGen.cpp
     source/recraft/gui/ImGuiManager.cpp
+    source/recraft/gui/Screen.cpp
+    source/recraft/gui/screens/SelectWorldScreen.cpp
+    source/recraft/gui/screens/CreateWorldScreen.cpp
+    source/recraft/gui/screens/ConfirmScreen.cpp
+    source/recraft/gui/screens/GuiInGame.cpp
 )
 target_include_directories(${PROJECT_NAME} PUBLIC
     include/recraft

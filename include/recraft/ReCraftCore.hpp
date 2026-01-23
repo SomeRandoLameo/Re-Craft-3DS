@@ -14,7 +14,7 @@ extern "C" {
 #include "gui/Gui.hpp"
 #include "gui/GuiChat.hpp"
 #include "gui/ImGuiManager.hpp"
-#include "gui/WorldSelect.hpp"
+#include "gui/Screen.hpp"
 #include "mcbridge/MCBridge.hpp"
 #include "misc/Crash.hpp"
 #include "rendering/PolyGen.hpp"
@@ -28,6 +28,8 @@ extern "C" {
 #include "world/worldgen/SmeaGen.hpp"
 #include "world/worldgen/SuperFlatGen.hpp"
 
+class Screen;
+
 class ReCraftCore : public Amy::App {
 public:
     ReCraftCore();
@@ -36,12 +38,19 @@ public:
 
     void Main() override;
 
-    void InitSinglePlayer(char* path, char* name, const WorldGenType* worldType, bool newWorld);
+    void SetScreen(Screen* pScreen, bool top);
+
+    void InitSinglePlayer(char* path, char* name, const WorldGenType* worldType, Gamemode gamemode, bool newWorld);
 
     void InitMultiPlayer();
 
     GameState* GetGameState() { return &m_gamestate; }
     Amy::AssetMgr* GetAssetManager() { return &m_AssetMgr; }
+    Player* GetPlayer() { return m_player; }
+
+    Screen* m_pTopScreen = nullptr;
+    Screen* m_pBotScreen = nullptr;
+
 private:
     static ReCraftCore* m_theReCraftCore;
     SuperFlatGen m_flatGen;
@@ -51,6 +60,14 @@ private:
     ChunkWorker m_chunkWorker;
     MCBridge m_mcBridge;
     DebugUI* m_debugUI = nullptr;
+
+    Screen* m_pTopQueuedScreen = nullptr;
+    Screen* m_pBotQueuedScreen = nullptr;
+    bool m_bTopUsingCurrScreen = false;
+    bool m_bTopHaveQueuedScreen = false;
+    bool m_bBotUsingCurrScreen = false;
+    bool m_bBotHaveQueuedScreen = false;
+
     Player* m_player = nullptr;
     World* m_world = nullptr;
     PlayerController* m_playerCtrl = nullptr;

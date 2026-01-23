@@ -5,7 +5,6 @@
 #include "gui/CT_Inventory.hpp"
 #include "gui/Gui.hpp"
 #include "gui/SpriteBatch.hpp"
-#include "gui/WorldSelect.hpp"
 #include "rendering/Camera.hpp"
 #include "rendering/Clouds.hpp"
 #include "rendering/Cursor.hpp"
@@ -17,11 +16,7 @@
 extern bool showDebugInfo;
 
 Renderer::Renderer(World* world, Player* player, WorkQueue* queue) {
-    m_world = world;
-    m_player = player;
     m_workqueue = queue;
-    m_inventory = new Inventory();
-    m_clouds = new Clouds();
     C3D::Init();
 
     Top[0] = C3D::CreateScreen(GFX_TOP);
@@ -55,16 +50,12 @@ Renderer::Renderer(World* world, Player* player, WorkQueue* queue) {
 
     Block_Init();
 
-    Texture_Load(&m_logoTex, "romfs:/assets/textures/gui/title/craftus.png");
     ImGuiManager::GetInstance()->Initialize();
-    m_show_demo_window = false;
 }
 
 Renderer::~Renderer() {
-    C3D_TexDelete(&m_logoTex);
     Block_Deinit();
     PolyGen_Deinit();
-    m_clouds->~Clouds();
     // delete m_worldRenderer;
     m_worldRenderer = nullptr;
     Gui::Deinit();
@@ -74,152 +65,6 @@ Renderer::~Renderer() {
     delete Top[1];
     delete Bottom;
     C3D::Deinit();
-}
-
-// this is actual minecraft ported code
-// TODO: Add support for damage animations, potion effects like poisin, wither
-// and more
-// TODO: Move this somewhere else once the new renderer works, Preferrably as a GuiOverlay
-void Renderer::RenderHealth() {
-    // TODO: Damage flicker bounce + healing white flicker + wither and more
-    int health = m_player->hp;
-    int yPos = 99;
-    int spriteSize = 9;
-    SpriteBatch_BindGuiTexture(GuiTexture::Icons);
-    for (int amount = 0; amount < 10; ++amount) {
-
-        int var6 = 0;
-        bool var9 = false;
-        if (var9) {
-            var6 = 1;
-        }
-
-        int prevHealth = m_player->hp;
-
-        if (health <= 4) {
-            yPos += nextafter(2, 0);
-        }
-
-        SpriteBatch_PushQuad(spriteSize + (amount * 8), yPos, -1, spriteSize, spriteSize, 16 + var6 * spriteSize, 0,
-                             spriteSize, spriteSize);
-
-        if (var9) {
-            if ((amount << 1) + 1 < prevHealth) {
-                SpriteBatch_PushQuad(spriteSize + (amount * 8), yPos, 0, spriteSize, spriteSize, 70, 0, spriteSize,
-                                     spriteSize);
-            }
-
-            if ((amount << 1) + 1 == prevHealth) {
-                SpriteBatch_PushQuad(spriteSize + (amount * 8), yPos, 0, spriteSize, spriteSize, 79, 0, spriteSize,
-                                     spriteSize);
-            }
-        }
-
-        if ((amount << 1) + 1 < health) {
-            SpriteBatch_PushQuad(spriteSize + (amount * 8), yPos, 0, spriteSize, spriteSize, 52, 0, spriteSize,
-                                 spriteSize);
-        }
-
-        if ((amount << 1) + 1 == health) {
-            SpriteBatch_PushQuad(spriteSize + (amount * 8), yPos, 0, spriteSize, spriteSize, 61, 0, spriteSize,
-                                 spriteSize);
-        }
-    }
-}
-
-void Renderer::RenderExpBar() {
-    // harcoded cap for now
-    int barCap = 10;
-
-    SpriteBatch_BindGuiTexture(GuiTexture::Icons);
-
-    if (barCap > 0) {
-        int barLength = 182;
-        int xpFill = (int)(m_player->experience * (float)(barLength + 1));
-
-        int y = 120 - 9;
-        SpriteBatch_PushQuad(200 / 2 - 182 / 2, y, 0, barLength, 5, 0, 64, barLength, 5);
-
-        if (xpFill > 0) {
-            SpriteBatch_PushQuad(200 / 2 - 182 / 2, y, 1, xpFill, 5, 0, 69, xpFill, 5);
-        }
-    }
-
-    if (m_player->experienceLevel > 0) {
-        char experienceStr[20]; // buffer to hold the string representation of
-                                // experience level
-
-        int experienceInt = (int)m_player->experienceLevel;
-        snprintf(experienceStr, sizeof(experienceStr), "%d",
-                 experienceInt); // Format as integer
-
-        int textWidth = SpriteBatch_CalcTextWidth(experienceStr);
-
-        int textY = 10;
-
-        SpriteBatch_PushText(200 / 2 - textWidth / 2 + 1, 120 - textY, 2, SHADER_RGB(0, 0, 0), false, INT_MAX, 0,
-                             experienceStr);
-        SpriteBatch_PushText(200 / 2 - textWidth / 2 - 1, 120 - textY, 2, SHADER_RGB(0, 0, 0), false, INT_MAX, 0,
-                             experienceStr);
-        SpriteBatch_PushText(200 / 2 - textWidth / 2, 120 - textY + 1, 2, SHADER_RGB(0, 0, 0), false, INT_MAX, 0,
-                             experienceStr);
-        SpriteBatch_PushText(200 / 2 - textWidth / 2, 120 - textY - 1, 2, SHADER_RGB(0, 0, 0), false, INT_MAX, 0,
-                             experienceStr);
-        SpriteBatch_PushText(200 / 2 - textWidth / 2, 120 - textY, 3, SHADER_RGB(100, 255, 32), false, INT_MAX, 0,
-                             experienceStr);
-    }
-}
-
-// TODO: Hunger effects
-void Renderer::RenderHunger() {
-    int spriteSize = 9;
-    int xpos = 190;
-    int ypos = 99;
-
-    int saturationLevel = m_player->hunger;
-
-    for (int amount = 0; amount < 10; ++amount) {
-
-        int l6 = 16;
-        int j7 = 0;
-        /*
-                // Hunger Effect
-                if (entityplayer.isPotionActive(MobEffects.HUNGER))
-                {
-                    l6 += 36;
-                    j7 = 13;
-                }
-
-                //Shaking effect
-                if (entityplayer.getFoodStats().getSaturationLevel() <= 0.0F &&
-           this.updateCounter % (k * 3 + 1) == 0)
-                {
-                    ypos = j1 + (this.rand.nextInt(3) - 1);
-                }
-        */
-
-        int spriteXpos = xpos - amount * 8 - 9;
-        SpriteBatch_PushQuad(spriteXpos, ypos, -1, spriteSize, spriteSize, 16 + j7 * 9, 27, 9, 9);
-
-        if (amount * 2 + 1 < saturationLevel) {
-            SpriteBatch_PushQuad(spriteXpos, ypos, 0, spriteSize, spriteSize, l6 + 36, 27, 9, 9);
-        }
-
-        if (amount * 2 + 1 == saturationLevel) {
-            SpriteBatch_PushQuad(spriteXpos, ypos, 0, spriteSize, spriteSize, l6 + 45, 27, 9, 9);
-        }
-    }
-}
-
-void Renderer::RenderGameOverlay() {
-    SpriteBatch_BindGuiTexture(GuiTexture::Icons);
-    SpriteBatch_PushQuad(200 / 2 - 16 / 2, 120 / 2 - 16 / 2, 0, 16, 16, 0, 0, 16, 16);
-
-    if (m_player->gamemode == 0) {
-        RenderExpBar();
-        RenderHealth();
-        RenderHunger();
-    }
 }
 
 void Renderer::Render(DebugUI* debugUi) {
@@ -282,14 +127,16 @@ void Renderer::RenderFrame(int eyeIndex, float iod) {
     C3D_DepthTest(true, GPU_GREATER, GPU_WRITE_ALL);
     C3D_CullFace(GPU_CULL_BACK_CCW);
 
+    if (&*ReCraftCore::GetInstance()->m_pTopScreen){
+        ReCraftCore::GetInstance()->m_pTopScreen->Render3D(0, 0, eyeIndex, m_world_shader_uLocProjection, iod, 0 /*  TODO: 0 is enough for now, but later we need   1000.f / Amy::App::Delta()*/);
+        ReCraftCore::GetInstance()->m_pTopScreen->Render(0, 0, 0 /*  TODO: 0 is enough for now, but later we need   1000.f / Amy::App::Delta()*/);
+    }
+
+    //TODO: REMOVE
     if (*ReCraftCore::GetInstance()->GetGameState() != GameState::SelectWorld) {
         C3D_TexBind(0, (C3D_Tex*)Block_GetTextureMap());
 
         m_worldRenderer->Render(!eyeIndex ? -iod : iod);
-
-        RenderGameOverlay();
-    } else {
-        WorldSelect_RenderTop(m_clouds, m_world_shader_uLocProjection, eyeIndex, iod, m_world, &m_logoTex);
     }
 
     pGuiShader->Use();
@@ -303,22 +150,13 @@ void Renderer::RenderLowerScreen(DebugUI* debugUi) {
 
     SpriteBatch_StartFrame(320, 240);
 
-    if (*ReCraftCore::GetInstance()->GetGameState() == GameState::SelectWorld) {
-        WorldSelect_RenderBot();
-    } else {
-        SpriteBatch_SetScale(2);
+    if (&*ReCraftCore::GetInstance()->m_pBotScreen){
+        Gui::GetCursorMovement(&m_mouseX, &m_mouseY);
+        ReCraftCore::GetInstance()->m_pBotScreen->Render(m_mouseX, m_mouseY, 0 /*  TODO: 0 is enough for now, but later we need   1000.f / Amy::App::Delta()*/);
+    }
 
-        m_inventory->renderHotbar(160 / 2 - 194 / 2, 120 - Inventory::QUICKSELECT_HEIGHT, m_player->quickSelectBar,
-                                  m_player->quickSelectBarSlot);
-
-        m_inventory->draw(((137 / 2) - (120 / 2)), 10, m_player->inventory,
-                          sizeof(m_player->inventory) / sizeof(ItemStack), m_player->inventorySite);
-
-        m_player->inventorySite = m_inventory->currentSite;
-
-        if (showDebugInfo) {
-            debugUi->Draw();
-        }
+    if (showDebugInfo) {
+        debugUi->Draw();
     }
 
     Gui::Frame();
