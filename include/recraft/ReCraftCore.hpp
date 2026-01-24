@@ -9,7 +9,6 @@ extern "C" {
 }
 #include "GameStates.hpp"
 #include "entity/Player.hpp"
-#include "entity/PlayerController.hpp"
 #include "gui/DebugUI.hpp"
 #include "gui/Gui.hpp"
 #include "gui/GuiChat.hpp"
@@ -29,7 +28,6 @@ extern "C" {
 #include "world/worldgen/SuperFlatGen.hpp"
 
 class Screen;
-
 class ReCraftCore : public Amy::App {
 public:
     ReCraftCore();
@@ -70,7 +68,6 @@ private:
 
     Player* m_player = nullptr;
     World* m_world = nullptr;
-    PlayerController* m_playerCtrl = nullptr;
     Renderer* m_renderer = nullptr;
     GuiChat* m_chat = nullptr;
     NetworkWorld* m_networkWorld = nullptr;
@@ -78,10 +75,9 @@ private:
     Amy::AssetMgr m_AssetMgr;
     float m_timeAccum = 0.f;
 
-
-    void RunSinglePlayer(InputData inputData);
+    void RunSinglePlayer();
     void ExitSinglePlayer();
 
-    void RunMultiPlayer(InputData inputData);
+    void RunMultiPlayer();
     void ExitMultiplayer();
 };

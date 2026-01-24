@@ -1,7 +1,7 @@
 #pragma once
 
-//TODO: STD::STRING <- char*
-typedef struct {
+// TODO: STD::STRING <- char*
+struct Damage {
     char* cause;
     int time;
-} Damage;
+};
