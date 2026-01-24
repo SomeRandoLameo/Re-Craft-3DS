@@ -85,7 +85,9 @@ add_executable(${PROJECT_NAME}
     source/recraft/gui/screens/SelectWorldScreen.cpp
     source/recraft/gui/screens/CreateWorldScreen.cpp
     source/recraft/gui/screens/ConfirmScreen.cpp
+    source/recraft/gui/screens/DeleteWorldScreen.cpp
     source/recraft/gui/screens/GuiInGame.cpp
+    source/recraft/gui/screens/StartScreen.cpp
 )
 target_include_directories(${PROJECT_NAME} PUBLIC
     include/recraft

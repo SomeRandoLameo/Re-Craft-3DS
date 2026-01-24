@@ -8,20 +8,6 @@ typedef struct {
     char path[256];
 } WorldInfo;
 
-typedef enum { WorldSelect, ConfirmDeletion } MenuState;
-
-class SelectWorldTopScreen : public Screen {
-public:
-    void Init() override;
-    void Removed() override;
-
-    bool IsInGameScreen() override;
-    void Render3D(int mouseX, int mouseY, int eyeIndex, int projmat, int iod, float delta) override;
-private:
-    Clouds* m_clouds = nullptr;
-    C3D_Tex m_logoTex;
-};
-
 class SelectWorldBotScreen : public Screen {
 public:
     void Init() override;
@@ -32,12 +18,10 @@ public:
     void ButtonClicked() override;
 private:
     void LoadLevelSource();
-    void DeleteWorld(const char* path);
 
     float m_maxVelocity = 20.f;
 
     std::vector<WorldInfo> m_worlds;
-    MenuState m_menustate = MenuState::WorldSelect; // TODO: Remove
 
     int m_scroll = 0;
     float m_velocity = 0.f;
@@ -45,15 +29,11 @@ private:
 
     bool m_clicked_play = false;
     bool m_clicked_new_world = false;
-    bool m_clicked_mp_connect = false;
+    bool m_clicked_back = false;
     bool m_clicked_delete_world = false;
-
-    bool m_confirmed_deletion = false;
-    bool m_canceled_deletion = false;
 
     char m_out_worldpath[256];
     char m_out_name[World::NameSize] = {'\0'};
     WorldGenType m_worldType;
-    bool m_newWorld = false;
 
 };

@@ -1,6 +1,7 @@
 #include "ReCraftCore.hpp"
 #include "gui/screens/GuiInGame.hpp"
 #include "gui/screens/SelectWorldScreen.hpp"
+#include "gui/screens/StartScreen.hpp"
 
 
 bool showDebugInfo = true;
@@ -41,8 +42,8 @@ ReCraftCore::ReCraftCore() {
     m_renderer = new Renderer(m_world, m_player, &m_chunkWorker.GetQueue());
     m_debugUI = new DebugUI();
 
-    SetScreen(new SelectWorldTopScreen, true);
-    SetScreen(new SelectWorldBotScreen, false);
+    SetScreen(new StartTopScreen, true);
+    SetScreen(new StartBotScreen, false);
     //WorldSelect_Init();
 
     m_savemgr.Init(m_player, m_world);
@@ -173,7 +174,7 @@ void ReCraftCore::RunSinglePlayer(InputData inputData) {
 }
 void ReCraftCore::ExitSinglePlayer() {
     if (m_world) m_world->Release(&m_chunkWorker, &m_savemgr);
-    SetScreen(new SelectWorldTopScreen, true);
+    SetScreen(new StartTopScreen, true);
     SetScreen(new SelectWorldBotScreen, false);
 }
 
@@ -238,7 +239,7 @@ void ReCraftCore::InitMultiPlayer() {
 void ReCraftCore::ExitMultiplayer() {
     m_mcBridge.stopBackgroundThread();
     m_mcBridge.disconnect();
-    SetScreen(new SelectWorldTopScreen, true);
+    SetScreen(new StartTopScreen, true);
     SetScreen(new SelectWorldBotScreen, false);
 }
 

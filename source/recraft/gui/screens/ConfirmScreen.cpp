@@ -1,9 +1,12 @@
 #include "gui/screens/ConfirmScreen.hpp"
-//TODO: THIS
+#include "gui/SpriteBatch.hpp"
+
 ConfirmScreen::ConfirmScreen(Screen* pScreen, const std::string& line1, const std::string& line2, int x) :
 	m_textLine1(line1),
 	m_textLine2(line2),
 	m_pScreen(pScreen),
+    m_buttonConfirm("Yes"),
+    m_buttonDeny("No"),
 	field_40(x)
 {
 }
@@ -12,49 +15,62 @@ ConfirmScreen::ConfirmScreen(Screen* pScreen, const std::string& line1, const st
 	m_textLine1(line1),
 	m_textLine2(line2),
 	m_pScreen(pScreen),
+    m_buttonConfirm(ok),
+    m_buttonDeny(cancel),
 	field_40(x)
 {
 }
 
-void ConfirmScreen::ButtonClicked()
-{
-	//postResult(pButton->field_30 == 0);
+void ConfirmScreen::ButtonClicked() {
+    if(m_confirmed_deletion){
+        m_confirmed_deletion = false;
+        PostResult(true);
+    }
+
+    if(m_canceled_deletion){
+        m_canceled_deletion = false;
+        PostResult(false);
+    }
+
 }
 
-bool ConfirmScreen::HandleBackEvent(bool b)
-{
+bool ConfirmScreen::HandleBackEvent(bool b) {
 	if (!b)
 		PostResult(false);
 
 	return true;
 }
 
-void ConfirmScreen::Init()
-{
-	//m_btnOK.m_xPos = m_width / 2 - 4 - 120;
-	//m_btnCancel.m_xPos = m_width / 2 + 4;
+void ConfirmScreen::Render(int mouseX, int mouseY, float delta) {
+    SpriteBatch_SetScale(2);
 
-	//m_btnCancel.m_yPos = m_btnOK.m_yPos = m_height / 6 + 72;
+    SpriteBatch_BindGuiTexture(GuiTexture::MenuBackground);
+    for (int i = 0; i < 160 / 32 + 1; i++) {
+        for (int j = 0; j < 120 / 32 + 1; j++) {
 
-	//m_btnOK.m_width  = m_btnCancel.m_width = 120;
-	//m_btnOK.m_height = m_btnCancel.m_height = 24;
+            SpriteBatch_PushQuadColor(i * 32, j * 32,  -10, 32, 32, 0, 0, 32, 32,
+                                      SHADER_RGB(12, 12, 12));
+        }
+    }
 
-	//m_buttons.push_back(&m_btnOK);
-	//m_buttons.push_back(&m_btnCancel);
-	//m_buttonTabList.push_back(&m_btnOK);
-	//m_buttonTabList.push_back(&m_btnCancel);
+    Gui::Offset(0, 10);
+    Gui::BeginRowCenter(SpriteBatch_GetWidth(), 1);
+    Gui::Label(0.f, true, INT16_MAX, true, m_textLine1.c_str());
+    Gui::EndRow();
+    Gui::BeginRow(SpriteBatch_GetWidth(), 1);
+    Gui::Label(0.f, true, INT16_MAX, true, m_textLine2.c_str());
+    Gui::EndRow();
+    Gui::VerticalSpace(Gui::RelativeHeight(0.4f));
+    Gui::BeginRowCenter(Gui::RelativeWidth(0.8f), 3);
+    m_canceled_deletion = Gui::Button(0.4f, m_buttonDeny.c_str());
+    Gui::Space(0.2f);
+    m_confirmed_deletion = Gui::Button(0.4f, m_buttonConfirm.c_str());
+    Gui::EndRow();
+
+	Screen::Render(mouseX, mouseY, delta);
 }
 
-void ConfirmScreen::Render(int mouseX, int mouseY, float f)
-{
-	//renderBackground();
-	//drawCenteredString(m_pFont, m_textLine1, m_width / 2, 50, 0xFFFFFF);
-	//drawCenteredString(m_pFont, m_textLine2, m_width / 2, 70, 0xFFFFFF);
-	Screen::Render(mouseX, mouseY, f);
-}
-
-void ConfirmScreen::PostResult(bool b)
-{
+void ConfirmScreen::PostResult(bool b) {
 	m_pScreen->ConfirmResult(b, field_40);
 }
 

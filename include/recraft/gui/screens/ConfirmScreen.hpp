@@ -10,8 +10,7 @@ public:
 
 	void ButtonClicked() override;
 	bool HandleBackEvent(bool b) override;
-	void Init() override;
-	void Render(int mouseX, int mouseY, float f) override;
+	void Render(int mouseX, int mouseY, float delta) override;
 
 	virtual void PostResult(bool b);
 
@@ -20,5 +19,10 @@ private:
 	int field_40 = 0;
 	std::string m_textLine1;
 	std::string m_textLine2;
+    std::string m_buttonConfirm;
+    std::string m_buttonDeny;
+
+    bool m_confirmed_deletion = false;
+    bool m_canceled_deletion = false;
 };
 

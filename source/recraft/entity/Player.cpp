@@ -136,6 +136,7 @@ void Player::UpdateMovement(DebugUI* dbg, PlayerControlScheme m_controlScheme, I
     pitch += (-lookDown + lookUp) * 160.f * DEG_TO_RAD * dt;
     pitch = CLAMP(pitch, -DEG_TO_RAD * 89.9f, DEG_TO_RAD * 89.9f);
 
+    //TODO: Segfault sometimes when rejoining the world, this is the problem.
     mc::inventory::Slot curSlot = quickSelectBar[quickSelectBarSlot];
     auto curStack = MCBridge::MCLIBSlotToCTItemStack(curSlot);
     bool slotEmpty = (curStack.block == Block::Air);

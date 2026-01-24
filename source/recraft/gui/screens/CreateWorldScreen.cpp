@@ -1,4 +1,4 @@
-#include "gui/screens/CreateWorldScreen.h"
+#include "gui/screens/CreateWorldScreen.hpp"
 #include "gui/SpriteBatch.hpp"
 
 #include <utility>
@@ -99,8 +99,8 @@ void CreateWorldBotScreen::ButtonClicked() {
             }
 
             m_newWorld = true;
+            ReCraftCore::GetInstance()->InitSinglePlayer(m_out_worldpath, name, &m_worldType, m_gamemode, m_newWorld);
 
-            ReCraftCore::GetInstance()->InitSinglePlayer(m_out_worldpath, name, &m_worldType, m_gamemode1, m_newWorld);
         }
     }
     if (m_canceled_world_options){
