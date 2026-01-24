@@ -1,0 +1,84 @@
+#pragma once
+//MCLIB includes
+#include "../../mclib/common/Common.h"
+#include "../../mclib/core/Client.h"
+#include "../../mclib/util/Forge.h"
+#include "../../mclib/util/Hash.h"
+#include "../../mclib/util/Utility.h"
+#include "../../mclib/util/VersionFetcher.h"
+
+//Craftus includes
+#include "../inventory/ItemStack.hpp"
+
+#include <memory>
+#include <iostream>
+#include <atomic>
+#include <functional>
+#include <3ds.h>
+
+class MCBridge {
+public:
+    MCBridge() = default;
+    ~MCBridge();
+
+    bool connect();
+    void disconnect();
+    void update();
+
+    void SetIPAddress(const std::string& ip) { m_ipAddress = ip; }
+    void SetUsername(const std::string& username) { m_username = username; }
+
+    void startBackgroundThread();
+    void stopBackgroundThread();
+    bool isConnected() const { return m_connected.load(); }
+    bool isRunning() const { return m_running.load(); }
+
+    //clanker suggested whatever the heck this is
+    template<typename Func>
+    bool withClient(Func&& func) {
+        LightLock_Lock(&m_clientMutex);
+        bool result = false;
+        if (m_client && m_connected.load()) {
+            try {
+                func(m_client.get(), m_dispatcher.get());
+                result = true;
+            } catch (std::exception& e) {
+                std::cout << "Client operation error: " << e.what() << std::endl;
+            }
+        }
+        LightLock_Unlock(&m_clientMutex);
+        return result;
+    }
+
+    mc::core::Client* getClient() { return m_client.get(); }
+    void lockClient() { LightLock_Lock(&m_clientMutex); }
+    void unlockClient() { LightLock_Unlock(&m_clientMutex); }
+
+    static mc::inventory::Slot CTItemStackToMCLIBSlot(ItemStack in);
+    static ItemStack MCLIBSlotToCTItemStack(mc::inventory::Slot in);
+
+    static Block MCLibBlockToCTBlock(u32 BlockType);
+
+private:
+    static void threadFunc(void* arg);
+    void backgroundLoop();
+
+    std::string m_ipAddress;
+    std::string m_username;
+
+    std::unique_ptr<mc::protocol::packets::PacketDispatcher> m_dispatcher;
+    std::unique_ptr<mc::core::Client> m_client;
+
+    Thread m_thread;
+    void* m_threadStack;
+    LightLock m_clientMutex;
+
+    std::atomic<bool> m_running = false;
+    std::atomic<bool> m_connected = false;
+    std::atomic<bool> m_shouldStop = false;
+
+    static constexpr size_t THREAD_STACK_SIZE = 64 * 1024;
+    static constexpr int THREAD_PRIORITY = 0x30;
+    static constexpr int THREAD_CORE = -2;
+
+};

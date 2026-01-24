@@ -1,4 +1,4 @@
-#include "mcbridge/MCBridge.h"
+#include "mcbridge/MCBridge.hpp"
 #include <iostream>
 
 MCBridge::~MCBridge() {

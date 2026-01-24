@@ -44,14 +44,14 @@ add_executable(${PROJECT_NAME}
     source/recraft/blocks/CT_Block.cpp
     source/recraft/entity/Damage.cpp
     source/recraft/entity/Player.cpp
-    source/recraft/entity/PlayerController.cpp
     source/recraft/gui/CT_Inventory.cpp
     source/recraft/gui/DebugUI.cpp
     source/recraft/gui/FontLoader.cpp
     source/recraft/gui/Gui.cpp
     source/recraft/gui/SpriteBatch.cpp
-    source/recraft/gui/WorldSelect.cpp
     source/recraft/gui/GuiChat.cpp
+    source/recraft/input/InputManager.cpp
+    source/recraft/input/PlayerInput.cpp
     source/recraft/inventory/ItemStack.cpp
     source/recraft/mcbridge/MCBridge.cpp
     source/recraft/misc/Collision.cpp
@@ -82,6 +82,13 @@ add_executable(${PROJECT_NAME}
     source/recraft/world/worldgen/EmptyGen.cpp
     source/recraft/world/worldgen/SuperFlatGen.cpp
     source/recraft/gui/ImGuiManager.cpp
+    source/recraft/gui/Screen.cpp
+    source/recraft/gui/screens/SelectWorldScreen.cpp
+    source/recraft/gui/screens/CreateWorldScreen.cpp
+    source/recraft/gui/screens/ConfirmScreen.cpp
+    source/recraft/gui/screens/DeleteWorldScreen.cpp
+    source/recraft/gui/screens/GuiInGame.cpp
+    source/recraft/gui/screens/StartScreen.cpp
 )
 target_include_directories(${PROJECT_NAME} PUBLIC
     include/recraft
@@ -95,7 +102,11 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC
     -DSAVE_DIR="recraft"
 )
 target_compile_options(${PROJECT_NAME} PUBLIC
+    -Ofast
+    -fomit-frame-pointer
+    #-fno-exceptions #franzosen grrrr
     -Wno-changes-meaning
+    -include "3ds/types.h"
 )
 target_link_libraries(${PROJECT_NAME} PUBLIC
     m

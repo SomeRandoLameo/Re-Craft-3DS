@@ -1,4 +1,4 @@
-#include "blocks/BlockEvents.h"
+#include "blocks/BlockEvents.hpp"
 
 void BlockEvent_RandomTick(World* world, ChunkColumnPtr column, int x[], int y[], int z[]) {
 	int k = 0;

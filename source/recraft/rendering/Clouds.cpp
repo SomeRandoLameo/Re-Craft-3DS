@@ -1,12 +1,12 @@
-#include "rendering/Clouds.h"
+#include "rendering/Clouds.hpp"
 
-#include "rendering/VertexFmt.h"
+#include "rendering/VertexFmt.hpp"
 extern "C" {
 #include <sino/sino.h>
 }
 #include <stdint.h>
 
-#include "rendering/TextureMap.h"
+#include "rendering/TextureMap.hpp"
 
 #include <amethyst.hpp>
 
@@ -43,7 +43,7 @@ Clouds::~Clouds() {
     linearFree(m_cloudVBO);
 }
 
-void Clouds::Draw(int projUniform, C3D_Mtx* projectionview, World* world, float tx, float tz) {
+void Clouds::Draw(int projUniform, C3D_Mtx* projectionview, float tx, float tz) {
     C3D_Mtx model;
     Mtx_Identity(&model);
     Mtx_Translate(&model, tx, 90.f, tz, true);

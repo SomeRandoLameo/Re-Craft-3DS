@@ -4,10 +4,10 @@
         - MINOR MODIFICATIONS FOR BUGFIXES OR "GENERAL" IMPROVEMENTS ARE ALLOWED
 */
 
-#include "blocks/CT_Block.h"
+#include "blocks/CT_Block.hpp"
 
-#include "rendering/TextureMap.h"
-#include "rendering/VertexFmt.h"
+#include "rendering/TextureMap.hpp"
+#include "rendering/VertexFmt.hpp"
 
 static Texture_Map textureMap;
 

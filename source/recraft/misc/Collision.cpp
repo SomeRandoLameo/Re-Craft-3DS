@@ -1,8 +1,8 @@
-#include "misc/Collision.h"
+#include "misc/Collision.hpp"
 
 #include <math.h>
 
-#include "misc/NumberUtils.h"
+#include "misc/NumberUtils.hpp"
 
 bool Collision_BoxIntersect(Box a, Box b, int ignore_faces,
                             mc::Vector3d* ncoll,  // normal of collision.

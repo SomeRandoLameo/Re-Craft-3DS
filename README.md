@@ -47,7 +47,7 @@ git submodule update --init --recursive
 # Configure CMake
 # The Toolchain has to be set to the toolchain of DevKitPro.
 # The 3DS IP is used for the send target. If you dont want to send via your IDE, you can leave it empty
-cmake -B build -DCMAKE_TOOLCHAIN_FILE=/opt/devkitpro/3ds.cmake -D3DS_IP="YOUR_3DS_IP_HERE"
+cmake -B build -DCMAKE_TOOLCHAIN_FILE=/opt/devkitpro/cmake/3DS.cmake -D3DS_IP="YOUR_3DS_IP_HERE"
 
 # Build the project
 make Re-Craft-3DS_3dsx
@@ -55,8 +55,8 @@ make Re-Craft-3DS_3dsx
 # Install via 3dslink (3DS must be on network)
 make send
 
-# you can also use standalone 3DSLink
-cd cmake_build_debug/
+# you can also use standalone 3DSLink (if make send doesn't work for you)
+cd build/
 3dslink Re-Craft-3DS.3dsx
 
 # OR use FTP to transfer the .3dsx file to your 3DS manually
@@ -128,6 +128,9 @@ My Tag is "SomeRandoLameo"!
 ### Credits
 - Network engine bits from [mclib-3ds](https://github.com/SomeRandoLameo/mclib-3ds)
 - Client Engine bits from [craftus](https://github.com/Onixiya/craftus)
+- Research from Official Minecraft PE decompilations [MCPED](https://github.com/ReMinecraftPE/mcped)
+- Research from Official Minecraft PE decompilations [MinecraftLCE](https://github.com/GRAnimated/MinecraftLCE/tree/main)
+- Research from Official Minecraft Decompilations [MCP919](https://github.com/Marcelektro/MCP-919)
 - Dear IMGUI for 3DS (used only for debugging) [imgui-ctr](https://github.com/npid7/imgui-impl-ctr/tree/e67a33579fa6424171ec1a583b6baffa077ee2d3)
 - Learned how to utilize mclib from [Terracotta](https://github.com/plushmonkey/Terracotta)
 - 3DS Compatability layer for IMGUI [imgui-impl-ctr](https://github.com/npid7/imgui-impl-ctr)
@@ -137,8 +140,11 @@ My Tag is "SomeRandoLameo"!
 - Tobid7 ([Amethyst](https://github.com/tobid7/amethyst) and main contributor)
 - RSDuck & Onixia ([Craftus](https://github.com/Onixiya/craftus))
 - Plushmonkey ([original mclib](https://github.com/plushmonkey/mclib) & [Terra](https://github.com/plushmonkey/Terracotta))
-- the people behind [DEAR IMGUI](https://github.com/ocornut/imgui)
-- the people behind [stb](https://github.com/nothings/stb)
+- The people behing [MCPED](https://github.com/ReMinecraftPE/mcped)
+- The people behind the MCLE Decomp [MinecraftLCE](https://github.com/GRAnimated/MinecraftLCE/tree/main)
+- The people behind MCP919 and the ones that published this build [MCP919](https://github.com/Marcelektro/MCP-919)
+- The people behind [DEAR IMGUI](https://github.com/ocornut/imgui)
+- The people behind [stb](https://github.com/nothings/stb)
 - And many more! (if you think, your code is used here, feel free to commit a change to the readme. We will validate and add it if possible)
 
 ### Licensing

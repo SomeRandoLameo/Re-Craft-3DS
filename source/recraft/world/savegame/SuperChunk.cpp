@@ -1,11 +1,11 @@
-#include "world/savegame/SuperChunk.h"
+#include "world/savegame/SuperChunk.hpp"
 
 #include <miniz/miniz.h>
 #include <mpack/mpack.h>
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "misc/Crash.h"
+#include "misc/Crash.hpp"
 
 #include <amethyst.hpp>
 

@@ -1,4 +1,4 @@
-#include "rendering/TextureMap.h"
+#include "rendering/TextureMap.hpp"
 
 #include <stb_image.h>
 
@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "misc/Crash.h"
+#include "misc/Crash.hpp"
 
 uint32_t hash(const char* str) {
 	unsigned long hash = 5381;

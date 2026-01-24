@@ -1,4 +1,4 @@
-#include "rendering/VBOCache.h"
+#include "rendering/VBOCache.hpp"
 #include <3ds.h>
 
 static LightLock lock;

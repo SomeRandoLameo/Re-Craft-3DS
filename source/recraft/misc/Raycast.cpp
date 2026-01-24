@@ -1,5 +1,5 @@
-#include "misc/Raycast.h"
-#include "misc/VecMath.h"
+#include "misc/Raycast.hpp"
+#include "misc/VecMath.hpp"
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -100,9 +100,10 @@ bool Raycast_Cast(World* world, mc::Vector3d inpos, mc::Vector3d raydir, Raycast
 
 	mc::Vector3d dist = map - inpos;
 	out->distSqr = Vector3d_MagSqr(dist);
-	out->x = map.x;
-	out->y = map.y;
-	out->z = map.z;
+	out->hitPos = ToVector3i(map);
+
+    // TODO: Add Entities to damage
+    out->entity = false;
 
 	return hit;
 }

@@ -1,10 +1,10 @@
-#include "rendering/PolyGen.h"
+#include "rendering/PolyGen.hpp"
 
 
-#include "rendering/VBOCache.h"
-#include "world/Direction.h"
+#include "rendering/VBOCache.hpp"
+#include "world/Direction.hpp"
 
-#include "entity/Player.h"
+#include "entity/Player.hpp"
 
 #include <stdbool.h>
 

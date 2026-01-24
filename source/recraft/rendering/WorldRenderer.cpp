@@ -1,9 +1,9 @@
-#include "blocks/CT_Block.h"
-#include "gui/DebugUI.h"
-#include "rendering/Clouds.h"
-#include "rendering/Hand.h"
-#include "rendering/VertexFmt.h"
-#include "rendering/WorldRenderer.h"
+#include "rendering/WorldRenderer.hpp"
+#include "blocks/CT_Block.hpp"
+#include "gui/DebugUI.hpp"
+#include "rendering/Clouds.hpp"
+#include "rendering/Hand.hpp"
+#include "rendering/VertexFmt.hpp"
 
 
 #include <citro3d.h>
@@ -203,12 +203,11 @@ void WorldRenderer::Render(float iod) {
 
     RenderWorld();
 
-    m_clouds->Draw(m_projectionUniform, m_cam.GetVP(), m_world, m_player->position.x, m_player->position.z);
+    m_clouds->Draw(m_projectionUniform, m_cam.GetVP(), m_player->position.x, m_player->position.z);
 
     m_cubeRenderer->Draw(m_projectionUniform, m_cam.GetVP(), m_world, m_player->position);
 
     if (m_player->blockInActionRange) {
-        m_cursor->Draw(m_projectionUniform, m_cam.GetVP(), m_world, m_player->viewRayCast.x, m_player->viewRayCast.y,
-                       m_player->viewRayCast.z, m_player->viewRayCast.direction);
+        m_cursor->Draw(m_projectionUniform, m_cam.GetVP(), m_world, m_player->viewRayCast.hitPos, m_player->viewRayCast.direction);
     }
 }

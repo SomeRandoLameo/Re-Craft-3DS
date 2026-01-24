@@ -1,5 +1,5 @@
-#include "rendering/Frustum.h"
-#include "misc/VecMath.h"
+#include "rendering/Frustum.hpp"
+#include "misc/VecMath.hpp"
 
 Frustum::Frustum() {
     for (auto & m_plane : m_planes) {

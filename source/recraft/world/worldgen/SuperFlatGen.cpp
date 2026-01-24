@@ -1,4 +1,4 @@
-#include "world/worldgen/SuperFlatGen.h"
+#include "world/worldgen/SuperFlatGen.hpp"
 
 void SuperFlatGen::Init(World* world) {
     m_world = world;
