@@ -3,7 +3,6 @@
 #include "gui/screens/SelectWorldScreen.hpp"
 #include "gui/screens/StartScreen.hpp"
 
-
 #include "input/InputManager.hpp"
 #include "input/PlayerInput.hpp"
 
@@ -329,7 +328,6 @@ void ReCraftCore::Main() {
 
     m_timeAccum += Delta();
 
-
     if (m_pTopScreen) {
         m_bTopUsingCurrScreen = true;
         // m_debugUI->Log("UPDATE TOP");
@@ -390,5 +388,7 @@ void ReCraftCore::SetScreen(Screen* pScreen, bool top) {
         }
     } else {
         delete pScreen;
+        // WorldSelect_Update(m_player);
     }
 }
+

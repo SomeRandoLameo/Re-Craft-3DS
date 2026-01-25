@@ -4,9 +4,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-
 #include <mclib/inventory/Slot.h>
-
 
 #include <citro3d.h>
 

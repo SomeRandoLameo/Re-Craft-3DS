@@ -498,8 +498,6 @@ void Player::Interact(DebugUI* dbg) {
         Metadata meta = m_world->GetMetadata(viewRayCast.hitPos);
         std::string logMsg = "Target at: " + to_string(viewRayCast.hitPos) +
             "  ID=" + std::to_string(static_cast<u8>(id)) + "  Meta=" + std::to_string(meta);
-
         dbg->Log(logMsg.c_str());
     }
 }
-
