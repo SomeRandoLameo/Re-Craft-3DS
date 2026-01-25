@@ -1,19 +1,17 @@
 #pragma once
 
-#include <stdio.h>
-
-typedef struct {
+struct VBOBlock {
     size_t size;
-    void* memory;
-} VBOBlock;
+    void*  memory;
+};
 
-typedef struct {
+struct VBOUpdate {
     VBOBlock vbo, transparentVBO;
-    int x, y, z;
-    size_t vertices, transparentVertices;
-    uint8_t delay;
-    uint16_t visibility;
-} VBOUpdate;
+    int      x, y, z;
+    size_t   vertices, transparentVertices;
+    u8       delay;
+    u16      visibility;
+};
 
 class VBOCache {
 public:
@@ -21,5 +19,5 @@ public:
     ~VBOCache() = default;
 
     VBOBlock Alloc(size_t size);
-    void Free(VBOBlock block);
+    void     Free(VBOBlock block);
 };

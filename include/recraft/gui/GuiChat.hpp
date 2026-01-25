@@ -1,9 +1,8 @@
 #pragma once
 
-#include "Utility.h"
-#include "gui/ImGuiManager.hpp"
-#include "mclib/protocol/ProtocolState.h"
-#include "mclib/protocol/packets/PacketDispatcher.h"
+#include <mclib/protocol/ProtocolState.h>
+#include <mclib/protocol/packets/PacketDispatcher.h>
+#include <mclib/util/Utility.h>
 
 class GuiChat : public mc::protocol::packets::PacketHandler, public mc::core::ClientListener {
 public:
@@ -14,7 +13,7 @@ public:
     void Render(bool* chatVisible);
 
 private:
-    mc::core::Client* m_Client;
+    mc::core::Client*        m_Client;
     std::vector<std::string> m_messages;
 
     std::string Input();

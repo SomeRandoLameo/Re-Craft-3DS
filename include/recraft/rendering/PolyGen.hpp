@@ -1,39 +1,42 @@
 #pragma once
 
-#include "../entity/Player.hpp"
-#include "../gui/DebugUI.hpp"
-#include "../world/CT_World.hpp"
-#include "../world/WorkQueue.hpp"
-
-#include "VertexFmt.hpp"
-
+#include "blocks/CT_Block.hpp"
+#include "world/CT_Chunk.hpp"
+#include "world/Direction.hpp"
+#include "world/WorkQueue.hpp"
 
 static std::vector<VBOUpdate> vboUpdates;
 
 static const int MAX_FACES_PER_CLUSTER = (Chunk::Size * Chunk::Size * Chunk::Size / 2 * 6);
 
-typedef struct {
-    int8_t x, y, z;
-    Direction direction;
-    Block block;
-    int8_t ao;
-    uint8_t metadata;
-    bool transparent;
-} Face;
+class DebugUI;
+class Player;
+class World;
 
-static World* world;
+struct Face {
+    s8        x, y, z;
+    Direction direction;
+    Block     block;
+    s8        ao;
+    u8        metadata;
+    bool      transparent;
+};
+
+static World*  world;
 static Player* player;
 
-typedef struct { int8_t x, y, z; } QueueElement;
+struct QueueElement {
+    s8 x, y, z;
+};
 
 static std::vector<QueueElement> floodfill_queue;
 
 static LightLock updateLock;
 
 static Face faceBuffer[MAX_FACES_PER_CLUSTER];
-static int currentFace;
-static int transparentFaces;
-static uint8_t floodfill_visited[Chunk::Size][Chunk::Size][Chunk::Size];
+static int  currentFace;
+static int  transparentFaces;
+static u8   floodfill_visited[Chunk::Size][Chunk::Size][Chunk::Size];
 
 void PolyGen_Init(World* world_, Player* player_);
 void PolyGen_Deinit();
@@ -43,8 +46,9 @@ void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context);
 
 Block fastBlockFetch(World* world, ChunkColumnPtr column, ChunkPtr chunk, int x, int y, int z);
 
-uint8_t fastMetadataFetch(World* world, ChunkColumnPtr column, ChunkPtr chunk, int x, int y, int z);
+u8 fastMetadataFetch(World* world, ChunkColumnPtr column, ChunkPtr chunk, int x, int y, int z);
 
-void addFace(int x, int y, int z, Direction dir, Block block, uint8_t metadata, int ao, bool transparent);
+void addFace(int x, int y, int z, Direction dir, Block block, u8 metadata, int ao, bool transparent);
 
-uint16_t floodFill(World* world, ChunkColumnPtr chunk, Chunk* cluster, int x, int y, int z, Direction entrySide0, Direction entrySide1, Direction entrySide2);
+u16 floodFill(World* world, ChunkColumnPtr chunk, Chunk* cluster, int x, int y, int z, Direction entrySide0,
+              Direction entrySide1, Direction entrySide2);

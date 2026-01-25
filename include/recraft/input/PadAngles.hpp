@@ -10,4 +10,3 @@ struct PadAngles {
     }
     bool operator!=(const PadAngles& o) { return !(*this == o); }
 };
-

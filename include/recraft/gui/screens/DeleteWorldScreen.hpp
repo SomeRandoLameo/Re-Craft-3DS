@@ -11,5 +11,5 @@ public:
 
 private:
     WorldInfo m_info;
-    void DeleteWorld(const char* path);
+    void      DeleteWorld(const char* path);
 };

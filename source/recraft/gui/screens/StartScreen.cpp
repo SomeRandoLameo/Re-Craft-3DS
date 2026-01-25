@@ -1,11 +1,13 @@
 #include "gui/screens/StartScreen.hpp"
-#include "gui/SpriteBatch.hpp"
+
+#include "gui/ScreenFwd.hpp"
 #include "gui/screens/SelectWorldScreen.hpp"
+#include "rendering/Clouds.hpp"
 
 void StartTopScreen::Init() {
     m_clouds = new Clouds();
     Texture_Load(&m_logoTex, "romfs:/assets/textures/gui/title/craftus.png");
-    //Screen::init();
+    // Screen::init();
 }
 
 void StartTopScreen::Removed() {
@@ -62,8 +64,7 @@ void StartBotScreen::Render(int mouseX, int mouseY, float delta) {
     for (int i = 0; i < 160 / 32 + 1; i++) {
         for (int j = 0; j < 120 / 32 + 1; j++) {
 
-            SpriteBatch_PushQuadColor(i * 32, j * 32,  -10, 32, 32, 0, 0, 32, 32,
-                                      SHADER_RGB(12, 12, 12));
+            SpriteBatch_PushQuadColor(i * 32, j * 32, -10, 32, 32, 0, 0, 32, 32, SHADER_RGB(12, 12, 12));
         }
     }
 
@@ -76,27 +77,27 @@ void StartBotScreen::Render(int mouseX, int mouseY, float delta) {
     Gui::EndRow();
     Gui::BeginRowCenter(Gui::RelativeWidth(0.95f), 2);
     m_clicked_options = Gui::Button(0.5f, "Options");
-    m_clicked_quit = Gui::Button(0.5f, "Quit");
+    m_clicked_quit    = Gui::Button(0.5f, "Quit");
     Gui::EndRow();
     Screen::Render(mouseX, mouseY, delta);
 }
 
 void StartBotScreen::ButtonClicked() {
-    if(m_clicked_singleplayer){
+    if (m_clicked_singleplayer) {
         m_clicked_singleplayer = false;
         m_ReCraftCore->SetScreen(new SelectWorldBotScreen(), false);
     }
 
-    if(m_clicked_multiplayer){
+    if (m_clicked_multiplayer) {
         m_clicked_multiplayer = false;
         m_ReCraftCore->InitMultiPlayer();
     }
 
-    if(m_clicked_options){
+    if (m_clicked_options) {
         exit(0);
     }
 
-    if(m_clicked_quit){
+    if (m_clicked_quit) {
         exit(0);
     }
 

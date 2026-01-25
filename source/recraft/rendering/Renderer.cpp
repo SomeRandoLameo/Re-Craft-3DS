@@ -1,16 +1,27 @@
 #include "rendering/Renderer.hpp"
 
+#include "GameStates.hpp"
 #include "ReCraftCore.hpp"
 #include "blocks/CT_Block.hpp"
+#include "entity/Player.hpp"
 #include "gui/CT_Inventory.hpp"
+#include "gui/DebugUI.hpp"
 #include "gui/Gui.hpp"
+#include "gui/ImGuiManager.hpp"
+#include "gui/Screen.hpp"
 #include "gui/SpriteBatch.hpp"
 #include "rendering/Camera.hpp"
 #include "rendering/Clouds.hpp"
 #include "rendering/Cursor.hpp"
 #include "rendering/PolyGen.hpp"
 #include "rendering/TextureMap.hpp"
+#include "rendering/WorldRenderer.hpp"
+#include "world/CT_World.hpp"
+#include "world/WorkQueue.hpp"
 
+#include <fstream>
+#include <functional>
+#include <iostream>
 
 // TODO: Fix this
 extern bool showDebugInfo;
@@ -78,14 +89,15 @@ void Renderer::Render(DebugUI* debugUi) {
 
     for (int i = 0; i < 2; i++) {
         RenderFrame(i, iod);
-        if (iod <= 0.f)
+        if (iod <= 0.f) {
             break;
+        }
     }
 
     RenderLowerScreen(debugUi);
 
-    ImGuiIO& io = ImGui::GetIO();
-    io.DisplaySize = ImVec2(ScreenWidth, ScreenHeight);
+    ImGuiIO& io                = ImGui::GetIO();
+    io.DisplaySize             = ImVec2(ScreenWidth, ScreenHeight);
     io.DisplayFramebufferScale = ImVec2(FrameBufferScale, FrameBufferScale);
 
     ImGuiManager::GetInstance()->BeginFrame();
@@ -127,12 +139,15 @@ void Renderer::RenderFrame(int eyeIndex, float iod) {
     C3D_DepthTest(true, GPU_GREATER, GPU_WRITE_ALL);
     C3D_CullFace(GPU_CULL_BACK_CCW);
 
-    if (&*ReCraftCore::GetInstance()->m_pTopScreen){
-        ReCraftCore::GetInstance()->m_pTopScreen->Render3D(0, 0, eyeIndex, m_world_shader_uLocProjection, iod, 0 /*  TODO: 0 is enough for now, but later we need   1000.f / Amy::App::Delta()*/);
-        ReCraftCore::GetInstance()->m_pTopScreen->Render(0, 0, 0 /*  TODO: 0 is enough for now, but later we need   1000.f / Amy::App::Delta()*/);
+    if (&*ReCraftCore::GetInstance()->m_pTopScreen) {
+        ReCraftCore::GetInstance()->m_pTopScreen->Render3D(
+            0, 0, eyeIndex, m_world_shader_uLocProjection, iod,
+            0 /*  TODO: 0 is enough for now, but later we need   1000.f / Amy::App::Delta()*/);
+        ReCraftCore::GetInstance()->m_pTopScreen->Render(
+            0, 0, 0 /*  TODO: 0 is enough for now, but later we need   1000.f / Amy::App::Delta()*/);
     }
 
-    //TODO: REMOVE
+    // TODO: REMOVE
     if (*ReCraftCore::GetInstance()->GetGameState() != GameState::SelectWorld) {
         C3D_TexBind(0, (C3D_Tex*)Block_GetTextureMap());
 
@@ -150,9 +165,10 @@ void Renderer::RenderLowerScreen(DebugUI* debugUi) {
 
     SpriteBatch_StartFrame(320, 240);
 
-    if (&*ReCraftCore::GetInstance()->m_pBotScreen){
+    if (&*ReCraftCore::GetInstance()->m_pBotScreen) {
         Gui::GetCursorMovement(&m_mouseX, &m_mouseY);
-        ReCraftCore::GetInstance()->m_pBotScreen->Render(m_mouseX, m_mouseY, 0 /*  TODO: 0 is enough for now, but later we need   1000.f / Amy::App::Delta()*/);
+        ReCraftCore::GetInstance()->m_pBotScreen->Render(
+            m_mouseX, m_mouseY, 0 /*  TODO: 0 is enough for now, but later we need   1000.f / Amy::App::Delta()*/);
     }
 
     if (showDebugInfo) {

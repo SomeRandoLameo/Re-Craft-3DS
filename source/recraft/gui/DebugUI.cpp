@@ -11,7 +11,7 @@
 
 static char* statusLines[DebugUI::StatusLines];
 static char* logLines[DebugUI::LogLines];
-static int currentStatusLine = 0;
+static int   currentStatusLine = 0;
 
 DebugUI::DebugUI() {
     for (auto& logLine : logLines) {
@@ -73,8 +73,9 @@ void DebugUI::Draw() {
         int step = 12;
         RenderData->DrawText(Amy::fvec2(0, yOffset), logLine, 0xffffffff);
         yOffset += step;
-        if (yOffset >= 240)
+        if (yOffset >= 240) {
             break;
+        }
     }
     yOffset = 0;
     for (auto& statusLine : statusLines) {

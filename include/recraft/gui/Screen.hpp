@@ -1,9 +1,9 @@
 #pragma once
 
 #include "ReCraftCore.hpp"
-//TODO: Buttonlist if possible (with GUI)
-class Screen
-{
+
+// TODO: Buttonlist if possible (with GUI)
+class Screen {
 public:
     Screen();
     virtual ~Screen();
@@ -35,15 +35,15 @@ public:
 
 protected:
     ReCraftCore* m_ReCraftCore;
+
 private:
-    int m_width = 1;
-    int m_height = 1;
+    int  m_width  = 1;
+    int  m_height = 1;
     bool field_10 = false;
 
-    //std::vector<Button*> m_buttons;
-    //std::vector<Button*> m_buttonTabList;
+    // std::vector<Button*> m_buttons;
+    // std::vector<Button*> m_buttonTabList;
     int m_tabButtonIndex = 0;
-    //Font* m_pFont;
-    //Button* m_pClickedButton = 0;
-
+    // Font* m_pFont;
+    // Button* m_pClickedButton = 0;
 };

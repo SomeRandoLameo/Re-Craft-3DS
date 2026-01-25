@@ -1,15 +1,16 @@
 #pragma once
 
-#include "../world/CT_World.hpp"
+#include "world/Direction.hpp"
 
-//mclib
+// mclib
 #include <mclib/common/Vector.h>
 
-typedef struct {
-	mc::Vector3i hitPos;
-	float distSqr;
-	Direction direction;
-    bool entity;
-} Raycast_Result;
+class World;
+struct Raycast_Result {
+    mc::Vector3i hitPos;
+    float        distSqr;
+    Direction    direction;
+    bool         entity;
+};
 
-bool Raycast_Cast(World* world, mc::Vector3d inpos, mc::Vector3d raydir, Raycast_Result* out);
+bool Raycast_Cast(World* world, mc::Vector3f inpos, mc::Vector3f raydir, Raycast_Result* out);

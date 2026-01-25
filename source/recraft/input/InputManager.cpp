@@ -11,13 +11,15 @@ void InputManager::loadKeys() {
     for (u32 i = 0; i < InputAction::INP_COUNT; ++i) {
         InputEntry& act = m_keyset.list[i];
         if (m_isNewModel) {
-            if (act.defkeyNw == KEY_NONE)
+            if (act.defkeyNw == KEY_NONE) {
                 continue;
+            }
 
             act.key = act.defkeyNw; // TODO: Implement config via "settings"
         } else {
-            if (act.defkeyOg == KEY_NONE)
+            if (act.defkeyOg == KEY_NONE) {
                 continue;
+            }
 
             act.key = act.defkeyOg;
         }
@@ -29,7 +31,7 @@ void InputManager::poll() {
     hidScanInput();
     m_keysHeld = hidKeysHeld();
     m_keysDown = hidKeysDown();
-    m_keysUp = hidKeysUp();
+    m_keysUp   = hidKeysUp();
     hidCircleRead(&m_pad);
     hidCstickRead(&m_stick);
     hidTouchRead(&m_touch);
@@ -37,12 +39,13 @@ void InputManager::poll() {
     for (u32 i = 0; i < InputAction::INP_COUNT; ++i) {
         InputEntry& act = m_keyset.list[i];
 
-        if (act.key == KEY_NONE)
+        if (act.key == KEY_NONE) {
             continue;
+        }
 
         u32 keys = act.isHold ? m_keysHeld : m_keysDown;
 
-        act.statePress = keys & act.key;
+        act.statePress   = keys & act.key;
         act.stateRelease = m_keysUp & act.key;
     }
 }
