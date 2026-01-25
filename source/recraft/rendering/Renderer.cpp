@@ -139,12 +139,9 @@ void Renderer::RenderFrame(int eyeIndex, float iod) {
     C3D_DepthTest(true, GPU_GREATER, GPU_WRITE_ALL);
     C3D_CullFace(GPU_CULL_BACK_CCW);
 
-    if (&*ReCraftCore::GetInstance()->m_pTopScreen) {
-        ReCraftCore::GetInstance()->m_pTopScreen->Render3D(
-            0, 0, eyeIndex, m_world_shader_uLocProjection, iod,
-            0 /*  TODO: 0 is enough for now, but later we need   1000.f / Amy::App::Delta()*/);
-        ReCraftCore::GetInstance()->m_pTopScreen->Render(
-            0, 0, 0 /*  TODO: 0 is enough for now, but later we need   1000.f / Amy::App::Delta()*/);
+    if (ReCraftCore::GetInstance()->m_pTopScreen){
+        ReCraftCore::GetInstance()->m_pTopScreen->Render3D(0, 0, eyeIndex, m_world_shader_uLocProjection, iod, 0 /*  TODO: 0 is enough for now, but later we need   1000.f / Amy::App::Delta()*/);
+        ReCraftCore::GetInstance()->m_pTopScreen->Render(0, 0, 0 /*  TODO: 0 is enough for now, but later we need   1000.f / Amy::App::Delta()*/);
     }
 
     // TODO: REMOVE
@@ -165,7 +162,8 @@ void Renderer::RenderLowerScreen(DebugUI* debugUi) {
 
     SpriteBatch_StartFrame(320, 240);
 
-    if (&*ReCraftCore::GetInstance()->m_pBotScreen) {
+
+    if (ReCraftCore::GetInstance()->m_pBotScreen){
         Gui::GetCursorMovement(&m_mouseX, &m_mouseY);
         ReCraftCore::GetInstance()->m_pBotScreen->Render(
             m_mouseX, m_mouseY, 0 /*  TODO: 0 is enough for now, but later we need   1000.f / Amy::App::Delta()*/);
