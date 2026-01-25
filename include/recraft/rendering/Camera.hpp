@@ -1,13 +1,11 @@
 #pragma once
 
-#include <citro3d.h>
-#include <stdbool.h> // if really needed
-#include "../entity/Player.hpp"
-#include "Frustum.hpp"
+#include "rendering/Frustum.hpp"
 
-//mclib
+// mclib
 #include <mclib/common/Vector.h>
 
+class Player;
 class Camera {
 public:
     Camera();
@@ -25,5 +23,5 @@ public:
 private:
     C3D_Mtx m_projection, m_view, m_vp;
     Frustum m_frustum;
-    float m_near, m_far, m_fov;
+    float   m_near, m_far, m_fov;
 };

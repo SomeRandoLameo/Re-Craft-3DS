@@ -31,15 +31,18 @@ void Gui::Init() {
     // RenderData->SetFont(ReCraftCore::GetInstance()->GetAssetManager()->Get<Iron::Font>("font"));
 }
 
-static inline int relativeToAbsoluteSize(float s) { return (int)((float)currentRow.unpaddedWidth * s); }
+static inline int relativeToAbsoluteSize(float s) {
+    return (int)((float)currentRow.unpaddedWidth * s);
+}
 
-void Gui::Deinit() {}
+void Gui::Deinit() {
+}
 
 void Gui::Frame() {
     relativeX = 0;
     relativeY = 0;
-    windowX = 0;
-    windowY = 0;
+    windowX   = 0;
+    windowY   = 0;
 }
 
 void Gui::Offset(int x, int y) {
@@ -47,8 +50,12 @@ void Gui::Offset(int x, int y) {
     windowY = y;
 }
 
-int Gui::RelativeWidth(float x) { return SpriteBatch_GetWidth() * x; }
-int Gui::RelativeHeight(float y) { return SpriteBatch_GetHeight() * y; }
+int Gui::RelativeWidth(float x) {
+    return SpriteBatch_GetWidth() * x;
+}
+int Gui::RelativeHeight(float y) {
+    return SpriteBatch_GetHeight() * y;
+}
 
 void Gui::BeginRowCenter(int width, int count) {
     windowX = SpriteBatch_GetWidth() / 2 - width / 2;
@@ -57,13 +64,15 @@ void Gui::BeginRowCenter(int width, int count) {
 
 void Gui::BeginRow(int width, int count) {
     currentRow = (Row){width, 0, width - paddingX * 2 - paddingX * count};
-    relativeX = paddingX;
-    relativeY = 0;
+    relativeX  = paddingX;
+    relativeY  = 0;
 }
-void Gui::EndRow() { windowY += currentRow.highestElement + paddingY; }
+void Gui::EndRow() {
+    windowY += currentRow.highestElement + paddingY;
+}
 
-void Gui::Label(float size, bool shadow, int16_t color, bool center, const char* text, ...) {
-    int wrap = size <= 0.f ? (currentRow.width - relativeX - paddingX) : relativeToAbsoluteSize(size);
+void Gui::Label(float size, bool shadow, s16 color, bool center, const char* text, ...) {
+    int wrap      = size <= 0.f ? (currentRow.width - relativeX - paddingX) : relativeToAbsoluteSize(size);
     int yTextSize = 0;
 
     va_list vl;
@@ -71,8 +80,9 @@ void Gui::Label(float size, bool shadow, int16_t color, bool center, const char*
     int xOffset = 0;
     if (center) {
         int textWidth = SpriteBatch_CalcTextWidthVargs(text, vl);
-        if (textWidth <= wrap)
+        if (textWidth <= wrap) {
             xOffset = wrap / 2 - textWidth / 2;
+        }
     }
     int xTextSize = SpriteBatch_PushTextVargs(windowX + relativeX + xOffset, windowY + relativeY, 0, INT16_MAX, false,
                                               wrap, &yTextSize, text, vl);
@@ -115,26 +125,31 @@ bool Gui::Button(float size, const char* label, ...) {
     relativeX += w + paddingX;
     currentRow.highestElement = MAX(currentRow.highestElement, BUTTON_HEIGHT);
 
-    if (Input::isKeyUp(KEY_TOUCH) && Gui::WasCursorInside(x, y, w, BUTTON_HEIGHT))
+    if (Input::isKeyUp(KEY_TOUCH) && Gui::WasCursorInside(x, y, w, BUTTON_HEIGHT)) {
         return true;
+    }
 
     return false;
 }
 
-void Gui::Space(float space) { relativeX += relativeToAbsoluteSize(space) + paddingX; }
-void Gui::VerticalSpace(int y) { windowY += y; }
+void Gui::Space(float space) {
+    relativeX += relativeToAbsoluteSize(space) + paddingX;
+}
+void Gui::VerticalSpace(int y) {
+    windowY += y;
+}
 
 bool Gui::IsCursorInside(int x, int y, int w, int h) {
     int sclInputX = Input::getTouch().px / SpriteBatch_GetScale();
     int sclInputY = Input::getTouch().py / SpriteBatch_GetScale();
     return sclInputX != 0 && sclInputY != 0 && sclInputX >= x && sclInputX < x + w && sclInputY >= y &&
-        sclInputY < y + h;
+           sclInputY < y + h;
 }
 bool Gui::WasCursorInside(int x, int y, int w, int h) {
     int sclOldInputX = Input::getTouchPrev().px / SpriteBatch_GetScale();
     int sclOldInputY = Input::getTouchPrev().py / SpriteBatch_GetScale();
     return sclOldInputX != 0 && sclOldInputY != 0 && sclOldInputX >= x && sclOldInputX < x + w && sclOldInputY >= y &&
-        sclOldInputY < y + h;
+           sclOldInputY < y + h;
 }
 bool Gui::EnteredCursorInside(int x, int y, int w, int h) {
     int sclOldInputX = Input::getTouchPrev().px / SpriteBatch_GetScale();

@@ -7,6 +7,7 @@ class GuiInGameTop : public Screen {
 public:
     bool IsInGameScreen() override;
     void Render(int mouseX, int mouseY, float delta) override;
+
 private:
     void RenderHealth();
     void RenderExpBar();
@@ -22,7 +23,8 @@ public:
     bool IsInGameScreen() override;
     void Render(int mouseX, int mouseY, float delta) override;
     void ButtonClicked() override;
+
 private:
-    Player* m_player = nullptr;
+    Player*    m_player    = nullptr;
     Inventory* m_inventory = nullptr;
 };

@@ -1,5 +1,6 @@
 #include "gui/screens/CreateWorldScreen.hpp"
-#include "gui/SpriteBatch.hpp"
+
+#include "gui/ScreenFwd.hpp"
 
 #include <utility>
 
@@ -11,7 +12,7 @@ CreateWorldBotScreen::CreateWorldBotScreen(std::vector<WorldInfo> worldInfo) {
 void CreateWorldBotScreen::Init() {
     Screen::Init();
 }
-//TODO: De-Noodle-c-ify
+// TODO: De-Noodle-c-ify
 void CreateWorldBotScreen::Render(int mouseX, int mouseY, float f) {
     SpriteBatch_SetScale(2);
 
@@ -19,8 +20,7 @@ void CreateWorldBotScreen::Render(int mouseX, int mouseY, float f) {
     for (int i = 0; i < 160 / 32 + 1; i++) {
         for (int j = 0; j < 120 / 32 + 1; j++) {
 
-            SpriteBatch_PushQuadColor(i * 32, j * 32,  -10, 32, 32, 0, 0, 32, 32,
-                                       SHADER_RGB(12, 12, 12));
+            SpriteBatch_PushQuadColor(i * 32, j * 32, -10, 32, 32, 0, 0, 32, 32, SHADER_RGB(12, 12, 12));
         }
     }
 
@@ -32,8 +32,9 @@ void CreateWorldBotScreen::Render(int mouseX, int mouseY, float f) {
     Gui::Space(0.1f);
     if (Gui::Button(0.45f, "%s", m_gamemodestr[m_gamemode])) {
         m_gamemode = static_cast<Gamemode>(static_cast<int>(m_gamemode) + 1);
-        if (m_gamemode == Gamemode_Count)
+        if (m_gamemode == Gamemode_Count) {
             m_gamemode = static_cast<Gamemode>(0);
+        }
     }
     Gui::EndRow();
     // TODO: This is terrible as well
@@ -42,8 +43,9 @@ void CreateWorldBotScreen::Render(int mouseX, int mouseY, float f) {
     Gui::Space(0.1f);
     if (Gui::Button(0.45f, "%s", m_worldGenTypesStr[m_worldGenType])) {
         m_worldGenType = static_cast<WorldGenType>(static_cast<int>(m_worldGenType) + 1);
-        if (m_worldGenType == WorldGenTypes_Count)
+        if (m_worldGenType == WorldGenTypes_Count) {
             m_worldGenType = static_cast<WorldGenType>(0);
+        }
     }
     Gui::EndRow();
 
@@ -57,15 +59,15 @@ void CreateWorldBotScreen::Render(int mouseX, int mouseY, float f) {
 }
 
 void CreateWorldBotScreen::ButtonClicked() {
-    if(m_confirmed_world_options){
+    if (m_confirmed_world_options) {
         m_confirmed_world_options = false;
-        m_worldType = m_worldGenType;
+        m_worldType               = m_worldGenType;
 
         static SwkbdState swkbd;
-        static char name[World::NameSize];
+        static char       name[World::NameSize];
 
         swkbdInit(&swkbd, SWKBD_TYPE_WESTERN, 2, World::NameSize);
-        swkbdSetValidation(&swkbd, SWKBD_NOTEMPTY_NOTBLANK, 0,  World::NameSize);
+        swkbdSetValidation(&swkbd, SWKBD_NOTEMPTY_NOTBLANK, 0, World::NameSize);
         swkbdSetHintText(&swkbd, "Enter the world name");
 
         int button = swkbdInputText(&swkbd, name, 12);
@@ -79,8 +81,9 @@ void CreateWorldBotScreen::ButtonClicked() {
             for (int i = 0; i < length; i++) {
                 if (m_out_worldpath[i] == '/' || m_out_worldpath[i] == '\\' || m_out_worldpath[i] == '?' ||
                     m_out_worldpath[i] == ':' || m_out_worldpath[i] == '|' || m_out_worldpath[i] == '<' ||
-                    m_out_worldpath[i] == '>')
+                    m_out_worldpath[i] == '>') {
                     m_out_worldpath[i] = '_';
+                }
             }
 
             while (true) {
@@ -91,19 +94,20 @@ void CreateWorldBotScreen::ButtonClicked() {
                         break;
                     }
                 }
-                if (!alreadyExisting) break;
+                if (!alreadyExisting) {
+                    break;
+                }
 
-                m_out_worldpath[length] = '_';
+                m_out_worldpath[length]     = '_';
                 m_out_worldpath[length + 1] = '\0';
                 ++length;
             }
 
             m_newWorld = true;
             ReCraftCore::GetInstance()->InitSinglePlayer(m_out_worldpath, name, &m_worldType, m_gamemode, m_newWorld);
-
         }
     }
-    if (m_canceled_world_options){
+    if (m_canceled_world_options) {
         m_ReCraftCore->SetScreen(new SelectWorldBotScreen, false);
     }
 }

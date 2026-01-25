@@ -8,66 +8,53 @@
 
 #include <array>
 #include <stdbool.h>
-#include <stdint.h>
+
 #include <string.h>
-
-
 
 
 class Chunk {
 public:
-    constexpr static int Size = 16; 
+    constexpr static int Size = 16;
 
-	int y;
-	Metadata metadataLight[Size][Size][Size];  // first half metadata, second half light
+    int      y;
+    Metadata metadataLight[Size][Size][Size]; // first half metadata, second half light
 
-	uint32_t revision;
+    u32 revision;
 
-	uint16_t seeThrough;
+    u16 seeThrough;
 
-	bool empty;
-	uint32_t emptyRevision;
+    bool empty;
+    u32  emptyRevision;
 
     VBOBlock vbo;
     VBOBlock transparentVBO;
 
-	size_t vertices;
+    size_t vertices;
     size_t transparentVertices;
 
-	uint32_t vboRevision;
-	bool forceVBOUpdate;
+    u32  vboRevision;
+    bool forceVBOUpdate;
 
-    Block GetBlock(mc::Vector3i pos) const {
-        return m_blocks[pos.x + pos.y * Size + pos.z * Size * Size];
-    }
+    Block GetBlock(mc::Vector3i pos) const { return m_blocks[pos.x + pos.y * Size + pos.z * Size * Size]; }
 
     /// DO NOT USE THIS MANUALLY
-    void SetBlock(mc::Vector3i pos, Block block) {
-        m_blocks[pos.x + pos.y * Size + pos.z * Size * Size] = block;
-    }
+    void SetBlock(mc::Vector3i pos, Block block) { m_blocks[pos.x + pos.y * Size + pos.z * Size * Size] = block; }
 
-    //TODO: REMOVE
-    Block GetBlock(int x, int y, int z) const {
-        return m_blocks[x + y * Size + z * Size * Size];
-    }
+    // TODO: REMOVE
+    Block GetBlock(int x, int y, int z) const { return m_blocks[x + y * Size + z * Size * Size]; }
 
     bool IsEmpty();
 
     // raw data access for saving/loading only. Do not use for block manipulation!
     // this might become replaced with popper save load functions in the future.
-    const Block* GetBlockData() const {
-        return m_blocks.data();
-    }
+    const Block* GetBlockData() const { return m_blocks.data(); }
 
-    Block* GetBlockData() {
-        return m_blocks.data();
-    }
+    Block* GetBlockData() { return m_blocks.data(); }
 
     static constexpr size_t BlockCount = Size * Size * Size;
 
-    static constexpr size_t GetBlockDataSize() {
-        return BlockCount * sizeof(Block);
-    }
+    static constexpr size_t GetBlockDataSize() { return BlockCount * sizeof(Block); }
+
 private:
     std::array<Block, Size * Size * Size> m_blocks;
 };
@@ -75,37 +62,37 @@ private:
 typedef Chunk* ChunkPtr;
 
 typedef enum {
-	ChunkGen_Empty,  //
-	ChunkGen_Terrain,
-	ChunkGen_Finished  // Terrain | Decoration
+    ChunkGen_Empty, //
+    ChunkGen_Terrain,
+    ChunkGen_Finished // Terrain | Decoration
 } ChunkGenProgress;
 
 extern Xorshift32 uuidGenerator;
-extern const uint8_t _seethroughTable[6][6];
+extern const u8   _seethroughTable[6][6];
 
-uint16_t ChunkSeeThrough(Direction in, Direction out);
-bool ChunkCanBeSeenThrough(uint16_t visiblity, Direction in, Direction out);
+u16  ChunkSeeThrough(Direction in, Direction out);
+bool ChunkCanBeSeenThrough(u16 visiblity, Direction in, Direction out);
 
 
 class ChunkColumn {
 public:
     constexpr static int ChunksPerColumn = 16;
 
-    uint32_t tasksRunning;
-    uint32_t graphicalTasksRunning;
-    uint32_t uuid;
+    u32 tasksRunning;
+    u32 graphicalTasksRunning;
+    u32 uuid;
 
     ChunkGenProgress genProgress;
 
     int x;
     int z;
 
-    uint8_t heightmap[Chunk::Size][Chunk::Size];
-    uint32_t heightmapRevision;
+    u8  heightmap[Chunk::Size][Chunk::Size];
+    u32 heightmapRevision;
 
     size_t revision;
 
-    uint32_t displayRevision;
+    u32  displayRevision;
     bool forceVBOUpdate;
 
     int references;
@@ -119,7 +106,7 @@ public:
 
     ChunkPtr GetChunk(int y);
 
-    uint8_t GetHeightMap(int x, int z);
+    u8 GetHeightMap(int x, int z);
 
     Metadata GetMetadata(mc::Vector3i position);
 
@@ -135,14 +122,13 @@ public:
         m_BlockEntities.insert(std::make_pair(blockEntity->GetPosition(), blockEntity));
     }
 
-    void RemoveBlockEntity(mc::Vector3i pos) {
-        m_BlockEntities.erase(pos);
-    }
+    void RemoveBlockEntity(mc::Vector3i pos) { m_BlockEntities.erase(pos); }
 
-    mc::block::BlockEntityPtr GetBlockEntity(mc::Vector3i worldPos);
+    mc::block::BlockEntityPtr              GetBlockEntity(mc::Vector3i worldPos);
     std::vector<mc::block::BlockEntityPtr> GetBlockEntities();
+
 private:
-    std::array<Chunk, ChunksPerColumn> m_chunks;
+    std::array<Chunk, ChunksPerColumn>                m_chunks;
     std::map<mc::Vector3i, mc::block::BlockEntityPtr> m_BlockEntities;
 };
 

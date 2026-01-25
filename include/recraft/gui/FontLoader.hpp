@@ -1,15 +1,14 @@
 #pragma once
 
-#include <stdint.h>
 
 #include <citro3d.h>
 
-typedef struct {
-	uint8_t fontWidth[1 << 8];
-	C3D_Tex texture;
-} Font;
+struct Font {
+    u8      fontWidth[1 << 8];
+    C3D_Tex texture;
+};
 
-class FontLoader{
+class FontLoader {
 public:
     void LoadFont(Font* font, const char* filename);
 };

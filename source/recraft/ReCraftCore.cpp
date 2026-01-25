@@ -1,22 +1,37 @@
 #include "ReCraftCore.hpp"
+
+#include "entity/Player.hpp"
+#include "gui/DebugUI.hpp"
+#include "gui/GuiChat.hpp"
+#include "gui/ImGuiManager.hpp"
+#include "gui/Screen.hpp"
 #include "gui/screens/GuiInGame.hpp"
 #include "gui/screens/SelectWorldScreen.hpp"
 #include "gui/screens/StartScreen.hpp"
-
 #include "input/InputManager.hpp"
 #include "input/PlayerInput.hpp"
+#include "mcbridge/MCBridge.hpp"
+#include "rendering/PolyGen.hpp"
+#include "rendering/Renderer.hpp"
+#include "world/CT_World.hpp"
+#include "world/NetworkWorld.hpp"
 
-bool showDebugInfo = true;
+#include <3ds.h>
+#include <citro3d.h>
+
+bool         showDebugInfo                 = true;
 ReCraftCore* ReCraftCore::m_theReCraftCore = nullptr;
 
 ReCraftCore::ReCraftCore() {
-    m_theReCraftCore = this;
+    m_theReCraftCore  = this;
     this->m_gamestate = GameState::SelectWorld;
     gfxInitDefault();
     // Enable N3DS 804MHz operation, where available
     osSetSpeedupEnable(true);
     gfxSet3D(true);
     romfsInit();
+
+    m_AssetMgr = new Amy::AssetMgr();
 
     SuperChunk_InitPools();
     SaveManager::InitFileSystem();
@@ -25,7 +40,7 @@ ReCraftCore::ReCraftCore() {
 
     sino_init();
 
-    m_world = new World(&m_chunkWorker.GetQueue());
+    m_world  = new World(&m_chunkWorker.GetQueue());
     m_player = new Player(m_world);
 
     m_flatGen.Init(m_world);
@@ -34,18 +49,20 @@ ReCraftCore::ReCraftCore() {
 
     auto fnt = Iron::Font::New();
     fnt->LoadBMF("romfs:/assets/textures/font/ascii.png");
-    m_AssetMgr.Add("font", fnt);
+    m_AssetMgr->Add("font", fnt);
 
-    m_AssetMgr.AutoLoad("GuiTexture_Widgets", "romfs:/assets/textures/gui/widgets.png");
+    m_AssetMgr->AutoLoad("GuiTexture_Widgets", "romfs:/assets/textures/gui/widgets.png");
 
-    // m_AssetMgr.AutoLoad("font", "romfs:/ComicNeue.ttf");
+    // m_AssetMgr->AutoLoad("font", "romfs:/ComicNeue.ttf");
 
     m_renderer = new Renderer(m_world, m_player, &m_chunkWorker.GetQueue());
-    m_debugUI = new DebugUI();
+    m_debugUI  = new DebugUI();
 
     SetScreen(new StartTopScreen, true);
     SetScreen(new StartBotScreen, false);
     // WorldSelect_Init();
+
+    m_mcBridge = new MCBridge();
 
     m_savemgr.Init(m_player, m_world);
 
@@ -150,14 +167,15 @@ void ReCraftCore::InitSinglePlayer(char* path, char* name, const WorldGenType* w
         for (int x = -1; x < 1; x++) {
             for (int z = -1; z < 1; z++) {
                 int height = m_world->GetHeight(x, z);
-                if (height > highestblock)
+                if (height > highestblock) {
                     highestblock = height;
+                }
             }
         }
 
-        m_player->gamemode = mode;
-        m_player->hunger = 20;
-        m_player->hp = 20;
+        m_player->gamemode   = mode;
+        m_player->hunger     = 20;
+        m_player->hp         = 20;
         m_player->position.y = (float)highestblock + 0.2f;
     }
 
@@ -178,8 +196,9 @@ void ReCraftCore::RunSinglePlayer() {
                               WorldToChunkCoord(FastFloor(m_player->position.z)));
 }
 void ReCraftCore::ExitSinglePlayer() {
-    if (m_world)
+    if (m_world) {
         m_world->Release(&m_chunkWorker, &m_savemgr);
+    }
     SetScreen(new StartTopScreen, true);
     SetScreen(new SelectWorldBotScreen, false);
 }
@@ -190,30 +209,30 @@ void ReCraftCore::InitMultiPlayer() {
     m_chunkWorker.AddHandler(WorkerItemType::BaseGen, (WorkerFuncObj){&EmptyGen::Generate, &m_emptyGen, true});
 
     SwkbdState swkbd;
-    char buffer1[256];
+    char       buffer1[256];
 
     swkbdInit(&swkbd, SWKBD_TYPE_NORMAL, 2, -1);
     swkbdSetHintText(&swkbd, "Username");
     swkbdInputText(&swkbd, buffer1, sizeof(buffer1));
-    m_mcBridge.SetUsername(buffer1);
+    m_mcBridge->SetUsername(buffer1);
 
     char buffer2[256];
     swkbdInit(&swkbd, SWKBD_TYPE_NORMAL, 2, -1);
     swkbdSetHintText(&swkbd, "Server IP (xxx.xxx.xxx.xxx)");
     swkbdInputText(&swkbd, buffer2, sizeof(buffer2));
-    m_mcBridge.SetIPAddress(buffer2);
+    m_mcBridge->SetIPAddress(buffer2);
 
-    m_mcBridge.connect();
+    m_mcBridge->connect();
     m_world->genSettings.type = WorldGenType::Empty;
 
-    m_player->hunger = 20;
-    m_player->hp = 20;
+    m_player->hunger   = 20;
+    m_player->hp       = 20;
     m_player->gamemode = 1;
 
-    // m_player->position = m_mcBridge.getClient()->GetPlayerController()->GetPosition();
+    // m_player->position = m_mcBridge->getClient()->GetPlayerController()->GetPosition();
 
-    m_chat = new GuiChat(m_mcBridge.getClient()->GetDispatcher(), m_mcBridge.getClient());
-    m_networkWorld = new NetworkWorld(m_world, m_mcBridge.getClient()->GetDispatcher());
+    m_chat         = new GuiChat(m_mcBridge->getClient()->GetDispatcher(), m_mcBridge->getClient());
+    m_networkWorld = new NetworkWorld(m_world, m_mcBridge->getClient()->GetDispatcher());
 
     m_chunkWorker.SetHandlerActive(WorkerItemType::BaseGen, &m_emptyGen, true);
 
@@ -234,32 +253,32 @@ void ReCraftCore::InitMultiPlayer() {
         m_world->Tick();
     }
 
-    m_player->position = mc::Vector3d(0, 63, 0);
+    m_player->position = mc::Vector3f(0, 63, 0);
 
-    m_mcBridge.startBackgroundThread();
+    m_mcBridge->startBackgroundThread();
     SetScreen(new GuiInGameTop, true);
     SetScreen(new GuiInGameBot, false);
     m_gamestate = GameState::Playing_OnLine;
 }
 
 void ReCraftCore::ExitMultiplayer() {
-    m_mcBridge.stopBackgroundThread();
-    m_mcBridge.disconnect();
+    m_mcBridge->stopBackgroundThread();
+    m_mcBridge->disconnect();
     SetScreen(new StartTopScreen, true);
     SetScreen(new SelectWorldBotScreen, false);
 }
 
 
 void ReCraftCore::RunMultiPlayer() {
-    if (m_mcBridge.isConnected()) {
-        m_mcBridge.withClient([&](mc::core::Client* client, mc::protocol::packets::PacketDispatcher* dispatcher) {
+    if (m_mcBridge->isConnected()) {
+        m_mcBridge->withClient([&](mc::core::Client* client, mc::protocol::packets::PacketDispatcher* dispatcher) {
             // TODO: Move this into some NetworkPlayer class that gets updated from here.
             // NetworkPlayer needs to listen to the server propperly to initialize the player (eg. setting position,
             // rotation and much more)
             // TODO: Yaw is inverted, Server recieves movement as jittery, might be mclib
             mc::protocol::packets::out::PlayerPositionAndLookPacket response(
-                m_player->position, m_player->yaw * 180.0f / 3.14159f, m_player->pitch * 180.0f / 3.14159f,
-                m_player->grounded);
+                mc::ToVector3d(m_player->position), m_player->yaw * 180.0f / 3.14159f,
+                m_player->pitch * 180.0f / 3.14159f, m_player->grounded);
             client->GetConnection()->SendPacket(&response);
 
             // Experimental, doesnt work
@@ -309,9 +328,9 @@ void ReCraftCore::Main() {
     m_renderer->Render(m_debugUI);
 
     if (Input::isKeyDown(KEY_START)) { // TODO: Change this in favor of pause screen
-        if (m_gamestate == GameState::SelectWorld)
+        if (m_gamestate == GameState::SelectWorld) {
             Exit();
-        else if (m_gamestate == GameState::Playing) {
+        } else if (m_gamestate == GameState::Playing) {
             ExitSinglePlayer();
 
             m_gamestate = GameState::SelectWorld;
@@ -336,7 +355,7 @@ void ReCraftCore::Main() {
         m_bTopUsingCurrScreen = false;
         if (m_bTopHaveQueuedScreen) {
             SetScreen(m_pTopQueuedScreen, true);
-            m_pTopQueuedScreen = nullptr;
+            m_pTopQueuedScreen     = nullptr;
             m_bTopHaveQueuedScreen = false;
         }
         // return;
@@ -348,7 +367,7 @@ void ReCraftCore::Main() {
         m_bBotUsingCurrScreen = false;
         if (m_bBotHaveQueuedScreen) {
             SetScreen(m_pBotQueuedScreen, false);
-            m_pBotQueuedScreen = nullptr;
+            m_pBotQueuedScreen     = nullptr;
             m_bBotHaveQueuedScreen = false;
         }
         // return;
@@ -366,17 +385,17 @@ void ReCraftCore::Main() {
 }
 
 void ReCraftCore::SetScreen(Screen* pScreen, bool top) {
-    bool& usingCurrScreen = top ? m_bTopUsingCurrScreen : m_bBotUsingCurrScreen;
-    bool& haveQueuedScreen = top ? m_bTopHaveQueuedScreen : m_bBotHaveQueuedScreen;
-    Screen*& queuedScreen = top ? m_pTopQueuedScreen : m_pBotQueuedScreen;
-    Screen*& currentScreen = top ? m_pTopScreen : m_pBotScreen;
+    bool&    usingCurrScreen  = top ? m_bTopUsingCurrScreen : m_bBotUsingCurrScreen;
+    bool&    haveQueuedScreen = top ? m_bTopHaveQueuedScreen : m_bBotHaveQueuedScreen;
+    Screen*& queuedScreen     = top ? m_pTopQueuedScreen : m_pBotQueuedScreen;
+    Screen*& currentScreen    = top ? m_pTopScreen : m_pBotScreen;
 
-    int screenWidth = top ? int(400 * 0.5f) : int(320 * 0.5);
+    int screenWidth  = top ? int(400 * 0.5f) : int(320 * 0.5);
     int screenHeight = int(240 * 0.5);
 
     if (usingCurrScreen) {
         haveQueuedScreen = true;
-        queuedScreen = pScreen;
+        queuedScreen     = pScreen;
     } else if (!pScreen || !pScreen->IsErrorScreen()) {
         if (currentScreen) {
             currentScreen->Removed();

@@ -16,7 +16,7 @@
 int sky_time = 0;
 
 WorldRenderer::WorldRenderer(Player* player, World* world, WorkQueue* workqueue, int projectionUniform) :
-    m_player(player), m_world(world), m_workqueue(workqueue), m_projectionUniform(projectionUniform){
+    m_player(player), m_world(world), m_workqueue(workqueue), m_projectionUniform(projectionUniform) {
 
     m_renderingQueue.clear();
     m_transparentClusters.clear();
@@ -31,14 +31,17 @@ WorldRenderer::WorldRenderer(Player* player, World* world, WorkQueue* workqueue,
     float data[256];
     for (int i = 0; i <= 128; i++) {
         float val = 1.f;
-        if (i == 0)
+        if (i == 0) {
             val = 0.0f;
-        else if (i == 1)
+        } else if (i == 1) {
             val = 0.9f;
-        if (i < 128)
+        }
+        if (i < 128) {
             data[i] = val;
-        if (i > 0)
+        }
+        if (i > 0) {
             data[i + 127] = val - data[i - 1];
+        }
     }
     FogLut_FromArray(&m_fogLut, data);
     C3D_FogGasMode(GPU_FOG, GPU_PLAIN_DENSITY, false);
@@ -72,10 +75,8 @@ void WorldRenderer::RenderWorld() {
 
     int pY = CLAMP(WorldToChunkCoord(FastFloor(m_player->position.y)), 0, ChunkColumn::ChunksPerColumn - 1);
 
-    ChunkColumnPtr columnPtr = m_world->GetChunkColumn(
-        WorldToChunkCoord(FastFloor(m_player->position.x)),
-        WorldToChunkCoord(FastFloor(m_player->position.z))
-    );
+    ChunkColumnPtr columnPtr = m_world->GetChunkColumn(WorldToChunkCoord(FastFloor(m_player->position.x)),
+                                                       WorldToChunkCoord(FastFloor(m_player->position.z)));
 
     if (!columnPtr) {
         // Player is in an invalid/unloaded chunk!
@@ -88,13 +89,13 @@ void WorldRenderer::RenderWorld() {
     ClusterRenderedRef(World::ChunkCacheSize / 2 + m_world->cacheTranslationX, pY,
                        World::ChunkCacheSize / 2 + m_world->cacheTranslationZ) = 1;
 
-    mc::Vector3d playerPos = m_player->position;
+    mc::Vector3f playerPos = m_player->position;
 
     while (!m_renderingQueue.empty()) {
         RenderStep step = m_renderingQueue.back();
         m_renderingQueue.pop_back();
         ChunkColumnPtr column = step.column;
-        ChunkPtr chunk = step.chunk;
+        ChunkPtr       chunk  = step.chunk;
 
         if (chunk->vertices > 0 && chunk->vbo.size) {
             ClusterRenderedRef(column->x, chunk->y, column->z) |= 2;
@@ -110,33 +111,38 @@ void WorldRenderer::RenderWorld() {
         }
 
         for (int i = 0; i < 6; i++) {
-            Direction dir = (Direction)i;
+            Direction  dir    = (Direction)i;
             const int* offset = DirectionToOffset[dir];
 
             int newX = column->x + offset[0], newY = chunk->y + offset[1], newZ = column->z + offset[2];
             if (newX < m_world->cacheTranslationX - World::ChunkCacheSize / 2 + 1 ||
                 newX > m_world->cacheTranslationX + World::ChunkCacheSize / 2 - 1 ||
                 newZ < m_world->cacheTranslationZ - World::ChunkCacheSize / 2 + 1 ||
-                newZ > m_world->cacheTranslationZ + World::ChunkCacheSize / 2 - 1 || newY < 0 || newY >= ChunkColumn::ChunksPerColumn)
-                continue;
-
-            mc::Vector3d dist = mc::Vector3d(newX * Chunk::Size + Chunk::Size / 2, newY * Chunk::Size + Chunk::Size / 2,
-                                             newZ * Chunk::Size + Chunk::Size / 2) -
-                playerPos;
-            if (Vector3d_dot(dist, dist) > (3.f * Chunk::Size) * (3.f * Chunk::Size)) {
+                newZ > m_world->cacheTranslationZ + World::ChunkCacheSize / 2 - 1 || newY < 0 ||
+                newY >= ChunkColumn::ChunksPerColumn) {
                 continue;
             }
 
-            if (ClusterRenderedRef(newX, newY, newZ) & 1)
+            mc::Vector3f dist = mc::Vector3f(newX * Chunk::Size + Chunk::Size / 2, newY * Chunk::Size + Chunk::Size / 2,
+                                             newZ * Chunk::Size + Chunk::Size / 2) -
+                                playerPos;
+            if (Vector3f_dot(dist, dist) > (3.f * Chunk::Size) * (3.f * Chunk::Size)) {
                 continue;
+            }
+
+            if (ClusterRenderedRef(newX, newY, newZ) & 1) {
+                continue;
+            }
 
             if (!ChunkCanBeSeenThrough(chunk->seeThrough, step.enteredFrom, (Direction)i) &&
-                step.enteredFrom != Direction::Invalid)
+                step.enteredFrom != Direction::Invalid) {
                 continue;
+            }
 
             C3D_FVec chunkPosition = FVec3_New(newX * Chunk::Size, newY * Chunk::Size, newZ * Chunk::Size);
-            if (!m_cam.IsAABBVisible(chunkPosition, FVec3_New(Chunk::Size, Chunk::Size, Chunk::Size)))
+            if (!m_cam.IsAABBVisible(chunkPosition, FVec3_New(Chunk::Size, Chunk::Size, Chunk::Size))) {
                 continue;
+            }
 
             ClusterRenderedRef(newX, newY, newZ) |= 1;
 
@@ -145,8 +151,8 @@ void WorldRenderer::RenderWorld() {
                 continue; // Column doesn't exist, skip this neighbor
             }
 
-            ChunkPtr nextChunk = newColumn->GetChunk(newY);
-            RenderStep nextStep = (RenderStep){nextChunk, newColumn, DirectionOpposite[dir]};
+            ChunkPtr   nextChunk = newColumn->GetChunk(newY);
+            RenderStep nextStep  = (RenderStep){nextChunk, newColumn, DirectionOpposite[dir]};
             m_renderingQueue.push_back(nextStep);
         }
     }
@@ -208,6 +214,7 @@ void WorldRenderer::Render(float iod) {
     m_cubeRenderer->Draw(m_projectionUniform, m_cam.GetVP(), m_world, m_player->position);
 
     if (m_player->blockInActionRange) {
-        m_cursor->Draw(m_projectionUniform, m_cam.GetVP(), m_world, m_player->viewRayCast.hitPos, m_player->viewRayCast.direction);
+        m_cursor->Draw(m_projectionUniform, m_cam.GetVP(), m_world, m_player->viewRayCast.hitPos,
+                       m_player->viewRayCast.direction);
     }
 }

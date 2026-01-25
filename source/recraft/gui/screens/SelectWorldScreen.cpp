@@ -1,11 +1,12 @@
 #include "gui/screens/SelectWorldScreen.hpp"
-#include "gui/SpriteBatch.hpp"
+
+#include "gui/ScreenFwd.hpp"
 #include "gui/screens/CreateWorldScreen.hpp"
 #include "gui/screens/DeleteWorldScreen.hpp"
 #include "gui/screens/StartScreen.hpp"
-#include "mpack.h"
 
-#include <climits>
+#include <limits.h>
+#include <mpack.h>
 #include <sys/dirent.h>
 
 void SelectWorldBotScreen::Removed() {
@@ -22,7 +23,7 @@ bool SelectWorldBotScreen::IsInGameScreen() {
     return false;
 }
 
-//TODO: Separate Menu States as custom views
+// TODO: Separate Menu States as custom views
 void SelectWorldBotScreen::Render(int mouseX, int mouseY, float delta) {
     SpriteBatch_SetScale(2);
 
@@ -41,20 +42,27 @@ void SelectWorldBotScreen::Render(int mouseX, int mouseY, float delta) {
     }
     m_scroll += m_velocity;
     m_velocity *= 0.75f;
-    if (ABS(m_velocity) < 0.001f) m_velocity = 0.f;
+    if (ABS(m_velocity) < 0.001f) {
+        m_velocity = 0.f;
+    }
 
     int maximumSize = SpriteBatch::CharHeight * 2 * m_worlds.size();
-    if (m_scroll < -maximumSize) m_scroll = -maximumSize;
-    if (m_scroll > 0) m_scroll = 0;
+    if (m_scroll < -maximumSize) {
+        m_scroll = -maximumSize;
+    }
+    if (m_scroll > 0) {
+        m_scroll = 0;
+    }
 
     for (size_t i = 0; i < m_worlds.size(); i++) {
         WorldInfo& info = m_worlds[i];
-        int y = i * (SpriteBatch::CharHeight + SpriteBatch::CharHeight) + 10 + m_scroll;
+        int        y    = i * (SpriteBatch::CharHeight + SpriteBatch::CharHeight) + 10 + m_scroll;
         if (m_selectedWorld == (int)i) {
             SpriteBatch_PushSingleColorQuad(10, y - 3, -7, 140, 1, SHADER_RGB(20, 20, 20));
             SpriteBatch_PushSingleColorQuad(10, y + SpriteBatch::CharHeight + 2, -7, 140, 1, SHADER_RGB(20, 20, 20));
             SpriteBatch_PushSingleColorQuad(10, y - 3, -7, 1, SpriteBatch::CharHeight + 6, SHADER_RGB(20, 20, 20));
-            SpriteBatch_PushSingleColorQuad(10 + 140, y - 3, -7, 1, SpriteBatch::CharHeight + 6, SHADER_RGB(20, 20, 20));
+            SpriteBatch_PushSingleColorQuad(10 + 140, y - 3, -7, 1, SpriteBatch::CharHeight + 6,
+                                            SHADER_RGB(20, 20, 20));
         }
         if (Gui::EnteredCursorInside(10, y - 3, 140, SpriteBatch::CharHeight + 6) && y < 32 * 2) {
             m_selectedWorld = (int)i;
@@ -67,9 +75,9 @@ void SelectWorldBotScreen::Render(int mouseX, int mouseY, float delta) {
     m_clicked_play = Gui::Button(1.f, "Play selected world");
     Gui::EndRow();
     Gui::BeginRowCenter(Gui::RelativeWidth(0.95f), 2);
-    m_clicked_new_world = Gui::Button(0.333f, "New");
+    m_clicked_new_world    = Gui::Button(0.333f, "New");
     m_clicked_delete_world = Gui::Button(0.333f, "Delete");
-    m_clicked_back = Gui::Button(0.333f, "Back");
+    m_clicked_back         = Gui::Button(0.333f, "Back");
     Gui::EndRow();
 
     Screen::Render(mouseX, mouseY, delta);
@@ -81,7 +89,7 @@ void SelectWorldBotScreen::ButtonClicked() {
         m_clicked_new_world = false;
         m_ReCraftCore->SetScreen(new CreateWorldBotScreen(m_worlds), false);
     }
-    if(m_clicked_back){
+    if (m_clicked_back) {
         m_clicked_back = false;
 
         m_ReCraftCore->SetScreen(new StartBotScreen, false);

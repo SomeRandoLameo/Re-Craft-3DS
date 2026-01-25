@@ -3,10 +3,12 @@
 #include <dirent.h>
 #include <unistd.h>
 
+#include <cstdio>
 #include <mpack/mpack.h>
 
 #include "gui/DebugUI.hpp"
 #include "misc/Crash.hpp"
+#include "world/CT_World.hpp"
 
 #define mkdirFlags (S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH)
 
@@ -23,7 +25,7 @@ void SaveManager::InitFileSystem() {
 
 void SaveManager::Init(Player* player, World* world) {
     m_player = player;
-    m_world = world;
+    m_world  = world;
 }
 
 void SaveManager::Load(char* path) {
@@ -60,7 +62,7 @@ void SaveManager::Load(char* path) {
             m_player->spawnPos.x = mpack_node_double(mpack_node_map_cstr(playerNode, "sx"));
             m_player->spawnPos.y = mpack_node_double(mpack_node_map_cstr(playerNode, "sy"));
             m_player->spawnPos.z = mpack_node_double(mpack_node_map_cstr(playerNode, "sz"));
-            m_player->spawnset = mpack_node_bool(mpack_node_map_cstr(playerNode, "ss"));
+            m_player->spawnset   = mpack_node_bool(mpack_node_map_cstr(playerNode, "ss"));
         }
 
         m_player->gamemode = mpack_node_int(mpack_node_map_cstr(playerNode, "gamemode"));
@@ -78,9 +80,9 @@ void SaveManager::Load(char* path) {
             m_player->hunger = 20;
         }
         m_player->pitch = mpack_node_float(mpack_node_map_cstr(playerNode, "pitch"));
-        m_player->yaw = mpack_node_float(mpack_node_map_cstr(playerNode, "yaw"));
+        m_player->yaw   = mpack_node_float(mpack_node_map_cstr(playerNode, "yaw"));
 
-        m_player->flying = mpack_elvis(playerNode, "flying", bool, false);
+        m_player->flying    = mpack_elvis(playerNode, "flying", bool, false);
         m_player->crouching = mpack_elvis(playerNode, "crouching", bool, false);
         // player->cheats = mpack_elvis(playerNode, "cheats", bool, true);
 
@@ -184,8 +186,8 @@ SuperChunk* SaveManager::FetchSuperChunk(int x, int z) {
 }
 
 void SaveManager::LoadChunk(WorkQueue* queue, WorkerItem item) {
-    int x = ChunkToSuperChunkCoord(item.column->x);
-    int z = ChunkToSuperChunkCoord(item.column->z);
+    int         x          = ChunkToSuperChunkCoord(item.column->x);
+    int         z          = ChunkToSuperChunkCoord(item.column->z);
     SuperChunk* superchunk = FetchSuperChunk(x, z);
 
     SuperChunk_LoadChunk(superchunk, item.column);

@@ -1,16 +1,16 @@
 #pragma once
 
-#include <cstdio>
-#include "../../entity/Player.hpp"
 #include "SuperChunk.hpp"
+#include "entity/Player.hpp"
+#include "world/WorkQueue.hpp"
 
 class SaveManager {
 public:
-    SaveManager() = default;
+    SaveManager()  = default;
     ~SaveManager() = default;
 
     // Delete copy constructor and assignment operator
-    SaveManager(const SaveManager&) = delete;
+    SaveManager(const SaveManager&)            = delete;
     SaveManager& operator=(const SaveManager&) = delete;
 
     static void InitFileSystem();
@@ -28,8 +28,8 @@ public:
     static void SaveChunkCallback(WorkQueue* queue, WorkerItem item, void* context);
 
 private:
-    Player* m_player = nullptr;
-    World* m_world = nullptr;
+    Player*                  m_player = nullptr;
+    World*                   m_world  = nullptr;
     std::vector<SuperChunk*> m_superchunks;
 
     SuperChunk* FetchSuperChunk(int x, int z);

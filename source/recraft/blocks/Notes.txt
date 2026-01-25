@@ -1,8 +1,8 @@
-CT Block & MCLib Block.
+CT Block& MCLib Block.
 
-- What is a CT Block?
-A Craftus block is a uint8_t that represents the ID of the block
-Every other attribute of the block (transparency, bounding box, etc) is hardcoded inside Craftus.
+    - What is a CT Block
+    ? A Craftus block is a u8 that represents the ID of the block Every other attribute of the
+      block(transparency, bounding box, etc) is hardcoded inside Craftus.
 The transparency is determined, if the block id matches a number out of "The Block ID enum".
 Craftus assumes by default that every block has full collision. no exceptions.
 
@@ -22,7 +22,7 @@ There are multiple lists of hardcoded blocks. (Block IDs, Block Textures, Block 
 
 
 - What is a MCLib Block?
-A MCLib block is a class with a string name, uint32_t data, bool solid and AABB bounding box.
+A MCLib block is a class with a string name, u32 data, bool solid and AABB bounding box.
 
 - How does MCLib "register" Blocks?
 Blocks are registered inside a BlockRegistry.
@@ -37,7 +37,7 @@ it is not avoidable to have some form of dynamic mapping to get the right textur
 this can be problematic when there will be new blocks. Also quite challenging if the pre flattened block searchs for (example) "stone:34" but there are 33 other stone types.
 
 
-we could start by rewriting the Block to be mc::Block instead of the uint8_t.
+we could start by rewriting the Block to be mc::Block instead of the u8.
 we can just set the type to the ID for now.
 This is sadly not possible.
 

@@ -1,16 +1,27 @@
 #include "rendering/Renderer.hpp"
 
+#include "GameStates.hpp"
 #include "ReCraftCore.hpp"
 #include "blocks/CT_Block.hpp"
+#include "entity/Player.hpp"
 #include "gui/CT_Inventory.hpp"
+#include "gui/DebugUI.hpp"
 #include "gui/Gui.hpp"
+#include "gui/ImGuiManager.hpp"
+#include "gui/Screen.hpp"
 #include "gui/SpriteBatch.hpp"
 #include "rendering/Camera.hpp"
 #include "rendering/Clouds.hpp"
 #include "rendering/Cursor.hpp"
 #include "rendering/PolyGen.hpp"
 #include "rendering/TextureMap.hpp"
+#include "rendering/WorldRenderer.hpp"
+#include "world/CT_World.hpp"
+#include "world/WorkQueue.hpp"
 
+#include <fstream>
+#include <functional>
+#include <iostream>
 
 // TODO: Fix this
 extern bool showDebugInfo;
@@ -78,14 +89,15 @@ void Renderer::Render(DebugUI* debugUi) {
 
     for (int i = 0; i < 2; i++) {
         RenderFrame(i, iod);
-        if (iod <= 0.f)
+        if (iod <= 0.f) {
             break;
+        }
     }
 
     RenderLowerScreen(debugUi);
 
-    ImGuiIO& io = ImGui::GetIO();
-    io.DisplaySize = ImVec2(ScreenWidth, ScreenHeight);
+    ImGuiIO& io                = ImGui::GetIO();
+    io.DisplaySize             = ImVec2(ScreenWidth, ScreenHeight);
     io.DisplayFramebufferScale = ImVec2(FrameBufferScale, FrameBufferScale);
 
     ImGuiManager::GetInstance()->BeginFrame();

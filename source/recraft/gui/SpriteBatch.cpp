@@ -3,27 +3,28 @@
 #include "gui/DebugUI.hpp"
 #include "gui/FontLoader.hpp"
 #include "mcbridge/MCBridge.hpp"
+#include "misc/NumberUtils.hpp"
 #include "rendering/TextureMap.hpp"
 #include "rendering/VertexFmt.hpp"
 
 
 #include <stdarg.h>
 
-typedef struct {
-    int depth;
+struct Sprite {
+    int      depth;
     C3D_Tex* texture;
-    int16_t x0, y0, x1, y1; // top left, right
-    int16_t x2, y2, x3, y3; // bottom left, right
-    int16_t u0, v0, u1, v1;
-    int16_t color;
-} Sprite;
+    s16      x0, y0, x1, y1; // top left, right
+    s16      x2, y2, x3, y3; // bottom left, right
+    s16      u0, v0, u1, v1;
+    s16      color;
+};
 
-static std::vector<Sprite> cmdList;
-static C3D_Tex* currentTexture = NULL;
+static std::vector<Sprite>       cmdList;
+static C3D_Tex*                  currentTexture = NULL;
 static std::array<GuiVertex*, 2> vertexList;
-static int projUniform;
+static int                       projUniform;
 
-static Font* font;
+static Font*   font;
 static C3D_Tex whiteTex;
 static C3D_Tex widgetsTex;
 static C3D_Tex iconsTex;
@@ -48,8 +49,8 @@ void SpriteBatch_Init(int projUniform_) {
 
     Texture_Load(&iconsTex, "romfs:/assets/textures/gui/icons.png");
 
-    uint8_t data[16 * 16];
-    memset(data, 0xff, 16 * 16 * sizeof(uint8_t));
+    u8 data[16 * 16];
+    memset(data, 0xff, 16 * 16 * sizeof(u8));
     C3D_TexInit(&whiteTex, 16, 16, GPU_L8);
     C3D_TexLoadImage(&whiteTex, data, GPU_TEXFACE_2D, 0);
 
@@ -72,7 +73,9 @@ void SpriteBatch_Deinit() {
     C3D_TexDelete(&menuBackgroundTex);
 }
 
-void SpriteBatch_BindTexture(C3D_Tex* texture) { currentTexture = texture; }
+void SpriteBatch_BindTexture(C3D_Tex* texture) {
+    currentTexture = texture;
+}
 void SpriteBatch_BindGuiTexture(GuiTexture texture) {
     switch (texture) {
     case GuiTexture::Blank:
@@ -94,21 +97,28 @@ void SpriteBatch_BindGuiTexture(GuiTexture texture) {
         break;
     }
 }
+// TODO: sometimes texture is 0x0 or 0xf0f0f0f0, which crashes the game. SEGMENTATION FAULT (CORE DUMPED)
+static void ensureTexture(C3D_Tex* tex) {
+    if (tex == nullptr || (int)tex == 0xf0f0f0f0) {
+        tex = &whiteTex; // error texture
+    }
+}
 
-void SpriteBatch_PushSingleColorQuad(int x, int y, int z, int w, int h, int16_t color) {
+void SpriteBatch_PushSingleColorQuad(int x, int y, int z, int w, int h, s16 color) {
     SpriteBatch_BindTexture(&whiteTex);
     SpriteBatch_PushQuadColor(x, y, z, w, h, 0, 0, 4, 4, color);
 }
 void SpriteBatch_PushQuad(int x, int y, int z, int w, int h, int rx, int ry, int rw, int rh) {
     SpriteBatch_PushQuadColor(x, y, z, w, h, rx, ry, rw, rh, INT16_MAX);
 }
-void SpriteBatch_PushQuadColor(int x, int y, int z, int w, int h, int rx, int ry, int rw, int rh, int16_t color) {
-    cmdList.push_back(Sprite{z, currentTexture, static_cast<int16_t>(x * guiScale), static_cast<int16_t>(y * guiScale),
-                             static_cast<int16_t>((x + w) * guiScale), static_cast<int16_t>(y * guiScale),
-                             static_cast<int16_t>(x * guiScale), static_cast<int16_t>((y + h) * guiScale),
-                             static_cast<int16_t>((x + w) * guiScale), static_cast<int16_t>((y + h) * guiScale),
-                             static_cast<int16_t>(rx), static_cast<int16_t>(ry), static_cast<int16_t>(rx + rw),
-                             static_cast<int16_t>(ry + rh), color});
+void SpriteBatch_PushQuadColor(int x, int y, int z, int w, int h, int rx, int ry, int rw, int rh, s16 color) {
+    ensureTexture(currentTexture);
+    cmdList.push_back(Sprite{z, currentTexture, static_cast<s16>(x * guiScale), static_cast<s16>(y * guiScale),
+                             static_cast<s16>((x + w) * guiScale), static_cast<s16>(y * guiScale),
+                             static_cast<s16>(x * guiScale), static_cast<s16>((y + h) * guiScale),
+                             static_cast<s16>((x + w) * guiScale), static_cast<s16>((y + h) * guiScale),
+                             static_cast<s16>(rx), static_cast<s16>(ry), static_cast<s16>(rx + rw),
+                             static_cast<s16>(ry + rh), color});
 }
 
 static float rot = 0.f;
@@ -118,48 +128,51 @@ void SpriteBatch_PushIcon(mc::inventory::Slot block, int x, int y, int z) {
     WorldVertex vertices[6 * 6];
     memcpy(vertices, cube_sides_lut, sizeof(cube_sides_lut));
     for (int i = 0; i < 6; i++) {
-        if (i != Direction::Top && i != Direction::South && i != Direction::West)
+        if (i != Direction::Top && i != Direction::South && i != Direction::West) {
             continue;
-        int16_t iconUV[2];
+        }
+        s16 iconUV[2];
         Block_GetTexture(block, (Direction)i, iconUV);
 
-        uint8_t color[3];
+        u8 color[3];
         Block_GetColor(MCBridge::MCLIBSlotToCTItemStack(block).block, MCBridge::MCLIBSlotToCTItemStack(block).meta,
                        (Direction)i, color);
 
         for (int j = 0; j < 5; j++) {
-            int k = i * 6 + j;
-            C3D_FVec p = FVec3_New((float)vertices[k].xyz[0] - 0.5f, (float)vertices[k].xyz[1] - 0.5f,
-                                   (float)vertices[k].xyz[2] - 0.5f);
-            C3D_FVec v = Mtx_MultiplyFVec3(&iconModelMtx, p);
+            int      k         = i * 6 + j;
+            C3D_FVec p         = FVec3_New((float)vertices[k].xyz[0] - 0.5f, (float)vertices[k].xyz[1] - 0.5f,
+                                           (float)vertices[k].xyz[2] - 0.5f);
+            C3D_FVec v         = Mtx_MultiplyFVec3(&iconModelMtx, p);
             vertices[k].xyz[0] = FastFloor(v.x * 20.f * guiScale) + (x + 16) * guiScale;
             vertices[k].xyz[1] = -FastFloor(v.y * 20.f * guiScale) + (y + 16) * guiScale; // invertieren auf der Y-Achse
         }
 
-        WorldVertex bottomLeft = vertices[i * 6 + 0];
+        WorldVertex bottomLeft  = vertices[i * 6 + 0];
         WorldVertex bottomRight = vertices[i * 6 + 1];
-        WorldVertex topRight = vertices[i * 6 + 2];
-        WorldVertex topLeft = vertices[i * 6 + 4];
+        WorldVertex topRight    = vertices[i * 6 + 2];
+        WorldVertex topLeft     = vertices[i * 6 + 4];
 
         C3D_Tex* texture = &((Texture_Map*)Block_GetTextureMap())->texture;
+        ensureTexture(texture);
 
-        int16_t color16 = SHADER_RGB(color[0] >> 3, color[1] >> 3, color[2] >> 3);
-        if (i == Direction::South)
+        s16 color16 = SHADER_RGB(color[0] >> 3, color[1] >> 3, color[2] >> 3);
+        if (i == Direction::South) {
             color16 = SHADER_RGB_DARKEN(color16, 14);
-        else if (i == Direction::West)
+        } else if (i == Direction::West) {
             color16 = SHADER_RGB_DARKEN(color16, 10);
+        }
 
 #define unpackP(x) (x).xyz[0], (x).xyz[1]
-        cmdList.push_back(Sprite{
-            z, texture, unpackP(topLeft), unpackP(topRight), unpackP(bottomLeft), unpackP(bottomRight),
-            static_cast<int16_t>(iconUV[0] / 256), static_cast<int16_t>(iconUV[1] / 256 + Texture::TileSize),
-            static_cast<int16_t>(iconUV[0] / 256 + Texture::TileSize), static_cast<int16_t>(iconUV[1] / 256), color16});
+        cmdList.push_back(
+            Sprite{z, texture, unpackP(topLeft), unpackP(topRight), unpackP(bottomLeft), unpackP(bottomRight),
+                   static_cast<s16>(iconUV[0] / 256), static_cast<s16>(iconUV[1] / 256 + Texture::TileSize),
+                   static_cast<s16>(iconUV[0] / 256 + Texture::TileSize), static_cast<s16>(iconUV[1] / 256), color16});
 
 #undef unpackP
     }
 }
 
-int SpriteBatch_PushText(int x, int y, int z, int16_t color, bool shadow, int wrap, int* ySize, const char* fmt, ...) {
+int SpriteBatch_PushText(int x, int y, int z, s16 color, bool shadow, int wrap, int* ySize, const char* fmt, ...) {
     va_list arg;
     va_start(arg, fmt);
     int length = SpriteBatch_PushTextVargs(x, y, z, color, shadow, wrap, ySize, fmt, arg);
@@ -167,7 +180,7 @@ int SpriteBatch_PushText(int x, int y, int z, int16_t color, bool shadow, int wr
     return length;
 }
 
-int SpriteBatch_PushTextVargs(int x, int y, int z, int16_t color, bool shadow, int wrap, int* ySize, const char* fmt,
+int SpriteBatch_PushTextVargs(int x, int y, int z, s16 color, bool shadow, int wrap, int* ySize, const char* fmt,
                               va_list arg) {
     SpriteBatch_BindTexture(&font->texture);
 
@@ -186,18 +199,20 @@ int SpriteBatch_PushTextVargs(int x, int y, int z, int16_t color, bool shadow, i
         if (*text == '\n' || implicitBreak) {
             offsetY += SpriteBatch::CharHeight;
             maxWidth = MAX(maxWidth, offsetX);
-            offsetX = 0;
-            if (implicitBreak)
+            offsetX  = 0;
+            if (implicitBreak) {
                 --text;
+            }
         } else if (*text == '\t') {
             offsetX = ((offsetX / CharWidth) / TabSize + 1) * TabSize * CharWidth;
         } else {
             if (*text != ' ') {
                 int texX = *text % 16 * 8, texY = *text / 16 * 8;
                 SpriteBatch_PushQuadColor(x + offsetX, y + offsetY, z, 8, 8, texX, texY, 8, 8, color);
-                if (shadow)
+                if (shadow) {
                     SpriteBatch_PushQuadColor(x + offsetX + 1, y + offsetY + 1, z - 1, 8, 8, texX, texY, 8, 8,
                                               SHADER_RGB(10, 10, 10));
+                }
             }
             offsetX += font->fontWidth[(int)*text];
         }
@@ -206,8 +221,9 @@ int SpriteBatch_PushTextVargs(int x, int y, int z, int16_t color, bool shadow, i
 
     maxWidth = MAX(maxWidth, offsetX);
 
-    if (ySize != NULL)
+    if (ySize != NULL) {
         *ySize = offsetY + SpriteBatch::CharHeight;
+    }
 
     return maxWidth;
 }
@@ -227,14 +243,15 @@ int SpriteBatch_CalcTextWidthVargs(const char* text, va_list args) {
 
     char* it = fmtedText;
 
-    int length = 0;
+    int length    = 0;
     int maxLength = 0;
     while (*it != '\0') {
         if (*it == '\n') {
             maxLength = MAX(maxLength, length);
-            length = 0;
-        } else
+            length    = 0;
+        } else {
             length += font->fontWidth[(int)*(it++)];
+        }
     }
 
     maxLength = MAX(maxLength, length);
@@ -246,17 +263,26 @@ static int compareDrawCommands(const void* a, const void* b) {
     Sprite* ga = ((Sprite*)a);
     Sprite* gb = ((Sprite*)b);
 
+    // if depth is identical, use address difference as fallback sorting
     return ga->depth == gb->depth ? gb->texture - ga->texture : gb->depth - ga->depth;
 }
 
-int SpriteBatch_GetWidth() { return screenWidth / guiScale; }
-int SpriteBatch_GetHeight() { return screenHeight / guiScale; }
+int SpriteBatch_GetWidth() {
+    return screenWidth / guiScale;
+}
+int SpriteBatch_GetHeight() {
+    return screenHeight / guiScale;
+}
 
-void SpriteBatch_SetScale(int scale) { guiScale = scale; }
-int SpriteBatch_GetScale() { return guiScale; }
+void SpriteBatch_SetScale(int scale) {
+    guiScale = scale;
+}
+int SpriteBatch_GetScale() {
+    return guiScale;
+}
 
 void SpriteBatch_StartFrame(int width, int height) {
-    screenWidth = width;
+    screenWidth  = width;
     screenHeight = height;
 }
 
@@ -288,6 +314,7 @@ void SpriteBatch_Render(gfxScreen_t screen) {
         size_t vtxStart = vtx;
 
         C3D_Tex* texture = cmdList.back().texture;
+
         float divW = 1.f / texture->width * INT16_MAX;
         float divH = 1.f / texture->height * INT16_MAX;
 
@@ -295,12 +322,12 @@ void SpriteBatch_Render(gfxScreen_t screen) {
             Sprite cmd = cmdList.back();
             cmdList.pop_back();
 
-            int16_t color = cmd.color;
+            s16 color = cmd.color;
 
-            int16_t u0 = (int16_t)(cmd.u0 * divW);
-            int16_t v0 = (int16_t)(cmd.v0 * divH);
-            int16_t u1 = (int16_t)(cmd.u1 * divW);
-            int16_t v1 = (int16_t)(cmd.v1 * divH);
+            s16 u0 = (s16)(cmd.u0 * divW);
+            s16 v0 = (s16)(cmd.v0 * divH);
+            s16 u1 = (s16)(cmd.u1 * divW);
+            s16 v1 = (s16)(cmd.v1 * divH);
 
             usedVertexList[vtx++] = {{cmd.x3, cmd.y3, 0}, {u1, v1, color}};
             usedVertexList[vtx++] = {{cmd.x1, cmd.y1, 0}, {u1, v0, color}};
@@ -324,5 +351,5 @@ void SpriteBatch_Render(gfxScreen_t screen) {
     C3D_DepthTest(true, GPU_GREATER, GPU_WRITE_ALL);
 
     currentTexture = NULL;
-    guiScale = 2;
+    guiScale       = 2;
 }

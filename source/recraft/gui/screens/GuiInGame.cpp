@@ -1,5 +1,6 @@
 #include "gui/screens/GuiInGame.hpp"
-#include "gui/SpriteBatch.hpp"
+
+#include "gui/ScreenFwd.hpp"
 
 bool GuiInGameTop::IsInGameScreen() {
     return true;
@@ -24,13 +25,13 @@ void GuiInGameTop::Render(int mouseX, int mouseY, float delta) {
 // TODO: Move this somewhere else once the new renderer works, Preferrably as a GuiOverlay
 void GuiInGameTop::RenderHealth() {
     // TODO: Damage flicker bounce + healing white flicker + wither and more
-    int health = m_ReCraftCore->GetPlayer()->hp;
-    int yPos = 99;
+    int health     = m_ReCraftCore->GetPlayer()->hp;
+    int yPos       = 99;
     int spriteSize = 9;
     SpriteBatch_BindGuiTexture(GuiTexture::Icons);
     for (int amount = 0; amount < 10; ++amount) {
 
-        int var6 = 0;
+        int  var6 = 0;
         bool var9 = false;
         if (var9) {
             var6 = 1;
@@ -77,7 +78,7 @@ void GuiInGameTop::RenderExpBar() {
 
     if (barCap > 0) {
         int barLength = 182;
-        int xpFill = (int)(m_ReCraftCore->GetPlayer()->experience * (float)(barLength + 1));
+        int xpFill    = (int)(m_ReCraftCore->GetPlayer()->experience * (float)(barLength + 1));
 
         int y = 120 - 9;
         SpriteBatch_PushQuad(200 / 2 - 182 / 2, y, 0, barLength, 5, 0, 64, barLength, 5);
@@ -115,8 +116,8 @@ void GuiInGameTop::RenderExpBar() {
 // TODO: Hunger effects
 void GuiInGameTop::RenderHunger() {
     int spriteSize = 9;
-    int xpos = 190;
-    int ypos = 99;
+    int xpos       = 190;
+    int ypos       = 99;
 
     int saturationLevel = m_ReCraftCore->GetPlayer()->hunger;
 
@@ -154,10 +155,8 @@ void GuiInGameTop::RenderHunger() {
 }
 
 
-
-
 void GuiInGameBot::Init() {
-    m_player = m_ReCraftCore->GetPlayer();
+    m_player    = m_ReCraftCore->GetPlayer();
     m_inventory = new Inventory();
 }
 void GuiInGameBot::Removed() {
@@ -175,11 +174,12 @@ void GuiInGameBot::Render(int mouseX, int mouseY, float delta) {
     m_inventory->renderHotbar(160 / 2 - 194 / 2, 120 - Inventory::QUICKSELECT_HEIGHT, m_player->quickSelectBar,
                               m_player->quickSelectBarSlot);
 
-    m_inventory->draw(((137 / 2) - (120 / 2)), 10, m_player->inventory,
-                      sizeof(m_player->inventory) / sizeof(ItemStack), m_player->inventorySite);
+    m_inventory->draw(((137 / 2) - (120 / 2)), 10, m_player->inventory, sizeof(m_player->inventory) / sizeof(ItemStack),
+                      m_player->inventorySite);
 
     m_player->inventorySite = m_inventory->currentSite;
     Screen::Render(mouseX, mouseY, delta);
 }
-void GuiInGameBot::ButtonClicked() { Screen::ButtonClicked(); }
-
+void GuiInGameBot::ButtonClicked() {
+    Screen::ButtonClicked();
+}

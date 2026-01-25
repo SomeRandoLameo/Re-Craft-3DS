@@ -1,9 +1,6 @@
 #pragma once
 
-#include <stdbool.h>
-#include <stdint.h>
-
-#include "amethyst/iron.hpp"
+#include <amethyst/iron.hpp>
 
 // TODO: COreUI
 class Gui {
@@ -27,7 +24,7 @@ public:
     static void BeginRow(int width, int count);
     static void EndRow();
 
-    static void Label(float size, bool shadow, int16_t color, bool center, const char* text, ...);
+    static void Label(float size, bool shadow, s16 color, bool center, const char* text, ...);
 
     static bool Button(float size, const char* label, ...);
 
@@ -38,7 +35,7 @@ public:
 
     static Amy::Iron::Drawlist* RenderData;
 
-    static const int BUTTON_HEIGHT = 20;
-    static const int CHAR_HEIGHT = 8;
+    static const int BUTTON_HEIGHT       = 20;
+    static const int CHAR_HEIGHT         = 8;
     static const int BUTTON_TEXT_PADDING = ((BUTTON_HEIGHT - CHAR_HEIGHT) / 2);
 };

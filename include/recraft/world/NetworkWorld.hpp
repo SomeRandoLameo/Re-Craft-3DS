@@ -1,9 +1,9 @@
 #pragma once
 
-#include "CT_World.hpp"
-#include "Client.h"
-#include "mclib/protocol/packets/PacketHandler.h"
+#include <mclib/core/Client.h>
+#include <mclib/protocol/packets/PacketHandler.h>
 
+class World;
 class NetworkWorld : public mc::protocol::packets::PacketHandler, public mc::core::ClientListener {
 public:
     NetworkWorld(World* world, mc::protocol::packets::PacketDispatcher* dispatcher);

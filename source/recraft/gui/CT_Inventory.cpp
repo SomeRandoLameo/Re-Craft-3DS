@@ -1,30 +1,34 @@
 #include "gui/CT_Inventory.hpp"
+
 #include <algorithm>
+
+#include "GameStates.hpp"
 #include "ReCraftCore.hpp"
 #include "gui/Gui.hpp"
 #include "gui/SpriteBatch.hpp"
+#include "inventory/ItemStack.hpp"
+#include "mcbridge/MCBridge.hpp"
+#include "misc/NumberUtils.hpp"
 #include "rendering/VertexFmt.hpp"
 
 void Inventory::handleStackClick(mc::inventory::Slot* stack) {
     if (m_sourceStack == nullptr && stack != m_proposedSourceStack) {
         m_proposedSourceStack = stack;
-    }
-    else if (m_proposedSourceStack == stack) {
-        m_sourceStack = stack;
+    } else if (m_proposedSourceStack == stack) {
+        m_sourceStack         = stack;
         m_proposedSourceStack = nullptr;
-    }
-    else if (m_sourceStack != nullptr) {
+    } else if (m_sourceStack != nullptr) {
         if (m_sourceStack != stack) {
             // Convert to ItemStack
             ItemStack sourceItemStack = MCBridge::MCLIBSlotToCTItemStack(*m_sourceStack);
-            ItemStack destItemStack = MCBridge::MCLIBSlotToCTItemStack(*stack);
+            ItemStack destItemStack   = MCBridge::MCLIBSlotToCTItemStack(*stack);
 
             // Perform the transfer
             Inventory::Transfer(&sourceItemStack, &destItemStack);
 
             // Convert back and write to the original slots
             *m_sourceStack = MCBridge::CTItemStackToMCLIBSlot(sourceItemStack);
-            *stack = MCBridge::CTItemStackToMCLIBSlot(destItemStack);
+            *stack         = MCBridge::CTItemStackToMCLIBSlot(destItemStack);
         }
         m_sourceStack = nullptr;
     }
@@ -49,8 +53,8 @@ void Inventory::renderHotbar(int x, int y, mc::inventory::Slot* stacks, int& sel
             selected = i;
             handleStackClick(&stacks[i]);
 
-           // if (*ReCraftCore::GetInstance()->GetGameState() == GameState::Playing_OnLine) {
-                // TODO: client->GetHotbar().SelectSlot(i);
+            // if (*ReCraftCore::GetInstance()->GetGameState() == GameState::Playing_OnLine) {
+            // TODO: client->GetHotbar().SelectSlot(i);
             //}
         }
 
@@ -58,10 +62,7 @@ void Inventory::renderHotbar(int x, int y, mc::inventory::Slot* stacks, int& sel
 
         // Highlight source stack
         if (m_sourceStack == &stacks[i]) {
-            SpriteBatch_PushSingleColorQuad(
-                    rx / 2 - 2, ry / 2 - 2, 9, 18, 18,
-                    SHADER_RGB(20, 5, 2)
-            );
+            SpriteBatch_PushSingleColorQuad(rx / 2 - 2, ry / 2 - 2, 9, 18, 18, SHADER_RGB(20, 5, 2));
             SpriteBatch_BindGuiTexture(GuiTexture::Widgets);
         }
 
@@ -89,21 +90,17 @@ void Inventory::drawSlot(mc::inventory::Slot* slot, int x, int y) {
         handleStackClick(slot);
     }
 
-    const int16_t backgroundColor = (m_sourceStack == slot)
-                                    ? SHADER_RGB(20, 5, 2)
-                                    : SHADER_RGB_DARKEN(SHADER_RGB(20, 20, 21), 9);
+    const s16 backgroundColor =
+        (m_sourceStack == slot) ? SHADER_RGB(20, 5, 2) : SHADER_RGB_DARKEN(SHADER_RGB(20, 20, 21), 9);
 
-    SpriteBatch_PushSingleColorQuad(
-            x * 2, y * 2, 9, 16 * 2, 16 * 2,
-            backgroundColor
-    );
+    SpriteBatch_PushSingleColorQuad(x * 2, y * 2, 9, 16 * 2, 16 * 2, backgroundColor);
 }
 
 void Inventory::draw(int x, int y, mc::inventory::Slot* stacks, int count, int site) {
     SpriteBatch_SetScale(1);
 
-    int headX = x;
-    int headY = y;
+    int headX   = x;
+    int headY   = y;
     currentSite = site;
 
     if (count > 27) {
@@ -119,7 +116,7 @@ void Inventory::draw(int x, int y, mc::inventory::Slot* stacks, int count, int s
     }
 
     const int startIndex = (currentSite - 1) * 27;
-    const int endIndex = std::min(currentSite * 27, count);
+    const int endIndex   = std::min(currentSite * 27, count);
 
     for (int i = startIndex; i < endIndex; ++i) {
 
@@ -146,10 +143,10 @@ void Inventory::Transfer(ItemStack* src, ItemStack* dst) {
         src->amount -= vol;
         dst->amount += vol;
         dst->block = src->block;
-        dst->meta = src->meta;
+        dst->meta  = src->meta;
     } else {
         ItemStack tmp = *src;
-        *src = *dst;
-        *dst = tmp;
+        *src          = *dst;
+        *dst          = tmp;
     }
 }

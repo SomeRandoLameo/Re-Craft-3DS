@@ -13,9 +13,12 @@ public:
         PadAngles look;
         PadAngles movePrev;
         PadAngles lookPrev;
-    } data;
-    bool isMoved;
-    bool isLooked;
+    };
+
+    Data data;
+
+    bool isMoved  = true;
+    bool isLooked = true;
 
     void update();
 

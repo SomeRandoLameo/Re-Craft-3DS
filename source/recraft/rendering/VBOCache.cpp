@@ -10,7 +10,7 @@ VBOCache::VBOCache() {
 VBOBlock VBOCache::Alloc(size_t size) {
     VBOBlock block;
     block.memory = linearAlloc(size);
-    block.size = size;
+    block.size   = size;
     return block;
 }
 

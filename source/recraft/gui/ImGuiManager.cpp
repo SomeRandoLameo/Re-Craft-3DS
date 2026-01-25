@@ -10,19 +10,21 @@ ImGuiManager* ImGuiManager::GetInstance() {
 }
 
 void ImGuiManager::Initialize() {
-    if (m_initialized) return;
+    if (m_initialized) {
+        return;
+    }
 
     ImGui::CreateContext();
     ImGui::StyleColorsDark();
 
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO& io        = ImGui::GetIO();
     io.FontGlobalScale = 0.9f;
-    ImGuiStyle& style = ImGui::GetStyle();
+    ImGuiStyle& style  = ImGui::GetStyle();
     style.ScaleAllSizes(0.5f);
     io.IniFilename = nullptr;
-    #ifdef IMGUI_HAS_DOCK
+#ifdef IMGUI_HAS_DOCK
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    #endif
+#endif
 
     ImGui_ImplCtr_Init();
     ImGui_ImplCitro3D_Init();
@@ -31,7 +33,9 @@ void ImGuiManager::Initialize() {
 }
 
 void ImGuiManager::Shutdown() {
-    if (!m_initialized) return;
+    if (!m_initialized) {
+        return;
+    }
 
     m_callbacks.clear();
 
@@ -43,7 +47,9 @@ void ImGuiManager::Shutdown() {
 }
 
 void ImGuiManager::BeginFrame() {
-    if (!m_initialized) return;
+    if (!m_initialized) {
+        return;
+    }
 
     ImGui_ImplCitro3D_NewFrame();
     ImGui_ImplCtr_NewFrame();
@@ -51,7 +57,9 @@ void ImGuiManager::BeginFrame() {
 }
 
 void ImGuiManager::EndFrame(void* topTarget, void* bottomTarget) {
-    if (!m_initialized) return;
+    if (!m_initialized) {
+        return;
+    }
 
     ImGui::Render();
     ImGui_ImplCitro3D_RenderDrawData(ImGui::GetDrawData(), topTarget, bottomTarget);
@@ -66,7 +74,9 @@ void ImGuiManager::UnregisterCallback(const std::string& name) {
 }
 
 void ImGuiManager::ExecuteCallbacks() {
-    if (!m_initialized) return;
+    if (!m_initialized) {
+        return;
+    }
 
     for (auto& [name, callback] : m_callbacks) {
         if (callback) {

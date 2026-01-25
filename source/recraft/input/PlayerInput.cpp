@@ -2,7 +2,8 @@
 
 #include "input/InputManager.hpp"
 
-PlayerInput::PlayerInput() {}
+PlayerInput::PlayerInput() {
+}
 
 static inline u8 padToMatrix(InputAction act, bool isPlus) {
     s16 axis;
@@ -38,18 +39,17 @@ static inline u8 padToMatrix(InputAction act, bool isPlus) {
 }
 
 void PlayerInput::update() {
-    data.movePrev = data.move;
-    data.move.up = padToMatrix(INP_MOVE_FORWARD, true);
-    data.move.down = padToMatrix(INP_MOVE_BACK, false);
-    data.move.left = padToMatrix(INP_MOVE_LEFT, false);
+    data.movePrev   = data.move;
+    data.move.up    = padToMatrix(INP_MOVE_FORWARD, true);
+    data.move.down  = padToMatrix(INP_MOVE_BACK, false);
+    data.move.left  = padToMatrix(INP_MOVE_LEFT, false);
     data.move.right = padToMatrix(INP_MOVE_RIGHT, true);
-    isMoved = data.movePrev != data.move;
+    isMoved         = data.movePrev != data.move;
 
-    data.lookPrev = data.look;
-    data.look.up = padToMatrix(INP_LOOK_UP, true);
-    data.look.down = padToMatrix(INP_LOOK_DOWN, false);
-    data.look.left = padToMatrix(INP_LOOK_LEFT, false);
+    data.lookPrev   = data.look;
+    data.look.up    = padToMatrix(INP_LOOK_UP, true);
+    data.look.down  = padToMatrix(INP_LOOK_DOWN, false);
+    data.look.left  = padToMatrix(INP_LOOK_LEFT, false);
     data.look.right = padToMatrix(INP_LOOK_RIGHT, true);
-    isLooked = data.look != 0;
+    isLooked        = data.look != 0;
 }
-
