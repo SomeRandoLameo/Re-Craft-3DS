@@ -100,7 +100,7 @@ ip -4 addr show
 
 Then think of a username. Eg: "Nintendo3DS".
 
-When you launched the rom, press on MP CON. You will be asked about the IP Address of the server, then your Username.
+When you launched the rom, press on Multiplayer. You will be asked about the IP Address of the server, then your Username.
 
 *SIDENOTE*: In order to connect to the offline dev server, your 3DS *NEEDS TO BE ON THE SAME NETWORK AS THE SERVER*, otherwise this wont connect and will crash
 
