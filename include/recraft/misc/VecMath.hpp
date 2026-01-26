@@ -1,8 +1,12 @@
 #pragma once
 
 #include <math.h>
+#include <mclib/common/Vector.h>
 
-#include "../../mclib/common/Vector.h"
+extern mc::Vector3d c_vecX;
+extern mc::Vector3d c_vecY;
+extern mc::Vector3d c_vecZ;
+extern mc::Vector3d c_vecZero;
 
 //TODO: MINOR TODO HERE
 

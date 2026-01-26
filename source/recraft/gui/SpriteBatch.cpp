@@ -9,14 +9,14 @@
 
 #include <stdarg.h>
 
-typedef struct {
+struct Sprite{
     int depth;
     C3D_Tex* texture;
     int16_t x0, y0, x1, y1; // top left, right
     int16_t x2, y2, x3, y3; // bottom left, right
     int16_t u0, v0, u1, v1;
     int16_t color;
-} Sprite;
+};
 
 static std::vector<Sprite> cmdList;
 static C3D_Tex* currentTexture = NULL;
@@ -95,6 +95,13 @@ void SpriteBatch_BindGuiTexture(GuiTexture texture) {
     }
 }
 
+// TODO: BUG: sometimes texture is 0x0 or 0xf0f0f0f0, which crashes the game.
+static void ensureTexture(C3D_Tex* tex) {
+    if (tex == nullptr || (int)tex == 0xf0f0f0f0) {
+        tex = &whiteTex; // error texture
+    }
+}
+
 void SpriteBatch_PushSingleColorQuad(int x, int y, int z, int w, int h, int16_t color) {
     SpriteBatch_BindTexture(&whiteTex);
     SpriteBatch_PushQuadColor(x, y, z, w, h, 0, 0, 4, 4, color);
@@ -103,6 +110,7 @@ void SpriteBatch_PushQuad(int x, int y, int z, int w, int h, int rx, int ry, int
     SpriteBatch_PushQuadColor(x, y, z, w, h, rx, ry, rw, rh, INT16_MAX);
 }
 void SpriteBatch_PushQuadColor(int x, int y, int z, int w, int h, int rx, int ry, int rw, int rh, int16_t color) {
+    ensureTexture(currentTexture);
     cmdList.push_back(Sprite{z, currentTexture, static_cast<int16_t>(x * guiScale), static_cast<int16_t>(y * guiScale),
                              static_cast<int16_t>((x + w) * guiScale), static_cast<int16_t>(y * guiScale),
                              static_cast<int16_t>(x * guiScale), static_cast<int16_t>((y + h) * guiScale),
@@ -142,6 +150,7 @@ void SpriteBatch_PushIcon(mc::inventory::Slot block, int x, int y, int z) {
         WorldVertex topLeft = vertices[i * 6 + 4];
 
         C3D_Tex* texture = &((Texture_Map*)Block_GetTextureMap())->texture;
+        ensureTexture(texture);
 
         int16_t color16 = SHADER_RGB(color[0] >> 3, color[1] >> 3, color[2] >> 3);
         if (i == Direction::South)

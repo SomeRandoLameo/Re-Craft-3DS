@@ -1,6 +1,6 @@
 #include "entity/Player.hpp"
 #include "entity/Damage.hpp"
-#include "entity/PlayerController.hpp"
+#include "input/InputManager.hpp"
 #include "gui/DebugUI.hpp"
 #include "mcbridge/MCBridge.hpp"
 #include "misc/Collision.hpp"
@@ -18,9 +18,7 @@ const float GravityPlusFriction = 10.f;
 // This needs to be restructured into an entity base class and player derived class. (Entity because mobs, Particles, TileEntities etc. will share a lot of code too.)
 // Inventory should also be separated.
 
-Player::Player(World* world) {
-    m_world = world;
-
+Player::Player(World* world) : m_world(world), m_move(new PlayerInput()) {
     InitializeInventory();
 }
 
@@ -92,62 +90,65 @@ void Player::Update(Damage* dmg) {
     HandleRespawn(dmg);
 }
 
-void Player::UpdateMovement(DebugUI* dbg, PlayerControlScheme m_controlScheme, InputData input, float dt) {
+void Player::UpdateMovement(DebugUI* dbg, float dt) {
     Damage dmg;
 
-    Input in = {0};
-    convertPlatformInput(&input, in.keys, in.keysdown, in.keysup);
+    m_move->update();
 
-    float jump          = in.IsKeyDown(m_controlScheme.jump, &in);
-    float crouch        = in.IsKeyDown(m_controlScheme.crouch, &in);
+    if (m_move->isMoved) { // only recalculate when needed
+        float jump  = Input::isPressed(INP_JUMP) ? 1.f : 0.f;
+        float sneak = Input::isPressed(INP_SNEAK) ? 1.f : 0.f;
 
-    float forward       = in.IsKeyDown(m_controlScheme.forward, &in);
-    float backward      = in.IsKeyDown(m_controlScheme.backward, &in);
-    float strafeLeft    = in.IsKeyDown(m_controlScheme.strafeLeft, &in);
-    float strafeRight   = in.IsKeyDown(m_controlScheme.strafeRight, &in);
+        float moveUp    = getCtrlMove()->up / PAD_MAXF;
+        float moveDown  = getCtrlMove()->down / PAD_MAXF;
+        float moveLeft  = getCtrlMove()->left / PAD_MAXF;
+        float moveRight = getCtrlMove()->right / PAD_MAXF;
 
-    mc::Vector3d forwardVec(-sinf(yaw), 0.f, -cosf(yaw));
-    mc::Vector3d rightVec = Vector3d_crs(forwardVec, mc::Vector3d(0, 1, 0));
+        forwardVec = mc::Vector3d(-sinf(yaw), 0.f, -cosf(yaw));
+        rightVec   = Vector3d_crs(forwardVec, c_vecY);
 
-    mc::Vector3d movement(0, 0, 0);
-    movement = movement + Vector3d_Scale(forwardVec, forward);
-    movement = movement - Vector3d_Scale(forwardVec, backward);
-    movement = movement + Vector3d_Scale(rightVec, strafeRight);
-    movement = movement - Vector3d_Scale(rightVec, strafeLeft);
+        movement = Vector3d_Scale(forwardVec, moveUp);
+        movement -= Vector3d_Scale(forwardVec, moveDown);
+        movement -= Vector3d_Scale(rightVec, moveLeft);
+        movement += Vector3d_Scale(rightVec, moveRight);
 
-    if (flying) {
-        movement = movement + mc::Vector3d(0.f, jump, 0.f);
-        movement = movement + mc::Vector3d(0.f, crouch, 0.f);
+        speed = 4.3f * Vector3d_mag(mc::Vector3d(-moveLeft + moveRight, -sneak + jump, -moveUp + moveDown));
+    }
+
+    if (flying) { // fly up and down
+        if (Input::isPressed(INP_FLYUP)) {
+            movement += c_vecY;
+        }
+        if (Input::isPressed(INP_FLYDOWN)) {
+            movement -= c_vecY;
+        }
     }
 
     if (Vector3d_MagSqr(movement) > 0.f) {
-        float speed = 4.3f * Vector3d_mag(mc::Vector3d(-strafeLeft + strafeRight, -crouch + jump, -forward + backward));
-        bobbing += speed * 1.5f * dt;
+        bobbing += speed * 3.5f * dt;
         movement.Normalize();
         movement = Vector3d_Scale(movement, speed);
     }
 
-    float lookLeft  = in.IsKeyDown(m_controlScheme.lookLeft, &in);
-    float lookRight = in.IsKeyDown(m_controlScheme.lookRight, &in);
-    float lookUp    = in.IsKeyDown(m_controlScheme.lookUp, &in);
-    float lookDown  = in.IsKeyDown(m_controlScheme.lookDown, &in);
+    if (m_move->isLooked) { // only recalculate when needed
+        float lookUp    = getCtrlLook()->up;
+        float lookDown  = getCtrlLook()->down;
+        float lookLeft  = getCtrlLook()->left;
+        float lookRight = getCtrlLook()->right;
 
-    yaw += (lookLeft + -lookRight) * 160.f * DEG_TO_RAD * dt;
-    pitch += (-lookDown + lookUp) * 160.f * DEG_TO_RAD * dt;
-    pitch = CLAMP(pitch, -DEG_TO_RAD * 89.9f, DEG_TO_RAD * 89.9f);
+        yaw += (lookLeft + -lookRight) * DEG_TO_RAD * dt;
+        pitch += (-lookDown + lookUp) * DEG_TO_RAD * dt;
+        pitch = CLAMP(pitch, -DEG_TO_RAD * 89.9f, DEG_TO_RAD * 89.9f);
+    }
 
-    //TODO: Segfault sometimes when rejoining the world, this is the problem.
-    mc::inventory::Slot curSlot = quickSelectBar[quickSelectBarSlot];
-    auto curStack = MCBridge::MCLIBSlotToCTItemStack(curSlot);
-    bool slotEmpty = (curStack.block == Block::Air);
+    // TODO: Segfault sometimes when rejoining the world, this is the problem.
+    mc::inventory::Slot curSlot   = quickSelectBar[quickSelectBarSlot];
+    auto                curStack  = MCBridge::MCLIBSlotToCTItemStack(curSlot);
+    bool                slotEmpty = (curStack.block == Block::Air);
 
     bool hitEntity = viewRayCast.entity;
 
-    float leftAction = in.IsKeyDown(m_controlScheme.placeBlock, &in);
-    float rightAction = in.IsKeyDown(m_controlScheme.breakBlock, &in);
-
-
-    if (leftAction > 0.f) {
+    if (Input::isPressed(INP_ATTACK)) {
         if (hitEntity) {
             HurtEntity();
         } else {
@@ -155,7 +156,7 @@ void Player::UpdateMovement(DebugUI* dbg, PlayerControlScheme m_controlScheme, I
         }
     }
 
-    if (rightAction > 0.f) {
+    if (Input::isPressed(INP_USE)) {
         if (slotEmpty) {
             Interact(dbg);
         } else {
@@ -164,14 +165,13 @@ void Player::UpdateMovement(DebugUI* dbg, PlayerControlScheme m_controlScheme, I
     }
 
 
-    if (jump > 0.f) {
+    if (Input::isPressed(INP_JUMP)) {
         Jump(mc::Vector3d(movement.x, movement.y, movement.z));
     }
 
 
-    bool releasedJump = in.WasKeyReleased(m_controlScheme.jump, &in);
     if (m_flyTimer >= 0.f) {
-        if (jump > 0.f) {
+        if (Input::isPressed(INP_JUMP)) {
             flying ^= true;
         }
 
@@ -180,15 +180,15 @@ void Player::UpdateMovement(DebugUI* dbg, PlayerControlScheme m_controlScheme, I
             m_flyTimer = -1.f;
         }
 
-    } else if (releasedJump) {
+    } else if (Input::isReleased(INP_JUMP)) {
         m_flyTimer = 0.f;
     }
 
-    releasedCrouch = in.WasKeyReleased(m_controlScheme.crouch, &in);
+    releasedCrouch = Input::isReleased(INP_SNEAK);
     crouching ^= !flying && releasedCrouch;
 
-    bool switchBlockLeft  = in.WasKeyPressed(m_controlScheme.switchBlockLeft, &in);
-    bool switchBlockRight = in.WasKeyPressed(m_controlScheme.switchBlockRight, &in);
+    bool switchBlockLeft  = Input::isReleased(INP_HOTBAR_LEFT);
+    bool switchBlockRight = Input::isReleased(INP_HOTBAR_RIGHT);
 
     if (switchBlockLeft && --quickSelectBarSlot == -1) {
         quickSelectBarSlot = 8;
@@ -197,18 +197,18 @@ void Player::UpdateMovement(DebugUI* dbg, PlayerControlScheme m_controlScheme, I
     if (switchBlockRight && ++quickSelectBarSlot == 9) {
         quickSelectBarSlot = 0;
     }
-/*
-    if (m_openedCmd) {
-        dt = 0.f;
-        m_openedCmd = false;
-    }
+    /*
+        if (m_openedCmd) {
+            dt = 0.f;
+            m_openedCmd = false;
+        }
 
-    bool cmdLine = WasKeyPressed(m_controlScheme.openCmd, &agnosticInput);
-    if (cmdLine) {
-        CommandLine_Activate(world, this, debugUi);
-        m_openedCmd = true;
-    }
-*/
+        bool cmdLine = Input::isReleased(INP_CHAT);
+        if (cmdLine) {
+            CommandLine_Activate(world, this, debugUi);
+            m_openedCmd = true;
+        }
+    */
     Move(dt, mc::Vector3d(movement.x, movement.y, movement.z));
     Update(&dmg);
 }

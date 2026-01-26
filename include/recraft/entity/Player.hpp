@@ -1,23 +1,16 @@
 ﻿#pragma once
 
-#include <stdbool.h>
-
 //mclib
 #include <mclib/common/Vector.h>
 
 #include "entity/Damage.hpp"
 #include "gui/CT_Inventory.hpp"
 #include "gui/DebugUI.hpp"
+#include "input/PlayerInput.hpp"
 #include "inventory/ItemStack.hpp"
-#include "misc/InputData.hpp"
 #include "misc/Raycast.hpp"
 #include "misc/VecMath.hpp"
 #include "world/CT_World.hpp"
-
-class PlayerControlScheme;
-class PlayerController;
-
-
 
 class Player {
 public:
@@ -25,7 +18,7 @@ public:
     ~Player() = default;
 
     void Update(Damage* dmg);
-    void UpdateMovement(DebugUI* dbg, PlayerControlScheme m_controlScheme, InputData input, float dt);
+    void UpdateMovement(DebugUI* dbg, float dt);
     void Move(float dt, mc::Vector3d accl);
     void PlaceBlock();
     void HurtEntity();
@@ -35,9 +28,14 @@ public:
     void Jump(mc::Vector3d accl);
     bool CanMove(mc::Vector3d newVec);
 
-    mc::Vector3d position = mc::Vector3d(0.f, 0.f, 0.f);
-    mc::Vector3d velocity = mc::Vector3d(0, 0, 0);
+    mc::Vector3d position = c_vecZero;
+    mc::Vector3d velocity = c_vecZero;
 
+    mc::Vector3d forwardVec = c_vecZero;
+    mc::Vector3d rightVec   = c_vecZero;
+    mc::Vector3d movement   = c_vecZero;
+
+    float speed     = 0.f;
     float pitch = 0.f;
     float yaw = 0.f;
     float bobbing = 0.f;
@@ -95,7 +93,11 @@ public:
     static constexpr float CollisionBoxSize = 0.65f;
     static constexpr float HalfEyeDiff = 0.07f;
     static constexpr float PlaceReplaceTimeout = 0.2f;
+
+    inline PadAngles* getCtrlMove() { return &m_move->data.move; }
+    inline PadAngles* getCtrlLook() { return &m_move->data.look; }
 private:
+    PlayerInput* m_move = nullptr;
     World* m_world = nullptr;
 
     float m_breakPlaceTimeout = 0.f;
