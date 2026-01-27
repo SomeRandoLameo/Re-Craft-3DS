@@ -39,3 +39,4 @@ build/*
 /server/usercache.json
 /server/whitelist.json
 .vscode
+.lite_project.lua

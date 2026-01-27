@@ -105,9 +105,9 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC
 target_compile_options(${PROJECT_NAME} PUBLIC
     -O3 -Ofast -ffunction-sections -fdata-sections
     -fomit-frame-pointer -mword-relocations
-    #-fno-exceptions #franzosen grrrr
+    #-fno-exceptions
     -Wno-changes-meaning
-    -include "3ds/types.h"
+    # rip
 )
 target_link_libraries(${PROJECT_NAME} PUBLIC
     m
