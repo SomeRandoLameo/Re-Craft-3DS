@@ -1,10 +1,7 @@
 #pragma once
 
-#include <stdbool.h>
 #include <stdint.h>
-
-#include "../misc/InputData.hpp"
-#include "amethyst/iron.hpp"
+#include <amethyst/iron.hpp>
 
 //TODO: COreUI
 class Gui {
@@ -13,8 +10,6 @@ public:
 
     static void Init();
     static void Deinit();
-
-    static void InputData(InputData data);
 
     static void Frame();
 

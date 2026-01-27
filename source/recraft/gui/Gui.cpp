@@ -5,17 +5,15 @@
 #include "ReCraftCore.hpp"
 #include "amethyst/iron.hpp"
 #include "gui/SpriteBatch.hpp"
+#include "input/InputManager.hpp"
 #include "misc/NumberUtils.hpp"
 #include "rendering/VertexFmt.hpp"
 
-static InputData oldInput;
-static InputData input;
-
-typedef struct {
+struct Row{
 	int width;
 	int highestElement;
 	int unpaddedWidth;
-} Row;
+};
 
 Amy::Iron::Drawlist* Gui::RenderData = nullptr;
 
@@ -25,9 +23,6 @@ static int windowX, windowY;
 static int paddingX, paddingY;
 
 void Gui::Init() {
-	memset(&input, 0x0, sizeof(::InputData));
-	memset(&oldInput, 0x0, sizeof(::InputData));
-
 	paddingX = 2;
 	paddingY = 3;
 
@@ -117,7 +112,7 @@ bool Gui::Button(float size, const char* label, ...) {
 	relativeX += w + paddingX;
 	currentRow.highestElement = MAX(currentRow.highestElement, BUTTON_HEIGHT);
 
-	if (input.keysup & KEY_TOUCH && Gui::WasCursorInside(x, y, w, BUTTON_HEIGHT)) return true;
+    if (Input::isKeyUp(KEY_TOUCH) && Gui::WasCursorInside(x, y, w, BUTTON_HEIGHT)) return true;
 
 	return false;
 }
@@ -125,34 +120,30 @@ bool Gui::Button(float size, const char* label, ...) {
 void Gui::Space(float space) { relativeX += relativeToAbsoluteSize(space) + paddingX; }
 void Gui::VerticalSpace(int y) { windowY += y; }
 
-void Gui::InputData(::InputData data) {
-	oldInput = input;
-	input = data;
-}
-
 bool Gui::IsCursorInside(int x, int y, int w, int h) {
-	int sclInputX = input.touchX / SpriteBatch_GetScale();
-	int sclInputY = input.touchY / SpriteBatch_GetScale();
+    int sclInputX = Input::getTouch().px / SpriteBatch_GetScale();
+    int sclInputY = Input::getTouch().py / SpriteBatch_GetScale();
 	return sclInputX != 0 && sclInputY != 0 && sclInputX >= x && sclInputX < x + w && sclInputY >= y && sclInputY < y + h;
 }
 bool Gui::WasCursorInside(int x, int y, int w, int h) {
-	int sclOldInputX = oldInput.touchX / SpriteBatch_GetScale();
-	int sclOldInputY = oldInput.touchY / SpriteBatch_GetScale();
+    int sclOldInputX = Input::getTouchPrev().px / SpriteBatch_GetScale();
+    int sclOldInputY = Input::getTouchPrev().py / SpriteBatch_GetScale();
 	return sclOldInputX != 0 && sclOldInputY != 0 && sclOldInputX >= x && sclOldInputX < x + w && sclOldInputY >= y &&
 	       sclOldInputY < y + h;
 }
 bool Gui::EnteredCursorInside(int x, int y, int w, int h) {
-	int sclOldInputX = oldInput.touchX / SpriteBatch_GetScale();
-	int sclOldInputY = oldInput.touchY / SpriteBatch_GetScale();
+    int sclOldInputX = Input::getTouchPrev().px / SpriteBatch_GetScale();
+    int sclOldInputY = Input::getTouchPrev().py / SpriteBatch_GetScale();
 
 	return (sclOldInputX == 0 && sclOldInputY == 0) && Gui::IsCursorInside(x, y, w, h);
 }
 void Gui::GetCursorMovement(int* x, int* y) {
-	if ((input.touchX == 0 && input.touchY == 0) || (oldInput.touchX == 0 && oldInput.touchY == 0)) {
+    if ((Input::getTouch().px == 0 && Input::getTouch().py == 0) ||
+        (Input::getTouchPrev().px == 0 && Input::getTouchPrev().py == 0)) {
 		*x = 0;
 		*y = 0;
 		return;
 	}
-	*x = input.touchX / SpriteBatch_GetScale() - oldInput.touchX / SpriteBatch_GetScale();
-	*y = input.touchY / SpriteBatch_GetScale() - oldInput.touchY / SpriteBatch_GetScale();
+    *x = Input::getTouch().px / SpriteBatch_GetScale() - Input::getTouchPrev().px / SpriteBatch_GetScale();
+    *y = Input::getTouch().px / SpriteBatch_GetScale() - Input::getTouchPrev().py / SpriteBatch_GetScale();
 }

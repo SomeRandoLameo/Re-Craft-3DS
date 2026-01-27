@@ -1,12 +1,10 @@
 #pragma once
 
 #include <limits.h>
-#include <stdbool.h>
 #include <stdint.h>
 
 
-#include "../misc/InputData.hpp"
-#include "../world/CT_World.hpp"
+#include "world/CT_World.hpp"
 
 #include "mclib/inventory/Slot.h"
 
@@ -16,13 +14,13 @@
 void SpriteBatch_Init(int projUniform_);
 void SpriteBatch_Deinit();
 
-typedef enum {
+enum GuiTexture {
     Blank,
     FontTex,
     Icons,
     Widgets,
     MenuBackground
-} GuiTexture;
+} ;
 
 enum SpriteBatch {
     CharWidth = 8,
