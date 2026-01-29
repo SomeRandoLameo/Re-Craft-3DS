@@ -37,8 +37,8 @@ void Player::InitializeInventory() {
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(Block::Stonebrick), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(Block::Brick), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(Block::Planks), 1, 0);
-    for (int i = 0; i < 16; i++) {
-        inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(Block::Wool), 1,static_cast<u8>(i));
+    for (u8 i = 0; i < 16; i++) {
+        inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(Block::Wool), 1, i);
     }
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(Block::Bedrock), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(Block::Gravel), 1, 0);
