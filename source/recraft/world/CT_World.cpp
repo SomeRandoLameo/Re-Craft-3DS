@@ -276,6 +276,35 @@ uint8_t World::GetMetadata(mc::Vector3i position) {
     return chunk->GetMetadata(mc::Vector3i(localX, position.y, localZ));
 }
 
+std::vector<AABB> World::GetCubes(const AABB& aabb) {
+    std::vector<AABB> blockBoxes;
+
+    int minX = FastFloor(aabb.min.x) - 1;
+    int maxX = FastFloor(aabb.max.x) + 1;
+    int minY = FastFloor(aabb.min.y);
+    int maxY = FastFloor(aabb.max.y) + 1;
+    int minZ = FastFloor(aabb.min.z) - 1;
+    int maxZ = FastFloor(aabb.max.z) + 1;
+
+    for (int x = minX; x <= maxX; x++) {
+        for (int y = minY; y <= maxY; y++) {
+            for (int z = minZ; z <= maxZ; z++) {
+                mc::Vector3i blockPos(x, y, z);
+                Block block = GetBlock(blockPos);
+
+                if (Block_Solid(block)) {
+                    blockBoxes.push_back(AABB(
+                        mc::Vector3f(x, y, z),
+                        mc::Vector3f(x + 1, y + 1, z + 1)
+                            ));
+                }
+            }
+        }
+    }
+
+    return blockBoxes;
+}
+
 void World::SetMetadata(mc::Vector3i position, uint8_t metadata) {
 	if (position.y < 0 || position.y >= World::Height) return;
 	int chunkX = WorldToChunkCoord(position.x);

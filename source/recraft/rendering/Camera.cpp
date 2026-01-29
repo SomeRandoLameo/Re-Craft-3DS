@@ -26,8 +26,8 @@ void Camera::Update(Player* player, float iod) {
 	);
 
 	Mtx_Identity(&m_view);
-	Mtx_RotateX(&m_view, -player->pitch, true);
-	Mtx_RotateY(&m_view, -player->yaw, true);
+	Mtx_RotateX(&m_view, -player->xRot, true);
+	Mtx_RotateY(&m_view, -player->yRot, true);
 	Mtx_Translate(&m_view, -playerHead.x, -playerHead.y, -playerHead.z, true);
 
 	C3D_Mtx vpTemp;
@@ -37,7 +37,7 @@ void Camera::Update(Player* player, float iod) {
 	m_frustum.UpdateFromMatrix(vpTemp);
 
 	mc::Vector3d forward(player->view.x, player->view.y, player->view.z);
-	mc::Vector3d right = Vector3d_crs(mc::Vector3d(0, 1, 0), mc::Vector3d(sinf(player->yaw), 0.f, cosf(player->yaw)));
+	mc::Vector3d right = Vector3d_crs(mc::Vector3d(0, 1, 0), mc::Vector3d(sinf(player->yRot), 0.f, cosf(player->yRot)));
 	mc::Vector3d up = Vector3d_crs(forward, right);
 
     m_frustum.UpdateCorners(playerHead, forward, right, up, m_fov, 400.f / 240.f, m_near, m_far);

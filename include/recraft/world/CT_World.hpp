@@ -5,6 +5,7 @@
 
 #include "../misc/NumberUtils.hpp"
 #include "../misc/Xorshift.hpp"
+#include "phys/AABB.hpp"
 
 
 #define UNDEADCHUNKS_COUNT (2 * World::ChunkCacheSize + World::ChunkCacheSize * World::ChunkCacheSize)
@@ -65,6 +66,8 @@ public:
     void SetBlock(mc::Vector3i position, Block block);
     uint8_t GetMetadata(mc::Vector3i position);
     void SetMetadata(mc::Vector3i position, uint8_t metadata);
+
+    std::vector<AABB> GetCubes(const AABB& aabb);
 
     void SetBlockAndMeta(mc::Vector3i position, Block block, uint8_t metadata);
 

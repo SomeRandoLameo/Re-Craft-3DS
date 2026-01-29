@@ -88,7 +88,7 @@ void WorldRenderer::RenderWorld() {
     ClusterRenderedRef(World::ChunkCacheSize / 2 + m_world->cacheTranslationX, pY,
                        World::ChunkCacheSize / 2 + m_world->cacheTranslationZ) = 1;
 
-    mc::Vector3d playerPos = m_player->position;
+    mc::Vector3d playerPos = ToVector3d(m_player->position);
 
     while (!m_renderingQueue.empty()) {
         RenderStep step = m_renderingQueue.back();
@@ -205,7 +205,7 @@ void WorldRenderer::Render(float iod) {
 
     m_clouds->Draw(m_projectionUniform, m_cam.GetVP(), m_player->position.x, m_player->position.z);
 
-    m_cubeRenderer->Draw(m_projectionUniform, m_cam.GetVP(), m_world, m_player->position);
+    m_cubeRenderer->Draw(m_projectionUniform, m_cam.GetVP(), m_world, ToVector3d(m_player->position));
 
     if (m_player->blockInActionRange) {
         m_cursor->Draw(m_projectionUniform, m_cam.GetVP(), m_world, m_player->viewRayCast.hitPos, m_player->viewRayCast.direction);

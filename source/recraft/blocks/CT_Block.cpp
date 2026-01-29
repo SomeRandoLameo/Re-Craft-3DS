@@ -385,3 +385,7 @@ void Block_GetColor(Block block, Metadata metadata, Direction direction, Metadat
 }
 
 bool Block_Opaque(Block block, Metadata metadata) { return block != Block::Air && block != Block::Glass && block != Block::Door_Top && block != Block::Door_Bottom; }
+
+bool Block_Solid(Block block) {
+    return block != Block::Air && block != Block::Lava && block != Block::Water;
+}

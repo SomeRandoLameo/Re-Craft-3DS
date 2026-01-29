@@ -3,6 +3,8 @@
 //mclib
 #include <mclib/common/Vector.h>
 
+#include <vector>
+#include "Entity.hpp"
 #include "entity/Damage.hpp"
 #include "gui/CT_Inventory.hpp"
 #include "gui/DebugUI.hpp"
@@ -10,9 +12,12 @@
 #include "inventory/ItemStack.hpp"
 #include "misc/Raycast.hpp"
 #include "misc/VecMath.hpp"
+#include "phys/AABB.hpp"
 #include "world/CT_World.hpp"
 
-class Player {
+
+//TODO: Integrate Entity propperly
+class Player : public Entity {
 public:
     Player(World* world);
     ~Player() = default;
@@ -26,9 +31,7 @@ public:
     void Interact(DebugUI* dbg);
 
     void Jump(mc::Vector3d accl);
-    bool CanMove(mc::Vector3d newVec);
 
-    mc::Vector3d position = c_vecZero;
     mc::Vector3d velocity = c_vecZero;
 
     mc::Vector3d forwardVec = c_vecZero;
@@ -36,12 +39,10 @@ public:
     mc::Vector3d movement   = c_vecZero;
 
     float speed     = 0.f;
-    float pitch = 0.f;
-    float yaw = 0.f;
     float bobbing = 0.f;
     float fovAdd = 0.f;
     float crouchAdd = 0.f;
-    bool grounded = false;
+
     bool jumped = false;
     bool sprinting = false;
     bool flying = false;
@@ -94,11 +95,11 @@ public:
     static constexpr float HalfEyeDiff = 0.07f;
     static constexpr float PlaceReplaceTimeout = 0.2f;
 
-    inline PadAngles* getCtrlMove() { return &m_move->data.move; }
-    inline PadAngles* getCtrlLook() { return &m_move->data.look; }
+    inline PadAngles* getCtrlMove() { return &m_input->data.move; }
+    inline PadAngles* getCtrlLook() { return &m_input->data.look; }
+
 private:
-    PlayerInput* m_move = nullptr;
-    World* m_world = nullptr;
+    PlayerInput* m_input = nullptr;
 
     float m_breakPlaceTimeout = 0.f;
     float m_flyTimer = -1.f;

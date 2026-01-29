@@ -70,3 +70,5 @@ void Block_GetTexture(mc::inventory::Slot block, Direction direction, int16_t* o
 void Block_GetColor(Block block, Metadata metadata, Direction direction, Metadata out_rgb[]);
 
 bool Block_Opaque(Block block, Metadata metadata);
+
+bool Block_Solid(Block block);

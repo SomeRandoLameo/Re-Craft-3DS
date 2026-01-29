@@ -228,7 +228,7 @@ void ReCraftCore::InitMultiPlayer() {
         m_world->Tick();
     }
 
-    m_player->position = mc::Vector3d(0, 63, 0);
+    m_player->SetPos(mc::Vector3f(0, 63, 0));
 
     m_mcBridge.startBackgroundThread();
     SetScreen(new GuiInGameTop, true);
@@ -252,8 +252,8 @@ void ReCraftCore::RunMultiPlayer() {
             // rotation and much more)
             // TODO: Yaw is inverted, Server recieves movement as jittery, might be mclib
             mc::protocol::packets::out::PlayerPositionAndLookPacket response(
-                m_player->position, m_player->yaw * 180.0f / 3.14159f, m_player->pitch * 180.0f / 3.14159f,
-                m_player->grounded);
+                ToVector3d(m_player->position), m_player->yRot * 180.0f / 3.14159f, m_player->xRot * 180.0f / 3.14159f,
+                m_player->onGround);
             client->GetConnection()->SendPacket(&response);
 
             // Experimental, doesnt work

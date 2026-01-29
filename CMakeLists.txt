@@ -43,6 +43,7 @@ add_executable(${PROJECT_NAME}
     source/recraft/blocks/BlockEvent.cpp
     source/recraft/blocks/CT_Block.cpp
     source/recraft/entity/Damage.cpp
+    source/recraft/entity/Entity.cpp
     source/recraft/entity/Player.cpp
     source/recraft/gui/CT_Inventory.cpp
     source/recraft/gui/DebugUI.cpp
@@ -90,6 +91,7 @@ add_executable(${PROJECT_NAME}
     source/recraft/gui/screens/DeleteWorldScreen.cpp
     source/recraft/gui/screens/GuiInGame.cpp
     source/recraft/gui/screens/StartScreen.cpp
+    source/recraft/phys/AABB.cpp
 )
 target_include_directories(${PROJECT_NAME} PUBLIC
     include/recraft

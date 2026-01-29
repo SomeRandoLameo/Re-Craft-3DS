@@ -77,8 +77,8 @@ void SaveManager::Load(char* path) {
         } else {
             m_player->hunger = 20;
         }
-        m_player->pitch = mpack_node_float(mpack_node_map_cstr(playerNode, "pitch"));
-        m_player->yaw = mpack_node_float(mpack_node_map_cstr(playerNode, "yaw"));
+        m_player->xRot = mpack_node_float(mpack_node_map_cstr(playerNode, "pitch"));
+        m_player->yRot = mpack_node_float(mpack_node_map_cstr(playerNode, "yaw"));
 
         m_player->flying = mpack_elvis(playerNode, "flying", bool, false);
         m_player->crouching = mpack_elvis(playerNode, "crouching", bool, false);
@@ -139,10 +139,10 @@ void SaveManager::Unload() {
     mpack_write_bool(&writer, m_player->cheats);*/
 
     mpack_write_cstr(&writer, "pitch");
-    mpack_write_float(&writer, m_player->pitch);
+    mpack_write_float(&writer, m_player->xRot);
 
     mpack_write_cstr(&writer, "yaw");
-    mpack_write_float(&writer, m_player->yaw);
+    mpack_write_float(&writer, m_player->yRot);
 
     mpack_write_cstr(&writer, "flying");
     mpack_write_bool(&writer, m_player->flying);
