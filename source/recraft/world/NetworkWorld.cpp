@@ -27,7 +27,7 @@ void NetworkWorld::Test() {
     for (s32 x = 0; x < Chunk::Size; ++x) {                     // 0-15 for x
         for (s32 z = 0; z < Chunk::Size; ++z) {                 // 0-15 for Y
             for (s32 y = 0; y < Chunk::Size; ++y) {             // 0-15 for Z
-                m_world->SetBlock(mc::Vector3i(x,y,z), BlockID::Dirt);            // Set Block at (x,y,z) to Dirt
+                m_world->SetBlockID(mc::Vector3i(x, y, z), BlockID::Dirt);            // Set Block at (x,y,z) to Dirt
             }
         }
     }
@@ -63,7 +63,7 @@ void NetworkWorld::HandlePacket(mc::protocol::packets::in::ChunkDataPacket* pack
                         baseWorldZ + z
                     );
 
-                    m_world->SetBlock(worldPos, MCBridge::MCLibBlockToCTBlock(sourceBlock->GetType()));
+                    m_world->SetBlockID(worldPos, MCBridge::MCLibBlockToCTBlock(sourceBlock->GetType()));
                 }
             }
         }
@@ -80,14 +80,14 @@ void NetworkWorld::HandlePacket(mc::protocol::packets::in::MultiBlockChangePacke
 
 void NetworkWorld::HandlePacket(mc::protocol::packets::in::BlockChangePacket* packet) {
     mc::block::BlockPtr newBlock = mc::block::BlockRegistry::GetInstance()->GetBlock((u16)packet->GetBlockId());
-    m_world->SetBlock(packet->GetPosition(), MCBridge::MCLibBlockToCTBlock(newBlock->GetType()));
+    m_world->SetBlockID(packet->GetPosition(), MCBridge::MCLibBlockToCTBlock(newBlock->GetType()));
 }
 
 void NetworkWorld::HandlePacket(mc::protocol::packets::in::ExplosionPacket* packet) {
     mc::Vector3d explosionPos = packet->GetPosition();
     for (mc::Vector3s offset : packet->GetAffectedBlocks()) {
         mc::Vector3d absolutePos = explosionPos + mc::ToVector3d(offset);
-        m_world->SetBlock(mc::ToVector3i(absolutePos), MCBridge::MCLibBlockToCTBlock(0));
+        m_world->SetBlockID(mc::ToVector3i(absolutePos), MCBridge::MCLibBlockToCTBlock(0));
     }
 }
 

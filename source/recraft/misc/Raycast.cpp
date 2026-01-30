@@ -68,7 +68,8 @@ bool Raycast_Cast(World* world, mc::Vector3d inpos, mc::Vector3d raydir, Raycast
 			side = 2;
 		}
 
-		if (world->GetBlock(mc::ToVector3i(map)) != BlockID::Air || world->GetBlock(mc::ToVector3i(map)) == BlockID::Lava) hit = 1;
+		if (world->GetBlockID(mc::ToVector3i(map)) != BlockID::Air ||
+            world->GetBlockID(mc::ToVector3i(map)) == BlockID::Lava) hit = 1;
 		// if (world->errFlags & World_ErrUnloadedBlockRequested) break;
 
 		if (steps++ > INF) break;

@@ -47,9 +47,8 @@ public:
     Amy::AssetMgr* GetAssetManager() { return &m_AssetMgr; }
     Player* GetPlayer() { return m_player; }
 
-    Screen* m_pTopScreen = nullptr;
-    Screen* m_pBotScreen = nullptr;
-
+    Screen* TopScreen = nullptr;
+    Screen* BotScreen = nullptr;
 private:
     static ReCraftCore* m_theReCraftCore;
     SuperFlatGen m_flatGen;

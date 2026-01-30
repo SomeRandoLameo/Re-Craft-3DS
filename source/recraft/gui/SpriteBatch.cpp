@@ -129,11 +129,16 @@ void SpriteBatch_PushIcon(mc::inventory::Slot block, int x, int y, int z) {
         if (i != Direction::Top && i != Direction::South && i != Direction::West)
             continue;
         int16_t iconUV[2];
-        Block_GetTexture(block, (Direction)i, iconUV);
+
+        BlockRegistry::getInstance()
+            .getBlock((MCBridge::MCLIBSlotToCTItemStack(block).block))
+                ->getTexture((Direction)i, iconUV);
 
         uint8_t color[3];
-        Block_GetColor(MCBridge::MCLIBSlotToCTItemStack(block).block, MCBridge::MCLIBSlotToCTItemStack(block).meta,
-                       (Direction)i, color);
+
+        BlockRegistry::getInstance()
+            .getBlock((MCBridge::MCLIBSlotToCTItemStack(block).block))
+                ->getColor(MCBridge::MCLIBSlotToCTItemStack(block).meta, (Direction)i, color);
 
         for (int j = 0; j < 5; j++) {
             int k = i * 6 + j;

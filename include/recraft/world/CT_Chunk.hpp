@@ -12,18 +12,6 @@
 #include <string.h>
 
 
-class BlockPalette {
-public:
-    static BlockID GetBlock(u16 paletteId) {
-        return static_cast<BlockID>(paletteId);
-    }
-
-    static u16 GetId(BlockID block) {
-        return static_cast<u16>(block);
-    }
-
-};
-
 class Chunk {
 public:
     constexpr static int Size = 16;
@@ -51,22 +39,22 @@ public:
 	uint32_t vboRevision;
 	bool forceVBOUpdate;
 
-    BlockID GetBlock(mc::Vector3i pos) const {
+    BlockID GetBlockID(mc::Vector3i pos) const {
 		int blockIndex = pos.x + pos.y * Size + pos.z * Size * Size;
 		u16 paletteId = GetPackedBlockId(blockIndex);
-		return BlockPalette::GetBlock(paletteId);
+		return BlockRegistry::GetBlock(paletteId);
     }
 
     /// DO NOT USE THIS MANUALLY
-    void SetBlock(mc::Vector3i pos, BlockID block) {
+    void SetBlockID(mc::Vector3i pos, BlockID block) {
 		int blockIndex = pos.x + pos.y * Size + pos.z * Size * Size;
-		u16 paletteId = BlockPalette::GetId(block);
+		u16 paletteId = BlockRegistry::GetId(block);
 	    SetPackedBlockId(blockIndex, paletteId);
     }
 
     //TODO: REMOVE
-    BlockID GetBlock(int x, int y, int z) const {
-        return GetBlock(mc::Vector3i(x, y, z));
+    BlockID GetBlockID(int x, int y, int z) const {
+        return GetBlockID(mc::Vector3i(x, y, z));
     }
 
     bool IsEmpty();
@@ -179,9 +167,9 @@ public:
 
     void SetMetadata(mc::Vector3i position, Metadata metadata);
 
-    BlockID GetBlock(mc::Vector3i position);
+    BlockID GetBlockID(mc::Vector3i position);
 
-    void SetBlock(mc::Vector3i position, BlockID block);
+    void SetBlockID(mc::Vector3i position, BlockID block);
 
     void SetBlockAndMeta(mc::Vector3i position, BlockID block, Metadata metadata);
 

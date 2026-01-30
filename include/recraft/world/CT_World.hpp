@@ -62,8 +62,8 @@ public:
 
     mc::block::BlockEntityPtr GetBlockEntity(mc::Vector3i pos);
 
-    BlockID GetBlock(mc::Vector3i position);
-    void SetBlock(mc::Vector3i position, BlockID block);
+    BlockID GetBlockID(mc::Vector3i position);
+    void SetBlockID(mc::Vector3i position, BlockID block);
     uint8_t GetMetadata(mc::Vector3i position);
     void SetMetadata(mc::Vector3i position, uint8_t metadata);
 

@@ -70,12 +70,9 @@ const WorldVertex cube_sides_lut[] = {
 
 BlockID fastBlockFetch(World* world, ChunkColumnPtr column, ChunkPtr chunk, int x, int y, int z) {
     return (x < 0 || y < 0 || z < 0 || x >= Chunk::Size || y >= Chunk::Size || z >= Chunk::Size)
-        ? world->GetBlock(mc::Vector3i(
-              (column->x * Chunk::Size) + x,
-              (chunk->y * Chunk::Size) + y,
-              (column->z * Chunk::Size) + z)
-                              )
-        : chunk->GetBlock(x, y, z);
+        ? world->GetBlockID(
+              mc::Vector3i((column->x * Chunk::Size) + x, (chunk->y * Chunk::Size) + y, (column->z * Chunk::Size) + z))
+        : chunk->GetBlockID(x, y, z);
 }
 
 uint8_t fastMetadataFetch(World* world, ChunkColumnPtr column, ChunkPtr chunk, int x, int y, int z) {
@@ -171,17 +168,25 @@ uint16_t floodFill(World* world, ChunkColumnPtr chunk, Chunk* cluster, int x, in
             if (x < 0 || y < 0 || z < 0 || x >= Chunk::Size || y >= Chunk::Size || z >= Chunk::Size) {
                 exitPoints[i] = true;
             } else {
-                if (!Block_Opaque(cluster->GetBlock(x,y,z), cluster->metadataLight[x][y][z] & 0xf) &&
+
+                if (!BlockRegistry::getInstance()
+                         .getBlock(cluster->GetBlockID(x, y, z))
+                         ->isOpaque(cluster->metadataLight[x][y][z] & 0xf) &&
                     !(floodfill_visited[x][y][z] & 1)) {
                     floodfill_visited[x][y][z] |= 1;
                     floodfill_queue.push_back((QueueElement){static_cast<int8_t>(x), static_cast<int8_t>(y), static_cast<int8_t>(z)});
                 }
-                if ((cluster->GetBlock(item.x,item.y,item.z) == BlockID::Air ||
-                     Block_Opaque(cluster->GetBlock(x,y,z), cluster->metadataLight[x][y][z] & 0xf)) &&
-                    cluster->GetBlock(x,y,z) != BlockID::Air) {
-                    addFace(x, y, z, DirectionOpposite[i], cluster->GetBlock(x,y,z),
+                if ((cluster->GetBlockID(item.x, item.y, item.z) == BlockID::Air ||
+                     BlockRegistry::getInstance()
+                         .getBlock(cluster->GetBlockID(x, y, z))
+                         ->isOpaque(cluster->metadataLight[x][y][z] & 0xf)) &&
+                    cluster->GetBlockID(x, y, z) != BlockID::Air) {
+
+                    addFace(x, y, z, DirectionOpposite[i], cluster->GetBlockID(x, y, z),
                             cluster->metadataLight[x][y][z] & 0xf, 0,
-                            !Block_Opaque(cluster->GetBlock(x,y,z), cluster->metadataLight[x][y][z] & 0xf));
+                            !BlockRegistry::getInstance()
+                                 .getBlock(cluster->GetBlockID(x, y, z))
+                                 ->isOpaque(cluster->metadataLight[x][y][z] & 0xf));
                 }
             }
         }
@@ -232,16 +237,24 @@ void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context) 
                         }
 
 
-                        if (!Block_Opaque(chunk->GetBlock(x,y,z), chunk->metadataLight[x][y][z] & 0xf)){
+                        if (!BlockRegistry::getInstance()
+                                 .getBlock(chunk->GetBlockID(x, y, z))
+                                 ->isOpaque(chunk->metadataLight[x][y][z] & 0xf)){
                             visibility |= floodFill(world, item.column, chunk, x, y, z, xDir, yDir, zDir);
                         }
                         BlockID block = fastBlockFetch(world, item.column, chunk, x + (!x ? -1 : 1), y, z);
                         uint8_t meta = fastMetadataFetch(world, item.column, chunk, x + (!x ? -1 : 1), y, z);
-                        if (!Block_Opaque(block, meta) && chunk->GetBlock(x,y,z) != BlockID::Air) {
+
+                        if (!BlockRegistry::getInstance()
+                                 .getBlock(block)
+                                 ->isOpaque(meta) &&
+                            chunk->GetBlockID(x, y, z) != BlockID::Air) {
                             addFace(
-                                x, y, z, xDir, chunk->GetBlock(x,y,z), chunk->metadataLight[x][y][z] & 0xf,
+                                x, y, z, xDir, chunk->GetBlockID(x, y, z), chunk->metadataLight[x][y][z] & 0xf,
                                 0,
-                                !Block_Opaque(chunk->GetBlock(x,y,z), chunk->metadataLight[x][y][z] & 0xf));
+                                !BlockRegistry::getInstance()
+                                     .getBlock(chunk->GetBlockID(x, y, z))
+                                     ->isOpaque(chunk->metadataLight[x][y][z] & 0xf));
                         }
                     }
                 }
@@ -262,17 +275,24 @@ void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context) 
                         } else if (z == Chunk::Size - 1) {
                             zDir = Direction::North;
                         }
-                        if (!Block_Opaque(chunk->GetBlock(x,y,z), chunk->metadataLight[x][y][z] & 0xf)){
+                        if (!BlockRegistry::getInstance()
+                                 .getBlock(chunk->GetBlockID(x, y, z))
+                                 ->isOpaque(chunk->metadataLight[x][y][z] & 0xf)){
                             visibility |= floodFill(world, item.column, chunk, x, y, z, xDir, yDir, zDir);
                         }
 
                         BlockID block = fastBlockFetch(world, item.column, chunk, x, y + (!y ? -1 : 1), z);
                         uint8_t meta = fastMetadataFetch(world, item.column, chunk, x, y + (!y ? -1 : 1), z);
-                        if (!Block_Opaque(block, meta) && chunk->GetBlock(x,y,z) != BlockID::Air) {
+                        if (!BlockRegistry::getInstance()
+                                 .getBlock(block)
+                                 ->isOpaque(meta) &&
+                            chunk->GetBlockID(x, y, z) != BlockID::Air) {
                             addFace(
-                                x, y, z, yDir, chunk->GetBlock(x,y,z), chunk->metadataLight[x][y][z] & 0xf,
+                                x, y, z, yDir, chunk->GetBlockID(x, y, z), chunk->metadataLight[x][y][z] & 0xf,
                                 0,
-                                !Block_Opaque(chunk->GetBlock(x,y,z), chunk->metadataLight[x][y][z] & 0xf));
+                                !BlockRegistry::getInstance()
+                                     .getBlock(chunk->GetBlockID(x, y, z))
+                                     ->isOpaque(chunk->metadataLight[x][y][z] & 0xf));
                         }
                     }
                 }
@@ -295,17 +315,23 @@ void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context) 
                             yDir = Direction::Top;
                         }
 
-                        if (!Block_Opaque(chunk->GetBlock(x,y,z), chunk->metadataLight[x][y][z] & 0xf)){
+                        if (!BlockRegistry::getInstance()
+                                 .getBlock(chunk->GetBlockID(x, y, z))
+                                 ->isOpaque(chunk->metadataLight[x][y][z] & 0xf)){
                             visibility |= floodFill(world, item.column, chunk, x, y, z, xDir, yDir, zDir);
                         }
 
                         BlockID block = fastBlockFetch(world, item.column, chunk, x, y, z + (!z ? -1 : 1));
-                        if (!Block_Opaque(block, chunk->metadataLight[x][y][z] & 0xf) &&
-                            chunk->GetBlock(x,y,z) != BlockID::Air) {
+                        if (!BlockRegistry::getInstance()
+                                 .getBlock(chunk->GetBlockID(x, y, z))
+                                 ->isOpaque(chunk->metadataLight[x][y][z] & 0xf) &&
+                            chunk->GetBlockID(x, y, z) != BlockID::Air) {
                             addFace(
-                                x, y, z, zDir, chunk->GetBlock(x,y,z), chunk->metadataLight[x][y][z] & 0xf,
+                                x, y, z, zDir, chunk->GetBlockID(x, y, z), chunk->metadataLight[x][y][z] & 0xf,
                                 0,
-                                !Block_Opaque(chunk->GetBlock(x,y,z), chunk->metadataLight[x][y][z] & 0xf));
+                                !BlockRegistry::getInstance()
+                                     .getBlock(chunk->GetBlockID(x, y, z))
+                                     ->isOpaque(chunk->metadataLight[x][y][z] & 0xf));
                         }
                     }
                 }
@@ -343,7 +369,11 @@ void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context) 
                     int offsetY = face.y + i * Chunk::Size;
 
                     int16_t iconUV[2];
-                    Block_GetTexture(mc::inventory::Slot(static_cast<s32>(face.block),0,face.metadata), face.direction, iconUV);
+
+                    BlockRegistry::getInstance()
+                        .getBlock(face.block)
+                        ->getTexture(face.direction, iconUV);
+
 
                     WorldVertex* data = face.transparent ? transparentData : opaqueData;
                     memcpy(data, &cube_sides_lut[face.direction * 6], sizeof(WorldVertex) * 6);
@@ -351,7 +381,10 @@ void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context) 
                     const int oneDivIconsPerRow = (32768 / 8);
 
                     uint8_t color[3];
-                    Block_GetColor(face.block, face.metadata, face.direction, color);
+
+                    BlockRegistry::getInstance()
+                        .getBlock(face.block)
+                        ->getColor(face.metadata, face.direction, color);
 
                     for (int k = 0; k < 6; k++) {
                         data[k].xyz[0] += offsetX;

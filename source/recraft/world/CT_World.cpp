@@ -163,7 +163,7 @@ mc::block::BlockEntityPtr World::GetBlockEntity(mc::Vector3i pos) {
 }
 
 
-BlockID World::GetBlock(mc::Vector3i position) {
+BlockID World::GetBlockID(mc::Vector3i position) {
     if (position.y < 0 || position.y >= World::Height) {
         return BlockID::Air;
     }
@@ -179,7 +179,7 @@ BlockID World::GetBlock(mc::Vector3i position) {
 
     position.x = WorldToLocalCoord(position.x);
     position.z = WorldToLocalCoord(position.z);
-    return chunk->GetBlock(position);
+    return chunk->GetBlockID(position);
 }
 
 /**
@@ -228,7 +228,7 @@ void World::NotifyNeighbors(ChunkColumnPtr column, int chunkX, int chunkZ, int l
     }
 }
 
-void World::SetBlock(mc::Vector3i position, BlockID block) {
+void World::SetBlockID(mc::Vector3i position, BlockID block) {
 	if (position.y < 0 || position.y >= World::Height) return;
 	int chunkX = WorldToChunkCoord(position.x);
 	int chunkZ = WorldToChunkCoord(position.z);
@@ -237,7 +237,7 @@ void World::SetBlock(mc::Vector3i position, BlockID block) {
 	if (column) {
 		int localX = WorldToLocalCoord(position.x);
 		int localZ = WorldToLocalCoord(position.z);
-        column->SetBlock(mc::Vector3i(localX, position.y, localZ), block);
+        column->SetBlockID(mc::Vector3i(localX, position.y, localZ), block);
 
         NotifyNeighbors(column, chunkX, chunkZ, localX, localZ, position.y);
 	}
@@ -290,9 +290,9 @@ std::vector<AABB> World::GetCubes(const AABB& aabb) {
         for (int y = minY; y <= maxY; y++) {
             for (int z = minZ; z <= maxZ; z++) {
                 mc::Vector3i blockPos(x, y, z);
-                BlockID block = GetBlock(blockPos);
+                BlockID block = GetBlockID(blockPos);
 
-                if (Block_Solid(block)) {
+                if (BlockRegistry::getInstance().getBlock(block)->isSolid()) {
                     blockBoxes.push_back(AABB(
                         mc::Vector3f(x, y, z),
                         mc::Vector3f(x + 1, y + 1, z + 1)

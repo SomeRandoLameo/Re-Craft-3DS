@@ -62,7 +62,7 @@ void ChunkColumn::GenerateHeightmap() {
                     auto chunk = GetChunk(i);
                     if (chunk->IsEmpty()) continue;
                     for (int j = Chunk::Size - 1; j >= 0; --j) {
-                        if (chunk->GetBlock(x,j,z) != BlockID::Air) {
+                        if (chunk->GetBlockID(x, j, z) != BlockID::Air) {
                             heightmap[x][z] = i * Chunk::Size + j + 1;
                             i = -1;
                             break;
@@ -93,18 +93,19 @@ void ChunkColumn::SetMetadata(mc::Vector3i position, Metadata metadata) {
     ++revision;
 }
 
-BlockID ChunkColumn::GetBlock(mc::Vector3i position) {
-    return GetChunk(position.y / Chunk::Size)->GetBlock(position.x,position.y - (position.y / Chunk::Size * Chunk::Size),position.z);
+BlockID ChunkColumn::GetBlockID(mc::Vector3i position) {
+    return GetChunk(position.y / Chunk::Size)
+        ->GetBlockID(position.x, position.y - (position.y / Chunk::Size * Chunk::Size), position.z);
 }
 
 
 // resets the meta data
 /// DO NOT USE THIS MANUALLY, AS THIS WONT UPDATE RENDERING-RELATED DATA
-void ChunkColumn::SetBlock(mc::Vector3i position, BlockID block) {
+void ChunkColumn::SetBlockID(mc::Vector3i position, BlockID block) {
     ChunkPtr chunk = GetChunk(position.y / Chunk::Size);
     mc::Vector3i localPos = position;
     localPos.y = position.y % Chunk::Size;
-    chunk->SetBlock(localPos, block);
+    chunk->SetBlockID(localPos, block);
     SetMetadata(position, 0);
 }
 
@@ -112,7 +113,7 @@ void ChunkColumn::SetBlockAndMeta(mc::Vector3i position, BlockID block, uint8_t 
     ChunkPtr chunk = GetChunk(position.y / Chunk::Size);
     mc::Vector3i localPos = position;
     localPos.y = position.y % Chunk::Size;
-    chunk->SetBlock(localPos, block);
+    chunk->SetBlockID(localPos, block);
     metadata &= 0xf;
     uint8_t* addr = &chunk->metadataLight[localPos.x][localPos.y][localPos.z];
     *addr = (*addr & 0xf0) | metadata;
@@ -135,7 +136,7 @@ bool Chunk::IsEmpty() {
     // Check all blocks in the chunk
     for (int i = 0; i < BlockCount; ++i) {
         u16 paletteId = GetPackedBlockId(i);
-        BlockID block = BlockPalette::GetBlock(paletteId);
+        BlockID block = BlockRegistry::GetBlock(paletteId);
         if (block != BlockID::Air) {
             empty = false;
             return false;

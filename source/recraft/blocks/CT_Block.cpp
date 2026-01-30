@@ -1,9 +1,3 @@
-/*
-    TODO: DEPRECATION NOTICE: THIS FILE WILL BE REMOVED AND REPLACED
-        - PLEASE NO BIG MODIFICATIONS TO THIS FILE, AS IT WILL BE REWRITTEN FROM SCRATCH
-        - MINOR MODIFICATIONS FOR BUGFIXES OR "GENERAL" IMPROVEMENTS ARE ALLOWED
-*/
-
 #include "blocks/CT_Block.hpp"
 
 #include "rendering/TextureMap.hpp"
@@ -64,328 +58,329 @@ const char* blockTextures[] = {
 };
 
 static struct {
-	Texture_MapIcon stone;
-	Texture_MapIcon dirt;
-	Texture_MapIcon cobblestone;
-	Texture_MapIcon grass_side;
-	Texture_MapIcon grass_top;
-	Texture_MapIcon stonebrick;
-	Texture_MapIcon sand;
-	Texture_MapIcon oaklog_side;
-	Texture_MapIcon oaklog_top;
-	Texture_MapIcon leaves_oak;
-	Texture_MapIcon glass;
-	Texture_MapIcon brick;
-	Texture_MapIcon oakplanks;
-	Texture_MapIcon wool;
-	Texture_MapIcon bedrock;
-	Texture_MapIcon gravel;
-	Texture_MapIcon coarse;
-	Texture_MapIcon door_top;
-	Texture_MapIcon door_bottom;
-	Texture_MapIcon snow_grass_side;
-	Texture_MapIcon snow;
-	Texture_MapIcon obsidian;
-	Texture_MapIcon netherrack;
-	Texture_MapIcon sandstone_side;
-	Texture_MapIcon sandstone_top;
-	Texture_MapIcon sandstone_bottom;
-	Texture_MapIcon smooth_stone;
-	Texture_MapIcon grass_path_side;
-	Texture_MapIcon grass_path_top;
-	Texture_MapIcon crafting_table_side;
-	Texture_MapIcon crafting_table_top;
-	Texture_MapIcon lava;
-	Texture_MapIcon water;
-	Texture_MapIcon iron_ore;
-	Texture_MapIcon iron_block;
-	Texture_MapIcon gold_block;
-	Texture_MapIcon gold_ore;
-	Texture_MapIcon diamond_ore;
-	Texture_MapIcon diamond_block;
-	Texture_MapIcon emerald_block;
-	Texture_MapIcon emerald_ore;
-	Texture_MapIcon coal_block;
-	Texture_MapIcon coal_ore;
-	Texture_MapIcon furnace_front;
-	Texture_MapIcon furnace_side;
-	Texture_MapIcon furnace_top;
-} icon;
+    int16_t u, v;
+} icons[sizeof(blockTextures) / sizeof(blockTextures[0])];
 
-// This is not really a block initializer, rather it initializes Block Textures
-void Block_Init() {
-	Texture_MapInit(&textureMap, blockTextures, sizeof(blockTextures) / sizeof(blockTextures[0]));
+void* Block_GetTextureMap() { return &textureMap.texture; } // BlockRegistry::GetTextureMap??
 
-    icon.stone               = Texture_MapGetIcon(&textureMap, blockTextures[0]);
-    icon.dirt                = Texture_MapGetIcon(&textureMap, blockTextures[1]);
-    icon.cobblestone         = Texture_MapGetIcon(&textureMap, blockTextures[2]);
-    icon.grass_side          = Texture_MapGetIcon(&textureMap, blockTextures[3]);
-    icon.grass_top           = Texture_MapGetIcon(&textureMap, blockTextures[4]);
-    icon.stonebrick          = Texture_MapGetIcon(&textureMap, blockTextures[5]);
-    icon.sand                = Texture_MapGetIcon(&textureMap, blockTextures[6]);
-    icon.oaklog_side         = Texture_MapGetIcon(&textureMap, blockTextures[7]);
-    icon.oaklog_top          = Texture_MapGetIcon(&textureMap, blockTextures[8]);
-    icon.leaves_oak          = Texture_MapGetIcon(&textureMap, blockTextures[9]);
-    icon.glass               = Texture_MapGetIcon(&textureMap, blockTextures[10]);
-    icon.brick               = Texture_MapGetIcon(&textureMap, blockTextures[11]);
-    icon.oakplanks           = Texture_MapGetIcon(&textureMap, blockTextures[12]);
-    icon.wool                = Texture_MapGetIcon(&textureMap, blockTextures[13]);
-    icon.bedrock             = Texture_MapGetIcon(&textureMap, blockTextures[14]);
-    icon.gravel              = Texture_MapGetIcon(&textureMap, blockTextures[15]);
-    icon.coarse              = Texture_MapGetIcon(&textureMap, blockTextures[16]);
-    icon.door_top            = Texture_MapGetIcon(&textureMap, blockTextures[17]);
-    icon.door_bottom         = Texture_MapGetIcon(&textureMap, blockTextures[18]);
-    icon.snow_grass_side     = Texture_MapGetIcon(&textureMap, blockTextures[19]);
-    icon.snow                = Texture_MapGetIcon(&textureMap, blockTextures[20]);
-    icon.obsidian            = Texture_MapGetIcon(&textureMap, blockTextures[21]);
-    icon.sandstone_side      = Texture_MapGetIcon(&textureMap, blockTextures[22]);
-    icon.sandstone_top       = Texture_MapGetIcon(&textureMap, blockTextures[23]);
-    icon.sandstone_bottom    = Texture_MapGetIcon(&textureMap, blockTextures[24]);
-    icon.netherrack          = Texture_MapGetIcon(&textureMap, blockTextures[25]);
-    icon.smooth_stone        = Texture_MapGetIcon(&textureMap, blockTextures[26]);
-    icon.lava                = Texture_MapGetIcon(&textureMap, blockTextures[27]);
-    icon.water               = Texture_MapGetIcon(&textureMap, blockTextures[28]);
-    icon.grass_path_side     = Texture_MapGetIcon(&textureMap, blockTextures[29]);
-    icon.grass_path_top      = Texture_MapGetIcon(&textureMap, blockTextures[30]);
-    icon.crafting_table_side = Texture_MapGetIcon(&textureMap, blockTextures[31]);
-    icon.crafting_table_top  = Texture_MapGetIcon(&textureMap, blockTextures[32]);
-    icon.iron_ore            = Texture_MapGetIcon(&textureMap, blockTextures[33]);
-    icon.iron_block          = Texture_MapGetIcon(&textureMap, blockTextures[34]);
-    icon.diamond_ore         = Texture_MapGetIcon(&textureMap, blockTextures[35]);
-    icon.diamond_block       = Texture_MapGetIcon(&textureMap, blockTextures[36]);
-    icon.gold_ore            = Texture_MapGetIcon(&textureMap, blockTextures[37]);
-    icon.gold_block          = Texture_MapGetIcon(&textureMap, blockTextures[38]);
-    icon.coal_ore            = Texture_MapGetIcon(&textureMap, blockTextures[39]);
-    icon.coal_block          = Texture_MapGetIcon(&textureMap, blockTextures[40]);
-    icon.emerald_ore         = Texture_MapGetIcon(&textureMap, blockTextures[41]);
-    icon.emerald_block       = Texture_MapGetIcon(&textureMap, blockTextures[42]);
-    icon.furnace_side        = Texture_MapGetIcon(&textureMap, blockTextures[43]);
-    icon.furnace_front       = Texture_MapGetIcon(&textureMap, blockTextures[44]);
-    icon.furnace_top         = Texture_MapGetIcon(&textureMap, blockTextures[45]);
+BlockRegistry::BlockRegistry() {
 
+    Texture_MapInit(&textureMap, blockTextures, sizeof(blockTextures) / sizeof(blockTextures[0]));
+
+    for (size_t i = 0; i < sizeof(blockTextures) / sizeof(blockTextures[0]); i++) {
+        auto icon = Texture_MapGetIcon(&textureMap, blockTextures[i]);
+        icons[i].u = icon.u;
+        icons[i].v = icon.v;
+    }
+
+    registerBlock(
+        (new Block(BlockID::Air, "air"))
+            ->setAllSidesTexture(0, 0)
+            ->setOpaque(false)
+            ->setSolid(false)
+            ->setDestroyTime(0.0f)
+    );
+
+    registerBlock(
+        (new Block(BlockID::Stone, "stone"))
+            ->setAllSidesTexture(icons[0].u, icons[0].v)
+            //->setSoundType(SoundType::STONE)
+            ->setDestroyTime(1.5f)
+    );
+
+    registerBlock(
+        (new Block(BlockID::Dirt, "dirt"))
+            ->setAllSidesTexture(icons[1].u, icons[1].v)
+            //->setSoundType(SoundType::STONE)
+            ->setDestroyTime(0.5f)
+    );
+
+    registerBlock(
+        (new Block(BlockID::Cobblestone, "cobblestone"))
+            ->setAllSidesTexture(icons[2].u, icons[2].v)
+            //->setSoundType(SoundType::STONE)
+            ->setDestroyTime(0.5f)
+    );
+
+    registerBlock(
+        (new GrassBlock(BlockID::Grass, "grass"))
+            ->setTopBottomSidesTexture(
+                icons[4].u, icons[4].v,  // top (grass_top)
+                icons[1].u, icons[1].v,  // bottom (dirt)
+                icons[3].u, icons[3].v   // sides (grass_side)
+            )
+            //->setSoundType(SoundType::GRASS)
+            ->setDestroyTime(0.6f)
+    );
+
+    registerBlock(
+        (new Block(BlockID::Stonebrick, "stonebrick"))
+            ->setAllSidesTexture(icons[5].u, icons[5].v)
+            //->setSoundType(SoundType::STONE)
+            ->setDestroyTime(0.5f)
+    );
+
+    registerBlock(
+        (new Block(BlockID::Sand, "sand"))
+            ->setAllSidesTexture(icons[6].u, icons[6].v)
+            //->setSoundType(SoundType::STONE)
+            ->setDestroyTime(0.5f)
+    );
+
+    registerBlock(
+        (new Block(BlockID::Log, "log"))
+            ->setTopBottomSidesTexture(
+                icons[8].u, icons[8].v,  // top (oaklog_top)
+                icons[8].u, icons[8].v,  // bottom (oaklog_top)
+                icons[7].u, icons[7].v   // sides (oaklog_side)
+                )
+            //->setSoundType(SoundType::WOOD)
+            ->setDestroyTime(2.0f)
+    );
+
+    registerBlock(
+        (new LeavesBlock(BlockID::Leaves, "leaves"))
+            ->setAllSidesTexture(icons[9].u, icons[9].v)
+            //->setSoundType(SoundType::GRASS)
+            ->setOpaque(false)
+            ->setDestroyTime(0.2f)
+    );
+
+    registerBlock(
+        (new Block(BlockID::Glass, "glass"))
+            ->setAllSidesTexture(icons[10].u, icons[10].v)
+            //->setSoundType(SoundType::GLASS)
+            ->setOpaque(false)
+            ->setDestroyTime(0.3f)
+    );
+
+    registerBlock(
+        (new Block(BlockID::Brick, "brick"))
+            ->setAllSidesTexture(icons[11].u, icons[11].v)
+            ->setSoundType(SoundType::STONE)
+            ->setDestroyTime(2.0f)
+    );
+
+    registerBlock(
+        (new Block(BlockID::Planks, "planks"))
+            ->setAllSidesTexture(icons[12].u, icons[12].v)
+            //->setSoundType(SoundType::WOOD)
+            ->setDestroyTime(2.0f)
+    );
+
+    registerBlock(
+        (new WoolBlock(BlockID::Wool, "wool"))
+            ->setAllSidesTexture(icons[13].u, icons[13].v)
+            //->setSoundType(SoundType::WOOD)
+            ->setDestroyTime(0.8f)
+    );
+
+    registerBlock(
+        (new Block(BlockID::Bedrock, "bedrock"))
+            ->setAllSidesTexture(icons[14].u, icons[14].v)
+            ->setSoundType(SoundType::STONE)
+            ->setDestroyTime(-1.0f)  // Unbreakable
+    );
+
+    registerBlock(
+        (new Block(BlockID::Gravel, "gravel"))
+            ->setAllSidesTexture(icons[15].u, icons[15].v)
+            //->setSoundType(SoundType::STONE)
+            ->setDestroyTime(0.5f)
+    );
+
+    registerBlock(
+        (new Block(BlockID::Coarse, "coarse_dirt"))
+            ->setAllSidesTexture(icons[16].u, icons[16].v)
+            //->setSoundType(SoundType::STONE)
+            ->setDestroyTime(0.5f)
+    );
+
+    // TODO: Doors or multiblock structures
+    //icon.door_top            = Texture_MapGetIcon(&textureMap, blockTextures[17]);
+    //icon.door_bottom         = Texture_MapGetIcon(&textureMap, blockTextures[18]);
+
+
+    registerBlock(
+        (new Block(BlockID::Snow_Grass, "snow_grass"))
+            ->setTopBottomSidesTexture(
+                icons[20].u, icons[20].v,  // top
+                icons[1].u, icons[1].v,  // bottom
+                icons[19].u, icons[19].v   // sides
+                )
+            //->setSoundType(SoundType::GRASS)
+            ->setDestroyTime(0.6f)
+    );
+
+    registerBlock(
+        (new Block(BlockID::Snow, "snow"))
+            ->setAllSidesTexture(icons[20].u, icons[20].v)
+            //->setSoundType(SoundType::STONE)
+            ->setDestroyTime(0.5f)
+    );
+
+    registerBlock(
+        (new Block(BlockID::Obsidian, "obsidian"))
+            ->setAllSidesTexture(icons[20].u, icons[20].v)
+            //->setSoundType(SoundType::STONE)
+            ->setDestroyTime(0.5f)
+    );
+
+    registerBlock(
+        (new Block(BlockID::Sandstone, "sandstone"))
+            ->setTopBottomSidesTexture(
+                icons[23].u, icons[23].v,  // top
+                icons[24].u, icons[24].v,  // bottom
+                icons[19].u, icons[19].v   // sides
+                )
+            ->setSoundType(SoundType::STONE)
+            ->setDestroyTime(0.8f)
+    );
+
+    registerBlock(
+        (new Block(BlockID::Netherrack, "netherrack"))
+            ->setAllSidesTexture(icons[25].u, icons[25].v)
+            ->setSoundType(SoundType::STONE)
+            ->setDestroyTime(0.8f)
+    );
+
+    registerBlock(
+        (new Block(BlockID::Smooth_Stone, "smooth_stone"))
+            ->setAllSidesTexture(icons[26].u, icons[26].v)
+            ->setSoundType(SoundType::STONE)
+            ->setDestroyTime(0.8f)
+    );
+
+    registerBlock(
+        (new Block(BlockID::Lava, "lava"))
+            ->setAllSidesTexture(icons[27].u, icons[27].v)
+            ->setSoundType(SoundType::STONE)
+            ->setDestroyTime(0.8f)
+    );
+
+    registerBlock(
+        (new Block(BlockID::Water, "water"))
+            ->setAllSidesTexture(icons[28].u, icons[28].v)
+            ->setSoundType(SoundType::STONE)
+            ->setOpaque(false)
+            ->setDestroyTime(0.8f)
+    );
+
+    registerBlock(
+        (new Block(BlockID::Grass_Path, "grass_path"))
+            ->setTopBottomSidesTexture(
+                icons[30].u, icons[30].v,
+                icons[1].u, icons[1].v,
+                icons[29].u, icons[29].v
+                )
+            //->setSoundType(SoundType::GRASS)
+            ->setDestroyTime(0.6f)
+    );
+
+    registerBlock(
+        (new Block(BlockID::Crafting_Table, "crafting_table"))
+            ->setTopBottomSidesTexture(
+                icons[32].u, icons[32].v,
+                icons[12].u, icons[12].v,
+                icons[31].u, icons[31].v
+                )
+            ->setSoundType(SoundType::STONE)
+            ->setDestroyTime(0.8f)
+    );
+
+    registerBlock(
+        (new Block(BlockID::Iron_Ore, "iron_ore"))
+            ->setAllSidesTexture(icons[33].u, icons[33].v)
+            ->setSoundType(SoundType::STONE)
+            ->setDestroyTime(0.8f)
+    );
+
+    registerBlock(
+        (new Block(BlockID::Iron_Block, "iron_block"))
+            ->setAllSidesTexture(icons[34].u, icons[34].v)
+            ->setSoundType(SoundType::STONE)
+            ->setDestroyTime(0.8f)
+    );
+
+    registerBlock(
+        (new Block(BlockID::Iron_Block, "iron_block"))
+            ->setAllSidesTexture(icons[34].u, icons[34].v)
+            ->setSoundType(SoundType::STONE)
+            ->setDestroyTime(0.8f)
+    );
+
+    registerBlock(
+        (new Block(BlockID::Diamond_Ore, "diamond_ore"))
+            ->setAllSidesTexture(icons[35].u, icons[35].v)
+            ->setSoundType(SoundType::STONE)
+            ->setDestroyTime(0.8f)
+    );
+
+    registerBlock(
+        (new Block(BlockID::Diamond_Block, "diamond_block"))
+            ->setAllSidesTexture(icons[36].u, icons[36].v)
+            ->setSoundType(SoundType::STONE)
+            ->setDestroyTime(0.8f)
+    );
+
+    registerBlock(
+        (new Block(BlockID::Gold_Ore, "gold_ore"))
+            ->setAllSidesTexture(icons[37].u, icons[37].v)
+            ->setSoundType(SoundType::STONE)
+            ->setDestroyTime(0.8f)
+    );
+
+    registerBlock(
+        (new Block(BlockID::Gold_Block, "gold_block"))
+            ->setAllSidesTexture(icons[38].u, icons[38].v)
+            ->setSoundType(SoundType::STONE)
+            ->setDestroyTime(0.8f)
+    );
+
+    registerBlock(
+        (new Block(BlockID::Coal_Ore, "coal_ore"))
+            ->setAllSidesTexture(icons[39].u, icons[39].v)
+            ->setSoundType(SoundType::STONE)
+            ->setDestroyTime(0.8f)
+    );
+
+    registerBlock(
+        (new Block(BlockID::Coal_Block, "coal_block"))
+            ->setAllSidesTexture(icons[40].u, icons[40].v)
+            ->setSoundType(SoundType::STONE)
+            ->setDestroyTime(0.8f)
+    );
+
+    registerBlock(
+        (new Block(BlockID::Coal_Ore, "emerald_ore"))
+            ->setAllSidesTexture(icons[41].u, icons[41].v)
+            ->setSoundType(SoundType::STONE)
+            ->setDestroyTime(0.8f)
+    );
+
+    registerBlock(
+        (new Block(BlockID::Coal_Block, "emerald_block"))
+            ->setAllSidesTexture(icons[42].u, icons[42].v)
+            ->setSoundType(SoundType::STONE)
+            ->setDestroyTime(0.8f)
+    );
+
+    //TODO: Propper furnace texture mapping
+    registerBlock(
+        (new Block(BlockID::Furnace, "furnace"))
+            ->setTopBottomSidesTexture(
+                icons[45].u, icons[45].v,
+                icons[44].u, icons[44].v,
+                icons[43].u, icons[43].v
+                )
+            ->setSoundType(SoundType::STONE)
+            ->setDestroyTime(0.8f)
+    );
+
+
+    m_blocks.resize(static_cast<size_t>(BlockID::Count));
 }
-// This is not really a block deinitializer, rather it deinitializes Block Textures
-void Block_Deinit() { C3D_TexDelete(&textureMap.texture); }
 
-void* Block_GetTextureMap() { return &textureMap.texture; }
-
-//TODO: Blocks are all blocks, not inventory blocks (slots), but for now this works...
-void Block_GetTexture(mc::inventory::Slot block, Direction direction, int16_t* out_uv) {
-	Texture_MapIcon i = {0, 0, 0};
-	switch (static_cast<BlockID>(block.GetItemId())) {
-        case BlockID::Air:
-			return;
-        case BlockID::Dirt:
-			i = icon.dirt;
-			break;
-        case BlockID::Stone:
-			i = icon.stone;
-			break;
-        case BlockID::Grass:
-			switch (direction) {
-                case Direction::Top:
-					i = icon.grass_top;
-					break;
-                case Direction::Bottom:
-					i = icon.dirt;
-					break;
-				default:
-					i = icon.grass_side;
-					break;
-			}
-			break;
-        case BlockID::Cobblestone:
-			i = icon.cobblestone;
-			break;
-        case BlockID::Log:
-			switch (direction) {
-                case Direction::Bottom:
-                case Direction::Top:
-					i = icon.oaklog_top;
-					break;
-				default:
-					i = icon.oaklog_side;
-					break;
-			}
-			break;
-        case BlockID::Gravel:
-			i = icon.gravel;
-			break;
-        case BlockID::Sand:
-			i = icon.sand;
-			break;
-        case BlockID::Leaves:
-			i = icon.leaves_oak;
-			break;
-        case BlockID::Glass:
-			i = icon.glass;
-			break;
-        case BlockID::Stonebrick:
-			i = icon.stonebrick;
-			break;
-        case BlockID::Brick:
-			i = icon.brick;
-			break;
-        case BlockID::Planks:
-			i = icon.oakplanks;
-			break;
-        case BlockID::Wool:
-			i = icon.wool;
-			break;
-        case BlockID::Bedrock:
-			i = icon.bedrock;
-			break;
-        case BlockID::Coarse:
-			i = icon.coarse;
-			break;
-        case BlockID::Door_Top:
-			i = icon.door_top;
-			break;
-        case BlockID::Door_Bottom:
-			i = icon.door_bottom;
-			break;
-        case BlockID::Snow_Grass:
-			switch (direction) {
-                case Direction::Top:
-					i = icon.snow;
-					break;
-                case Direction::Bottom:
-					i = icon.dirt;
-					break;
-				default:
-					i = icon.snow_grass_side;
-					break;
-			}
-			break;
-        case BlockID::Snow:
-			i = icon.snow;
-			break;
-        case BlockID::Obsidian:
-			i = icon.obsidian;
-			break;
-        case BlockID::Netherrack:
-			i = icon.netherrack;
-			break;
-        case BlockID::Sandstone:
-			switch (direction) {
-                case Direction::Bottom:
-					i = icon.sandstone_bottom;
-					break;
-                case Direction::Top:
-					i = icon.sandstone_top;
-					break;
-				default:
-					i = icon.sandstone_side;
-					break;
-			}
-			break;
-        case BlockID::Smooth_Stone:
-			i = icon.smooth_stone;
-			break;
-        case BlockID::Crafting_Table:
-			switch (direction) {
-                case Direction::Bottom:
-					i = icon.oakplanks;
-					break;
-                case Direction::Top:
-					i = icon.crafting_table_top;
-					break;
-				default:
-					i = icon.crafting_table_side;
-					break;
-			}
-			break;
-        case BlockID::Lava:
-			i=icon.lava;
-			break;
-        case BlockID::Water:
-			i=icon.water;
-			break;
-        case BlockID::Grass_Path:
-			switch (direction) {
-                case Direction::Bottom:
-					i = icon.dirt;
-					break;
-                case Direction::Top:
-					i = icon.grass_path_top;
-					break;
-				default:
-					i = icon.grass_path_side;
-					break;
-			}
-			break;
-        case BlockID::Gold_Block:
-			i=icon.gold_block;
-			break;
-        case BlockID::Gold_Ore:
-			i=icon.gold_ore;
-			break;
-        case BlockID::Coal_Block:
-			i=icon.coal_block;
-			break;
-        case BlockID::Coal_Ore:
-			i=icon.coal_ore;
-			break;
-        case BlockID::Iron_Block:
-			i=icon.iron_block;
-			break;
-        case BlockID::Iron_Ore:
-			i=icon.iron_ore;
-			break;
-        case BlockID::Diamond_Block:
-			i=icon.diamond_block;
-			break;
-        case BlockID::Diamond_Ore:
-			i=icon.diamond_ore;
-			break;
-        case BlockID::Emerald_Block:
-			i=icon.emerald_block;
-			break;
-        case BlockID::Emerald_Ore:
-			i=icon.emerald_ore;
-			break;
-        case BlockID::Furnace:
-			switch (direction) {
-                case Direction::South:
-					i = icon.furnace_front;
-					break;
-                case Direction::Top:
-					i=icon.furnace_top;
-					break;
-				default:
-					i = icon.furnace_side;
-					break;
-			}
-			break;
-		default: break;
-	}
-	out_uv[0] = i.u;
-	out_uv[1] = i.v;
-}
-
-void Block_GetColor(BlockID block, Metadata metadata, Direction direction, Metadata out_rgb[]) {
-	if ((block == BlockID::Grass && direction == Direction::Top) || block == BlockID::Leaves) {
-		out_rgb[0] = 140;
-		out_rgb[1] = 214;
-		out_rgb[2] = 123;
-		return;
-	}
-	// white, orange, magenta, light blue, yellow, lime, pink, gray, silver, cyan, purple, blue, green, red, black
-	const uint32_t dies[] = {(16777215), (14188339), (11685080), (6724056), (15066419), (8375321), (15892389), (5000268),
-				 (10066329), (5013401),  (8339378),  (3361970), (6704179),  (6717235), (10040115), (1644825)};
-	if (block == BlockID::Wool) {
-		out_rgb[0] = ((dies[metadata] >> 16) & 0xff);
-		out_rgb[1] = (((dies[metadata]) >> 8) & 0xff);
-		out_rgb[2] = ((dies[metadata]) & 0xff);
-	} else {
-		out_rgb[0] = 255;
-		out_rgb[1] = 255;
-		out_rgb[2] = 255;
-	}
-}
-
-bool Block_Opaque(BlockID block, Metadata metadata) { return block != BlockID::Air && block != BlockID::Glass && block != BlockID::Door_Top && block != BlockID::Door_Bottom; }
-
-bool Block_Solid(BlockID block) {
-    return block != BlockID::Air && block != BlockID::Lava && block != BlockID::Water;
+BlockRegistry::~BlockRegistry() {
+    C3D_TexDelete(&textureMap.texture);
 }

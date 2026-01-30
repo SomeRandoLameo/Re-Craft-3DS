@@ -220,7 +220,7 @@ void Player::UpdateMovement(DebugUI* dbg, float dt) {
 void Player::HandleFallDamage() {
     if (velocity.y <= -12) {
         rndy = round(velocity.y);
-        if (m_world->GetBlock(mc::Vector3i(position.x, position.y - 1, position.z)) != BlockID::Air) {
+        if (m_world->GetBlockID(mc::Vector3i(position.x, position.y - 1, position.z)) != BlockID::Air) {
             hp = hp + rndy;
             rndy = 0;
         }
@@ -228,7 +228,7 @@ void Player::HandleFallDamage() {
 }
 
 void Player::HandleFireDamage() {
-    if (m_world->GetBlock(ToVector3i(ToVector3d(position))) == BlockID::Lava) {
+    if (m_world->GetBlockID(ToVector3i(ToVector3d(position))) == BlockID::Lava) {
         //  DebugUI_Log("ur burning lol");
         //OvertimeDamage("Fire", 10);
     }
@@ -263,7 +263,7 @@ void Player::HandleRespawn(Damage* dmg) {
                 position.x = 0.0;
 
                 int spawnY = 1;
-                while (m_world->GetBlock( mc::ToVector3i(spawnPos)) != BlockID::Air)
+                while (m_world->GetBlockID(mc::ToVector3i(spawnPos)) != BlockID::Air)
                     spawnY++;
 
                 bool shouldOffset = m_world->GetGenSettings().type != WorldGenType::SuperFlat;
@@ -279,7 +279,7 @@ void Player::HandleRespawn(Damage* dmg) {
                 position.x = spawnPos.x;
 
                 int spawnY = 1;
-                while (m_world->GetBlock(ToVector3i(spawnPos)) != BlockID::Air)
+                while (m_world->GetBlockID(ToVector3i(spawnPos)) != BlockID::Air)
                     spawnY++;
 
                 bool shouldOffset = m_world->GetGenSettings().type != WorldGenType::SuperFlat;
@@ -360,9 +360,9 @@ void Player::Move(float dt, mc::Vector3d accl) {
                             FastFloor(axisStep.z) + z
                         );
 
-                        if (m_world->GetBlock(blockPos) != BlockID::Air &&
-                            m_world->GetBlock(blockPos) != BlockID::Lava &&
-                            m_world->GetBlock(blockPos) != BlockID::Water) {
+                        if (m_world->GetBlockID(blockPos) != BlockID::Air &&
+                            m_world->GetBlockID(blockPos) != BlockID::Lava &&
+                            m_world->GetBlockID(blockPos) != BlockID::Water) {
                             Box blockBox = Box_Create(blockPos.x, blockPos.y, blockPos.z, 1, 1, 1);
 
                             mc::Vector3d normal(0.f, 0.f, 0.f);
@@ -407,20 +407,12 @@ void Player::Move(float dt, mc::Vector3d accl) {
             mc::Vector3f nrmDiff = newPos - position;
             nrmDiff.Normalize();
 
-            BlockID block = m_world->GetBlock(
-                mc::Vector3i(
-                    FastFloor(finalPos.x + nrmDiff.x),
-                    FastFloor(finalPos.y + nrmDiff.y) + 2,
-                    FastFloor(finalPos.z + nrmDiff.z)
-                )
-            );
-            BlockID landingBlock = m_world->GetBlock(
-                mc::Vector3i(
-                    FastFloor(finalPos.x + nrmDiff.x),
-                    FastFloor(finalPos.y + nrmDiff.y) + 1,
-                    FastFloor(finalPos.z + nrmDiff.z)
-                )
-            );
+            BlockID block = m_world->GetBlockID(mc::Vector3i(FastFloor(finalPos.x + nrmDiff.x),
+                                                             FastFloor(finalPos.y + nrmDiff.y) + 2,
+                                                             FastFloor(finalPos.z + nrmDiff.z)));
+            BlockID landingBlock = m_world->GetBlockID(mc::Vector3i(FastFloor(finalPos.x + nrmDiff.x),
+                                                                    FastFloor(finalPos.y + nrmDiff.y) + 1,
+                                                                    FastFloor(finalPos.z + nrmDiff.z)));
 
             if ((block == BlockID::Air || block == BlockID::Lava || block == BlockID::Water) &&
                 landingBlock != BlockID::Air && landingBlock != BlockID::Lava && landingBlock != BlockID::Water) {
@@ -495,7 +487,7 @@ void Player::PlaceBlock() {
 
 void Player::BreakBlock() {
     if (m_world && blockInActionRange && breakPlaceTimeout < 0.f) {
-        m_world->SetBlock(viewRayCast.hitPos, BlockID::Air);
+        m_world->SetBlockID(viewRayCast.hitPos, BlockID::Air);
     }
 
     if (breakPlaceTimeout < 0.f) {
@@ -510,7 +502,7 @@ void Player::HurtEntity() {
 // TODO: When triggered, this cuts the o3DS performance in half...
 void Player::Interact(DebugUI* dbg) {
     if (m_world && blockInActionRange && breakPlaceTimeout < 0.f) {
-        BlockID id = m_world->GetBlock(viewRayCast.hitPos);
+        BlockID id = m_world->GetBlockID(viewRayCast.hitPos);
         Metadata meta = m_world->GetMetadata(viewRayCast.hitPos);
         std::string logMsg = "Target at: " + to_string(viewRayCast.hitPos) +
             "  ID=" + std::to_string(static_cast<u8>(id)) +

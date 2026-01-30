@@ -20,6 +20,8 @@ ReCraftCore::ReCraftCore() {
     SuperChunk_InitPools();
     SaveManager::InitFileSystem();
 
+    new BlockRegistry();
+
     m_chunkWorker.AddHandler(WorkerItemType::PolyGen, (WorkerFuncObj){&PolyGen_GeneratePolygons, nullptr, true});
 
     sino_init();
@@ -103,11 +105,13 @@ ReCraftCore::~ReCraftCore() {
     delete m_renderer;
     m_chunkWorker.~ChunkWorker();
 
+    BlockRegistry::getInstance().~BlockRegistry();
     romfsExit();
     gfxExit();
 }
 
 void ReCraftCore::InitSinglePlayer(char* path, char* name, const WorldGenType* worldType, Gamemode mode, bool newWorld) {
+
     m_chunkWorker.AddHandler(WorkerItemType::BaseGen, (WorkerFuncObj){&SuperFlatGen::Generate, &m_flatGen, true});
 
     m_chunkWorker.AddHandler(WorkerItemType::BaseGen, (WorkerFuncObj){&SmeaGen::Generate, &m_smeaGen, true});
@@ -322,10 +326,10 @@ void ReCraftCore::Main() {
 
     m_timeAccum += Delta();
 
-    if (m_pTopScreen) {
+    if (TopScreen) {
         m_bTopUsingCurrScreen = true;
         // m_debugUI->Log("UPDATE TOP");
-        m_pTopScreen->UpdateEvents();
+        TopScreen->UpdateEvents();
         m_bTopUsingCurrScreen = false;
         if (m_bTopHaveQueuedScreen) {
             SetScreen(m_pTopQueuedScreen, true);
@@ -334,10 +338,10 @@ void ReCraftCore::Main() {
         }
         // return;
     }
-    if (m_pBotScreen) {
+    if (BotScreen) {
         m_bBotUsingCurrScreen = true;
         // m_debugUI->Log("UPDATE BOT");
-        m_pBotScreen->UpdateEvents();
+        BotScreen->UpdateEvents();
         m_bBotUsingCurrScreen = false;
         if (m_bBotHaveQueuedScreen) {
             SetScreen(m_pBotQueuedScreen, false);
@@ -362,7 +366,7 @@ void ReCraftCore::SetScreen(Screen* pScreen, bool top) {
     bool& usingCurrScreen = top ? m_bTopUsingCurrScreen : m_bBotUsingCurrScreen;
     bool& haveQueuedScreen = top ? m_bTopHaveQueuedScreen : m_bBotHaveQueuedScreen;
     Screen*& queuedScreen = top ? m_pTopQueuedScreen : m_pBotQueuedScreen;
-    Screen*& currentScreen = top ? m_pTopScreen : m_pBotScreen;
+    Screen*& currentScreen = top ? TopScreen : BotScreen;
 
     int screenWidth = top ? int(400 * 0.5f) : int(320 * 0.5);
     int screenHeight = int(240 * 0.5);
