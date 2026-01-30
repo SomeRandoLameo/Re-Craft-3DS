@@ -147,55 +147,55 @@ void MCBridge::backgroundLoop() {
 }
 
 // TODO: make it stop...
-Block MCBridge::MCLibBlockToCTBlock(u32 BlockType){
+BlockID MCBridge::MCLibBlockToCTBlock(u32 BlockType){
     // These are MCLib Mapping IDs, IDK how they correspond to Minecraft IDs but this works
-    if(BlockType == 0)         return Block::Air;
-    else if(BlockType == 16)   return Block::Stone;
-    else if(BlockType == 17)   return Block::Stone;
-    else if(BlockType == 18)   return Block::Stone;
-    else if(BlockType == 19)   return Block::Stone;
-    else if(BlockType == 20)   return Block::Stone;
-    else if(BlockType == 21)   return Block::Stone;
-    else if(BlockType == 22)   return Block::Stone;
-    else if(BlockType == 32)   return Block::Grass;
-    else if(BlockType == 48)   return Block::Dirt;
-    else if(BlockType == 49)   return Block::Dirt;
-    else if(BlockType == 50)   return Block::Dirt;
-    else if(BlockType == 64)   return Block::Cobblestone;
-    else if(BlockType == 80)   return Block::Planks;
-    else if(BlockType == 81)   return Block::Planks;
-    else if(BlockType == 82)   return Block::Planks;
-    else if(BlockType == 83)   return Block::Planks;
-    else if(BlockType == 84)   return Block::Planks;
-    else if(BlockType == 85)   return Block::Planks;
+    if(BlockType == 0)         return BlockID::Air;
+    else if(BlockType == 16)   return BlockID::Stone;
+    else if(BlockType == 17)   return BlockID::Stone;
+    else if(BlockType == 18)   return BlockID::Stone;
+    else if(BlockType == 19)   return BlockID::Stone;
+    else if(BlockType == 20)   return BlockID::Stone;
+    else if(BlockType == 21)   return BlockID::Stone;
+    else if(BlockType == 22)   return BlockID::Stone;
+    else if(BlockType == 32)   return BlockID::Grass;
+    else if(BlockType == 48)   return BlockID::Dirt;
+    else if(BlockType == 49)   return BlockID::Dirt;
+    else if(BlockType == 50)   return BlockID::Dirt;
+    else if(BlockType == 64)   return BlockID::Cobblestone;
+    else if(BlockType == 80)   return BlockID::Planks;
+    else if(BlockType == 81)   return BlockID::Planks;
+    else if(BlockType == 82)   return BlockID::Planks;
+    else if(BlockType == 83)   return BlockID::Planks;
+    else if(BlockType == 84)   return BlockID::Planks;
+    else if(BlockType == 85)   return BlockID::Planks;
     // 96 - 101 = sapling
-    else if(BlockType == 112)  return Block::Bedrock;
-    else if(BlockType == 128)  return Block::Water; // Flowing water, actually
-    else if(BlockType == 144)  return Block::Water;
-    else if(BlockType == 160)  return Block::Lava;  // Flowing lava, actually
-    else if(BlockType == 176)  return Block::Lava;
-    else if(BlockType == 192)  return Block::Sand;
-    else if(BlockType == 193)  return Block::Sand;
-    else if(BlockType == 298)  return Block::Gravel;
-    else if(BlockType == 224)  return Block::Gold_Ore;
-    else if(BlockType == 240)  return Block::Iron_Ore;
-    else if(BlockType == 256)  return Block::Coal_Ore;
-    else if(BlockType == 272)  return Block::Log;
-    else if(BlockType == 273)  return Block::Log;
-    else if(BlockType == 274)  return Block::Log;
-    else if(BlockType == 275)  return Block::Log;
-    else if(BlockType == 288)  return Block::Leaves;
-    else if(BlockType == 289)  return Block::Leaves;
-    else if(BlockType == 290)  return Block::Leaves;
-    else if(BlockType == 291)  return Block::Leaves;
+    else if(BlockType == 112)  return BlockID::Bedrock;
+    else if(BlockType == 128)  return BlockID::Water; // Flowing water, actually
+    else if(BlockType == 144)  return BlockID::Water;
+    else if(BlockType == 160)  return BlockID::Lava;  // Flowing lava, actually
+    else if(BlockType == 176)  return BlockID::Lava;
+    else if(BlockType == 192)  return BlockID::Sand;
+    else if(BlockType == 193)  return BlockID::Sand;
+    else if(BlockType == 298)  return BlockID::Gravel;
+    else if(BlockType == 224)  return BlockID::Gold_Ore;
+    else if(BlockType == 240)  return BlockID::Iron_Ore;
+    else if(BlockType == 256)  return BlockID::Coal_Ore;
+    else if(BlockType == 272)  return BlockID::Log;
+    else if(BlockType == 273)  return BlockID::Log;
+    else if(BlockType == 274)  return BlockID::Log;
+    else if(BlockType == 275)  return BlockID::Log;
+    else if(BlockType == 288)  return BlockID::Leaves;
+    else if(BlockType == 289)  return BlockID::Leaves;
+    else if(BlockType == 290)  return BlockID::Leaves;
+    else if(BlockType == 291)  return BlockID::Leaves;
     // 304 - 305 = sponge
-    else if(BlockType == 320)  return Block::Glass;
+    else if(BlockType == 320)  return BlockID::Glass;
     // 336 = lapis ore
     // 352 = lapis block
     // 368 = dispenser
-    else if(BlockType == 384)  return Block::Sandstone;
-    else if(BlockType == 385)  return Block::Sandstone;
-    else if(BlockType == 386)  return Block::Sandstone;
+    else if(BlockType == 384)  return BlockID::Sandstone;
+    else if(BlockType == 385)  return BlockID::Sandstone;
+    else if(BlockType == 386)  return BlockID::Sandstone;
     // 400 = note block
     // 416 = bed
     // 432 = powered rail
@@ -206,22 +206,22 @@ Block MCBridge::MCLibBlockToCTBlock(u32 BlockType){
     // 512 = dead bush
     // 528 = piston
     // 544 = piston head
-    else if(BlockType == 560)  return Block::Wool;
-    else if(BlockType == 561)  return Block::Wool;
-    else if(BlockType == 562)  return Block::Wool;
-    else if(BlockType == 563)  return Block::Wool;
-    else if(BlockType == 564)  return Block::Wool;
-    else if(BlockType == 565)  return Block::Wool;
-    else if(BlockType == 566)  return Block::Wool;
-    else if(BlockType == 567)  return Block::Wool;
-    else if(BlockType == 568)  return Block::Wool;
-    else if(BlockType == 569)  return Block::Wool;
-    else if(BlockType == 570)  return Block::Wool;
-    else if(BlockType == 571)  return Block::Wool;
-    else if(BlockType == 572)  return Block::Wool;
-    else if(BlockType == 573)  return Block::Wool;
-    else if(BlockType == 574)  return Block::Wool;
-    else if(BlockType == 575)  return Block::Wool;
+    else if(BlockType == 560)  return BlockID::Wool;
+    else if(BlockType == 561)  return BlockID::Wool;
+    else if(BlockType == 562)  return BlockID::Wool;
+    else if(BlockType == 563)  return BlockID::Wool;
+    else if(BlockType == 564)  return BlockID::Wool;
+    else if(BlockType == 565)  return BlockID::Wool;
+    else if(BlockType == 566)  return BlockID::Wool;
+    else if(BlockType == 567)  return BlockID::Wool;
+    else if(BlockType == 568)  return BlockID::Wool;
+    else if(BlockType == 569)  return BlockID::Wool;
+    else if(BlockType == 570)  return BlockID::Wool;
+    else if(BlockType == 571)  return BlockID::Wool;
+    else if(BlockType == 572)  return BlockID::Wool;
+    else if(BlockType == 573)  return BlockID::Wool;
+    else if(BlockType == 574)  return BlockID::Wool;
+    else if(BlockType == 575)  return BlockID::Wool;
     //registry->RegisterBlock(new Block("minecraft:yellow_flower", 592, true));
     //registry->RegisterBlock(new Block("minecraft:red_flower", 608, true));
     //registry->RegisterBlock(new Block("minecraft:red_flower", 609, true));
@@ -234,8 +234,8 @@ Block MCBridge::MCLibBlockToCTBlock(u32 BlockType){
     //registry->RegisterBlock(new Block("minecraft:red_flower", 616, true));
     //registry->RegisterBlock(new Block("minecraft:brown_mushroom", 624, true));
     //registry->RegisterBlock(new Block("minecraft:red_mushroom", 640, true));
-    else if(BlockType == 656)  return Block::Gold_Block;
-    else if(BlockType == 672)  return Block::Iron_Block;
+    else if(BlockType == 656)  return BlockID::Gold_Block;
+    else if(BlockType == 672)  return BlockID::Iron_Block;
     //registry->RegisterBlock(new Block("minecraft:double_stone_slab", 688, true));
     //registry->RegisterBlock(new Block("minecraft:double_stone_slab", 689, true));
     //registry->RegisterBlock(new Block("minecraft:double_stone_slab", 690, true));
@@ -252,11 +252,11 @@ Block MCBridge::MCLibBlockToCTBlock(u32 BlockType){
     //registry->RegisterBlock(new Block("minecraft:stone_slab", 709, true));
     //registry->RegisterBlock(new Block("minecraft:stone_slab", 710, true));
     //registry->RegisterBlock(new Block("minecraft:stone_slab", 711, true));
-    else if(BlockType == 720)  return Block::Brick;
+    else if(BlockType == 720)  return BlockID::Brick;
     //registry->RegisterBlock(new Block("minecraft:tnt", 736, true));
     //registry->RegisterBlock(new Block("minecraft:bookshelf", 752, true));
     //registry->RegisterBlock(new Block("minecraft:mossy_cobblestone", 768, true));
-    else if(BlockType == 784)  return Block::Obsidian;
+    else if(BlockType == 784)  return BlockID::Obsidian;
     //registry->RegisterBlock(new Block("minecraft:obsidian", 784, true));
     //registry->RegisterBlock(new Block("minecraft:torch", 800, true));
     //registry->RegisterBlock(new Block("minecraft:fire", 816, true));
@@ -264,12 +264,12 @@ Block MCBridge::MCLibBlockToCTBlock(u32 BlockType){
     //registry->RegisterBlock(new Block("minecraft:oak_stairs", 848, true));
     //registry->RegisterBlock(new Block("minecraft:chest", 864, true));
     //registry->RegisterBlock(new Block("minecraft:redstone_wire", 880, true));
-    else if(BlockType == 896)  return Block::Diamond_Ore;
-    else if(BlockType == 912)  return Block::Diamond_Block;
-    else if(BlockType == 928)  return Block::Crafting_Table;
+    else if(BlockType == 896)  return BlockID::Diamond_Ore;
+    else if(BlockType == 912)  return BlockID::Diamond_Block;
+    else if(BlockType == 928)  return BlockID::Crafting_Table;
     //registry->RegisterBlock(new Block("minecraft:wheat", 944, true));
     //registry->RegisterBlock(new Block("minecraft:farmland", 960, true));
-    else if(BlockType == 928)  return Block::Furnace;
+    else if(BlockType == 928)  return BlockID::Furnace;
     //registry->RegisterBlock(new Block("minecraft:lit_furnace", 992, true));
     //registry->RegisterBlock(new Block("minecraft:standing_sign", 1008, true));
     //registry->RegisterBlock(new Block("minecraft:wooden_door", 1024, true)); This one is commented out because upper and lower door parts are separate
@@ -295,7 +295,7 @@ Block MCBridge::MCLibBlockToCTBlock(u32 BlockType){
     //registry->RegisterBlock(new Block("minecraft:jukebox", 1344, true));
     //registry->RegisterBlock(new Block("minecraft:fence", 1360, true));
     //registry->RegisterBlock(new Block("minecraft:pumpkin", 1376, true));
-    else if(BlockType == 1392)  return Block::Netherrack;
+    else if(BlockType == 1392)  return BlockID::Netherrack;
     //registry->RegisterBlock(new Block("minecraft:netherrack", 1392, true));
     //registry->RegisterBlock(new Block("minecraft:soul_sand", 1408, true));
     //registry->RegisterBlock(new Block("minecraft:glowstone", 1424, true));
@@ -327,10 +327,10 @@ Block MCBridge::MCLibBlockToCTBlock(u32 BlockType){
     //registry->RegisterBlock(new Block("minecraft:monster_egg", 1555, true));
     //registry->RegisterBlock(new Block("minecraft:monster_egg", 1556, true));
     //registry->RegisterBlock(new Block("minecraft:monster_egg", 1557, true));
-    else if(BlockType == 1568)  return Block::Stonebrick;
-    else if(BlockType == 1569)  return Block::Stonebrick;
-    else if(BlockType == 1570)  return Block::Stonebrick;
-    else if(BlockType == 1571)  return Block::Stonebrick;
+    else if(BlockType == 1568)  return BlockID::Stonebrick;
+    else if(BlockType == 1569)  return BlockID::Stonebrick;
+    else if(BlockType == 1570)  return BlockID::Stonebrick;
+    else if(BlockType == 1571)  return BlockID::Stonebrick;
     //registry->RegisterBlock(new Block("minecraft:brown_mushroom_block", 1584, true));
     //registry->RegisterBlock(new Block("minecraft:red_mushroom_block", 1600, true));
     //registry->RegisterBlock(new Block("minecraft:iron_bars", 1616, true));
@@ -371,7 +371,7 @@ Block MCBridge::MCLibBlockToCTBlock(u32 BlockType){
     //registry->RegisterBlock(new Block("minecraft:wooden_slab", 2021, true));
     //registry->RegisterBlock(new Block("minecraft:cocoa", 2032, true));
     //registry->RegisterBlock(new Block("minecraft:sandstone_stairs", 2048, true));
-    else if(BlockType == 2064)  return Block::Emerald_Ore;
+    else if(BlockType == 2064)  return BlockID::Emerald_Ore;
     //registry->RegisterBlock(new Block("minecraft:ender_chest", 2080, true));
     //registry->RegisterBlock(new Block("minecraft:tripwire_hook", 2096, true));
     //registry->RegisterBlock(new Block("minecraft:tripwire_hook", 2112, true));
@@ -467,7 +467,7 @@ Block MCBridge::MCLibBlockToCTBlock(u32 BlockType){
     //registry->RegisterBlock(new Block("minecraft:carpet", 2750, true));
     //registry->RegisterBlock(new Block("minecraft:carpet", 2751, true));
     //registry->RegisterBlock(new Block("minecraft:hardened_clay", 2752, true));
-    else if(BlockType == 2768)  return Block::Coal_Block;
+    else if(BlockType == 2768)  return BlockID::Coal_Block;
     //registry->RegisterBlock(new Block("minecraft:coal_block", 2768, true));
     //registry->RegisterBlock(new Block("minecraft:packed_ice", 2784, true));
     //registry->RegisterBlock(new Block("minecraft:double_plant", 2800, true));
@@ -588,7 +588,7 @@ Block MCBridge::MCLibBlockToCTBlock(u32 BlockType){
     //registry->RegisterBlock(new Block("minecraft:structure_block", 4080, true));
 
 
-    else return Block::Air;
+    else return BlockID::Air;
 }
 
 mc::inventory::Slot MCBridge::CTItemStackToMCLIBSlot(ItemStack in){
@@ -596,5 +596,5 @@ mc::inventory::Slot MCBridge::CTItemStackToMCLIBSlot(ItemStack in){
 }
 
 ItemStack MCBridge::MCLIBSlotToCTItemStack(mc::inventory::Slot in){
-    return (ItemStack){static_cast<Block>(in.GetItemId()),in.GetItemDamage(),in.GetItemCount()};
+    return (ItemStack){static_cast<BlockID>(in.GetItemId()),in.GetItemDamage(),in.GetItemCount()};
 }

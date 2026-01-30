@@ -15,7 +15,7 @@ static const int MAX_FACES_PER_CLUSTER = (Chunk::Size * Chunk::Size * Chunk::Siz
 typedef struct {
     int8_t x, y, z;
     Direction direction;
-    Block block;
+    BlockID block;
     int8_t ao;
     uint8_t metadata;
     bool transparent;
@@ -41,10 +41,10 @@ void PolyGen_Deinit();
 void PolyGen_Harvest(DebugUI* debugUi);
 void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context);
 
-Block fastBlockFetch(World* world, ChunkColumnPtr column, ChunkPtr chunk, int x, int y, int z);
+BlockID fastBlockFetch(World* world, ChunkColumnPtr column, ChunkPtr chunk, int x, int y, int z);
 
 uint8_t fastMetadataFetch(World* world, ChunkColumnPtr column, ChunkPtr chunk, int x, int y, int z);
 
-void addFace(int x, int y, int z, Direction dir, Block block, uint8_t metadata, int ao, bool transparent);
+void addFace(int x, int y, int z, Direction dir, BlockID block, uint8_t metadata, int ao, bool transparent);
 
 uint16_t floodFill(World* world, ChunkColumnPtr chunk, Chunk* cluster, int x, int y, int z, Direction entrySide0, Direction entrySide1, Direction entrySide2);

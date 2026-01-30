@@ -172,16 +172,16 @@ void* Block_GetTextureMap() { return &textureMap.texture; }
 //TODO: Blocks are all blocks, not inventory blocks (slots), but for now this works...
 void Block_GetTexture(mc::inventory::Slot block, Direction direction, int16_t* out_uv) {
 	Texture_MapIcon i = {0, 0, 0};
-	switch (static_cast<Block>(block.GetItemId())) {
-        case Block::Air:
+	switch (static_cast<BlockID>(block.GetItemId())) {
+        case BlockID::Air:
 			return;
-        case Block::Dirt:
+        case BlockID::Dirt:
 			i = icon.dirt;
 			break;
-        case Block::Stone:
+        case BlockID::Stone:
 			i = icon.stone;
 			break;
-        case Block::Grass:
+        case BlockID::Grass:
 			switch (direction) {
                 case Direction::Top:
 					i = icon.grass_top;
@@ -194,10 +194,10 @@ void Block_GetTexture(mc::inventory::Slot block, Direction direction, int16_t* o
 					break;
 			}
 			break;
-        case Block::Cobblestone:
+        case BlockID::Cobblestone:
 			i = icon.cobblestone;
 			break;
-        case Block::Log:
+        case BlockID::Log:
 			switch (direction) {
                 case Direction::Bottom:
                 case Direction::Top:
@@ -208,43 +208,43 @@ void Block_GetTexture(mc::inventory::Slot block, Direction direction, int16_t* o
 					break;
 			}
 			break;
-        case Block::Gravel:
+        case BlockID::Gravel:
 			i = icon.gravel;
 			break;
-        case Block::Sand:
+        case BlockID::Sand:
 			i = icon.sand;
 			break;
-        case Block::Leaves:
+        case BlockID::Leaves:
 			i = icon.leaves_oak;
 			break;
-        case Block::Glass:
+        case BlockID::Glass:
 			i = icon.glass;
 			break;
-        case Block::Stonebrick:
+        case BlockID::Stonebrick:
 			i = icon.stonebrick;
 			break;
-        case Block::Brick:
+        case BlockID::Brick:
 			i = icon.brick;
 			break;
-        case Block::Planks:
+        case BlockID::Planks:
 			i = icon.oakplanks;
 			break;
-        case Block::Wool:
+        case BlockID::Wool:
 			i = icon.wool;
 			break;
-        case Block::Bedrock:
+        case BlockID::Bedrock:
 			i = icon.bedrock;
 			break;
-        case Block::Coarse:
+        case BlockID::Coarse:
 			i = icon.coarse;
 			break;
-        case Block::Door_Top:
+        case BlockID::Door_Top:
 			i = icon.door_top;
 			break;
-        case Block::Door_Bottom:
+        case BlockID::Door_Bottom:
 			i = icon.door_bottom;
 			break;
-        case Block::Snow_Grass:
+        case BlockID::Snow_Grass:
 			switch (direction) {
                 case Direction::Top:
 					i = icon.snow;
@@ -257,16 +257,16 @@ void Block_GetTexture(mc::inventory::Slot block, Direction direction, int16_t* o
 					break;
 			}
 			break;
-        case Block::Snow:
+        case BlockID::Snow:
 			i = icon.snow;
 			break;
-        case Block::Obsidian:
+        case BlockID::Obsidian:
 			i = icon.obsidian;
 			break;
-        case Block::Netherrack:
+        case BlockID::Netherrack:
 			i = icon.netherrack;
 			break;
-        case Block::Sandstone:
+        case BlockID::Sandstone:
 			switch (direction) {
                 case Direction::Bottom:
 					i = icon.sandstone_bottom;
@@ -279,10 +279,10 @@ void Block_GetTexture(mc::inventory::Slot block, Direction direction, int16_t* o
 					break;
 			}
 			break;
-        case Block::Smooth_Stone:
+        case BlockID::Smooth_Stone:
 			i = icon.smooth_stone;
 			break;
-        case Block::Crafting_Table:
+        case BlockID::Crafting_Table:
 			switch (direction) {
                 case Direction::Bottom:
 					i = icon.oakplanks;
@@ -295,13 +295,13 @@ void Block_GetTexture(mc::inventory::Slot block, Direction direction, int16_t* o
 					break;
 			}
 			break;
-        case Block::Lava:
+        case BlockID::Lava:
 			i=icon.lava;
 			break;
-        case Block::Water:
+        case BlockID::Water:
 			i=icon.water;
 			break;
-        case Block::Grass_Path:
+        case BlockID::Grass_Path:
 			switch (direction) {
                 case Direction::Bottom:
 					i = icon.dirt;
@@ -314,37 +314,37 @@ void Block_GetTexture(mc::inventory::Slot block, Direction direction, int16_t* o
 					break;
 			}
 			break;
-        case Block::Gold_Block:
+        case BlockID::Gold_Block:
 			i=icon.gold_block;
 			break;
-        case Block::Gold_Ore:
+        case BlockID::Gold_Ore:
 			i=icon.gold_ore;
 			break;
-        case Block::Coal_Block:
+        case BlockID::Coal_Block:
 			i=icon.coal_block;
 			break;
-        case Block::Coal_Ore:
+        case BlockID::Coal_Ore:
 			i=icon.coal_ore;
 			break;
-        case Block::Iron_Block:
+        case BlockID::Iron_Block:
 			i=icon.iron_block;
 			break;
-        case Block::Iron_Ore:
+        case BlockID::Iron_Ore:
 			i=icon.iron_ore;
 			break;
-        case Block::Diamond_Block:
+        case BlockID::Diamond_Block:
 			i=icon.diamond_block;
 			break;
-        case Block::Diamond_Ore:
+        case BlockID::Diamond_Ore:
 			i=icon.diamond_ore;
 			break;
-        case Block::Emerald_Block:
+        case BlockID::Emerald_Block:
 			i=icon.emerald_block;
 			break;
-        case Block::Emerald_Ore:
+        case BlockID::Emerald_Ore:
 			i=icon.emerald_ore;
 			break;
-        case Block::Furnace:
+        case BlockID::Furnace:
 			switch (direction) {
                 case Direction::South:
 					i = icon.furnace_front;
@@ -363,8 +363,8 @@ void Block_GetTexture(mc::inventory::Slot block, Direction direction, int16_t* o
 	out_uv[1] = i.v;
 }
 
-void Block_GetColor(Block block, Metadata metadata, Direction direction, Metadata out_rgb[]) {
-	if ((block == Block::Grass && direction == Direction::Top) || block == Block::Leaves) {
+void Block_GetColor(BlockID block, Metadata metadata, Direction direction, Metadata out_rgb[]) {
+	if ((block == BlockID::Grass && direction == Direction::Top) || block == BlockID::Leaves) {
 		out_rgb[0] = 140;
 		out_rgb[1] = 214;
 		out_rgb[2] = 123;
@@ -373,7 +373,7 @@ void Block_GetColor(Block block, Metadata metadata, Direction direction, Metadat
 	// white, orange, magenta, light blue, yellow, lime, pink, gray, silver, cyan, purple, blue, green, red, black
 	const uint32_t dies[] = {(16777215), (14188339), (11685080), (6724056), (15066419), (8375321), (15892389), (5000268),
 				 (10066329), (5013401),  (8339378),  (3361970), (6704179),  (6717235), (10040115), (1644825)};
-	if (block == Block::Wool) {
+	if (block == BlockID::Wool) {
 		out_rgb[0] = ((dies[metadata] >> 16) & 0xff);
 		out_rgb[1] = (((dies[metadata]) >> 8) & 0xff);
 		out_rgb[2] = ((dies[metadata]) & 0xff);
@@ -384,8 +384,8 @@ void Block_GetColor(Block block, Metadata metadata, Direction direction, Metadat
 	}
 }
 
-bool Block_Opaque(Block block, Metadata metadata) { return block != Block::Air && block != Block::Glass && block != Block::Door_Top && block != Block::Door_Bottom; }
+bool Block_Opaque(BlockID block, Metadata metadata) { return block != BlockID::Air && block != BlockID::Glass && block != BlockID::Door_Top && block != BlockID::Door_Bottom; }
 
-bool Block_Solid(Block block) {
-    return block != Block::Air && block != Block::Lava && block != Block::Water;
+bool Block_Solid(BlockID block) {
+    return block != BlockID::Air && block != BlockID::Lava && block != BlockID::Water;
 }

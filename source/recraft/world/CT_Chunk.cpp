@@ -62,7 +62,7 @@ void ChunkColumn::GenerateHeightmap() {
                     auto chunk = GetChunk(i);
                     if (chunk->IsEmpty()) continue;
                     for (int j = Chunk::Size - 1; j >= 0; --j) {
-                        if (chunk->GetBlock(x,j,z) != Block::Air) {
+                        if (chunk->GetBlock(x,j,z) != BlockID::Air) {
                             heightmap[x][z] = i * Chunk::Size + j + 1;
                             i = -1;
                             break;
@@ -93,14 +93,14 @@ void ChunkColumn::SetMetadata(mc::Vector3i position, Metadata metadata) {
     ++revision;
 }
 
-Block ChunkColumn::GetBlock(mc::Vector3i position) {
+BlockID ChunkColumn::GetBlock(mc::Vector3i position) {
     return GetChunk(position.y / Chunk::Size)->GetBlock(position.x,position.y - (position.y / Chunk::Size * Chunk::Size),position.z);
 }
 
 
 // resets the meta data
 /// DO NOT USE THIS MANUALLY, AS THIS WONT UPDATE RENDERING-RELATED DATA
-void ChunkColumn::SetBlock(mc::Vector3i position, Block block) {
+void ChunkColumn::SetBlock(mc::Vector3i position, BlockID block) {
     ChunkPtr chunk = GetChunk(position.y / Chunk::Size);
     mc::Vector3i localPos = position;
     localPos.y = position.y % Chunk::Size;
@@ -108,7 +108,7 @@ void ChunkColumn::SetBlock(mc::Vector3i position, Block block) {
     SetMetadata(position, 0);
 }
 
-void ChunkColumn::SetBlockAndMeta(mc::Vector3i position, Block block, uint8_t metadata) {
+void ChunkColumn::SetBlockAndMeta(mc::Vector3i position, BlockID block, uint8_t metadata) {
     ChunkPtr chunk = GetChunk(position.y / Chunk::Size);
     mc::Vector3i localPos = position;
     localPos.y = position.y % Chunk::Size;
@@ -135,8 +135,8 @@ bool Chunk::IsEmpty() {
     // Check all blocks in the chunk
     for (int i = 0; i < BlockCount; ++i) {
         u16 paletteId = GetPackedBlockId(i);
-        Block block = BlockPalette::GetBlock(paletteId);
-        if (block != Block::Air) {
+        BlockID block = BlockPalette::GetBlock(paletteId);
+        if (block != BlockID::Air) {
             empty = false;
             return false;
         }

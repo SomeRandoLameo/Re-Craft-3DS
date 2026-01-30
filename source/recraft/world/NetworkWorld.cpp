@@ -27,7 +27,7 @@ void NetworkWorld::Test() {
     for (s32 x = 0; x < Chunk::Size; ++x) {                     // 0-15 for x
         for (s32 z = 0; z < Chunk::Size; ++z) {                 // 0-15 for Y
             for (s32 y = 0; y < Chunk::Size; ++y) {             // 0-15 for Z
-                m_world->SetBlock(mc::Vector3i(x,y,z), Block::Dirt);            // Set Block at (x,y,z) to Dirt
+                m_world->SetBlock(mc::Vector3i(x,y,z), BlockID::Dirt);            // Set Block at (x,y,z) to Dirt
             }
         }
     }

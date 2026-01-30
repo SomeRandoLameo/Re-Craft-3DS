@@ -62,14 +62,14 @@ public:
 
     mc::block::BlockEntityPtr GetBlockEntity(mc::Vector3i pos);
 
-    Block GetBlock(mc::Vector3i position);
-    void SetBlock(mc::Vector3i position, Block block);
+    BlockID GetBlock(mc::Vector3i position);
+    void SetBlock(mc::Vector3i position, BlockID block);
     uint8_t GetMetadata(mc::Vector3i position);
     void SetMetadata(mc::Vector3i position, uint8_t metadata);
 
     std::vector<AABB> GetCubes(const AABB& aabb);
 
-    void SetBlockAndMeta(mc::Vector3i position, Block block, uint8_t metadata);
+    void SetBlockAndMeta(mc::Vector3i position, BlockID block, uint8_t metadata);
 
     void UpdateChunkCache(int originX, int originZ);
 

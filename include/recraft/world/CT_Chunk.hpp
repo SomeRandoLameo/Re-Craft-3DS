@@ -14,11 +14,11 @@
 
 class BlockPalette {
 public:
-    static Block GetBlock(u16 paletteId) {
-        return static_cast<Block>(paletteId);
+    static BlockID GetBlock(u16 paletteId) {
+        return static_cast<BlockID>(paletteId);
     }
 
-    static u16 GetId(Block block) {
+    static u16 GetId(BlockID block) {
         return static_cast<u16>(block);
     }
 
@@ -51,21 +51,21 @@ public:
 	uint32_t vboRevision;
 	bool forceVBOUpdate;
 
-    Block GetBlock(mc::Vector3i pos) const {
+    BlockID GetBlock(mc::Vector3i pos) const {
 		int blockIndex = pos.x + pos.y * Size + pos.z * Size * Size;
 		u16 paletteId = GetPackedBlockId(blockIndex);
 		return BlockPalette::GetBlock(paletteId);
     }
 
     /// DO NOT USE THIS MANUALLY
-    void SetBlock(mc::Vector3i pos, Block block) {
+    void SetBlock(mc::Vector3i pos, BlockID block) {
 		int blockIndex = pos.x + pos.y * Size + pos.z * Size * Size;
 		u16 paletteId = BlockPalette::GetId(block);
 	    SetPackedBlockId(blockIndex, paletteId);
     }
 
     //TODO: REMOVE
-    Block GetBlock(int x, int y, int z) const {
+    BlockID GetBlock(int x, int y, int z) const {
         return GetBlock(mc::Vector3i(x, y, z));
     }
 
@@ -179,11 +179,11 @@ public:
 
     void SetMetadata(mc::Vector3i position, Metadata metadata);
 
-    Block GetBlock(mc::Vector3i position);
+    BlockID GetBlock(mc::Vector3i position);
 
-    void SetBlock(mc::Vector3i position, Block block);
+    void SetBlock(mc::Vector3i position, BlockID block);
 
-    void SetBlockAndMeta(mc::Vector3i position, Block block, Metadata metadata);
+    void SetBlockAndMeta(mc::Vector3i position, BlockID block, Metadata metadata);
 
     void AddBlockEntity(mc::block::BlockEntityPtr blockEntity) {
         m_BlockEntities.insert(std::make_pair(blockEntity->GetPosition(), blockEntity));

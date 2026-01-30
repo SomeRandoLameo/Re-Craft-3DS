@@ -14,7 +14,8 @@
 #include "mclib/block/Block.h"
 #include "mclib/inventory/Slot.h"
 
-enum class Block : u16 {
+
+enum class BlockID : u16 {
     Air,
     Stone,
     Dirt,
@@ -66,8 +67,8 @@ void* Block_GetTextureMap();
 
 void Block_GetTexture(mc::inventory::Slot block, Direction direction, int16_t* out_uv);
 
-void Block_GetColor(Block block, Metadata metadata, Direction direction, Metadata out_rgb[]);
+void Block_GetColor(BlockID block, Metadata metadata, Direction direction, Metadata out_rgb[]);
 
-bool Block_Opaque(Block block, Metadata metadata);
+bool Block_Opaque(BlockID block, Metadata metadata);
 
-bool Block_Solid(Block block);
+bool Block_Solid(BlockID block);

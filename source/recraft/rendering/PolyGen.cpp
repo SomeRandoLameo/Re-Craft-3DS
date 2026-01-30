@@ -68,7 +68,7 @@ const WorldVertex cube_sides_lut[] = {
 };
 
 
-Block fastBlockFetch(World* world, ChunkColumnPtr column, ChunkPtr chunk, int x, int y, int z) {
+BlockID fastBlockFetch(World* world, ChunkColumnPtr column, ChunkPtr chunk, int x, int y, int z) {
     return (x < 0 || y < 0 || z < 0 || x >= Chunk::Size || y >= Chunk::Size || z >= Chunk::Size)
         ? world->GetBlock(mc::Vector3i(
               (column->x * Chunk::Size) + x,
@@ -144,7 +144,7 @@ void PolyGen_Harvest(DebugUI* debugUi) {
 	}
 }
 
-void addFace(int x, int y, int z, Direction dir, Block block, uint8_t metadata, int ao, bool transparent) {
+void addFace(int x, int y, int z, Direction dir, BlockID block, uint8_t metadata, int ao, bool transparent) {
     if (x >= 0 && y >= 0 && z >= 0 && x < Chunk::Size && y < Chunk::Size && z < Chunk::Size) {
         faceBuffer[currentFace++] = Face{static_cast<int8_t>(x), static_cast<int8_t>(y), static_cast<int8_t>(z), dir, block, static_cast<int8_t>(ao), metadata, transparent};
         transparentFaces += transparent;
@@ -176,9 +176,9 @@ uint16_t floodFill(World* world, ChunkColumnPtr chunk, Chunk* cluster, int x, in
                     floodfill_visited[x][y][z] |= 1;
                     floodfill_queue.push_back((QueueElement){static_cast<int8_t>(x), static_cast<int8_t>(y), static_cast<int8_t>(z)});
                 }
-                if ((cluster->GetBlock(item.x,item.y,item.z) == Block::Air ||
+                if ((cluster->GetBlock(item.x,item.y,item.z) == BlockID::Air ||
                      Block_Opaque(cluster->GetBlock(x,y,z), cluster->metadataLight[x][y][z] & 0xf)) &&
-                    cluster->GetBlock(x,y,z) != Block::Air) {
+                    cluster->GetBlock(x,y,z) != BlockID::Air) {
                     addFace(x, y, z, DirectionOpposite[i], cluster->GetBlock(x,y,z),
                             cluster->metadataLight[x][y][z] & 0xf, 0,
                             !Block_Opaque(cluster->GetBlock(x,y,z), cluster->metadataLight[x][y][z] & 0xf));
@@ -235,9 +235,9 @@ void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context) 
                         if (!Block_Opaque(chunk->GetBlock(x,y,z), chunk->metadataLight[x][y][z] & 0xf)){
                             visibility |= floodFill(world, item.column, chunk, x, y, z, xDir, yDir, zDir);
                         }
-                        Block block = fastBlockFetch(world, item.column, chunk, x + (!x ? -1 : 1), y, z);
+                        BlockID block = fastBlockFetch(world, item.column, chunk, x + (!x ? -1 : 1), y, z);
                         uint8_t meta = fastMetadataFetch(world, item.column, chunk, x + (!x ? -1 : 1), y, z);
-                        if (!Block_Opaque(block, meta) && chunk->GetBlock(x,y,z) != Block::Air) {
+                        if (!Block_Opaque(block, meta) && chunk->GetBlock(x,y,z) != BlockID::Air) {
                             addFace(
                                 x, y, z, xDir, chunk->GetBlock(x,y,z), chunk->metadataLight[x][y][z] & 0xf,
                                 0,
@@ -266,9 +266,9 @@ void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context) 
                             visibility |= floodFill(world, item.column, chunk, x, y, z, xDir, yDir, zDir);
                         }
 
-                        Block block = fastBlockFetch(world, item.column, chunk, x, y + (!y ? -1 : 1), z);
+                        BlockID block = fastBlockFetch(world, item.column, chunk, x, y + (!y ? -1 : 1), z);
                         uint8_t meta = fastMetadataFetch(world, item.column, chunk, x, y + (!y ? -1 : 1), z);
-                        if (!Block_Opaque(block, meta) && chunk->GetBlock(x,y,z) != Block::Air) {
+                        if (!Block_Opaque(block, meta) && chunk->GetBlock(x,y,z) != BlockID::Air) {
                             addFace(
                                 x, y, z, yDir, chunk->GetBlock(x,y,z), chunk->metadataLight[x][y][z] & 0xf,
                                 0,
@@ -299,9 +299,9 @@ void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context) 
                             visibility |= floodFill(world, item.column, chunk, x, y, z, xDir, yDir, zDir);
                         }
 
-                        Block block = fastBlockFetch(world, item.column, chunk, x, y, z + (!z ? -1 : 1));
+                        BlockID block = fastBlockFetch(world, item.column, chunk, x, y, z + (!z ? -1 : 1));
                         if (!Block_Opaque(block, chunk->metadataLight[x][y][z] & 0xf) &&
-                            chunk->GetBlock(x,y,z) != Block::Air) {
+                            chunk->GetBlock(x,y,z) != BlockID::Air) {
                             addFace(
                                 x, y, z, zDir, chunk->GetBlock(x,y,z), chunk->metadataLight[x][y][z] & 0xf,
                                 0,
