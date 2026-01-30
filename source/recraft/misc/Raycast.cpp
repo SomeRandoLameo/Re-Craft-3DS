@@ -1,7 +1,7 @@
 #include "misc/Raycast.hpp"
 #include "misc/VecMath.hpp"
 
-#include <stdbool.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -9,27 +9,27 @@
 
 static constexpr int INF = (World::ChunkCacheSize / 2 * Chunk::Size);
 
-bool Raycast_Cast(World* world, mc::Vector3d inpos, mc::Vector3d raydir, Raycast_Result* out) {
-    mc::Vector3d map = mc::Vector3d(
+bool Raycast_Cast(World* world, mc::Vector3f inpos, mc::Vector3f raydir, Raycast_Result* out) {
+    mc::Vector3f map = mc::Vector3f(
             FastFloor(inpos.x),
             FastFloor(inpos.y),
             FastFloor(inpos.z)
             );
 
-    mc::Vector3d square = mc::Vector3d(
+    mc::Vector3f square = mc::Vector3f(
             raydir.x * raydir.x,
             raydir.y * raydir.y,
             raydir.z * raydir.z
             );
 
-    mc::Vector3d deltaDist = mc::Vector3d(
+    mc::Vector3f deltaDist = mc::Vector3f(
             sqrtf(1.f + (square.y + square.z) / square.x),
             sqrtf(1.f + (square.x + square.z) / square.y),
             sqrtf(1.f + (square.x + square.y) / square.z)
             );
 
-    mc::Vector3d step = mc::Vector3d(0,0,0);
-    mc::Vector3d sideDist = mc::Vector3d(0,0,0);
+    mc::Vector3f step = mc::Vector3f(0,0,0);
+    mc::Vector3f sideDist = mc::Vector3f(0,0,0);
 	if (raydir.x < 0) {
 		step.x = -1;
 		sideDist.x = (inpos.x - map.x) * deltaDist.x;
@@ -68,8 +68,8 @@ bool Raycast_Cast(World* world, mc::Vector3d inpos, mc::Vector3d raydir, Raycast
 			side = 2;
 		}
 
-		if (world->GetBlockID(mc::ToVector3i(map)) != BlockID::Air ||
-            world->GetBlockID(mc::ToVector3i(map)) == BlockID::Lava) hit = 1;
+		if (world->GetBlockID(ToVector3i(map)) != BlockID::Air 
+		 || world->GetBlockID(ToVector3i(map)) == BlockID::Lava) hit = 1;
 		// if (world->errFlags & World_ErrUnloadedBlockRequested) break;
 
 		if (steps++ > INF) break;
@@ -99,8 +99,8 @@ bool Raycast_Cast(World* world, mc::Vector3d inpos, mc::Vector3d raydir, Raycast
 			break;
 	}
 
-	mc::Vector3d dist = map - inpos;
-	out->distSqr = Vector3d_MagSqr(dist);
+	mc::Vector3f dist = map - inpos;
+	out->distSqr = Vector3f_MagSqr(dist);
 	out->hitPos = ToVector3i(map);
 
     // TODO: Add Entities to damage

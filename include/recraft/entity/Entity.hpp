@@ -1,18 +1,17 @@
 #pragma once
 
-#include <mclib/common/Vector.h>
 #include "misc/VecMath.hpp"
 #include "phys/AABB.hpp"
-#include "world/CT_World.hpp"
 
+class World;
 class Entity {
 public:
     Entity(World* world);
     ~Entity() = default;
 
-    mc::Vector3f position       = mc::Vector3f(0.0f, 0.0f, 0.0f);
-    mc::Vector3f oldPosition    = mc::Vector3f(0.0f, 0.0f, 0.0f);
-    mc::Vector3f deltaPosition  = mc::Vector3f(0.0f, 0.0f, 0.0f);
+    mc::Vector3f position       = vecZero;
+    mc::Vector3f oldPosition    = vecZero;
+    mc::Vector3f deltaPosition  = vecZero;
 
     bool onGround = false;
     bool removed = false;

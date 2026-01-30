@@ -6,7 +6,7 @@ Frustum::Frustum() {
         m_plane = FVec4_New(0.f, 0.f, 0.f, 0.f);
     }
     for (auto & m_corner : m_corners) {
-        m_corner = mc::Vector3d(0.f, 0.f, 0.f);
+        m_corner = mc::Vector3f(0.f, 0.f, 0.f);
     }
 }
 
@@ -24,8 +24,8 @@ void Frustum::UpdateFromMatrix(const C3D_Mtx& vp) {
     m_planes[Frustum_Far]    = FVec4_Normalize(FVec4_Add(rowW, rowZ));
 }
 
-void Frustum::UpdateCorners(const mc::Vector3d& position, const mc::Vector3d& forward,
-                            const mc::Vector3d& right, const mc::Vector3d& up,
+void Frustum::UpdateCorners(const mc::Vector3f& position, const mc::Vector3f& forward,
+                            const mc::Vector3f& right, const mc::Vector3f& up,
                             float fov, float aspectRatio, float nearPlane, float farPlane) {
     float tan2halffov = 2.f * tanf(fov / 2.f);
 
@@ -35,17 +35,17 @@ void Frustum::UpdateCorners(const mc::Vector3d& position, const mc::Vector3d& fo
     float hFar = tan2halffov * farPlane;
     float wFar = hFar * aspectRatio;
 
-    mc::Vector3d cNear = position + Vector3d_Scale(forward, nearPlane);
-    mc::Vector3d cFar  = position + Vector3d_Scale(forward, farPlane);
+    mc::Vector3f cNear = position + forward * nearPlane;
+    mc::Vector3f cFar  = position + forward * farPlane;
 
-    m_corners[Frustum_NearBottomLeft]  = ((cNear - Vector3d_Scale(up, hNear * 0.5f)) - Vector3d_Scale(right, wNear * 0.5f));
-    m_corners[Frustum_NearBottomRight] = ((cNear - Vector3d_Scale(up, hNear * 0.5f)) + Vector3d_Scale(right, wNear * 0.5f));
-    m_corners[Frustum_NearTopLeft]     = ((cNear + Vector3d_Scale(up, hNear * 0.5f)) - Vector3d_Scale(right, wNear * 0.5f));
-    m_corners[Frustum_NearTopRight]    = ((cNear + Vector3d_Scale(up, hNear * 0.5f)) + Vector3d_Scale(right, wNear * 0.5f));
-    m_corners[Frustum_FarBottomLeft]   = ((cFar  - Vector3d_Scale(up, hFar * 0.5f))  - Vector3d_Scale(right, wFar * 0.5f));
-    m_corners[Frustum_FarBottomRight]  = ((cFar  - Vector3d_Scale(up, hFar * 0.5f))  + Vector3d_Scale(right, wFar * 0.5f));
-    m_corners[Frustum_FarTopLeft]      = ((cFar  + Vector3d_Scale(up, hFar * 0.5f))  - Vector3d_Scale(right, wFar * 0.5f));
-    m_corners[Frustum_FarTopRight]     = ((cFar  + Vector3d_Scale(up, hFar * 0.5f))  + Vector3d_Scale(right, wFar * 0.5f));
+    m_corners[Frustum_NearBottomLeft]  = ((cNear - up * (hNear * 0.5f)) - right * (wNear * 0.5f));
+    m_corners[Frustum_NearBottomRight] = ((cNear - up * (hNear * 0.5f)) + right * (wNear * 0.5f));
+    m_corners[Frustum_NearTopLeft]     = ((cNear + up * (hNear * 0.5f)) - right * (wNear * 0.5f));
+    m_corners[Frustum_NearTopRight]    = ((cNear + up * (hNear * 0.5f)) + right * (wNear * 0.5f));
+    m_corners[Frustum_FarBottomLeft]   = ((cFar  - up * (hFar * 0.5f))  - right * (wFar * 0.5f));
+    m_corners[Frustum_FarBottomRight]  = ((cFar  - up * (hFar * 0.5f))  + right * (wFar * 0.5f));
+    m_corners[Frustum_FarTopLeft]      = ((cFar  + up * (hFar * 0.5f))  - right * (wFar * 0.5f));
+    m_corners[Frustum_FarTopRight]     = ((cFar  + up * (hFar * 0.5f))  + right * (wFar * 0.5f));
 }
 
 bool Frustum::IsPointVisible(C3D_FVec point) const {
@@ -59,8 +59,8 @@ bool Frustum::IsPointVisible(C3D_FVec point) const {
 }
 //TODO: Use actual AABB from MCLib
 bool Frustum::IsAABBVisible(C3D_FVec origin, C3D_FVec size) const {
-    mc::Vector3d min(origin.x, origin.y, origin.z);
-    mc::Vector3d max(origin.x + size.x, origin.y + size.y, origin.z + size.z);
+    mc::Vector3f min(origin.x, origin.y, origin.z);
+    mc::Vector3f max(origin.x + size.x, origin.y + size.y, origin.z + size.z);
 
     // Check if AABB is outside any frustum plane
     for (auto m_plane : m_planes) {

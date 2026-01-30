@@ -3,7 +3,7 @@
 #include "../misc/Xorshift.hpp"
 #include "CT_Chunk.hpp"
 
-#include <stdbool.h>
+
 #include <vector>
 #include <3ds.h>
 

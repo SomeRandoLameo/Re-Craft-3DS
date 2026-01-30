@@ -1,22 +1,20 @@
 ﻿#pragma once
 
-//mclib
-#include <mclib/common/Vector.h>
-
-#include <vector>
 #include "Entity.hpp"
-#include "entity/Damage.hpp"
 #include "gui/CT_Inventory.hpp"
-#include "gui/DebugUI.hpp"
 #include "input/PlayerInput.hpp"
 #include "inventory/ItemStack.hpp"
 #include "misc/Raycast.hpp"
 #include "misc/VecMath.hpp"
 #include "phys/AABB.hpp"
-#include "world/CT_World.hpp"
 
+#include <vector>
 
 //TODO: Integrate Entity propperly
+class Damage;
+class DebugUI;
+class World;
+
 class Player : public Entity {
 public:
     Player(World* world);
@@ -24,19 +22,19 @@ public:
 
     void Update(Damage* dmg);
     void UpdateMovement(DebugUI* dbg, float dt);
-    void Move(float dt, mc::Vector3d accl);
+    void Move(float dt, mc::Vector3f accl);
     void PlaceBlock();
     void HurtEntity();
     void BreakBlock();
     void Interact(DebugUI* dbg);
 
-    void Jump(mc::Vector3d accl);
+    void Jump(mc::Vector3f accl);
+    bool CanMove(mc::Vector3f newVec);
 
-    mc::Vector3d velocity = c_vecZero;
-
-    mc::Vector3d forwardVec = c_vecZero;
-    mc::Vector3d rightVec   = c_vecZero;
-    mc::Vector3d movement   = c_vecZero;
+    mc::Vector3f forwardVec = vecZero;
+    mc::Vector3f rightVec   = vecZero;
+    mc::Vector3f movement   = vecZero;
+    mc::Vector3f velocity   = vecZero;
 
     float speed     = 0.f;
     float bobbing = 0.f;
@@ -50,12 +48,11 @@ public:
     bool releasedCrouch = false;
     bool crouching = false;
 
-
     // experience is a value between 0 and 0.99*
     float experience = 0.1;
     float experienceLevel = 5000000;
 
-    mc::Vector3d view = mc::Vector3d(0, 0, -1);
+    mc::Vector3f view = mc::Vector3f(0, 0, -1);
     bool autoJumpEnabled = true;
 
     float simStepAccum = 0.f;
@@ -72,7 +69,7 @@ public:
 
     float rndy = 0.f; // whatever this is
 
-    mc::Vector3d spawnPos = mc::Vector3d(0, 0, 0);
+    mc::Vector3f spawnPos = vecZero;
 
     bool spawnset = false;
 

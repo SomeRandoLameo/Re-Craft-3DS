@@ -66,7 +66,7 @@ CubeRenderer::~CubeRenderer() {
     linearFree(m_cloudVBO);
 }
 
-void CubeRenderer::Draw(int projUniform, C3D_Mtx* projectionview, World* world, mc::Vector3d position) {
+void CubeRenderer::Draw(int projUniform, C3D_Mtx* projectionview, World* world, mc::Vector3f position) {
     C3D_Mtx model;
     Mtx_Identity(&model);
 

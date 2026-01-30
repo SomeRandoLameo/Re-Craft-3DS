@@ -78,6 +78,8 @@ ReCraftCore::ReCraftCore() {
         ImGui::Text("HP: %i", m_player->hp);
         ImGui::Text("Hunger: %i (Timer: %i)", m_player->hunger, m_player->hungertimer);
         ImGui::Text("Velocity Y: %.3f, RndY: %.3f", m_player->velocity.y, m_player->rndy);
+        ImGui::Spacing();
+        ImGui::Text("Move Pad: u%i d%i l%i r%i", m_player->getCtrlMove()->up, m_player->getCtrlMove()->down, m_player->getCtrlMove()->left, m_player->getCtrlMove()->right);
         ImGui::End();
     });
     // i want to use imgui anywhere
@@ -256,8 +258,11 @@ void ReCraftCore::RunMultiPlayer() {
             // rotation and much more)
             // TODO: Yaw is inverted, Server recieves movement as jittery, might be mclib
             mc::protocol::packets::out::PlayerPositionAndLookPacket response(
-                ToVector3d(m_player->position), m_player->yRot * 180.0f / 3.14159f, m_player->xRot * 180.0f / 3.14159f,
-                m_player->onGround);
+                ToVector3d(m_player->position),
+                RAD_TO_DEG(m_player->yRot),
+                RAD_TO_DEG(m_player->xRot),
+                           m_player->onGround);
+
             client->GetConnection()->SendPacket(&response);
 
             // Experimental, doesnt work

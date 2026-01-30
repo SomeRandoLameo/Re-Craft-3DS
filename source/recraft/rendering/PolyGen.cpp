@@ -6,7 +6,7 @@
 
 #include "entity/Player.hpp"
 
-#include <stdbool.h>
+
 
 #include <3ds.h>
 

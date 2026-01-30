@@ -28,7 +28,7 @@ void Hand::Draw(int projUniform, C3D_Mtx* projection, mc::inventory::Slot stack,
 		Mtx_RotateX(&model, -dist, true);
 		Mtx_Translate(&model, 0.f, -h * 0.3f, -dist * 0.25f, true);
 	}
-	if (stack.GetItemCount() == 0) Mtx_RotateZ(&model, DEG_TO_RAD * 40.f, true);
+	if (stack.GetItemCount() == 0) Mtx_RotateZ(&model, DEG_TO_RAD(40.f), true);
 	Mtx_Scale(&model, 0.28f, 0.28f, stack.GetItemCount() == 0 ? 0.8f : 0.28f);
 
 	Mtx_Multiply(&pm, projection, &model);

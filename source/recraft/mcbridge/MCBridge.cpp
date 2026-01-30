@@ -596,5 +596,5 @@ mc::inventory::Slot MCBridge::CTItemStackToMCLIBSlot(ItemStack in){
 }
 
 ItemStack MCBridge::MCLIBSlotToCTItemStack(mc::inventory::Slot in){
-    return (ItemStack){static_cast<BlockID>(in.GetItemId()),in.GetItemDamage(),in.GetItemCount()};
+    return (ItemStack){static_cast<BlockID>(in.GetItemId()),(u8)in.GetItemDamage(),in.GetItemCount()};
 }

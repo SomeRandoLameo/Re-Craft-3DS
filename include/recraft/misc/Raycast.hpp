@@ -12,4 +12,4 @@ typedef struct {
     bool entity;
 } Raycast_Result;
 
-bool Raycast_Cast(World* world, mc::Vector3d inpos, mc::Vector3d raydir, Raycast_Result* out);
+bool Raycast_Cast(World* world, mc::Vector3f inpos, mc::Vector3f raydir, Raycast_Result* out);
