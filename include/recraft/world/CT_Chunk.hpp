@@ -12,11 +12,25 @@
 #include <string.h>
 
 
+class BlockPalette {
+public:
+    static Block GetBlock(u16 paletteId) {
+        return static_cast<Block>(paletteId);
+    }
 
+    static u16 GetId(Block block) {
+        return static_cast<u16>(block);
+    }
+
+};
 
 class Chunk {
 public:
-    constexpr static int Size = 16; 
+    constexpr static int Size = 16;
+    constexpr static int BITS_PER_BLOCK = 10;
+    constexpr static size_t BlockCount = Size * Size * Size;
+    constexpr static size_t BYTES_NEEDED = (BlockCount * BITS_PER_BLOCK + 7) / 8;
+    constexpr static u16 BLOCK_MASK = (1 << BITS_PER_BLOCK) - 1;
 
 	int y;
 	Metadata metadataLight[Size][Size][Size];  // first half metadata, second half light
@@ -38,38 +52,78 @@ public:
 	bool forceVBOUpdate;
 
     Block GetBlock(mc::Vector3i pos) const {
-        return m_blocks[pos.x + pos.y * Size + pos.z * Size * Size];
+		int blockIndex = pos.x + pos.y * Size + pos.z * Size * Size;
+		u16 paletteId = GetPackedBlockId(blockIndex);
+		return BlockPalette::GetBlock(paletteId);
     }
 
     /// DO NOT USE THIS MANUALLY
     void SetBlock(mc::Vector3i pos, Block block) {
-        m_blocks[pos.x + pos.y * Size + pos.z * Size * Size] = block;
+		int blockIndex = pos.x + pos.y * Size + pos.z * Size * Size;
+		u16 paletteId = BlockPalette::GetId(block);
+	    SetPackedBlockId(blockIndex, paletteId);
     }
 
     //TODO: REMOVE
     Block GetBlock(int x, int y, int z) const {
-        return m_blocks[x + y * Size + z * Size * Size];
+        return GetBlock(mc::Vector3i(x, y, z));
     }
 
     bool IsEmpty();
 
     // raw data access for saving/loading only. Do not use for block manipulation!
-    // this might become replaced with popper save load functions in the future.
-    const Block* GetBlockData() const {
-        return m_blocks.data();
+    const u8* GetBlockData() const {
+        return m_packedBlocks;
     }
 
-    Block* GetBlockData() {
-        return m_blocks.data();
+    u8* GetBlockData() {
+        return m_packedBlocks;
     }
-
-    static constexpr size_t BlockCount = Size * Size * Size;
 
     static constexpr size_t GetBlockDataSize() {
-        return BlockCount * sizeof(Block);
+        return BYTES_NEEDED;
     }
+
 private:
-    std::array<Block, Size * Size * Size> m_blocks;
+    u8 m_packedBlocks[BYTES_NEEDED];
+
+    u16 GetPackedBlockId(int blockIndex) const {
+        size_t bitOffset = blockIndex * BITS_PER_BLOCK;
+        size_t byteOffset = bitOffset / 8;
+        int bitInByte = bitOffset % 8;
+
+        u32 value = 0;
+        value |= m_packedBlocks[byteOffset];
+        if (byteOffset + 1 < BYTES_NEEDED)
+            value |= (m_packedBlocks[byteOffset + 1] << 8);
+        if (byteOffset + 2 < BYTES_NEEDED)
+            value |= (m_packedBlocks[byteOffset + 2] << 16);
+
+        value >>= bitInByte;
+        return static_cast<u16>(value & BLOCK_MASK);
+    }
+
+    void SetPackedBlockId(int blockIndex, u16 id) {
+        size_t bitOffset = blockIndex * BITS_PER_BLOCK;
+        size_t byteOffset = bitOffset / 8;
+        int bitInByte = bitOffset % 8;
+
+        u32 value = 0;
+        value |= m_packedBlocks[byteOffset];
+        if (byteOffset + 1 < BYTES_NEEDED)
+            value |= (m_packedBlocks[byteOffset + 1] << 8);
+        if (byteOffset + 2 < BYTES_NEEDED)
+            value |= (m_packedBlocks[byteOffset + 2] << 16);
+
+        u32 clearMask = ~(BLOCK_MASK << bitInByte);
+        value = (value & clearMask) | ((u32)id << bitInByte);
+
+        m_packedBlocks[byteOffset] = value & 0xFF;
+        if (byteOffset + 1 < BYTES_NEEDED)
+            m_packedBlocks[byteOffset + 1] = (value >> 8) & 0xFF;
+        if (byteOffset + 2 < BYTES_NEEDED)
+            m_packedBlocks[byteOffset + 2] = (value >> 16) & 0xFF;
+    }
 };
 
 typedef Chunk* ChunkPtr;

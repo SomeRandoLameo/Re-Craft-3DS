@@ -14,8 +14,7 @@
 #include "mclib/block/Block.h"
 #include "mclib/inventory/Slot.h"
 
-//TODO: Instead of ENUM IDs, use the "flattened" strings
-enum class Block : u8 { // TODO: Convert to u16 once the o3DS hardware supports it
+enum class Block : u16 {
     Air,
     Stone,
     Dirt,

@@ -129,10 +129,13 @@ bool Chunk::IsEmpty() {
     if (emptyRevision == revision) {
         return empty;
     }
-    
+
     emptyRevision = revision;
 
-    for (Block block : m_blocks) {
+    // Check all blocks in the chunk
+    for (int i = 0; i < BlockCount; ++i) {
+        u16 paletteId = GetPackedBlockId(i);
+        Block block = BlockPalette::GetBlock(paletteId);
         if (block != Block::Air) {
             empty = false;
             return false;
