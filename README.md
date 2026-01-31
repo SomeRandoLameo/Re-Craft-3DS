@@ -3,7 +3,7 @@ a Minecraft (1.10.x - 1.12.x) client implemented on the 3DS (and new 3DS)
 
 ### IMPORTANT
 Due to personal reasons, I (SomeRandoLameo) will pause my part on development for the next 4-5 weeks.
-You can still reach out to me, do PRs and commits, i will accept / answer them, i just wont be pushing code for that time.
+You can still reach out to me, do PRs and commits, i will accept / answer them, i will just be pushing less to no code for that time.
 
 ### Other informations
 This is a hobby project. I cannot tell how far this will go in the future but for now this will stay active for a longer amount of time.
