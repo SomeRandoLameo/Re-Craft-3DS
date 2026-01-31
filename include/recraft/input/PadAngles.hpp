@@ -1,6 +1,8 @@
 #pragma once
 #include <3ds.h>
 
+#include <3ds/types.h>
+
 struct PadAngles {
     u8 up    = 0;
     u8 down  = 0;

@@ -1,8 +1,8 @@
 #pragma once
 
 #include <citro3d.h>
-#include <stdbool.h> // if really needed
-#include "../entity/Player.hpp"
+
+#include "entity/Player.hpp"
 #include "Frustum.hpp"
 
 //mclib

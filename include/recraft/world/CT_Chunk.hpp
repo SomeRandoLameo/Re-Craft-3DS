@@ -7,7 +7,7 @@
 #include "mclib/block/BlockEntity.h"
 
 #include <array>
-#include <stdbool.h>
+
 #include <stdint.h>
 #include <string.h>
 

@@ -47,7 +47,7 @@ git submodule update --init --recursive
 # Configure CMake
 # The Toolchain has to be set to the toolchain of DevKitPro.
 # The 3DS IP is used for the send target. If you dont want to send via your IDE, you can leave it empty
-cmake -B build -DCMAKE_TOOLCHAIN_FILE=/opt/devkitpro/3ds.cmake -D3DS_IP="YOUR_3DS_IP_HERE"
+cmake -B build -DCMAKE_TOOLCHAIN_FILE=/opt/devkitpro/cmake/3DS.cmake -D3DS_IP="YOUR_3DS_IP_HERE"
 
 # Build the project
 make Re-Craft-3DS_3dsx
@@ -55,8 +55,8 @@ make Re-Craft-3DS_3dsx
 # Install via 3dslink (3DS must be on network)
 make send
 
-# you can also use standalone 3DSLink
-cd cmake_build_debug/
+# Alternatively, you can also use standalone 3DSLink
+cd build/
 3dslink Re-Craft-3DS.3dsx
 
 # OR use FTP to transfer the .3dsx file to your 3DS manually

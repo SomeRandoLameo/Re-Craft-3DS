@@ -1,5 +1,7 @@
 #include "entity/Entity.hpp"
 
+#include "world/CT_World.hpp"
+
 Entity::Entity(World* world) : m_world(world) {}
 
 void Entity::MoveTo(mc::Vector3f pos, float yaw, float pitch)

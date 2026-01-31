@@ -10,7 +10,7 @@ public:
     CubeRenderer();
     ~CubeRenderer();
 
-    void Draw(int projUniform, C3D_Mtx* projectionview, World* world, mc::Vector3d position);
+    void Draw(int projUniform, C3D_Mtx* projectionview, World* world, mc::Vector3f position);
 
 private:
     WorldVertex* m_cloudVBO = nullptr;

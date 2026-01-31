@@ -1,6 +1,8 @@
 #include "world/NetworkWorld.hpp"
 #include "gui/DebugUI.hpp"
 #include "mcbridge/MCBridge.hpp"
+#include "misc/VecMath.hpp"
+
 //TODO: All of this needs to happen asynchronously in order for consoles not to disconnect due to timeout when loading
 NetworkWorld::NetworkWorld(World* world, mc::protocol::packets::PacketDispatcher* dispatcher)
     : mc::protocol::packets::PacketHandler(dispatcher)
@@ -84,10 +86,10 @@ void NetworkWorld::HandlePacket(mc::protocol::packets::in::BlockChangePacket* pa
 }
 
 void NetworkWorld::HandlePacket(mc::protocol::packets::in::ExplosionPacket* packet) {
-    mc::Vector3d explosionPos = packet->GetPosition();
+    mc::Vector3i explosionPos = ToVector3i(packet->GetPosition());
     for (mc::Vector3s offset : packet->GetAffectedBlocks()) {
-        mc::Vector3d absolutePos = explosionPos + mc::ToVector3d(offset);
-        m_world->SetBlockID(mc::ToVector3i(absolutePos), MCBridge::MCLibBlockToCTBlock(0));
+        mc::Vector3i absolutePos = explosionPos + ToVector3i(offset);
+        m_world->SetBlockID(absolutePos, MCBridge::MCLibBlockToCTBlock(0));
     }
 }
 

@@ -9,16 +9,16 @@
 class PlayerInput {
 public:
     struct Data {
+        PadAngles movePrev;
         PadAngles move;
         PadAngles look;
-        PadAngles movePrev;
-        PadAngles lookPrev;
     };
 
     Data data;
 
-    bool isMoved  = true;
-    bool isLooked = true;
+    bool isMoving   = true;
+    bool isMoveDiff = true;
+    bool isLooking  = true;
 
     void update();
 

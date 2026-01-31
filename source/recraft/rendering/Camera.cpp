@@ -19,7 +19,7 @@ void Camera::Update(Player* player, float iod) {
 	Mtx_PerspStereoTilt(&m_projection, currentFov, (400.f / 240.f), m_near, m_far, iod, 1.f, false);
 
 	// View bobbing at player head
-	mc::Vector3d playerHead(
+	mc::Vector3f playerHead(
 			player->position.x,
 			player->position.y + Player::EyeHeight + sinf(player->bobbing) * 0.1f + player->crouchAdd,
 			player->position.z
@@ -36,9 +36,9 @@ void Camera::Update(Player* player, float iod) {
 
 	m_frustum.UpdateFromMatrix(vpTemp);
 
-	mc::Vector3d forward(player->view.x, player->view.y, player->view.z);
-	mc::Vector3d right = Vector3d_crs(mc::Vector3d(0, 1, 0), mc::Vector3d(sinf(player->yRot), 0.f, cosf(player->yRot)));
-	mc::Vector3d up = Vector3d_crs(forward, right);
+	mc::Vector3f forward(player->view.x, player->view.y, player->view.z);
+	mc::Vector3f right = Vector3f_crs(vecY, mc::Vector3f(sinf(player->yRot), 0.f, cosf(player->yRot)));
+	mc::Vector3f up = Vector3f_crs(forward, right);
 
     m_frustum.UpdateCorners(playerHead, forward, right, up, m_fov, 400.f / 240.f, m_near, m_far);
 }
