@@ -3,31 +3,31 @@
 #include "CT_Chunk.hpp"
 #include "WorkQueue.hpp"
 
-#include "../misc/NumberUtils.hpp"
-#include "../misc/Xorshift.hpp"
+#include "misc/NumberUtils.hpp"
+#include "misc/Xorshift.hpp"
 #include "phys/AABB.hpp"
 
 
 #define UNDEADCHUNKS_COUNT (2 * World::ChunkCacheSize + World::ChunkCacheSize * World::ChunkCacheSize)
 
 
-typedef enum {
+enum WorldGenType{
     Smea,
     SuperFlat,
     Empty,
     WorldGenTypes_Count
-} WorldGenType;
+};
 
-typedef enum {
+enum Gamemode {
     Survival,
     Creative,
     adventure,
     Spectator,
     Gamemode_Count
-} Gamemode;
+};
 
-typedef struct {
-	uint64_t seed;
+struct GeneratorSettings{
+	u64 seed;
 	WorldGenType type;
 	//gamemode type;
 	union {
@@ -35,7 +35,7 @@ typedef struct {
 			// Keine Einstellungen...
 		} superflat;
 	} settings;
-} GeneratorSettings;
+};
 
 class ChunkWorker;
 class SaveManager;
@@ -64,12 +64,12 @@ public:
 
     BlockID GetBlockID(mc::Vector3i position);
     void SetBlockID(mc::Vector3i position, BlockID block);
-    uint8_t GetMetadata(mc::Vector3i position);
-    void SetMetadata(mc::Vector3i position, uint8_t metadata);
+    u8 GetMetadata(mc::Vector3i position);
+    void SetMetadata(mc::Vector3i position, u8 metadata);
 
     std::vector<AABB> GetCubes(const AABB& aabb);
 
-    void SetBlockAndMeta(mc::Vector3i position, BlockID block, uint8_t metadata);
+    void SetBlockAndMeta(mc::Vector3i position, BlockID block, u8 metadata);
 
     void UpdateChunkCache(int originX, int originZ);
 

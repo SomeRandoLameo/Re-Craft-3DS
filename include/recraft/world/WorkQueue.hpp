@@ -1,33 +1,31 @@
 #pragma once
 
-#include "../misc/Xorshift.hpp"
 #include "CT_Chunk.hpp"
-
 
 #include <vector>
 #include <3ds.h>
 
-typedef enum {
+enum WorkerItemType {
 	Load,
 	Save,
 	BaseGen,
 	Decorate,
 	PolyGen,
 	Count
-} WorkerItemType;
+};
 
-typedef struct {
+struct WorkerItem {
 	WorkerItemType type;
 	ChunkColumnPtr column;
-	uint32_t uuid;
-} WorkerItem;
+	u32 uuid;
+};
 
-typedef struct {
+struct WorkQueue {
     std::vector<WorkerItem> queue;
 
 	LightEvent itemAddedEvent;
 	LightLock listInUse;
-} WorkQueue;
+};
 
 void WorkQueue_Init(WorkQueue* queue);
 

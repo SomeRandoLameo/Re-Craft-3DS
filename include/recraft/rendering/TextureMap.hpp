@@ -13,17 +13,17 @@ enum Texture {
     MapTiles = MapSize / TileSize
 };
 
-typedef struct {
-	uint32_t textureHash;
-	int16_t u, v;
-} Texture_MapIcon;
+struct Texture_MapIcon {
+	u32 textureHash;
+	s16 u, v;
+} ;
 
-typedef struct {
+struct Texture_Map {
 	C3D_Tex texture;
 	std::array<Texture_MapIcon, Texture::MapTiles * Texture::MapTiles> icons;
-} Texture_Map;
+};
 
 void Texture_MapInit(Texture_Map* map, const char** files, int num_files);
 Texture_MapIcon Texture_MapGetIcon(Texture_Map* map, const char* filename);
 
-void Texture_TileImage8(uint8_t* src, uint8_t* dst, int size);
+void Texture_TileImage8(u8* src, u8* dst, int size);

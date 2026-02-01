@@ -2,11 +2,11 @@
 
 #include "gui/Screen.hpp"
 
-typedef struct {
+struct WorldInfo {
     uint32_t lastPlayed;
     char name[World::NameSize];
     char path[256];
-} WorldInfo;
+};
 
 class SelectWorldBotScreen : public Screen {
 public:

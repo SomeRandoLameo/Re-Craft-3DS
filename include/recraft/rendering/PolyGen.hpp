@@ -1,25 +1,24 @@
 #pragma once
 
-#include "../entity/Player.hpp"
-#include "../gui/DebugUI.hpp"
-#include "../world/CT_World.hpp"
-#include "../world/WorkQueue.hpp"
+#include "entity/Player.hpp"
+#include "gui/DebugUI.hpp"
+#include "world/CT_World.hpp"
+#include "world/WorkQueue.hpp"
 
-#include "VertexFmt.hpp"
-
+#include "rendering/VertexFmt.hpp"
 
 static std::vector<VBOUpdate> vboUpdates;
 
 static const int MAX_FACES_PER_CLUSTER = (Chunk::Size * Chunk::Size * Chunk::Size / 2 * 6);
 
-typedef struct {
-    int8_t x, y, z;
+struct Face {
+    s8 x, y, z;
     Direction direction;
     BlockID block;
-    int8_t ao;
-    uint8_t metadata;
+    s8 ao;
+    u8 metadata;
     bool transparent;
-} Face;
+};
 
 static World* world;
 static Player* player;
@@ -33,7 +32,7 @@ static LightLock updateLock;
 static Face faceBuffer[MAX_FACES_PER_CLUSTER];
 static int currentFace;
 static int transparentFaces;
-static uint8_t floodfill_visited[Chunk::Size][Chunk::Size][Chunk::Size];
+static u8 floodfill_visited[Chunk::Size][Chunk::Size][Chunk::Size];
 
 void PolyGen_Init(World* world_, Player* player_);
 void PolyGen_Deinit();

@@ -4,10 +4,10 @@
 
 #include <citro3d.h>
 
-typedef struct {
-	uint8_t fontWidth[1 << 8];
+struct Font {
+	u8 fontWidth[1 << 8];
 	C3D_Tex texture;
-} Font;
+};
 
 class FontLoader{
 public:
