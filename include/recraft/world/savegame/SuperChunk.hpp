@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../CT_Chunk.hpp"
+#include "world/CT_Chunk.hpp"
 #define SUPERCHUNK_SIZE 8
 #define SUPERCHUNK_BLOCKSIZE (SUPERCHUNK_SIZE * CHUNK_SIZE)
 
@@ -29,21 +29,21 @@
 
 int vec_expand_(char **data, int *length, int *capacity, int memsz);
 
-typedef struct {
+struct ChunkInfo {
     uint32_t position;
     uint32_t compressedSize;
     uint32_t actualSize;
     uint8_t blockSize;
     uint32_t revision;
-} ChunkInfo;
+};
 
 // TODO: Turn this into a class
-typedef struct {
+struct SuperChunk {
     int x, z;
     FILE* dataFile;
     ChunkInfo grid[SUPERCHUNK_SIZE][SUPERCHUNK_SIZE];
     vec_t(uint8_t) sectors;
-} SuperChunk;
+};
 
 inline static int ChunkToSuperChunkCoord(int x) { return (x + (int)(x < 0)) / SUPERCHUNK_SIZE - (int)(x < 0); }
 inline static int ChunkToLocalSuperChunkCoord(int x) { return x - ChunkToSuperChunkCoord(x) * SUPERCHUNK_SIZE; }

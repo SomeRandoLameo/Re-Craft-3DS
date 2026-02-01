@@ -1,12 +1,12 @@
 #pragma once
 
+#include "misc/VecMath.hpp"
 
-
-#include "VecMath.hpp"
-//mclib
-#include <mclib/common/Vector.h>
 //TODO: Use MCLIB AABB
-typedef struct { mc::Vector3f min, max; } Box;
+struct Box {
+    mc::Vector3f min;
+    mc::Vector3f max;
+};
 
 Box Box_Create(float x, float y, float z, float w, float h, float d);
 
