@@ -1,14 +1,11 @@
 #pragma once
 
-
 #include <stdint.h>
 
 #include "../world/Direction.hpp"
-
+#include "rendering/TextureMap.hpp"
 #include "mclib/block/Block.h"
 #include "mclib/inventory/Slot.h"
-
-
 
 enum class BlockID : u16 {
     Air,
@@ -27,8 +24,6 @@ enum class BlockID : u16 {
     Wool,
     Bedrock,
     Coarse,
-    Door_Top,
-   	Door_Bottom,
    	Snow_Grass,
    	Snow,
    	Obsidian,
@@ -156,7 +151,6 @@ public:
         return this;
     }
 
-    // Virtual methods for block behavior
     virtual void getTexture(Direction direction, int16_t* out_uv) const {
         switch (direction) {
         case Direction::Top:
@@ -192,8 +186,7 @@ public:
         out_rgb[2] = 255;
     }
 
-    // Getters
-    BlockID getID() const { return m_id; }
+    BlockID GetID() const { return m_id; }
     const char* getName() const { return m_name; }
     float getDestroyTime() const { return m_destroyTime; }
     bool isOpaque(Metadata metadata = 0) const { return m_opaque; }
@@ -213,93 +206,43 @@ protected:
     uint8_t m_lightEmission;
 };
 
-//TODO: Separate these into their own files
-class GrassBlock : public Block {
-public:
-    GrassBlock(BlockID id, const char* name) : Block(id, name) {}
-
-    void getColor(Metadata metadata, Direction direction, Metadata out_rgb[]) const override {
-        if (direction == Direction::Top) {
-            out_rgb[0] = 140;
-            out_rgb[1] = 214;
-            out_rgb[2] = 123;
-        } else {
-            Block::getColor(metadata, direction, out_rgb);
-        }
-    }
-};
-
-class LeavesBlock : public Block {
-public:
-    LeavesBlock(BlockID id, const char* name) : Block(id, name) {}
-
-    void getColor(Metadata metadata, Direction direction, Metadata out_rgb[]) const override {
-        out_rgb[0] = 140;
-        out_rgb[1] = 214;
-        out_rgb[2] = 123;
-    }
-};
-
-class WoolBlock : public Block {
-public:
-    WoolBlock(BlockID id, const char* name) : Block(id, name) {
-        setHasMetadata(true);
-    }
-
-    void getColor(Metadata metadata, Direction direction, Metadata out_rgb[]) const override {
-        const uint32_t dyes[] = {
-            0xFFFFFF, 0xD87F33, 0xB24CD8, 0x6699D8,
-            0xE5E533, 0x7FCC19, 0xF27FA5, 0x4C4C4C,
-            0x999999, 0x4C7F99, 0x7F3FB2, 0x334CB2,
-            0x664C33, 0x667F33, 0x993333, 0x191919
-        };
-
-        if (metadata < 16) {
-            uint32_t color = dyes[metadata];
-            out_rgb[0] = (color >> 16) & 0xFF;
-            out_rgb[1] = (color >> 8) & 0xFF;
-            out_rgb[2] = color & 0xFF;
-        } else {
-            Block::getColor(metadata, direction, out_rgb);
-        }
-    }
-};
+typedef Block* BlockPtr;
 
 class BlockRegistry {
 public:
     BlockRegistry();
     ~BlockRegistry();
 
-    static BlockRegistry& getInstance() {
+    static BlockRegistry& GetInstance() {
         static BlockRegistry instance;
         return instance;
     }
 
-    // Register a block (takes ownership)
-    Block* registerBlock(Block* block) {
-        uint16_t id = static_cast<uint16_t>(block->getID());
+    BlockPtr RegisterBlock(BlockPtr block) {
+        uint16_t id = static_cast<uint16_t>(block->GetID());
         while (id >= m_blocks.size()) {
-            m_blocks.push_back(nullptr);  // or m_blocks.emplace_back(nullptr);
+            m_blocks.push_back(nullptr);
         }
         m_blocks[id] = std::unique_ptr<Block>(block);
         return block;
     }
 
-    // Get block by ID
-    const Block* getBlock(BlockID id) const {
+    // Use this to get Block attributes
+    static const BlockPtr GetBlock(BlockID id) {
+        const auto& blocks = GetInstance().m_blocks;
         uint16_t index = static_cast<uint16_t>(id);
-        if (index < m_blocks.size() && m_blocks[index]) {
-            return m_blocks[index].get();
+        if (index < blocks.size() && blocks[index]) {
+            return blocks[index].get();
         }
-        return m_blocks[0].get(); // Return Air as default
+        return blocks[0].get();
     }
 
-    const Block* getBlock(uint16_t paletteId) const {
-        return getBlock(static_cast<BlockID>(paletteId));
+    // Use this to get Block attributes
+    static const BlockPtr GetBlock(uint16_t paletteId) {
+        return GetBlock(static_cast<BlockID>(paletteId));
     }
 
-    // Palette system (simple 1:1 mapping for now)
-    static BlockID GetBlock(uint16_t paletteId) {
+    static BlockID GetBlockID(uint16_t paletteId) {
         return static_cast<BlockID>(paletteId);
     }
 
@@ -307,9 +250,10 @@ public:
         return static_cast<uint16_t>(block);
     }
 
+    static void* GetTextureMap() { return &m_textureMap.texture; }
+
 private:
     std::vector<std::unique_ptr<Block>> m_blocks;
+
+    static Texture_Map m_textureMap;
 };
-
-
-void* Block_GetTextureMap();

@@ -107,7 +107,7 @@ ReCraftCore::~ReCraftCore() {
     delete m_renderer;
     m_chunkWorker.~ChunkWorker();
 
-    BlockRegistry::getInstance().~BlockRegistry();
+    BlockRegistry::GetInstance().~BlockRegistry();
     romfsExit();
     gfxExit();
 }
@@ -194,13 +194,19 @@ void ReCraftCore::InitMultiPlayer() {
 
     swkbdInit(&swkbd, SWKBD_TYPE_NORMAL, 2, -1);
     swkbdSetHintText(&swkbd, "Username");
-    swkbdInputText(&swkbd, buffer1, sizeof(buffer1));
+    if (swkbdInputText(&swkbd, buffer1, sizeof(buffer1)) != SWKBD_BUTTON_CONFIRM || buffer1[0] == '\0') {
+        SetScreen(new StartBotScreen, false);
+        return;
+    }
     m_mcBridge.SetUsername(buffer1);
 
     char buffer2[256];
     swkbdInit(&swkbd, SWKBD_TYPE_NORMAL, 2, -1);
     swkbdSetHintText(&swkbd, "Server IP (xxx.xxx.xxx.xxx)");
-    swkbdInputText(&swkbd, buffer2, sizeof(buffer2));
+    if (swkbdInputText(&swkbd, buffer2, sizeof(buffer2)) != SWKBD_BUTTON_CONFIRM || buffer2[0] == '\0') {
+        SetScreen(new StartBotScreen, false);
+        return;
+    }
     m_mcBridge.SetIPAddress(buffer2);
 
     m_mcBridge.connect();

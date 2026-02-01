@@ -1,7 +1,7 @@
 #include "rendering/Renderer.hpp"
 
 #include "ReCraftCore.hpp"
-#include "blocks/CT_Block.hpp"
+#include "blocks/Block.hpp"
 #include "gui/CT_Inventory.hpp"
 #include "gui/Gui.hpp"
 #include "gui/SpriteBatch.hpp"
@@ -133,7 +133,7 @@ void Renderer::RenderFrame(int eyeIndex, float iod) {
 
     //TODO: REMOVE
     if (*ReCraftCore::GetInstance()->GetGameState() != GameState::SelectWorld) {
-        C3D_TexBind(0, (C3D_Tex*)Block_GetTextureMap());
+        C3D_TexBind(0, (C3D_Tex*)BlockRegistry::GetTextureMap());
 
         m_worldRenderer->Render(!eyeIndex ? -iod : iod);
     }

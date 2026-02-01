@@ -67,6 +67,9 @@ public:
     u8 GetMetadata(mc::Vector3i position);
     void SetMetadata(mc::Vector3i position, u8 metadata);
 
+    BlockPtr GetBlock(mc::Vector3i position);
+    void SetBlock(mc::Vector3i position, BlockPtr block);
+
     std::vector<AABB> GetCubes(const AABB& aabb);
 
     void SetBlockAndMeta(mc::Vector3i position, BlockID block, u8 metadata);

@@ -61,47 +61,51 @@ void CreateWorldBotScreen::ButtonClicked() {
         m_confirmed_world_options = false;
         m_worldType = m_worldGenType;
 
-        static SwkbdState swkbd;
-        static char name[World::NameSize];
+        SwkbdState swkbd;
+        char name[World::NameSize];
+        memset(name, 0, sizeof(name));
 
         swkbdInit(&swkbd, SWKBD_TYPE_WESTERN, 2, World::NameSize);
-        swkbdSetValidation(&swkbd, SWKBD_NOTEMPTY_NOTBLANK, 0,  World::NameSize);
+        swkbdSetValidation(&swkbd, SWKBD_NOTEMPTY_NOTBLANK, 0, World::NameSize);
         swkbdSetHintText(&swkbd, "Enter the world name");
 
-        int button = swkbdInputText(&swkbd, name, 12);
+        int button = swkbdInputText(&swkbd, name, World::NameSize);
+
+        if (button != SWKBD_BUTTON_CONFIRM || name[0] == '\0') {
+            return;
+        }
 
         strcpy(m_out_name, name);
-        if (button == SWKBD_BUTTON_CONFIRM) {
-            strcpy(m_out_worldpath, m_out_name);
 
-            int length = strlen(m_out_worldpath);
+        strcpy(m_out_worldpath, m_out_name);
 
-            for (int i = 0; i < length; i++) {
-                if (m_out_worldpath[i] == '/' || m_out_worldpath[i] == '\\' || m_out_worldpath[i] == '?' ||
+        int length = strlen(m_out_worldpath);
+
+        for (int i = 0; i < length; i++) {
+            if (m_out_worldpath[i] == '/' || m_out_worldpath[i] == '\\' || m_out_worldpath[i] == '?' ||
                     m_out_worldpath[i] == ':' || m_out_worldpath[i] == '|' || m_out_worldpath[i] == '<' ||
                     m_out_worldpath[i] == '>')
                     m_out_worldpath[i] = '_';
-            }
-
-            while (true) {
-                bool alreadyExisting = false;
-                for (const auto& info : m_worlds) {
-                    if (!strcmp(m_out_worldpath, info.path)) {
-                        alreadyExisting = true;
-                        break;
-                    }
-                }
-                if (!alreadyExisting) break;
-
-                m_out_worldpath[length] = '_';
-                m_out_worldpath[length + 1] = '\0';
-                ++length;
-            }
-
-            m_newWorld = true;
-            ReCraftCore::GetInstance()->InitSinglePlayer(m_out_worldpath, name, &m_worldType, m_gamemode, m_newWorld);
-
         }
+
+        while (true) {
+            bool alreadyExisting = false;
+            for (const auto& info : m_worlds) {
+                if (!strcmp(m_out_worldpath, info.path)) {
+                    alreadyExisting = true;
+                    break;
+                }
+            }
+
+            if (!alreadyExisting) break;
+
+            m_out_worldpath[length] = '_';
+            m_out_worldpath[length + 1] = '\0';
+            ++length;
+        }
+
+        m_newWorld = true;
+        ReCraftCore::GetInstance()->InitSinglePlayer(m_out_worldpath, name, &m_worldType, m_gamemode, m_newWorld);
     }
     if (m_canceled_world_options){
         m_ReCraftCore->SetScreen(new SelectWorldBotScreen, false);

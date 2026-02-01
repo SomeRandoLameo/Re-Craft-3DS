@@ -1,5 +1,5 @@
 #include "rendering/WorldRenderer.hpp"
-#include "blocks/CT_Block.hpp"
+#include "blocks/Block.hpp"
 #include "gui/DebugUI.hpp"
 #include "rendering/Clouds.hpp"
 #include "rendering/Hand.hpp"
@@ -197,7 +197,7 @@ void WorldRenderer::Render(float iod) {
     m_hand->Draw(m_projectionUniform, m_cam.GetProjection(), m_player->quickSelectBar[m_player->quickSelectBarSlot],
                  m_player);
 
-    C3D_TexBind(0, (C3D_Tex*)Block_GetTextureMap());
+    C3D_TexBind(0, (C3D_Tex*)BlockRegistry::GetTextureMap());
 
     C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, m_projectionUniform, m_cam.GetVP());
 

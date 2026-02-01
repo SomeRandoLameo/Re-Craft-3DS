@@ -7,7 +7,7 @@ void BlockEvent_RandomTick(World* world, ChunkColumnPtr column, int x[], int y[]
 
             auto defaultPosition = mc::Vector3i(x[k], y[k] + i * Chunk::Size, z[k]);
 
-            BlockID block = column->GetBlockID(defaultPosition);
+            BlockPtr block = column->GetBlock(defaultPosition);
 
             auto blockPosition = mc::Vector3i(
                     defaultPosition.x,
@@ -15,24 +15,24 @@ void BlockEvent_RandomTick(World* world, ChunkColumnPtr column, int x[], int y[]
                     defaultPosition.z
             );
 
-            switch (block) {
+            switch (block->GetID()) {
             case BlockID::Dirt:
-					if (!BlockRegistry::getInstance().getBlock(column->GetBlockID(blockPosition))->isOpaque()) {
+					if (!column->GetBlock(blockPosition)->isOpaque()) {
                         column->SetBlockID(defaultPosition, BlockID::Grass);
 					}
 					break;
             case BlockID::Grass:
-					if (BlockRegistry::getInstance().getBlock(column->GetBlockID(blockPosition))->isOpaque()) {
+					if (column->GetBlock(blockPosition)->isOpaque()) {
                         column->SetBlockID(defaultPosition, BlockID::Dirt);
 					}
 					break;
             case BlockID::Snow_Grass:
-					if (BlockRegistry::getInstance().getBlock(column->GetBlockID(blockPosition))->isOpaque()) {
+					if (column->GetBlock(blockPosition)->isOpaque()) {
                         column->SetBlockID(defaultPosition, BlockID::Dirt);
 					}
 					break;
             case BlockID::Grass_Path:
-					if (BlockRegistry::getInstance().getBlock(column->GetBlockID(blockPosition))->isOpaque()) {
+					if (column->GetBlock(blockPosition)->isOpaque()) {
                         column->SetBlockID(defaultPosition, BlockID::Dirt);
 					}
 					break;

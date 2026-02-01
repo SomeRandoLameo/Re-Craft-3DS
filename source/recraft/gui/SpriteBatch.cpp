@@ -130,14 +130,14 @@ void SpriteBatch_PushIcon(mc::inventory::Slot block, int x, int y, int z) {
             continue;
         int16_t iconUV[2];
 
-        BlockRegistry::getInstance()
-            .getBlock((MCBridge::MCLIBSlotToCTItemStack(block).block))
+        BlockRegistry::GetInstance()
+            .GetBlock((MCBridge::MCLIBSlotToCTItemStack(block).block))
                 ->getTexture((Direction)i, iconUV);
 
         uint8_t color[3];
 
-        BlockRegistry::getInstance()
-            .getBlock((MCBridge::MCLIBSlotToCTItemStack(block).block))
+        BlockRegistry::GetInstance()
+            .GetBlock((MCBridge::MCLIBSlotToCTItemStack(block).block))
                 ->getColor(MCBridge::MCLIBSlotToCTItemStack(block).meta, (Direction)i, color);
 
         for (int j = 0; j < 5; j++) {
@@ -154,7 +154,7 @@ void SpriteBatch_PushIcon(mc::inventory::Slot block, int x, int y, int z) {
         WorldVertex topRight = vertices[i * 6 + 2];
         WorldVertex topLeft = vertices[i * 6 + 4];
 
-        C3D_Tex* texture = &((Texture_Map*)Block_GetTextureMap())->texture;
+        C3D_Tex* texture = &((Texture_Map*)BlockRegistry::GetTextureMap())->texture;
         ensureTexture(texture);
 
         int16_t color16 = SHADER_RGB(color[0] >> 3, color[1] >> 3, color[2] >> 3);

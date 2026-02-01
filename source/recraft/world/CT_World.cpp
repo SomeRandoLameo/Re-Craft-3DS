@@ -182,6 +182,25 @@ BlockID World::GetBlockID(mc::Vector3i position) {
     return chunk->GetBlockID(position);
 }
 
+BlockPtr World::GetBlock(mc::Vector3i position) {
+    if (position.y < 0 || position.y >= World::Height) {
+        return BlockRegistry::GetBlock(BlockID::Air);
+    }
+
+    ChunkColumnPtr chunk = GetChunkColumn(
+        WorldToChunkCoord(position.x),
+        WorldToChunkCoord(position.z)
+    );
+
+    if (!chunk) {
+        return BlockRegistry::GetBlock(BlockID::Air);
+    }
+
+    position.x = WorldToLocalCoord(position.x);
+    position.z = WorldToLocalCoord(position.z);
+    return chunk->GetBlock(position);
+}
+
 /**
  * Notifies neighboring chunks to update their graphics when a block changes.
  *
@@ -243,6 +262,21 @@ void World::SetBlockID(mc::Vector3i position, BlockID block) {
 	}
 }
 
+void World::SetBlock(mc::Vector3i position, BlockPtr block) {
+    if (position.y < 0 || position.y >= World::Height) return;
+    int chunkX = WorldToChunkCoord(position.x);
+    int chunkZ = WorldToChunkCoord(position.z);
+
+    ChunkColumnPtr column = GetChunkColumn(chunkX, chunkZ);
+    if (column) {
+        int localX = WorldToLocalCoord(position.x);
+        int localZ = WorldToLocalCoord(position.z);
+        column->SetBlock(mc::Vector3i(localX, position.y, localZ), block);
+
+        NotifyNeighbors(column, chunkX, chunkZ, localX, localZ, position.y);
+    }
+}
+
 void World::SetBlockAndMeta(mc::Vector3i position, BlockID block, uint8_t metadata) {
 	if (position.y < 0 || position.y >= World::Height) return;
 	int chunkX = WorldToChunkCoord(position.x);
@@ -292,7 +326,7 @@ std::vector<AABB> World::GetCubes(const AABB& aabb) {
                 mc::Vector3i blockPos(x, y, z);
                 BlockID block = GetBlockID(blockPos);
 
-                if (BlockRegistry::getInstance().getBlock(block)->isSolid()) {
+                if (BlockRegistry::GetInstance().GetBlock(block)->isSolid()) {
                     blockBoxes.push_back(AABB(
                         mc::Vector3f(x, y, z),
                         mc::Vector3f(x + 1, y + 1, z + 1)

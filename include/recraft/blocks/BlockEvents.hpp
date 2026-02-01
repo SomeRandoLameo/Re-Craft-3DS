@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../world/CT_World.hpp"
-#include "CT_Block.hpp"
+#include "Block.hpp"
 
 #define RANDOMTICKS_PER_CLUSTER (3)
 #define RANDOMTICKS_PER_CHUNK (ChunkColumn::ChunksPerColumn * RANDOMTICKS_PER_CLUSTER)

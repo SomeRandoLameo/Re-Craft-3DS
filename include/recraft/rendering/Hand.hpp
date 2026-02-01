@@ -2,7 +2,7 @@
 
 #include <citro3d.h>
 
-#include "../blocks/CT_Block.hpp"
+#include "../blocks/Block.hpp"
 #include "../entity/Player.hpp"
 #include "misc/NumberUtils.hpp"
 #include "rendering/VertexFmt.hpp"

@@ -41,12 +41,11 @@ void Hand::Draw(int projUniform, C3D_Mtx* projection, mc::inventory::Slot stack,
 			int16_t iconUV[2];
 			uint8_t color[3];
 
-            BlockRegistry::getInstance()
-                .getBlock(stack.GetItemId())
+            BlockRegistry::GetInstance().GetBlock(stack.GetItemId())
                 ->getTexture((Direction)i, iconUV);
 
-            BlockRegistry::getInstance()
-                .getBlock(stack.GetItemId())
+            BlockRegistry::GetInstance()
+                .GetBlock(stack.GetItemId())
                 ->getColor(stack.GetItemDamage(), (Direction)i, color);
 
             const int oneDivIconsPerRow = (32768 / 8);

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../blocks/CT_Block.hpp"
+#include "../blocks/Block.hpp"
 
 #include "../misc/Xorshift.hpp"
 #include "../rendering/VBOCache.hpp"
@@ -42,7 +42,7 @@ public:
     BlockID GetBlockID(mc::Vector3i pos) const {
 		int blockIndex = pos.x + pos.y * Size + pos.z * Size * Size;
 		u16 paletteId = GetPackedBlockId(blockIndex);
-		return BlockRegistry::GetBlock(paletteId);
+		return BlockRegistry::GetBlockID(paletteId);
     }
 
     /// DO NOT USE THIS MANUALLY
@@ -52,9 +52,26 @@ public:
 	    SetPackedBlockId(blockIndex, paletteId);
     }
 
+    BlockPtr GetBlock(mc::Vector3i pos) const {
+        int blockIndex = pos.x + pos.y * Size + pos.z * Size * Size;
+        u16 paletteId = GetPackedBlockId(blockIndex);
+        return const_cast<BlockPtr>(BlockRegistry::GetBlock(paletteId));
+    }
+
+    /// DO NOT USE THIS MANUALLY
+    void SetBlock(mc::Vector3i pos, BlockPtr block) {
+        int blockIndex = pos.x + pos.y * Size + pos.z * Size * Size;
+        u16 paletteId = BlockRegistry::GetId(block->GetID());
+        SetPackedBlockId(blockIndex, paletteId);
+    }
+
     //TODO: REMOVE
     BlockID GetBlockID(int x, int y, int z) const {
         return GetBlockID(mc::Vector3i(x, y, z));
+    }
+
+    BlockPtr GetBlock(int x, int y, int z) const {
+        return GetBlock(mc::Vector3i(x, y, z));
     }
 
     bool IsEmpty();
@@ -169,7 +186,11 @@ public:
 
     BlockID GetBlockID(mc::Vector3i position);
 
+    BlockPtr GetBlock(mc::Vector3i position);
+
     void SetBlockID(mc::Vector3i position, BlockID block);
+
+    void SetBlock(mc::Vector3i position, BlockPtr block);
 
     void SetBlockAndMeta(mc::Vector3i position, BlockID block, Metadata metadata);
 
