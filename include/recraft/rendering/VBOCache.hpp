@@ -2,18 +2,18 @@
 
 #include <stdio.h>
 
-typedef struct {
+struct VBOBlock {
     size_t size;
     void* memory;
-} VBOBlock;
+};
 
-typedef struct {
+struct VBOUpdate {
     VBOBlock vbo, transparentVBO;
     int x, y, z;
     size_t vertices, transparentVertices;
     uint8_t delay;
     uint16_t visibility;
-} VBOUpdate;
+};
 
 class VBOCache {
 public:
