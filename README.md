@@ -138,6 +138,7 @@ My Tag is "SomeRandoLameo"!
 
 ### Special thanks goes out to: 
 - Tobid7 ([Amethyst](https://github.com/tobid7/amethyst) and main contributor)
+- Moddimation as another main contributor
 - RSDuck & Onixia ([Craftus](https://github.com/Onixiya/craftus))
 - Plushmonkey ([original mclib](https://github.com/plushmonkey/mclib) & [Terra](https://github.com/plushmonkey/Terracotta))
 - The people behing [MCPED](https://github.com/ReMinecraftPE/mcped)
