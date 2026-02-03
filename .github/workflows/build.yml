@@ -20,8 +20,70 @@ jobs:
           chmod +x cmake-4.0.0-linux-x86_64.sh
           ./cmake-4.0.0-linux-x86_64.sh --skip-license --prefix=/usr/local
 
+      - name: Restore Buildtools
+        id: cache-tools
+        uses: actions/cache@v5
+        with:
+          path: priv
+          key: mybuildtools
+
+      - name: Setup Buildtools
+        if: steps.cache-tools.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p priv && cd priv
+
+          git clone https://github.com/3DSGuy/Project_CTR.git
+          cd Project_CTR/makerom && make deps && make
+          cp bin/makerom ../../ && cd ../../
+
+          curl -LO https://github.com/Epicpkmn11/bannertool/releases/download/v1.2.2/bannertool.zip
+          unzip bannertool.zip
+          mv linux-x86_64/bannertool . && rm -rf */
+
+          chmod +x makerom bannertool
+          rm -rf *.zip
+          ls
+
       - name: Build
         run: |
-          git config --global --add safe.directory /__w/Re-Craft-3DS/Re-Craft-3DS
+          export PATH="$(pwd)/priv:$PATH"
+          git config --global --add safe.directory "$(pwd)"
           cmake -B build -DCMAKE_TOOLCHAIN_FILE=/opt/devkitpro/cmake/3DS.cmake
-          cmake --build build --target Re-Craft-3DS_3dsx --parallel $(nproc)
+          cmake --build build --target make_cia --parallel $(nproc)
+
+      - name: Upload
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Re-Craft-3DS
+          path: build/*.cia
+
+      - name: Calc Statistics
+        if: always()
+        shell: bash
+        run: |
+          echo "# Statistics\n" >> "$GITHUB_STEP_SUMMARY"
+          if compgen -G "build/*.cia" > /dev/null; then
+              echo "Build succeeded\n" >> "$GITHUB_STEP_SUMMARY"
+          else
+              echo "Build failed\n" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          for dir in source include vendor/*; do
+              [ -d "$dir" ] || continue
+              files=$(find "$dir" -type f \( -name '*.c*' -o -name '*.h*' \) \
+                        ! -iname "*.clang*" ! -iname "*.csv")
+              [ -z "$files" ] && continue
+              total_lines=$(echo "$files" | xargs wc -l 2>/dev/null | tail -n1 | awk '{print $1}')
+              declare -A exts
+              for f in $files; do
+                  base=$(basename "$f")
+                  ext=".${base##*.}"
+                  [[ $ext == .c* || $ext == .h* ]] && ((exts[$ext]++))
+              done
+              counts=""
+              for e in "${!exts[@]}"; do
+                  counts+="${exts[$e]} $e "
+              done
+              echo "$dir: $total_lines lines, $counts" >> "$GITHUB_STEP_SUMMARY"
+          done
+
