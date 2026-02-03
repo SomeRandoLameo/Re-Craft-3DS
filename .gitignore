@@ -3,6 +3,8 @@
 *.elf
 *.lst
 
+priv/
+
 build/*
 .idea/*
 .vscode
