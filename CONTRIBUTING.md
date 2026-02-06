@@ -64,3 +64,4 @@ When designing user interfaces, please follow these guidelines:
 - NO MINIFICATION/OBFUSCATION OF CODE
 - NO *forced* SPAGHETTI CODE (keep functions and classes focused on a single responsibility)
 - NO GINORMOUS PR'S (try to keep them small and focused on a single issue/feature)
+- NO FORCE PUSHES / PR COMMIT OVERRIDES (We want a history of all the changes)
