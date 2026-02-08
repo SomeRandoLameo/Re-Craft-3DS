@@ -178,7 +178,7 @@ if(MAKEROM AND BANNERTOOL)
     )
 
     add_custom_target(make_cia ALL
-        DEPENDS make_banner ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.elf ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.cia
+        DEPENDS make_banner ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.3dsx ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.cia
     )
 endif()
 
