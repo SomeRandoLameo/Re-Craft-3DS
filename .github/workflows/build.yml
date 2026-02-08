@@ -45,12 +45,17 @@ jobs:
           git config --global --add safe.directory "$(pwd)"
           cmake -B build -DCMAKE_TOOLCHAIN_FILE=/opt/devkitpro/cmake/3DS.cmake
           cmake --build build --target make_cia --parallel $(nproc)
+          ls && ls build && ls ..
       - name: Upload
         if: success()
         uses: actions/upload-artifact@v4
         with:
           name: Re-Craft-3DS
-          path: build/*.cia build/*.3dsx build/*.elf
+          path: |
+            build/*.cia
+            build/*.3dsx
+            build/*.elf
+
 
       - name: Calc Statistics
         if: always()
