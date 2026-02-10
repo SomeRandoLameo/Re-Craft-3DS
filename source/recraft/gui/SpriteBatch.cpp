@@ -9,7 +9,7 @@
 
 #include <stdarg.h>
 
-struct Sprite{
+struct Sprite {
     int depth;
     C3D_Tex* texture;
     int16_t x0, y0, x1, y1; // top left, right
@@ -132,13 +132,13 @@ void SpriteBatch_PushIcon(mc::inventory::Slot block, int x, int y, int z) {
 
         BlockRegistry::GetInstance()
             .GetBlock((MCBridge::MCLIBSlotToCTItemStack(block).block))
-                ->getTexture((Direction)i, iconUV);
+            ->getTexture((Direction)i, iconUV);
 
         uint8_t color[3];
 
         BlockRegistry::GetInstance()
             .GetBlock((MCBridge::MCLIBSlotToCTItemStack(block).block))
-                ->getColor(MCBridge::MCLIBSlotToCTItemStack(block).meta, (Direction)i, color);
+            ->getColor(MCBridge::MCLIBSlotToCTItemStack(block).meta, (Direction)i, color);
 
         for (int j = 0; j < 5; j++) {
             int k = i * 6 + j;
@@ -154,7 +154,7 @@ void SpriteBatch_PushIcon(mc::inventory::Slot block, int x, int y, int z) {
         WorldVertex topRight = vertices[i * 6 + 2];
         WorldVertex topLeft = vertices[i * 6 + 4];
 
-        C3D_Tex* texture = &((Texture_Map*)BlockRegistry::GetTextureMap())->texture;
+        C3D_Tex* texture = (C3D_Tex*)BlockRegistry::GetTextureMap();
         ensureTexture(texture);
 
         int16_t color16 = SHADER_RGB(color[0] >> 3, color[1] >> 3, color[2] >> 3);
@@ -164,10 +164,11 @@ void SpriteBatch_PushIcon(mc::inventory::Slot block, int x, int y, int z) {
             color16 = SHADER_RGB_DARKEN(color16, 10);
 
 #define unpackP(x) (x).xyz[0], (x).xyz[1]
-        cmdList.push_back(Sprite{
-            z, texture, unpackP(topLeft), unpackP(topRight), unpackP(bottomLeft), unpackP(bottomRight),
-            static_cast<int16_t>(iconUV[0] / 256), static_cast<int16_t>(iconUV[1] / 256 + Texture::TileSize),
-            static_cast<int16_t>(iconUV[0] / 256 + Texture::TileSize), static_cast<int16_t>(iconUV[1] / 256), color16});
+        cmdList.push_back(Sprite{z, texture, unpackP(topLeft), unpackP(topRight), unpackP(bottomLeft),
+                                 unpackP(bottomRight), static_cast<int16_t>(iconUV[0] / 256),
+                                 static_cast<int16_t>(iconUV[1] / 256 + TextureMap::TileSize),
+                                 static_cast<int16_t>(iconUV[0] / 256 + TextureMap::TileSize),
+                                 static_cast<int16_t>(iconUV[1] / 256), color16});
 
 #undef unpackP
     }

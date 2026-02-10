@@ -12,10 +12,16 @@
 #include "misc/Crash.hpp"
 
 uint32_t hash(const char* str) {
-	unsigned long hash = 5381;
-	int c;
-	while ((c = *str++)) hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
-	return hash;
+    unsigned long hash = 5381;
+    int c;
+    while ((c = *str++))
+        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+    return hash;
+}
+
+unsigned int D7_TileIndex(const int& x, const int& y, const int& w) {
+    return (((y >> 3) * (w >> 3) + (x >> 3)) << 6) +
+        ((x & 1) | ((y & 1) << 1) | ((x & 2) << 1) | ((y & 2) << 2) | ((x & 4) << 2) | ((y & 4) << 3));
 }
 
 void tileImage32(u32* src, u8* dst, int sizex, int sizez);
@@ -72,9 +78,9 @@ void Texture_Load(C3D_Tex* result, const char* filename) {
 
 // Grabbed from Citra Emulator (citra/src/video_core/utils.h)
 static inline u32 morton_interleave(u32 x, u32 y) {
-    u32 i = (x & 7) | ((y & 7) << 8);  // ---- -210
-    i = (i ^ (i << 2)) & 0x1313;       // ---2 --10
-    i = (i ^ (i << 1)) & 0x1515;       // ---2 -1-0
+    u32 i = (x & 7) | ((y & 7) << 8); // ---- -210
+    i = (i ^ (i << 2)) & 0x1313; // ---2 --10
+    i = (i ^ (i << 1)) & 0x1515; // ---2 -1-0
     i = (i | (i >> 7)) & 0x3F;
     return i;
 }
@@ -84,17 +90,18 @@ static inline u32 get_morton_offset(u32 x, u32 y, u32 bytes_per_pixel) {
     unsigned int offset = (x & ~7) * 8;
     return (i + offset) * bytes_per_pixel;
 }
-// from sf2d https://github.com/xerpi/sf2dlib/blob/effe77ea81d21c26bad457d4f5ed8bb16ce7b753/libsf2d/source/sf2d_texture.c
+// from sf2d
+// https://github.com/xerpi/sf2dlib/blob/effe77ea81d21c26bad457d4f5ed8bb16ce7b753/libsf2d/source/sf2d_texture.c
 void tileImage32(u32* src, u8* dst, int sizex, int sizey) {
-	for (int j = 0; j < sizey; j++) {
-		for (int i = 0; i < sizex; i++) {
-			u32 coarse_y = j & ~7;
-			u32 dst_offset = get_morton_offset(i, j, 4) + coarse_y * sizex * 4;
+    for (int j = 0; j < sizey; j++) {
+        for (int i = 0; i < sizex; i++) {
+            u32 coarse_y = j & ~7;
+            u32 dst_offset = get_morton_offset(i, j, 4) + coarse_y * sizex * 4;
 
-			u32 v = src[i + (sizey - 1 - j) * sizex];
-			*(u32*)(dst + dst_offset) = v;
-		}
-	}
+            u32 v = src[i + (sizey - 1 - j) * sizex];
+            *(u32*)(dst + dst_offset) = v;
+        }
+    }
 }
 void Texture_TileImage8(uint8_t* src, uint8_t* dst, int size) {
     for (int j = 0; j < size; j++) {
@@ -114,108 +121,105 @@ void downscaleImage(u8* data, int size) {
             const u32 offset = (i + j * size) * 4;
             const u32 offset2 = (i * 2 + j * 2 * size * 2) * 4;
             data[offset + 0] = (data[offset2 + 0 + 0] + data[offset2 + 4 + 0] + data[offset2 + size * 4 * 2 + 0] +
-                        data[offset2 + (size * 2 + 1) * 4 + 0]) /
-                       4;
+                                data[offset2 + (size * 2 + 1) * 4 + 0]) /
+                4;
             data[offset + 1] = (data[offset2 + 0 + 1] + data[offset2 + 4 + 1] + data[offset2 + size * 4 * 2 + 1] +
-                        data[offset2 + (size * 2 + 1) * 4 + 1]) /
-                       4;
+                                data[offset2 + (size * 2 + 1) * 4 + 1]) /
+                4;
             data[offset + 2] = (data[offset2 + 0 + 2] + data[offset2 + 4 + 2] + data[offset2 + size * 4 * 2 + 2] +
-                        data[offset2 + (size * 2 + 1) * 4 + 2]) /
-                       4;
+                                data[offset2 + (size * 2 + 1) * 4 + 2]) /
+                4;
             data[offset + 3] = (data[offset2 + 0 + 3] + data[offset2 + 4 + 3] + data[offset2 + size * 4 * 2 + 3] +
-                        data[offset2 + (size * 2 + 1) * 4 + 3]) /
-                       4;
+                                data[offset2 + (size * 2 + 1) * 4 + 3]) /
+                4;
         }
     }
 }
 
-void Texture_MapInit(Texture_Map* map, const char** files, int num_files) {
+void TextureMap::Init(const char** files, int num_files) {
     int locX = 0;
     int locY = 0;
 
     // printf("TextureMapInit %s\n", files);
 
     const int mipmapLevels = 2;
-    const int maxSize = 4 * Texture::MapSize * Texture::MapSize;
+    const int maxSize = 4 * MapSize * MapSize;
 
-    uint32_t* buffer = (uint32_t*)linearAlloc(maxSize);
-    for (int i = 0; i < maxSize; i++) buffer[i] = 0x000000FF;
+
+    C3D_TexInit(&m_texture, MapSize, MapSize, GPU_RGBA8);
+    /*C3D_TexInitParams param;
+    param.width = MapSize;
+    param.height = MapSize;
+    param.maxLevel = 2;
+    param.format = GPU_RGBA8;
+    param.type = GPU_TEX_2D;
+    param.onVram = true;
+     if (!C3D_TexInitWithParams(&m_texture, nullptr, param))
+         printf("Couldn't alloc texture memory\n");*/
+    C3D_TexSetFilter(&m_texture, GPU_NEAREST, GPU_NEAREST);
 
     int filei = 0;
     const char* filename = files[filei];
     int c = 0;
-    while (filename != NULL && c < (Texture::MapTiles * Texture::MapTiles) && filei < num_files) {
+    while (filename != NULL && c < (MapTiles * MapTiles) && filei < num_files) {
         int w = 0, h = 0, c1 = 0;
         unsigned char* image = stbi_load(filename, &w, &h, &c1, 4);
 
-        if (image != NULL && w == Texture::TileSize && h == Texture::TileSize) {
-            /* image is a byte buffer with 4 bytes per pixel (RGBA). Convert per-pixel to u32 then store swapped. */
-            for (int x = 0; x < Texture::TileSize; x++) {
-                for (int y = 0; y < Texture::TileSize; y++) {
-                    size_t idx = (x + ((Texture::TileSize - y - 1) * Texture::TileSize)) * 4;
-                    uint32_t pixel = *((uint32_t*)(image + idx));
-                    buffer[(locX + x) + ((y + locY) * Texture::MapSize)] = __builtin_bswap32(pixel);
+        if (image != nullptr && c1 == 3) {
+            stbi_image_free(image);
+            image = stbi_load(filename, &w, &h, &c1, 3);
+        }
+
+        if (image != nullptr && w == TileSize && h == TileSize) {
+
+            for (int x = 0; x < TileSize; x++) {
+                for (int y = 0; y < TileSize; y++) {
+                    int src = (((TileSize - 1) - y) * TileSize + x) * c1;
+                    int dst = D7_TileIndex(locX + x, (MapSize - 1) - (locY + y), MapSize) * 4;
+                    if (c1 == 3) {
+                        reinterpret_cast<u8*>(m_texture.data)[dst] = 255;
+                    } else {
+                        reinterpret_cast<u8*>(m_texture.data)[dst] = image[src + 3];
+                    }
+                    reinterpret_cast<u8*>(m_texture.data)[dst + 1] = image[src + 2];
+                    reinterpret_cast<u8*>(m_texture.data)[dst + 2] = image[src + 1];
+                    reinterpret_cast<u8*>(m_texture.data)[dst + 3] = image[src];
                 }
             }
 
-            Texture_MapIcon* icon = &map->icons[c];
-            icon->textureHash = hash((char*)filename);
-            icon->u = 256 * locX;
-            icon->v = 256 * locY;
+            Icon icon;
+            icon.Hash = hash((char*)filename);
+            icon.u = 256 * locX;
+            icon.v = 256 * locY;
+            m_icons.push_back(icon);
 
-            locX += Texture::TileSize;
-            if (locX == Texture::MapSize) {
-                locY += Texture::TileSize;
+            locX += TileSize;
+            if (locX == MapSize) {
+                locY += TileSize;
                 locX = 0;
             }
         } else {
-            printf("Image size(%u, %u) doesn't match or ptr null(internal error) for '%s'\n", w, h, filename ? filename : "(null)");
+            printf("Image size(%u, %u) doesn't match or ptr null(internal error) or c not 4 for '%s'\n", w, h,
+                   filename ? filename : "(null)");
         }
-        stbi_image_free(image);
+        if (image)
+            stbi_image_free(image);
         filename = files[++filei];
         c++;
     }
 
-    GSPGPU_FlushDataCache(buffer, maxSize);
-    if (!C3D_TexInitWithParams(&map->texture, NULL,
-                   (C3D_TexInitParams){Texture::MapSize, Texture::MapSize, mipmapLevels, GPU_RGBA8, GPU_TEX_2D, true}))
-        printf("Couldn't alloc texture memory\n");
-    C3D_TexSetFilter(&map->texture, GPU_NEAREST, GPU_NEAREST);
-
-    C3D_SyncDisplayTransfer(
-        buffer, GX_BUFFER_DIM(Texture::MapSize, Texture::MapSize), (u32*)map->texture.data, GX_BUFFER_DIM(Texture::MapSize, Texture::MapSize),
-        (GX_TRANSFER_FLIP_VERT(1) | GX_TRANSFER_OUT_TILED(1) | GX_TRANSFER_RAW_COPY(0) | GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGBA8) |
-         GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGBA8) | GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO)));
-
-    int size = Texture::MapSize / 2;
-    ptrdiff_t offset = Texture::MapSize * Texture::MapSize;
-
-    u32* tiledImage = (u32*)linearAlloc(size * size * 4);
-
-    for (int i = 0; i < mipmapLevels; i++) {
-        downscaleImage((u8*)buffer, size);
-
-        tileImage32(buffer, (u8*)tiledImage, size, size);
-
-        GSPGPU_FlushDataCache(tiledImage, size * size * 4);
-
-        GX_RequestDma(tiledImage, ((u32*)map->texture.data) + offset, size * size * 4);
-        gspWaitForAnyEvent();
-
-        offset += size * size;
-        size /= 2;
-    }
-
-    linearFree(tiledImage);
-    linearFree(buffer);
+    m_texture.border = 0x00000000;
+    C3D_TexFlush(&m_texture);
+    C3D_TexSetWrap(&m_texture, GPU_CLAMP_TO_BORDER, GPU_CLAMP_TO_BORDER);
 }
 
-Texture_MapIcon Texture_MapGetIcon(Texture_Map* map, const char* filename) {
+const TextureMap::Icon& TextureMap::Get(const char* filename) {
     uint32_t h = hash(filename);
-    for (size_t i = 0; i < Texture::MapTiles * Texture::MapTiles; i++) {
-        if (h == map->icons[i].textureHash) {
-            return map->icons[i];
+    for (size_t i = 0; i < MapTiles * MapTiles; i++) {
+        if (h == m_icons[i].Hash) {
+            return m_icons[i];
         }
     }
-    return (Texture_MapIcon){0};
+    static Icon nullicn2;
+    return nullicn2;
 }
