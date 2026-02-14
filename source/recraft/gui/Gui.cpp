@@ -26,9 +26,9 @@ void Gui::Init() {
 	paddingX = 2;
 	paddingY = 3;
 
-    //RenderData = new Iron::Drawlist();
+    RenderData = new Iron::Drawlist();
     //TODO: MC Bitmap pixel font loaded from assets :D
-    //RenderData->SetFont(ReCraftCore::GetInstance()->GetAssetManager()->Get<Iron::Font>("font"));
+    RenderData->SetFont(ReCraftCore::GetInstance()->GetAssetManager()->Get<Iron::Font>("font"));
 }
 
 static inline int relativeToAbsoluteSize(float s) { return (int)((float)currentRow.unpaddedWidth * s); }
@@ -85,36 +85,32 @@ bool Gui::Button(float size, const char* label, ...) {
 	va_start(vl, label);
 
 	int textWidth = SpriteBatch_CalcTextWidthVargs(label, vl);
-
 	int x = windowX + relativeX;
 	int y = windowY + relativeY - BUTTON_TEXT_PADDING;
 	int w = (size <= 0.f) ? textWidth + SliceSize : relativeToAbsoluteSize(size);
 
 	bool pressed = Gui::IsCursorInside(x, y, w, BUTTON_HEIGHT);
-
 	int middlePieceSize = w - SliceSize * 2;
 
-	SpriteBatch_BindGuiTexture(GuiTexture::Widgets);
-    SpriteBatch_PushQuad(x, y, -3, SliceSize, 20, 0, 46 + (pressed * BUTTON_HEIGHT * 2), SliceSize, 20);
-    SpriteBatch_PushQuad(x + SliceSize, y, -3, middlePieceSize, 20, SliceSize, 46 + (pressed * BUTTON_HEIGHT * 2), middlePieceSize, 20);
-    SpriteBatch_PushQuad(x + SliceSize + middlePieceSize, y, -3, SliceSize, 20, 192, 46 + (pressed * BUTTON_HEIGHT * 2), SliceSize, 20);
-    //RenderData->DrawTex(ReCraftCore::GetInstance()->GetAssetManager()->Get<Amy::Texture>("GuiTexture_Widgets"));
-   // RenderData->DrawRectFilled(Amy::fvec2(x, y), Amy::fvec2(SLICE_SIZE, 20), Amy::Color(255, 255, 255, 255));
-   // RenderData->DrawRectFilled(Amy::fvec2(x + SLICE_SIZE, y), Amy::fvec2(middlePieceSize, 20), Amy::Color(255, 255, 255, 255));
-   // RenderData->DrawRectFilled(Amy::fvec2(x + SLICE_SIZE + middlePieceSize, y), Amy::fvec2(SLICE_SIZE, 20), Amy::Color(255, 255, 255, 255));
+	RenderData->DrawTex(ReCraftCore::GetInstance()->GetAssetManager()->Get<Amy::Texture>("GuiTexture_Widgets"));
 
+	int baseTextureY = 66 + (pressed * BUTTON_HEIGHT);
 
+	DrawTexturedModalRect(x, y, 0, baseTextureY, SliceSize, BUTTON_HEIGHT);
+	DrawTexturedModalRect(x + SliceSize, y, SliceSize, baseTextureY, middlePieceSize, BUTTON_HEIGHT);
+	DrawTexturedModalRect(x + SliceSize + middlePieceSize, y, 192, baseTextureY, SliceSize, BUTTON_HEIGHT);
 
-	SpriteBatch_PushTextVargs(x + (w / 2 - textWidth / 2), y + (BUTTON_HEIGHT - CHAR_HEIGHT) / 2, -1, SHADER_RGB(31, 31, 31), true,
-				  INT_MAX, NULL, label, vl);
+    RenderData->DrawText(Amy::fvec2((x + (w / 2 - textWidth / 2)),
+                                    (y + (BUTTON_HEIGHT - CHAR_HEIGHT) / 2))*2,label, Amy::Color(255, 255, 255, 255));
+
 	va_end(vl);
 
+	// Update layout
 	relativeX += w + paddingX;
 	currentRow.highestElement = MAX(currentRow.highestElement, BUTTON_HEIGHT);
 
-    if (Input::isKeyUp(KEY_TOUCH) && Gui::WasCursorInside(x, y, w, BUTTON_HEIGHT)) return true;
-
-	return false;
+	// Check if button was clicked
+	return Input::isKeyUp(KEY_TOUCH) && Gui::WasCursorInside(x, y, w, BUTTON_HEIGHT);
 }
 
 void Gui::Space(float space) { relativeX += relativeToAbsoluteSize(space) + paddingX; }
@@ -146,4 +142,13 @@ void Gui::GetCursorMovement(int* x, int* y) {
 	}
     *x = Input::getTouch().px / SpriteBatch_GetScale() - Input::getTouchPrev().px / SpriteBatch_GetScale();
     *y = Input::getTouch().px / SpriteBatch_GetScale() - Input::getTouchPrev().py / SpriteBatch_GetScale();
+}
+
+void Gui::DrawTexturedModalRect(int x, int y, int textureX, int textureY, int width, int height) {
+    RenderData->DrawFromAtlas(
+        Amy::fvec2(x * 2, y * 2),
+        Amy::fvec2(width * 2, height * 2),
+        Amy::fvec4(textureX, textureY, textureX + width, textureY + height),
+        Amy::Color(255, 255, 255, 255)
+    );
 }

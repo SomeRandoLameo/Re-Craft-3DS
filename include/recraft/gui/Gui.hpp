@@ -34,6 +34,8 @@ public:
     static void GetCursorMovement(int* x, int* y);
     static bool EnteredCursorInside(int x, int y, int w, int h);
 
+    static void DrawTexturedModalRect(int x, int y, int textureX, int textureY, int width, int height);
+
     static Amy::Iron::Drawlist* RenderData;
 
     static const int BUTTON_HEIGHT = 20;

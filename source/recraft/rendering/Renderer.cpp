@@ -95,14 +95,21 @@ void Renderer::Render(DebugUI* debugUi) {
 
     Top[0]->Use();
     Iron::DrawOn(Top[0]);
-    debugUi->RenderData->DrawRectFilled(0, 50, 0xff00ff00);
+    //debugUi->RenderData->DrawRectFilled(0, 50, 0xff00ff00);
     Iron::Draw(debugUi->RenderData->Data());
     debugUi->RenderData->Clear();
+
 
     // C3D_FrameDrawOn(m_lowerScreen);
     // Iron::DrawOn(Bottom);
     // Iron::Draw(*Gui::RenderData);
     // Gui::RenderData->Clear();
+
+    Bottom->Use();
+    Iron::DrawOn(Bottom);
+    //Gui::RenderData->DrawRectFilled(0, 50, 0xff00ff00);
+    Iron::Draw(Gui::RenderData->Data());
+    Gui::RenderData->Clear();
 
     ImGuiManager::GetInstance()->EndFrame(reinterpret_cast<void*>(Top[0]->Ptr()),
                                           reinterpret_cast<void*>(Bottom->Ptr()));

@@ -82,7 +82,6 @@ ReCraftCore::ReCraftCore() {
         ImGui::Text("Move Pad: u%i d%i l%i r%i", m_player->getCtrlMove()->up, m_player->getCtrlMove()->down, m_player->getCtrlMove()->left, m_player->getCtrlMove()->right);
         ImGui::End();
     });
-    // i want to use imgui anywhere
 }
 
 ReCraftCore::~ReCraftCore() {

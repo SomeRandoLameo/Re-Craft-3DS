@@ -91,6 +91,7 @@ add_executable(${PROJECT_NAME}
     source/recraft/gui/screens/DeleteWorldScreen.cpp
     source/recraft/gui/screens/GuiInGame.cpp
     source/recraft/gui/screens/StartScreen.cpp
+    source/recraft/gui/components/Button.cpp
     source/recraft/phys/AABB.cpp
 )
 target_include_directories(${PROJECT_NAME} PUBLIC

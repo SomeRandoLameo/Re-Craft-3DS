@@ -2,6 +2,7 @@
 
 #include "ReCraftCore.hpp"
 //TODO: Buttonlist if possible (with GUI)
+//TODO: Every Screen should inherit GUI.
 class Screen
 {
 public:
