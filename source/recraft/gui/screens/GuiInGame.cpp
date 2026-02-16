@@ -172,10 +172,10 @@ bool GuiInGameBot::IsInGameScreen() {
 void GuiInGameBot::Render(int mouseX, int mouseY, float delta) {
     SpriteBatch_SetScale(2);
 
-    m_inventory->renderHotbar(160 / 2 - 194 / 2, 120 - Inventory::QUICKSELECT_HEIGHT, m_player->quickSelectBar,
+    RenderHotbar(160 / 2 - 194 / 2, 120 - Inventory::QUICKSELECT_HEIGHT, m_player->quickSelectBar,
                               m_player->quickSelectBarSlot);
 
-    m_inventory->draw(((137 / 2) - (120 / 2)), 10, m_player->inventory,
+    RenderInventory(((137 / 2) - (120 / 2)), 10, m_player->inventory,
                       sizeof(m_player->inventory) / sizeof(ItemStack), m_player->inventorySite);
 
     m_player->inventorySite = m_inventory->currentSite;
@@ -183,3 +183,114 @@ void GuiInGameBot::Render(int mouseX, int mouseY, float delta) {
 }
 void GuiInGameBot::ButtonClicked() { Screen::ButtonClicked(); }
 
+
+void GuiInGameBot::RenderHotbar(int x, int y, mc::inventory::Slot* stacks, int& selected) {
+    SpriteBatch_BindGuiTexture(GuiTexture::Widgets);
+
+    for (int i = 0; i < 9; ++i) {
+        SpriteBatch_SetScale(1);
+
+        const int rx = (i * 20 + x + 3) * 2;
+        const int ry = (y + 3) * 2;
+
+        // Render item icon if stack has items
+        if (stacks[i].GetItemCount() > 0) {
+            SpriteBatch_PushIcon(stacks[i], rx, ry, 11);
+        }
+
+        // Handle cursor interaction
+        if (Gui::EnteredCursorInside(rx - 4, ry - 4, 18 * 2, 18 * 2)) {
+            selected = i;
+            m_inventory->handleStackClick(&stacks[i]);
+
+            // if (*ReCraftCore::GetInstance()->GetGameState() == GameState::Playing_OnLine) {
+            // TODO: client->GetHotbar().SelectSlot(i);
+            //}
+        }
+
+        SpriteBatch_SetScale(2);
+
+        // Highlight source stack
+        if (m_inventory->m_sourceStack == &stacks[i]) {
+            SpriteBatch_PushSingleColorQuad(
+                rx / 2 - 2, ry / 2 - 2, 9, 18, 18,
+                SHADER_RGB(20, 5, 2)
+            );
+            SpriteBatch_BindGuiTexture(GuiTexture::Widgets);
+        }
+
+        // Draw slot separator (except for last two slots)
+        if (i < 9 - 2) {
+            SpriteBatch_PushQuad(i * 20 + 21 + x, y, 10, 20, 22, 21, 0, 20, 22);
+        }
+    }
+
+    SpriteBatch_SetScale(2);
+
+    // Draw hotbar ends
+    SpriteBatch_PushQuad(x, y, 10, 21, 22, 0, 0, 21, 22);
+    SpriteBatch_PushQuad(21 + 20 * 7 + x, y, 10, 21, 22, 161, 0, 21, 22);
+
+    // Draw selection indicator
+    SpriteBatch_PushQuad(x + selected * 20 - 1, y - 1, 14, 24, 24, 0, 22, 24, 24);
+}
+
+void GuiInGameBot::RenderInventory(int x, int y, mc::inventory::Slot* stacks, int count, int site) {
+    SpriteBatch_SetScale(1);
+
+    int headX = x;
+    int headY = y;
+    m_inventory->currentSite = site;
+
+    if (count > 27) {
+        Gui::Offset(0, 155);
+        if (Gui::Button(0.f, " << ") && m_inventory->currentSite > 1) {
+            --m_inventory->currentSite;
+        }
+
+        Gui::Offset(270, 155);
+        if (Gui::Button(0.f, " >> ") && m_inventory->currentSite * 27 < count) {
+            ++m_inventory->currentSite;
+        }
+    }
+
+    const int startIndex = (m_inventory->currentSite - 1) * 27;
+    const int endIndex = std::min(m_inventory->currentSite * 27, count);
+
+    for (int i = startIndex; i < endIndex; ++i) {
+
+        if (!stacks[i].GetItemId() || stacks[i].GetItemCount() <= 0) {
+            continue;
+        }
+
+        if ((i - startIndex) % 9 == 0 && i != startIndex) {
+            headX = x;
+            headY += 16;
+        }
+
+        RenderSlot(&stacks[i], headX, headY);
+
+        headX += 16;
+    }
+
+    SpriteBatch_SetScale(2);
+}
+
+
+void GuiInGameBot::RenderSlot(mc::inventory::Slot* slot, int x, int y) {
+
+    SpriteBatch_PushIcon(*slot, x * 2, y * 2, 10);
+
+    if (Gui::EnteredCursorInside(x * 2, y * 2, 16 * 2, 16 * 2)) {
+        m_inventory->handleStackClick(slot);
+    }
+
+    const int16_t backgroundColor = (m_inventory->m_sourceStack == slot)
+        ? SHADER_RGB(20, 5, 2)
+        : SHADER_RGB_DARKEN(SHADER_RGB(20, 20, 21), 9);
+
+    SpriteBatch_PushSingleColorQuad(
+        x * 2, y * 2, 9, 16 * 2, 16 * 2,
+        backgroundColor
+    );
+}
