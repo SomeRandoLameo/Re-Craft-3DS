@@ -1,13 +1,18 @@
 #include "gui/screens/GuiInGame.hpp"
 #include "gui/SpriteBatch.hpp"
 
+void GuiInGameTop::Init() {
+    m_ReCraftCore->GetAssetManager()->AutoLoad("GuiTexture_icons", "romfs:/assets/textures/gui/icons.png");
+    Screen::Init();
+}
+
 bool GuiInGameTop::IsInGameScreen() {
     return true;
 }
 
 void GuiInGameTop::Render(int mouseX, int mouseY, float delta) {
-    //SpriteBatch_BindGuiTexture(GuiTexture::Icons);
-    //SpriteBatch_PushQuad(200 / 2 - 16 / 2, 120 / 2 - 16 / 2, 0, 16, 16, 0, 0, 16, 16);
+    RenderData->DrawTex(ReCraftCore::GetInstance()->GetAssetManager()->Get<Amy::Texture>("GuiTexture_icons"));
+    DrawTexturedModalRect(200 / 2 - 16 / 2, 120 / 2 - 16 / 2, 0, 0, 16, 16); // Crosshair
 
     if (m_ReCraftCore->GetPlayer()->gamemode == 0) {
         RenderExpBar();
@@ -27,7 +32,7 @@ void GuiInGameTop::RenderHealth() {
     int health = m_ReCraftCore->GetPlayer()->hp;
     int yPos = 99;
     int spriteSize = 9;
-    //SpriteBatch_BindGuiTexture(GuiTexture::Icons);
+    RenderData->DrawTex(ReCraftCore::GetInstance()->GetAssetManager()->Get<Amy::Texture>("GuiTexture_icons"));
     for (int amount = 0; amount < 10; ++amount) {
 
         int var6 = 0;
@@ -41,31 +46,37 @@ void GuiInGameTop::RenderHealth() {
         if (health <= 4) {
             yPos += nextafter(2, 0);
         }
-
-        //SpriteBatch_PushQuad(spriteSize + (amount * 8), yPos, -1, spriteSize, spriteSize, 16 + var6 * spriteSize, 0,
-       //                      spriteSize, spriteSize);
+        //SpriteBatch_PushQuad(, -1, spriteSize, spriteSize, );
 
         if (var9) {
             if ((amount << 1) + 1 < prevHealth) {
-                //SpriteBatch_PushQuad(spriteSize + (amount * 8), yPos, 0, spriteSize, spriteSize, 70, 0, spriteSize,
-                //                     spriteSize);
+                DrawTexturedModalRect(spriteSize + (amount * 8), yPos,70, 0, spriteSize, spriteSize);
+                //SpriteBatch_PushQuad( 0, spriteSize, spriteSize, );
             }
 
             if ((amount << 1) + 1 == prevHealth) {
-                //SpriteBatch_PushQuad(spriteSize + (amount * 8), yPos, 0, spriteSize, spriteSize, 79, 0, spriteSize,
-                //                     spriteSize);
+                DrawTexturedModalRect(spriteSize + (amount * 8), yPos, 79, 0, spriteSize, spriteSize);
+                //SpriteBatch_PushQuad( 0, spriteSize, spriteSize, );
             }
         }
 
+        // full heart
+        DrawTexturedModalRect(spriteSize + (amount * 8), yPos,16 + var6 * spriteSize, 0, spriteSize, spriteSize);
+
+        // Empty heart
         if ((amount << 1) + 1 < health) {
+            DrawTexturedModalRect(spriteSize + (amount * 8), yPos, 52, 0, spriteSize, spriteSize);
          //   SpriteBatch_PushQuad(spriteSize + (amount * 8), yPos, 0, spriteSize, spriteSize, 52, 0, spriteSize,
           //                       spriteSize);
         }
 
+        // half heart
         if ((amount << 1) + 1 == health) {
+            DrawTexturedModalRect(spriteSize + (amount * 8), yPos, 61, 0, spriteSize, spriteSize);
             //SpriteBatch_PushQuad(spriteSize + (amount * 8), yPos, 0, spriteSize, spriteSize, 61, 0, spriteSize,
             //                     spriteSize);
         }
+
     }
 }
 
@@ -73,17 +84,17 @@ void GuiInGameTop::RenderExpBar() {
     // harcoded cap for now
     int barCap = 10;
 
-    //SpriteBatch_BindGuiTexture(GuiTexture::Icons);
+    RenderData->DrawTex(ReCraftCore::GetInstance()->GetAssetManager()->Get<Amy::Texture>("GuiTexture_icons"));
 
     if (barCap > 0) {
         int barLength = 182;
         int xpFill = (int)(m_ReCraftCore->GetPlayer()->experience * (float)(barLength + 1));
 
         int y = 120 - 9;
-       // SpriteBatch_PushQuad(200 / 2 - 182 / 2, y, 0, barLength, 5, 0, 64, barLength, 5);
+        DrawTexturedModalRect(200 / 2 - 182 / 2, y, 0, 64, barLength, 5);
 
         if (xpFill > 0) {
-          //  SpriteBatch_PushQuad(200 / 2 - 182 / 2, y, 1, xpFill, 5, 0, 69, xpFill, 5);
+            DrawTexturedModalRect(200 / 2 - 182 / 2, y,  0, 69, xpFill, 5);
         }
     }
 
@@ -95,20 +106,15 @@ void GuiInGameTop::RenderExpBar() {
         snprintf(experienceStr, sizeof(experienceStr), "%d",
                  experienceInt); // Format as integer
 
-        int textWidth = 0;//SpriteBatch_CalcTextWidth(experienceStr);
+        int xPos = 200 * 0.5;
+        int yPos = 120 - 6;
 
-        int textY = 10;
+        DrawCenteredString(experienceStr, xPos + 1, yPos, Amy::Color(0, 0, 0, 255), false);
+        DrawCenteredString(experienceStr, xPos - 1, yPos, Amy::Color(0, 0, 0, 255), false);
+        DrawCenteredString(experienceStr, xPos, yPos + 1, Amy::Color(0, 0, 0, 255), false);
+        DrawCenteredString(experienceStr, xPos, yPos - 1, Amy::Color(0, 0, 0, 255), false);
+        DrawCenteredString(experienceStr, xPos, yPos, Amy::Color(128,255,32,255), false);
 
-        //SpriteBatch_PushText(200 / 2 - textWidth / 2 + 1, 120 - textY, 2, SHADER_RGB(0, 0, 0), false, INT_MAX, 0,
-         //                    experienceStr);
-        //SpriteBatch_PushText(200 / 2 - textWidth / 2 - 1, 120 - textY, 2, SHADER_RGB(0, 0, 0), false, INT_MAX, 0,
-        //                     experienceStr);
-        //SpriteBatch_PushText(200 / 2 - textWidth / 2, 120 - textY + 1, 2, SHADER_RGB(0, 0, 0), false, INT_MAX, 0,
-        //                     experienceStr);
-        //SpriteBatch_PushText(200 / 2 - textWidth / 2, 120 - textY - 1, 2, SHADER_RGB(0, 0, 0), false, INT_MAX, 0,
-        //                    experienceStr);
-        //SpriteBatch_PushText(200 / 2 - textWidth / 2, 120 - textY, 3, SHADER_RGB(100, 255, 32), false, INT_MAX, 0,
-        //                     experienceStr);
     }
 }
 
@@ -141,20 +147,20 @@ void GuiInGameTop::RenderHunger() {
         */
 
         int spriteXpos = xpos - amount * 8 - 9;
-        //SpriteBatch_PushQuad(spriteXpos, ypos, -1, spriteSize, spriteSize, 16 + j7 * 9, 27, 9, 9);
+        DrawTexturedModalRect(spriteXpos, ypos,16 + j7 * 9, 27, 9, 9);
+        //SpriteBatch_PushQuad( -1, spriteSize, spriteSize, );
 
         if (amount * 2 + 1 < saturationLevel) {
-           // SpriteBatch_PushQuad(spriteXpos, ypos, 0, spriteSize, spriteSize, l6 + 36, 27, 9, 9);
+            DrawTexturedModalRect(spriteXpos, ypos, l6 + 36, 27, 9, 9);
+           // SpriteBatch_PushQuad( 0, spriteSize, spriteSize, );
         }
 
         if (amount * 2 + 1 == saturationLevel) {
-            //SpriteBatch_PushQuad(spriteXpos, ypos, 0, spriteSize, spriteSize, l6 + 45, 27, 9, 9);
+            DrawTexturedModalRect(spriteXpos, ypos,l6 + 45, 27, 9, 9);
+            //SpriteBatch_PushQuad( 0, spriteSize, spriteSize, );
         }
     }
 }
-
-
-
 
 void GuiInGameBot::Init() {
     m_player = m_ReCraftCore->GetPlayer();
@@ -186,7 +192,7 @@ void GuiInGameBot::ButtonClicked() { Screen::ButtonClicked(); }
 
 void GuiInGameBot::RenderHotbar(int x, int y, mc::inventory::Slot* stacks, int& selected) {
     //SpriteBatch_BindGuiTexture(GuiTexture::Widgets);
-
+    RenderData->DrawTex(ReCraftCore::GetInstance()->GetAssetManager()->Get<Amy::Texture>("GuiTexture_Widgets"));
     for (int i = 0; i < 9; ++i) {
        // SpriteBatch_SetScale(1);
 
@@ -223,6 +229,7 @@ void GuiInGameBot::RenderHotbar(int x, int y, mc::inventory::Slot* stacks, int& 
 
         // Draw slot separator (except for last two slots)
         if (i < 9 - 2) {
+            DrawTexturedModalRect(i * 20 + 21 + x, y, 21, 0, 20, 22);
            // SpriteBatch_PushQuad(i * 20 + 21 + x, y, 10, 20, 22, 21, 0, 20, 22);
         }
     }
@@ -230,10 +237,13 @@ void GuiInGameBot::RenderHotbar(int x, int y, mc::inventory::Slot* stacks, int& 
     //SpriteBatch_SetScale(2);
 
     // Draw hotbar ends
+    DrawTexturedModalRect(x, y, 0, 0, 21, 22);
+    DrawTexturedModalRect(21 + 20 * 7 + x, y, 161, 0, 21, 22);
     //SpriteBatch_PushQuad(x, y, 10, 21, 22, 0, 0, 21, 22);
     //SpriteBatch_PushQuad(21 + 20 * 7 + x, y, 10, 21, 22, 161, 0, 21, 22);
 
     // Draw selection indicator
+    DrawTexturedModalRect(x + selected * 20 - 1, y - 1, 0, 22, 24, 24);
     //SpriteBatch_PushQuad(x + selected * 20 - 1, y - 1, 14, 24, 24, 0, 22, 24, 24);
 }
 
@@ -245,12 +255,12 @@ void GuiInGameBot::RenderInventory(int x, int y, mc::inventory::Slot* stacks, in
     m_inventory->currentSite = site;
 
     if (count > 27) {
-        Gui::Offset(0, 155);
+        Gui::Offset(0, 77);
         if (Gui::Button(0.f, " << ") && m_inventory->currentSite > 1) {
             --m_inventory->currentSite;
         }
 
-        Gui::Offset(270, 155);
+        Gui::Offset(135, 77);
         if (Gui::Button(0.f, " >> ") && m_inventory->currentSite * 27 < count) {
             ++m_inventory->currentSite;
         }

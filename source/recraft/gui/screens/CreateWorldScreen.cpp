@@ -13,16 +13,7 @@ void CreateWorldBotScreen::Init() {
 }
 //TODO: De-Noodle-c-ify
 void CreateWorldBotScreen::Render(int mouseX, int mouseY, float f) {
-    //SpriteBatch_SetScale(2);
-
-    //SpriteBatch_BindGuiTexture(GuiTexture::MenuBackground);
-    for (int i = 0; i < 160 / 32 + 1; i++) {
-        for (int j = 0; j < 120 / 32 + 1; j++) {
-
-           // SpriteBatch_PushQuadColor(i * 32, j * 32,  -10, 32, 32, 0, 0, 32, 32,
-            //                           SHADER_RGB(12, 12, 12));
-        }
-    }
+    Gui::DrawDefaultBackground();
 
     Gui::Offset(0, 10);
 
@@ -30,7 +21,7 @@ void CreateWorldBotScreen::Render(int mouseX, int mouseY, float f) {
     Gui::BeginRowCenter(Gui::RelativeWidth(0.9f), 3);
     Gui::Label(0.45f, true, INT16_MAX, false, "Game Mode:");
     Gui::Space(0.1f);
-    if (Gui::Button(0.45f, "%s", m_gamemodestr[m_gamemode])) {
+    if (Gui::Button(0.45f, m_gamemodestr[m_gamemode])) {
         m_gamemode = static_cast<Gamemode>(static_cast<int>(m_gamemode) + 1);
         if (m_gamemode == Gamemode_Count)
             m_gamemode = static_cast<Gamemode>(0);
@@ -40,7 +31,7 @@ void CreateWorldBotScreen::Render(int mouseX, int mouseY, float f) {
     Gui::BeginRowCenter(Gui::RelativeWidth(0.9f), 3);
     Gui::Label(0.45f, true, INT16_MAX, false, "World type:");
     Gui::Space(0.1f);
-    if (Gui::Button(0.45f, "%s", m_worldGenTypesStr[m_worldGenType])) {
+    if (Gui::Button(0.45f, m_worldGenTypesStr[m_worldGenType])) {
         m_worldGenType = static_cast<WorldGenType>(static_cast<int>(m_worldGenType) + 1);
         if (m_worldGenType == WorldGenTypes_Count)
             m_worldGenType = static_cast<WorldGenType>(0);

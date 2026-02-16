@@ -5,6 +5,7 @@
 
 class GuiInGameTop : public Screen {
 public:
+    void Init() override;
     bool IsInGameScreen() override;
     void Render(int mouseX, int mouseY, float delta) override;
 private:

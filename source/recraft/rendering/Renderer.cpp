@@ -93,9 +93,27 @@ void Renderer::Render(DebugUI* debugUi) {
 
     Top[0]->Use();
     Iron::DrawOn(Top[0]);
-    //debugUi->RenderData->DrawRectFilled(0, 50, 0xff00ff00);
-    Iron::Draw(debugUi->RenderData->Data());
+    if (ReCraftCore::GetInstance()->TopScreen){
+        ReCraftCore::GetInstance()->TopScreen->Render(0, 0, 0 /*  TODO: 0 is enough for now, but later we need   1000.f / Amy::App::Delta()*/);
+        ReCraftCore::GetInstance()->TopScreen->RenderData->Merge(debugUi->RenderData.get());
+        Iron::Draw(ReCraftCore::GetInstance()->TopScreen->RenderData->Data());
+    }
+
+    Top[1]->Use();
+    Iron::DrawOn(Top[1]);
+    if (ReCraftCore::GetInstance()->TopScreen){
+        ReCraftCore::GetInstance()->TopScreen->Render(0, 0, 0 /*  TODO: 0 is enough for now, but later we need   1000.f / Amy::App::Delta()*/);
+        Iron::Draw(ReCraftCore::GetInstance()->TopScreen->RenderData->Data());
+
+    }
+
+    if (ReCraftCore::GetInstance()->TopScreen){
+        ReCraftCore::GetInstance()->TopScreen->RenderData->Clear();
+    }
+
     debugUi->RenderData->Clear();
+
+
 
 
     // C3D_FrameDrawOn(m_lowerScreen);
@@ -130,7 +148,10 @@ void Renderer::RenderTopScreen(int eyeIndex, float iod) {
 
     if (ReCraftCore::GetInstance()->TopScreen){
         ReCraftCore::GetInstance()->TopScreen->Render3D(0, 0, eyeIndex, m_world_shader_uLocProjection, iod, 0 /*  TODO: 0 is enough for now, but later we need   1000.f / Amy::App::Delta()*/);
-        ReCraftCore::GetInstance()->TopScreen->Render(0, 0, 0 /*  TODO: 0 is enough for now, but later we need   1000.f / Amy::App::Delta()*/);
+
+        //Iron::DrawOn(Top[0]);
+        //Iron::Draw(ReCraftCore::GetInstance()->TopScreen->RenderData->Data());
+        ReCraftCore::GetInstance()->TopScreen->RenderData->Clear();
     }
 
     //TODO: REMOVE

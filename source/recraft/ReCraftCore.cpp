@@ -38,6 +38,7 @@ ReCraftCore::ReCraftCore() {
     m_AssetMgr.Add("font", fnt);
 
     m_AssetMgr.AutoLoad("GuiTexture_Widgets", "romfs:/assets/textures/gui/widgets.png");
+    m_AssetMgr.AutoLoad("GuiTexture_DefaultBG", "romfs:/assets/textures/gui/options_background.png");
 
     // m_AssetMgr.AutoLoad("font", "romfs:/ComicNeue.ttf");
 

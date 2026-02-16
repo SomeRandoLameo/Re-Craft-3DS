@@ -42,16 +42,7 @@ bool ConfirmScreen::HandleBackEvent(bool b) {
 }
 
 void ConfirmScreen::Render(int mouseX, int mouseY, float delta) {
-   // SpriteBatch_SetScale(2);
-
-    //SpriteBatch_BindGuiTexture(GuiTexture::MenuBackground);
-    for (int i = 0; i < 160 / 32 + 1; i++) {
-        for (int j = 0; j < 120 / 32 + 1; j++) {
-
-          //  SpriteBatch_PushQuadColor(i * 32, j * 32,  -10, 32, 32, 0, 0, 32, 32,
-                                     // SHADER_RGB(12, 12, 12));
-        }
-    }
+    Gui::DrawDefaultBackground();
 
     Gui::Offset(0, 10);
     Gui::BeginRowCenter(SpriteBatch_GetWidth(), 1);

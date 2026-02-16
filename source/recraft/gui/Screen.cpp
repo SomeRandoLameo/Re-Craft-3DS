@@ -13,6 +13,7 @@ void Screen::Init(ReCraftCore* pReCraftCore, int width, int height) {
     m_height = height;
     m_ReCraftCore = pReCraftCore;
     //m_pFont = pMinecraft->m_pFont;
+    SetDimensions(m_width, m_height);
     Init();
     UpdateTabButtonSelection();
 }
