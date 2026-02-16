@@ -9,31 +9,27 @@
 #include "misc/NumberUtils.hpp"
 #include "rendering/VertexFmt.hpp"
 
-struct Row{
-	int width;
-	int highestElement;
-	int unpaddedWidth;
-};
 
-Amy::Iron::Drawlist* Gui::RenderData = nullptr;
-
-static Row currentRow;
-static int relativeX, relativeY;
-static int windowX, windowY;
-static int paddingX, paddingY;
-
-void Gui::Init() {
-	paddingX = 2;
-	paddingY = 3;
-
+Gui::Gui() {
     RenderData = new Iron::Drawlist();
-    //TODO: MC Bitmap pixel font loaded from assets :D
     RenderData->SetFont(ReCraftCore::GetInstance()->GetAssetManager()->Get<Iron::Font>("font"));
+
+    paddingX = 2;
+    paddingY = 3;
+    windowX = 0;
+    windowY = 0;
+    relativeX = 0;
+    relativeY = 0;
 }
 
-static inline int relativeToAbsoluteSize(float s) { return (int)((float)currentRow.unpaddedWidth * s); }
+Gui::~Gui() {
+    if (RenderData) {
+        delete RenderData;
+        RenderData = nullptr;
+    }
+}
 
-void Gui::Deinit() {}
+int Gui::relativeToAbsoluteSize(float s) { return (int)((float)currentRow.unpaddedWidth * s); }
 
 void Gui::Frame() {
 	relativeX = 0;
@@ -47,11 +43,11 @@ void Gui::Offset(int x, int y) {
 	windowY = y;
 }
 
-int Gui::RelativeWidth(float x) { return SpriteBatch_GetWidth() * x; }
-int Gui::RelativeHeight(float y) { return SpriteBatch_GetHeight() * y; }
+int Gui::RelativeWidth(float x) { return /*SpriteBatch_GetWidth()*/1 * x; }
+int Gui::RelativeHeight(float y) { return /*SpriteBatch_GetHeight()*/1 * y; }
 
 void Gui::BeginRowCenter(int width, int count) {
-	windowX = SpriteBatch_GetWidth() / 2 - width / 2;
+	windowX = /*SpriteBatch_GetWidth()*/1 / 2 - width / 2;
     Gui::BeginRow(width, count);
 }
 
@@ -62,6 +58,8 @@ void Gui::BeginRow(int width, int count) {
 }
 void Gui::EndRow() { windowY += currentRow.highestElement + paddingY; }
 
+
+
 void Gui::Label(float size, bool shadow, int16_t color, bool center, const char* text, ...) {
 	int wrap = size <= 0.f ? (currentRow.width - relativeX - paddingX) : relativeToAbsoluteSize(size);
 	int yTextSize = 0;
@@ -70,11 +68,11 @@ void Gui::Label(float size, bool shadow, int16_t color, bool center, const char*
 	va_start(vl, text);
 	int xOffset = 0;
 	if (center) {
-		int textWidth = SpriteBatch_CalcTextWidthVargs(text, vl);
+		int textWidth = 0;//SpriteBatch_CalcTextWidthVargs(text, vl);
 		if (textWidth <= wrap) xOffset = wrap / 2 - textWidth / 2;
 	}
 	int xTextSize =
-	    SpriteBatch_PushTextVargs(windowX + relativeX + xOffset, windowY + relativeY, 0, INT16_MAX, false, wrap, &yTextSize, text, vl);
+	    0; //SpriteBatch_PushTextVargs(windowX + relativeX + xOffset, windowY + relativeY, 0, INT16_MAX, false, wrap, &yTextSize, text, vl);
 	va_end(vl);
 	relativeX += (size <= 0.f ? xTextSize : wrap) + paddingX;
 	currentRow.highestElement = MAX(currentRow.highestElement, yTextSize);
@@ -84,7 +82,7 @@ bool Gui::Button(float size, const char* label, ...) {
 	va_list vl;
 	va_start(vl, label);
 
-	int textWidth = SpriteBatch_CalcTextWidthVargs(label, vl);
+	int textWidth = 0;//SpriteBatch_CalcTextWidthVargs(label, vl);
 	int x = windowX + relativeX;
 	int y = windowY + relativeY - BUTTON_TEXT_PADDING;
 	int w = (size <= 0.f) ? textWidth + SliceSize : relativeToAbsoluteSize(size);
@@ -117,19 +115,19 @@ void Gui::Space(float space) { relativeX += relativeToAbsoluteSize(space) + padd
 void Gui::VerticalSpace(int y) { windowY += y; }
 
 bool Gui::IsCursorInside(int x, int y, int w, int h) {
-    int sclInputX = Input::getTouch().px / SpriteBatch_GetScale();
-    int sclInputY = Input::getTouch().py / SpriteBatch_GetScale();
+    int sclInputX = Input::getTouch().px / 1;//SpriteBatch_GetScale();
+    int sclInputY = Input::getTouch().py / 1;//SpriteBatch_GetScale();
 	return sclInputX != 0 && sclInputY != 0 && sclInputX >= x && sclInputX < x + w && sclInputY >= y && sclInputY < y + h;
 }
 bool Gui::WasCursorInside(int x, int y, int w, int h) {
-    int sclOldInputX = Input::getTouchPrev().px / SpriteBatch_GetScale();
-    int sclOldInputY = Input::getTouchPrev().py / SpriteBatch_GetScale();
+    int sclOldInputX = Input::getTouchPrev().px / 1;//SpriteBatch_GetScale();
+    int sclOldInputY = Input::getTouchPrev().py / 1;//SpriteBatch_GetScale();
 	return sclOldInputX != 0 && sclOldInputY != 0 && sclOldInputX >= x && sclOldInputX < x + w && sclOldInputY >= y &&
 	       sclOldInputY < y + h;
 }
 bool Gui::EnteredCursorInside(int x, int y, int w, int h) {
-    int sclOldInputX = Input::getTouchPrev().px / SpriteBatch_GetScale();
-    int sclOldInputY = Input::getTouchPrev().py / SpriteBatch_GetScale();
+    int sclOldInputX = Input::getTouchPrev().px / 1;//SpriteBatch_GetScale();
+    int sclOldInputY = Input::getTouchPrev().py / 1;//SpriteBatch_GetScale();
 
 	return (sclOldInputX == 0 && sclOldInputY == 0) && Gui::IsCursorInside(x, y, w, h);
 }
@@ -140,8 +138,8 @@ void Gui::GetCursorMovement(int* x, int* y) {
 		*y = 0;
 		return;
 	}
-    *x = Input::getTouch().px / SpriteBatch_GetScale() - Input::getTouchPrev().px / SpriteBatch_GetScale();
-    *y = Input::getTouch().px / SpriteBatch_GetScale() - Input::getTouchPrev().py / SpriteBatch_GetScale();
+    *x = Input::getTouch().px / 1/*SpriteBatch_GetScale()*/ - Input::getTouchPrev().px / 1/*SpriteBatch_GetScale()*/;
+    *y = Input::getTouch().px / 1/*SpriteBatch_GetScale()*/ - Input::getTouchPrev().py / 1/*SpriteBatch_GetScale()*/;
 }
 
 void Gui::DrawTexturedModalRect(int x, int y, int textureX, int textureY, int width, int height) {

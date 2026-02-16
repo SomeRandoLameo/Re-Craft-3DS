@@ -44,8 +44,7 @@ Renderer::Renderer(World* world, Player* player, WorkQueue* queue) {
     m_worldRenderer = new WorldRenderer(player, world, m_workqueue, m_world_shader_uLocProjection);
 
     Iron::Init();
-    SpriteBatch_Init(m_gui_shader_uLocProjection);
-    Gui::Init();
+    //SpriteBatch_Init(m_gui_shader_uLocProjection);
     C3D_CullFace(GPU_CULL_BACK_CCW);
 
     //Block_Init();
@@ -57,8 +56,7 @@ Renderer::~Renderer() {
     PolyGen_Deinit();
     // delete m_worldRenderer;
     m_worldRenderer = nullptr;
-    Gui::Deinit();
-    SpriteBatch_Deinit();
+    //SpriteBatch_Deinit();
 
     delete Top[0];
     delete Top[1];
@@ -76,12 +74,12 @@ void Renderer::Render(DebugUI* debugUi) {
     }
 
     for (int i = 0; i < 2; i++) {
-        RenderFrame(i, iod);
+        RenderTopScreen(i, iod);
         if (iod <= 0.f)
             break;
     }
 
-    RenderLowerScreen(debugUi);
+    RenderBottomScreen(debugUi);
 
     ImGuiIO& io = ImGui::GetIO();
     io.DisplaySize = ImVec2(ScreenWidth, ScreenHeight);
@@ -107,9 +105,6 @@ void Renderer::Render(DebugUI* debugUi) {
 
     Bottom->Use();
     Iron::DrawOn(Bottom);
-    //Gui::RenderData->DrawRectFilled(0, 50, 0xff00ff00);
-    Iron::Draw(Gui::RenderData->Data());
-    Gui::RenderData->Clear();
 
     ImGuiManager::GetInstance()->EndFrame(reinterpret_cast<void*>(Top[0]->Ptr()),
                                           reinterpret_cast<void*>(Bottom->Ptr()));
@@ -117,11 +112,11 @@ void Renderer::Render(DebugUI* debugUi) {
     C3D_FrameEnd(0);
 }
 
-void Renderer::RenderFrame(int eyeIndex, float iod) {
+void Renderer::RenderTopScreen(int eyeIndex, float iod) {
     Top[eyeIndex]->Clear(SkyClearColor);
     C3D_FrameDrawOn(Top[eyeIndex]->Ptr());
 
-    SpriteBatch_StartFrame(400, 240);
+    //SpriteBatch_StartFrame(400, 240);
 
     C3D_TexEnv* env = C3D_GetTexEnv(0);
     C3D_TexEnvInit(env);
@@ -147,25 +142,30 @@ void Renderer::RenderFrame(int eyeIndex, float iod) {
 
     pGuiShader->Use();
 
-    SpriteBatch_Render(GFX_TOP);
+    //SpriteBatch_Render(GFX_TOP);
 }
 
-void Renderer::RenderLowerScreen(DebugUI* debugUi) {
+void Renderer::RenderBottomScreen(DebugUI* debugUi) {
     Bottom->Clear(BlackClearColor);
     Bottom->Use();
 
-    SpriteBatch_StartFrame(320, 240);
+    //SpriteBatch_StartFrame(320, 240);
 
     if (ReCraftCore::GetInstance()->BotScreen){
+        ReCraftCore::GetInstance()->BotScreen->Frame();
+
         Gui::GetCursorMovement(&m_mouseX, &m_mouseY);
-        ReCraftCore::GetInstance()->BotScreen->Render(m_mouseX, m_mouseY, 0 /*  TODO: 0 is enough for now, but later we need   1000.f / Amy::App::Delta()*/);
+        ReCraftCore::GetInstance()->BotScreen->Render(m_mouseX, m_mouseY, 0);
+
+        // Draw the GUI using Iron
+        Iron::DrawOn(Bottom);
+        Iron::Draw(ReCraftCore::GetInstance()->BotScreen->RenderData->Data());
+        ReCraftCore::GetInstance()->BotScreen->RenderData->Clear();
     }
 
     if (showDebugInfo) {
         debugUi->Draw();
     }
 
-    Gui::Frame();
-
-    SpriteBatch_Render(GFX_BOTTOM);
+    //SpriteBatch_Render(GFX_BOTTOM);
 }

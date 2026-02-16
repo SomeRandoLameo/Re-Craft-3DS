@@ -141,9 +141,11 @@ void Screen::Render(int xPos, int yPos, float unused) {
     }
 #endif
      */
+    Gui::Frame();
 }
 
 void Screen::Render3D(int xPos, int yPos, int eyeIndex, int projmat, int iod, float) {
+    Gui::Frame();
 }
 
 void Screen::Tick() {

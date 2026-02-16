@@ -8,37 +8,50 @@ class Gui {
 public:
     enum { SliceSize = 8 };
 
-    static void Init();
-    static void Deinit();
+    Gui();
+    virtual ~Gui();
 
-    static void Frame();
+    void Frame();
 
-    static int RelativeWidth(float x);
-    static int RelativeHeight(float y);
+    int RelativeWidth(float x);
+    int RelativeHeight(float y);
 
-    static void Offset(int x, int y);
-    static void BeginRowCenter(int width, int count);
-    static void VerticalSpace(int y);
+    void Offset(int x, int y);
+    void BeginRowCenter(int width, int count);
+    void VerticalSpace(int y);
 
-    static void Space(float space);
+    void Space(float space);
 
-    static void BeginRow(int width, int count);
-    static void EndRow();
+    void BeginRow(int width, int count);
+    void EndRow();
 
-    static void Label(float size, bool shadow, int16_t color, bool center, const char* text, ...);
+    void Label(float size, bool shadow, int16_t color, bool center, const char* text, ...);
 
-    static bool Button(float size, const char* label, ...);
+    bool Button(float size, const char* label, ...);
 
-    static bool IsCursorInside(int x, int y, int w, int h);
-    static bool WasCursorInside(int x, int y, int w, int h);
+    bool IsCursorInside(int x, int y, int w, int h);
+    bool WasCursorInside(int x, int y, int w, int h);
     static void GetCursorMovement(int* x, int* y);
-    static bool EnteredCursorInside(int x, int y, int w, int h);
+    bool EnteredCursorInside(int x, int y, int w, int h);
 
-    static void DrawTexturedModalRect(int x, int y, int textureX, int textureY, int width, int height);
+    void DrawTexturedModalRect(int x, int y, int textureX, int textureY, int width, int height);
 
-    static Amy::Iron::Drawlist* RenderData;
+    Amy::Iron::Drawlist* RenderData = nullptr;
 
     static const int BUTTON_HEIGHT = 20;
     static const int CHAR_HEIGHT = 8;
     static const int BUTTON_TEXT_PADDING = ((BUTTON_HEIGHT - CHAR_HEIGHT) / 2);
+private:
+    int relativeToAbsoluteSize(float s);
+    struct Row {
+        int width;
+        int highestElement;
+        int unpaddedWidth;
+    };
+
+    Row currentRow;
+    int relativeX, relativeY;
+    int windowX, windowY;
+    int paddingX, paddingY;
+
 };

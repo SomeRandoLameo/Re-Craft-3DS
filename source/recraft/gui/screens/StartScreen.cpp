@@ -33,12 +33,12 @@ void StartTopScreen::Render3D(int mouseX, int mouseY, int eyeIndex, int projMat,
 
     m_clouds->Draw(projMat, &vp, 0.f, 0.f);
 
-    SpriteBatch_BindTexture(&m_logoTex);
+    //SpriteBatch_BindTexture(&m_logoTex);
 
-    SpriteBatch_SetScale(2);
-    SpriteBatch_PushQuad(100 / 2 - 76 / 2, 120 / 2, 0, 256, 64, 0, 0, 128, 32);
+    //SpriteBatch_SetScale(2);
+    //SpriteBatch_PushQuad(100 / 2 - 76 / 2, 120 / 2, 0, 256, 64, 0, 0, 128, 32);
 
-    SpriteBatch_PushText(0, 0, 0, INT16_MAX, true, INT_MAX, NULL, GIT_COMMIT "-" GIT_BRANCH);
+    //SpriteBatch_PushText(0, 0, 0, INT16_MAX, true, INT_MAX, NULL, GIT_COMMIT "-" GIT_BRANCH);
     Screen::Render(mouseX, mouseY, delta);
 }
 
@@ -56,14 +56,14 @@ bool StartBotScreen::IsInGameScreen() {
 }
 
 void StartBotScreen::Render(int mouseX, int mouseY, float delta) {
-    SpriteBatch_SetScale(2);
+    //SpriteBatch_SetScale(2);
 
-    SpriteBatch_BindGuiTexture(GuiTexture::MenuBackground);
+    //SpriteBatch_BindGuiTexture(GuiTexture::MenuBackground);
     for (int i = 0; i < 160 / 32 + 1; i++) {
         for (int j = 0; j < 120 / 32 + 1; j++) {
 
-            SpriteBatch_PushQuadColor(i * 32, j * 32,  -10, 32, 32, 0, 0, 32, 32,
-                                      SHADER_RGB(12, 12, 12));
+            //SpriteBatch_PushQuadColor(i * 32, j * 32,  -10, 32, 32, 0, 0, 32, 32,
+           //                           SHADER_RGB(12, 12, 12));
         }
     }
 

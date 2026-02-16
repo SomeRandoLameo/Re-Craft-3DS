@@ -6,8 +6,8 @@ bool GuiInGameTop::IsInGameScreen() {
 }
 
 void GuiInGameTop::Render(int mouseX, int mouseY, float delta) {
-    SpriteBatch_BindGuiTexture(GuiTexture::Icons);
-    SpriteBatch_PushQuad(200 / 2 - 16 / 2, 120 / 2 - 16 / 2, 0, 16, 16, 0, 0, 16, 16);
+    //SpriteBatch_BindGuiTexture(GuiTexture::Icons);
+    //SpriteBatch_PushQuad(200 / 2 - 16 / 2, 120 / 2 - 16 / 2, 0, 16, 16, 0, 0, 16, 16);
 
     if (m_ReCraftCore->GetPlayer()->gamemode == 0) {
         RenderExpBar();
@@ -27,7 +27,7 @@ void GuiInGameTop::RenderHealth() {
     int health = m_ReCraftCore->GetPlayer()->hp;
     int yPos = 99;
     int spriteSize = 9;
-    SpriteBatch_BindGuiTexture(GuiTexture::Icons);
+    //SpriteBatch_BindGuiTexture(GuiTexture::Icons);
     for (int amount = 0; amount < 10; ++amount) {
 
         int var6 = 0;
@@ -42,29 +42,29 @@ void GuiInGameTop::RenderHealth() {
             yPos += nextafter(2, 0);
         }
 
-        SpriteBatch_PushQuad(spriteSize + (amount * 8), yPos, -1, spriteSize, spriteSize, 16 + var6 * spriteSize, 0,
-                             spriteSize, spriteSize);
+        //SpriteBatch_PushQuad(spriteSize + (amount * 8), yPos, -1, spriteSize, spriteSize, 16 + var6 * spriteSize, 0,
+       //                      spriteSize, spriteSize);
 
         if (var9) {
             if ((amount << 1) + 1 < prevHealth) {
-                SpriteBatch_PushQuad(spriteSize + (amount * 8), yPos, 0, spriteSize, spriteSize, 70, 0, spriteSize,
-                                     spriteSize);
+                //SpriteBatch_PushQuad(spriteSize + (amount * 8), yPos, 0, spriteSize, spriteSize, 70, 0, spriteSize,
+                //                     spriteSize);
             }
 
             if ((amount << 1) + 1 == prevHealth) {
-                SpriteBatch_PushQuad(spriteSize + (amount * 8), yPos, 0, spriteSize, spriteSize, 79, 0, spriteSize,
-                                     spriteSize);
+                //SpriteBatch_PushQuad(spriteSize + (amount * 8), yPos, 0, spriteSize, spriteSize, 79, 0, spriteSize,
+                //                     spriteSize);
             }
         }
 
         if ((amount << 1) + 1 < health) {
-            SpriteBatch_PushQuad(spriteSize + (amount * 8), yPos, 0, spriteSize, spriteSize, 52, 0, spriteSize,
-                                 spriteSize);
+         //   SpriteBatch_PushQuad(spriteSize + (amount * 8), yPos, 0, spriteSize, spriteSize, 52, 0, spriteSize,
+          //                       spriteSize);
         }
 
         if ((amount << 1) + 1 == health) {
-            SpriteBatch_PushQuad(spriteSize + (amount * 8), yPos, 0, spriteSize, spriteSize, 61, 0, spriteSize,
-                                 spriteSize);
+            //SpriteBatch_PushQuad(spriteSize + (amount * 8), yPos, 0, spriteSize, spriteSize, 61, 0, spriteSize,
+            //                     spriteSize);
         }
     }
 }
@@ -73,17 +73,17 @@ void GuiInGameTop::RenderExpBar() {
     // harcoded cap for now
     int barCap = 10;
 
-    SpriteBatch_BindGuiTexture(GuiTexture::Icons);
+    //SpriteBatch_BindGuiTexture(GuiTexture::Icons);
 
     if (barCap > 0) {
         int barLength = 182;
         int xpFill = (int)(m_ReCraftCore->GetPlayer()->experience * (float)(barLength + 1));
 
         int y = 120 - 9;
-        SpriteBatch_PushQuad(200 / 2 - 182 / 2, y, 0, barLength, 5, 0, 64, barLength, 5);
+       // SpriteBatch_PushQuad(200 / 2 - 182 / 2, y, 0, barLength, 5, 0, 64, barLength, 5);
 
         if (xpFill > 0) {
-            SpriteBatch_PushQuad(200 / 2 - 182 / 2, y, 1, xpFill, 5, 0, 69, xpFill, 5);
+          //  SpriteBatch_PushQuad(200 / 2 - 182 / 2, y, 1, xpFill, 5, 0, 69, xpFill, 5);
         }
     }
 
@@ -95,20 +95,20 @@ void GuiInGameTop::RenderExpBar() {
         snprintf(experienceStr, sizeof(experienceStr), "%d",
                  experienceInt); // Format as integer
 
-        int textWidth = SpriteBatch_CalcTextWidth(experienceStr);
+        int textWidth = 0;//SpriteBatch_CalcTextWidth(experienceStr);
 
         int textY = 10;
 
-        SpriteBatch_PushText(200 / 2 - textWidth / 2 + 1, 120 - textY, 2, SHADER_RGB(0, 0, 0), false, INT_MAX, 0,
-                             experienceStr);
-        SpriteBatch_PushText(200 / 2 - textWidth / 2 - 1, 120 - textY, 2, SHADER_RGB(0, 0, 0), false, INT_MAX, 0,
-                             experienceStr);
-        SpriteBatch_PushText(200 / 2 - textWidth / 2, 120 - textY + 1, 2, SHADER_RGB(0, 0, 0), false, INT_MAX, 0,
-                             experienceStr);
-        SpriteBatch_PushText(200 / 2 - textWidth / 2, 120 - textY - 1, 2, SHADER_RGB(0, 0, 0), false, INT_MAX, 0,
-                             experienceStr);
-        SpriteBatch_PushText(200 / 2 - textWidth / 2, 120 - textY, 3, SHADER_RGB(100, 255, 32), false, INT_MAX, 0,
-                             experienceStr);
+        //SpriteBatch_PushText(200 / 2 - textWidth / 2 + 1, 120 - textY, 2, SHADER_RGB(0, 0, 0), false, INT_MAX, 0,
+         //                    experienceStr);
+        //SpriteBatch_PushText(200 / 2 - textWidth / 2 - 1, 120 - textY, 2, SHADER_RGB(0, 0, 0), false, INT_MAX, 0,
+        //                     experienceStr);
+        //SpriteBatch_PushText(200 / 2 - textWidth / 2, 120 - textY + 1, 2, SHADER_RGB(0, 0, 0), false, INT_MAX, 0,
+        //                     experienceStr);
+        //SpriteBatch_PushText(200 / 2 - textWidth / 2, 120 - textY - 1, 2, SHADER_RGB(0, 0, 0), false, INT_MAX, 0,
+        //                    experienceStr);
+        //SpriteBatch_PushText(200 / 2 - textWidth / 2, 120 - textY, 3, SHADER_RGB(100, 255, 32), false, INT_MAX, 0,
+        //                     experienceStr);
     }
 }
 
@@ -141,14 +141,14 @@ void GuiInGameTop::RenderHunger() {
         */
 
         int spriteXpos = xpos - amount * 8 - 9;
-        SpriteBatch_PushQuad(spriteXpos, ypos, -1, spriteSize, spriteSize, 16 + j7 * 9, 27, 9, 9);
+        //SpriteBatch_PushQuad(spriteXpos, ypos, -1, spriteSize, spriteSize, 16 + j7 * 9, 27, 9, 9);
 
         if (amount * 2 + 1 < saturationLevel) {
-            SpriteBatch_PushQuad(spriteXpos, ypos, 0, spriteSize, spriteSize, l6 + 36, 27, 9, 9);
+           // SpriteBatch_PushQuad(spriteXpos, ypos, 0, spriteSize, spriteSize, l6 + 36, 27, 9, 9);
         }
 
         if (amount * 2 + 1 == saturationLevel) {
-            SpriteBatch_PushQuad(spriteXpos, ypos, 0, spriteSize, spriteSize, l6 + 45, 27, 9, 9);
+            //SpriteBatch_PushQuad(spriteXpos, ypos, 0, spriteSize, spriteSize, l6 + 45, 27, 9, 9);
         }
     }
 }
@@ -170,7 +170,7 @@ bool GuiInGameBot::IsInGameScreen() {
 }
 
 void GuiInGameBot::Render(int mouseX, int mouseY, float delta) {
-    SpriteBatch_SetScale(2);
+    //SpriteBatch_SetScale(2);
 
     RenderHotbar(160 / 2 - 194 / 2, 120 - Inventory::QUICKSELECT_HEIGHT, m_player->quickSelectBar,
                               m_player->quickSelectBarSlot);
@@ -185,17 +185,17 @@ void GuiInGameBot::ButtonClicked() { Screen::ButtonClicked(); }
 
 
 void GuiInGameBot::RenderHotbar(int x, int y, mc::inventory::Slot* stacks, int& selected) {
-    SpriteBatch_BindGuiTexture(GuiTexture::Widgets);
+    //SpriteBatch_BindGuiTexture(GuiTexture::Widgets);
 
     for (int i = 0; i < 9; ++i) {
-        SpriteBatch_SetScale(1);
+       // SpriteBatch_SetScale(1);
 
         const int rx = (i * 20 + x + 3) * 2;
         const int ry = (y + 3) * 2;
 
         // Render item icon if stack has items
         if (stacks[i].GetItemCount() > 0) {
-            SpriteBatch_PushIcon(stacks[i], rx, ry, 11);
+            //SpriteBatch_PushIcon(stacks[i], rx, ry, 11);
         }
 
         // Handle cursor interaction
@@ -208,35 +208,37 @@ void GuiInGameBot::RenderHotbar(int x, int y, mc::inventory::Slot* stacks, int& 
             //}
         }
 
-        SpriteBatch_SetScale(2);
+        //SpriteBatch_SetScale(2);
 
         // Highlight source stack
         if (m_inventory->m_sourceStack == &stacks[i]) {
-            SpriteBatch_PushSingleColorQuad(
-                rx / 2 - 2, ry / 2 - 2, 9, 18, 18,
-                SHADER_RGB(20, 5, 2)
-            );
-            SpriteBatch_BindGuiTexture(GuiTexture::Widgets);
+
+            //SpriteBatch_PushSingleColorQuad(
+            //    rx / 2 - 2, ry / 2 - 2, 9, 18, 18,
+            //    SHADER_RGB(20, 5, 2)
+            //);
+
+            //SpriteBatch_BindGuiTexture(GuiTexture::Widgets);
         }
 
         // Draw slot separator (except for last two slots)
         if (i < 9 - 2) {
-            SpriteBatch_PushQuad(i * 20 + 21 + x, y, 10, 20, 22, 21, 0, 20, 22);
+           // SpriteBatch_PushQuad(i * 20 + 21 + x, y, 10, 20, 22, 21, 0, 20, 22);
         }
     }
 
-    SpriteBatch_SetScale(2);
+    //SpriteBatch_SetScale(2);
 
     // Draw hotbar ends
-    SpriteBatch_PushQuad(x, y, 10, 21, 22, 0, 0, 21, 22);
-    SpriteBatch_PushQuad(21 + 20 * 7 + x, y, 10, 21, 22, 161, 0, 21, 22);
+    //SpriteBatch_PushQuad(x, y, 10, 21, 22, 0, 0, 21, 22);
+    //SpriteBatch_PushQuad(21 + 20 * 7 + x, y, 10, 21, 22, 161, 0, 21, 22);
 
     // Draw selection indicator
-    SpriteBatch_PushQuad(x + selected * 20 - 1, y - 1, 14, 24, 24, 0, 22, 24, 24);
+    //SpriteBatch_PushQuad(x + selected * 20 - 1, y - 1, 14, 24, 24, 0, 22, 24, 24);
 }
 
 void GuiInGameBot::RenderInventory(int x, int y, mc::inventory::Slot* stacks, int count, int site) {
-    SpriteBatch_SetScale(1);
+    //SpriteBatch_SetScale(1);
 
     int headX = x;
     int headY = y;
@@ -273,13 +275,13 @@ void GuiInGameBot::RenderInventory(int x, int y, mc::inventory::Slot* stacks, in
         headX += 16;
     }
 
-    SpriteBatch_SetScale(2);
+    //SpriteBatch_SetScale(2);
 }
 
 
 void GuiInGameBot::RenderSlot(mc::inventory::Slot* slot, int x, int y) {
 
-    SpriteBatch_PushIcon(*slot, x * 2, y * 2, 10);
+    //SpriteBatch_PushIcon(*slot, x * 2, y * 2, 10);
 
     if (Gui::EnteredCursorInside(x * 2, y * 2, 16 * 2, 16 * 2)) {
         m_inventory->handleStackClick(slot);
@@ -289,8 +291,8 @@ void GuiInGameBot::RenderSlot(mc::inventory::Slot* slot, int x, int y) {
         ? SHADER_RGB(20, 5, 2)
         : SHADER_RGB_DARKEN(SHADER_RGB(20, 20, 21), 9);
 
-    SpriteBatch_PushSingleColorQuad(
-        x * 2, y * 2, 9, 16 * 2, 16 * 2,
-        backgroundColor
-    );
+    //SpriteBatch_PushSingleColorQuad(
+    //    x * 2, y * 2, 9, 16 * 2, 16 * 2,
+    //    backgroundColor
+    //);
 }

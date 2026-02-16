@@ -66,6 +66,6 @@ private:
     std::string m_cstyle;
     std::vector<std::string> m_styles;
 
-    void RenderFrame(int eyeIndex, float iod);
-    void RenderLowerScreen(DebugUI* debugUi);
+    void RenderTopScreen(int eyeIndex, float iod);
+    void RenderBottomScreen(DebugUI* debugUi);
 };

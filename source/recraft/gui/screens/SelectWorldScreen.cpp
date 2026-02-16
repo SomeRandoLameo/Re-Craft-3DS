@@ -24,14 +24,14 @@ bool SelectWorldBotScreen::IsInGameScreen() {
 
 //TODO: Separate Menu States as custom views
 void SelectWorldBotScreen::Render(int mouseX, int mouseY, float delta) {
-    SpriteBatch_SetScale(2);
+    //SpriteBatch_SetScale(2);
 
-    SpriteBatch_BindGuiTexture(GuiTexture::MenuBackground);
+    //SpriteBatch_BindGuiTexture(GuiTexture::MenuBackground);
     for (int i = 0; i < 160 / 32 + 1; i++) {
         for (int j = 0; j < 120 / 32 + 1; j++) {
             bool overlay = j >= 2;
-            SpriteBatch_PushQuadColor(i * 32, j * 32, overlay ? -4 : -10, 32, 32, 0, 0, 32, 32,
-                                      overlay ? INT16_MAX : SHADER_RGB(12, 12, 12));
+            //SpriteBatch_PushQuadColor(i * 32, j * 32, overlay ? -4 : -10, 32, 32, 0, 0, 32, 32,
+            //                          overlay ? INT16_MAX : SHADER_RGB(12, 12, 12));
         }
     }
 
@@ -51,15 +51,15 @@ void SelectWorldBotScreen::Render(int mouseX, int mouseY, float delta) {
         WorldInfo& info = m_worlds[i];
         int y = i * (SpriteBatch::CharHeight + SpriteBatch::CharHeight) + 10 + m_scroll;
         if (m_selectedWorld == (int)i) {
-            SpriteBatch_PushSingleColorQuad(10, y - 3, -7, 140, 1, SHADER_RGB(20, 20, 20));
-            SpriteBatch_PushSingleColorQuad(10, y + SpriteBatch::CharHeight + 2, -7, 140, 1, SHADER_RGB(20, 20, 20));
-            SpriteBatch_PushSingleColorQuad(10, y - 3, -7, 1, SpriteBatch::CharHeight + 6, SHADER_RGB(20, 20, 20));
-            SpriteBatch_PushSingleColorQuad(10 + 140, y - 3, -7, 1, SpriteBatch::CharHeight + 6, SHADER_RGB(20, 20, 20));
+            //SpriteBatch_PushSingleColorQuad(10, y - 3, -7, 140, 1, SHADER_RGB(20, 20, 20));
+            //SpriteBatch_PushSingleColorQuad(10, y + SpriteBatch::CharHeight + 2, -7, 140, 1, SHADER_RGB(20, 20, 20));
+            //SpriteBatch_PushSingleColorQuad(10, y - 3, -7, 1, SpriteBatch::CharHeight + 6, SHADER_RGB(20, 20, 20));
+            //SpriteBatch_PushSingleColorQuad(10 + 140, y - 3, -7, 1, SpriteBatch::CharHeight + 6, SHADER_RGB(20, 20, 20));
         }
         if (Gui::EnteredCursorInside(10, y - 3, 140, SpriteBatch::CharHeight + 6) && y < 32 * 2) {
             m_selectedWorld = (int)i;
         }
-        SpriteBatch_PushText(20, y, -6, INT16_MAX, true, INT_MAX, nullptr, "%s", info.name, mouseY);
+        //SpriteBatch_PushText(20, y, -6, INT16_MAX, true, INT_MAX, nullptr, "%s", info.name, mouseY);
     }
 
     Gui::Offset(0, 2 * 32 + 5 + Gui::BUTTON_TEXT_PADDING);
