@@ -31,7 +31,7 @@ void InputManager::poll() {
     hidScanInput();
     m_keysHeld = hidKeysHeld();
     m_keysDown = hidKeysDown();
-    m_keysUp   = hidKeysUp();
+    m_keysUp = hidKeysUp();
     hidCircleRead(&m_pad);
     hidCstickRead(&m_stick);
     hidTouchRead(&m_touch);
@@ -45,7 +45,7 @@ void InputManager::poll() {
 
         u32 keys = act.isHold ? m_keysHeld : m_keysDown;
 
-        act.statePress   = keys & act.key;
+        act.statePress = keys & act.key;
         act.stateRelease = m_keysUp & act.key;
     }
 }

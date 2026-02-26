@@ -3,8 +3,8 @@ extern "C" {
 #include <c3d/texture.h>
 }
 #include <stdint.h>
-#include <vector>
 
+#include <vector>
 
 void Texture_Load(C3D_Tex* result, const char* filename);
 
@@ -21,7 +21,8 @@ public:
         s16 u = 0, v = 0;
     };
 
-    constexpr static int MapSize = 128;
+    constexpr static int UvPrecision = 32768;
+    constexpr static int MapSize = 512;
     constexpr static int TileSize = 16;
     constexpr static int MapTiles = MapSize / TileSize;
 

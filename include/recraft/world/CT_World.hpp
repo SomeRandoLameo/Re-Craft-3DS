@@ -11,30 +11,19 @@
 #define UNDEADCHUNKS_COUNT (2 * World::ChunkCacheSize + World::ChunkCacheSize * World::ChunkCacheSize)
 
 
-enum WorldGenType{
-    Smea,
-    SuperFlat,
-    Empty,
-    WorldGenTypes_Count
-};
+enum WorldGenType { Smea, SuperFlat, Empty, WorldGenTypes_Count };
 
-enum Gamemode {
-    Survival,
-    Creative,
-    adventure,
-    Spectator,
-    Gamemode_Count
-};
+enum Gamemode { Survival, Creative, adventure, Spectator, Gamemode_Count };
 
-struct GeneratorSettings{
-	u64 seed;
-	WorldGenType type;
-	//gamemode type;
-	union {
-		struct {
-			// Keine Einstellungen...
-		} superflat;
-	} settings;
+struct GeneratorSettings {
+    u64 seed;
+    WorldGenType type;
+    // gamemode type;
+    union {
+        struct {
+            // Keine Einstellungen...
+        } superflat;
+    } settings;
 };
 
 class ChunkWorker;
@@ -42,7 +31,6 @@ class SaveManager;
 
 class World {
 public:
-
     constexpr static int Height = 256;
     constexpr static int ChunkCacheSize = 9;
     constexpr static int ChunkPoolSize = World::ChunkCacheSize * World::ChunkCacheSize + UNDEADCHUNKS_COUNT;
@@ -94,10 +82,10 @@ public:
     char name[NameSize];
 
 
-
     VBOCache vboCache;
 
     void Release(ChunkWorker* chunkWorker, SaveManager* savemgr);
+
 private:
     int m_HighestBlock;
 

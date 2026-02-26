@@ -11,7 +11,7 @@
 #include "Hand.hpp"
 #include "mcbridge/MCBridge.hpp"
 
-//mclib
+// mclib
 #include <mclib/common/Vector.h>
 
 struct RenderStep {
@@ -57,11 +57,11 @@ private:
 
     inline bool ClusterWasRendered(int x, int y, int z) const {
         return m_chunkRendered[x - (m_world->cacheTranslationX - (World::ChunkCacheSize / 2))][y]
-        [z - (m_world->cacheTranslationZ - (World::ChunkCacheSize / 2))];
+                              [z - (m_world->cacheTranslationZ - (World::ChunkCacheSize / 2))];
     }
 
     inline uint8_t& ClusterRenderedRef(int x, int y, int z) {
         return m_chunkRendered[x - (m_world->cacheTranslationX - (World::ChunkCacheSize / 2))][y]
-        [z - (m_world->cacheTranslationZ - (World::ChunkCacheSize / 2))];
+                              [z - (m_world->cacheTranslationZ - (World::ChunkCacheSize / 2))];
     }
 };

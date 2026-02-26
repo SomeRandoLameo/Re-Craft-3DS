@@ -2,10 +2,10 @@
 
 #include <citro3d.h>
 
-#include "entity/Player.hpp"
 #include "Frustum.hpp"
+#include "entity/Player.hpp"
 
-//mclib
+// mclib
 #include <mclib/common/Vector.h>
 
 class Camera {

@@ -1,43 +1,31 @@
 #include "gui/screens/ConfirmScreen.hpp"
 
 ConfirmScreen::ConfirmScreen(Screen* pScreen, const std::string& line1, const std::string& line2, int x) :
-	m_textLine1(line1),
-	m_textLine2(line2),
-	m_pScreen(pScreen),
-    m_buttonConfirm("Yes"),
-    m_buttonDeny("No"),
-	field_40(x)
-{
-}
+    m_textLine1(line1), m_textLine2(line2), m_pScreen(pScreen), m_buttonConfirm("Yes"), m_buttonDeny("No"),
+    field_40(x) {}
 
-ConfirmScreen::ConfirmScreen(Screen* pScreen, const std::string& line1, const std::string& line2, const std::string& ok, const std::string& cancel, int x) :
-	m_textLine1(line1),
-	m_textLine2(line2),
-	m_pScreen(pScreen),
-    m_buttonConfirm(ok),
-    m_buttonDeny(cancel),
-	field_40(x)
-{
+ConfirmScreen::ConfirmScreen(Screen* pScreen, const std::string& line1, const std::string& line2, const std::string& ok,
+                             const std::string& cancel, int x) :
+    m_textLine1(line1), m_textLine2(line2), m_pScreen(pScreen), m_buttonConfirm(ok), m_buttonDeny(cancel), field_40(x) {
 }
 
 void ConfirmScreen::ButtonClicked() {
-    if(m_confirmed_deletion){
+    if (m_confirmed_deletion) {
         m_confirmed_deletion = false;
         PostResult(true);
     }
 
-    if(m_canceled_deletion){
+    if (m_canceled_deletion) {
         m_canceled_deletion = false;
         PostResult(false);
     }
-
 }
 
 bool ConfirmScreen::HandleBackEvent(bool b) {
-	if (!b)
-		PostResult(false);
+    if (!b)
+        PostResult(false);
 
-	return true;
+    return true;
 }
 
 void ConfirmScreen::Render(int mouseX, int mouseY, float delta) {
@@ -57,11 +45,7 @@ void ConfirmScreen::Render(int mouseX, int mouseY, float delta) {
     m_confirmed_deletion = Gui::Button(0.4f, m_buttonConfirm.c_str());
     Gui::EndRow();
 
-	Screen::Render(mouseX, mouseY, delta);
+    Screen::Render(mouseX, mouseY, delta);
 }
 
-void ConfirmScreen::PostResult(bool b) {
-	m_pScreen->ConfirmResult(b, field_40);
-}
-
-
+void ConfirmScreen::PostResult(bool b) { m_pScreen->ConfirmResult(b, field_40); }

@@ -7,12 +7,10 @@
 void Inventory::handleStackClick(mc::inventory::Slot* stack) {
     if (m_sourceStack == nullptr && stack != m_proposedSourceStack) {
         m_proposedSourceStack = stack;
-    }
-    else if (m_proposedSourceStack == stack) {
+    } else if (m_proposedSourceStack == stack) {
         m_sourceStack = stack;
         m_proposedSourceStack = nullptr;
-    }
-    else if (m_sourceStack != nullptr) {
+    } else if (m_sourceStack != nullptr) {
         if (m_sourceStack != stack) {
             // Convert to ItemStack
             ItemStack sourceItemStack = MCBridge::MCLIBSlotToCTItemStack(*m_sourceStack);

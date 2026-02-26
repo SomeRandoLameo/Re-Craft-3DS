@@ -4,8 +4,7 @@
 
 Entity::Entity(World* world) : m_world(world) {}
 
-void Entity::MoveTo(mc::Vector3f pos, float yaw, float pitch)
-{
+void Entity::MoveTo(mc::Vector3f pos, float yaw, float pitch) {
     pos.y += heightOffset;
 
     position = pos;
@@ -19,11 +18,9 @@ void Entity::MoveTo(mc::Vector3f pos, float yaw, float pitch)
     SetPos(pos);
 }
 
-void Entity::MoveRelative(float x, float z, float speed)
-{
+void Entity::MoveRelative(float x, float z, float speed) {
     float len = x * x + z * z;
-    if (len >= 0.01f)
-    {
+    if (len >= 0.01f) {
         len = speed / std::sqrt(len);
         x *= len;
         z *= len;
@@ -50,19 +47,12 @@ void Entity::SetPos(mc::Vector3f pos) {
     float halfSize = bbWidth / 2;
     float lowY = pos.y - heightOffset + ySlideOffset;
 
-    bb = AABB(
-        pos.x - halfSize,
-        lowY,
-        pos.z - halfSize,
-        pos.x + halfSize,
-        lowY + bbHeight,
-        pos.z + halfSize
-    );
+    bb = AABB(pos.x - halfSize, lowY, pos.z - halfSize, pos.x + halfSize, lowY + bbHeight, pos.z + halfSize);
 }
 
 void Entity::ResetPos() {}
 
-void Entity::SetSize(float bbWidth, float bbHeight){
+void Entity::SetSize(float bbWidth, float bbHeight) {
     this->bbWidth = bbWidth;
     this->bbHeight = bbHeight;
 }
@@ -73,7 +63,8 @@ void Entity::Turn(float yRotDelta, float xRotDelta) {
     xRot = std::clamp(xRot - xRotDelta * 0.15f, -90.0f, 90.0f);
 
     yRot = std::remainder(yRot, 360.0f);
-    if (yRot < 0.0f) yRot += 360.0f;
+    if (yRot < 0.0f)
+        yRot += 360.0f;
 }
 
 void Entity::CheckFallDamage(float deltaY, bool HitGround) {
@@ -89,6 +80,4 @@ void Entity::CheckFallDamage(float deltaY, bool HitGround) {
 
 void Entity::CauseFallDamage(float distance) {}
 
-void Entity::Tick() {
-    deltaPosition = position;
-}
+void Entity::Tick() { deltaPosition = position; }

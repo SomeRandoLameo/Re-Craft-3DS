@@ -1,15 +1,13 @@
-#include "rendering/TextureMap.hpp"
-
-#include <stb_image.h>
-
 #include <3ds.h>
 #include <citro3d.h>
 #include <malloc.h>
+#include <stb_image.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "misc/Crash.hpp"
+#include "rendering/TextureMap.hpp"
 
 uint32_t hash(const char* str) {
     unsigned long hash = 5381;
@@ -33,14 +31,16 @@ void Texture_Load(C3D_Tex* result, const char* filename) {
         uint32_t* imgInLinRam = (uint32_t*)linearAlloc(width * height * sizeof(uint32_t));
 
         if (width < 64 || height < 64) {
-            /* For small images you handled pixels differently: operate on 32-bit pixels after casting. */
+            /* For small images you handled pixels differently: operate on 32-bit
+             * pixels after casting. */
             uint32_t* src32 = (uint32_t*)image;
             for (int j = 0; j < (int)height; j++)
                 for (int i = 0; i < (int)width; i++) {
                     src32[i + j * width] = __builtin_bswap32(src32[i + j * width]);
                 }
             /* When width/height < 64 you later call tileImage32(image, ...),
-               but tileImage32 expects u32* src; we can call with (u32*)src32 where appropriate. */
+               but tileImage32 expects u32* src; we can call with (u32*)src32 where
+               appropriate. */
         } else {
             uint32_t* src32 = (uint32_t*)image;
             for (int i = 0; i < (int)(width * height); i++) {
@@ -145,7 +145,6 @@ void TextureMap::Init(const char** files, int num_files) {
     const int mipmapLevels = 2;
     const int maxSize = 4 * MapSize * MapSize;
 
-
     C3D_TexInit(&m_texture, MapSize, MapSize, GPU_RGBA8);
     /*C3D_TexInitParams param;
     param.width = MapSize;
@@ -171,7 +170,6 @@ void TextureMap::Init(const char** files, int num_files) {
         }
 
         if (image != nullptr && w == TileSize && h == TileSize) {
-
             for (int x = 0; x < TileSize; x++) {
                 for (int y = 0; y < TileSize; y++) {
                     int src = (((TileSize - 1) - y) * TileSize + x) * c1;
@@ -189,8 +187,9 @@ void TextureMap::Init(const char** files, int num_files) {
 
             Icon icon;
             icon.Hash = hash((char*)filename);
-            icon.u = 256 * locX;
-            icon.v = 256 * locY;
+            constexpr int m = UvPrecision / MapSize;
+            icon.u = locX * m;
+            icon.v = locY * m;
             m_icons.push_back(icon);
 
             locX += TileSize;
@@ -199,8 +198,9 @@ void TextureMap::Init(const char** files, int num_files) {
                 locX = 0;
             }
         } else {
-            printf("Image size(%u, %u) doesn't match or ptr null(internal error) or c not 4 for '%s'\n", w, h,
-                   filename ? filename : "(null)");
+            printf("Image size(%u, %u) doesn't match or ptr null(internal error) or c "
+                   "not 4 for '%s'\n",
+                   w, h, filename ? filename : "(null)");
         }
         if (image)
             stbi_image_free(image);

@@ -2,13 +2,13 @@
 
 #include "world/CT_World.hpp"
 
-//mclib
+// mclib
 #include <mclib/common/Vector.h>
 
 struct Raycast_Result {
-	mc::Vector3i hitPos;
-	float distSqr;
-	Direction direction;
+    mc::Vector3i hitPos;
+    float distSqr;
+    Direction direction;
     bool entity;
 };
 

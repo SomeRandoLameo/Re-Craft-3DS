@@ -2,15 +2,11 @@
 
 #include <utility>
 
-CreateWorldBotScreen::CreateWorldBotScreen(std::vector<WorldInfo> worldInfo) {
-    m_worlds = std::move(worldInfo);
-}
+CreateWorldBotScreen::CreateWorldBotScreen(std::vector<WorldInfo> worldInfo) { m_worlds = std::move(worldInfo); }
 
 
-void CreateWorldBotScreen::Init() {
-    Screen::Init();
-}
-//TODO: De-Noodle-c-ify
+void CreateWorldBotScreen::Init() { Screen::Init(); }
+// TODO: De-Noodle-c-ify
 void CreateWorldBotScreen::Render(int mouseX, int mouseY, float f) {
     Gui::DrawDefaultBackground();
 
@@ -47,7 +43,7 @@ void CreateWorldBotScreen::Render(int mouseX, int mouseY, float f) {
 }
 
 void CreateWorldBotScreen::ButtonClicked() {
-    if(m_confirmed_world_options){
+    if (m_confirmed_world_options) {
         m_confirmed_world_options = false;
         m_worldType = m_worldGenType;
 
@@ -73,9 +69,9 @@ void CreateWorldBotScreen::ButtonClicked() {
 
         for (int i = 0; i < length; i++) {
             if (m_out_worldpath[i] == '/' || m_out_worldpath[i] == '\\' || m_out_worldpath[i] == '?' ||
-                    m_out_worldpath[i] == ':' || m_out_worldpath[i] == '|' || m_out_worldpath[i] == '<' ||
-                    m_out_worldpath[i] == '>')
-                    m_out_worldpath[i] = '_';
+                m_out_worldpath[i] == ':' || m_out_worldpath[i] == '|' || m_out_worldpath[i] == '<' ||
+                m_out_worldpath[i] == '>')
+                m_out_worldpath[i] = '_';
         }
 
         while (true) {
@@ -87,7 +83,8 @@ void CreateWorldBotScreen::ButtonClicked() {
                 }
             }
 
-            if (!alreadyExisting) break;
+            if (!alreadyExisting)
+                break;
 
             m_out_worldpath[length] = '_';
             m_out_worldpath[length + 1] = '\0';
@@ -97,7 +94,7 @@ void CreateWorldBotScreen::ButtonClicked() {
         m_newWorld = true;
         ReCraftCore::GetInstance()->InitSinglePlayer(m_out_worldpath, name, &m_worldType, m_gamemode, m_newWorld);
     }
-    if (m_canceled_world_options){
+    if (m_canceled_world_options) {
         m_ReCraftCore->SetScreen(new SelectWorldBotScreen, false);
     }
 }

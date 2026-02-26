@@ -212,3 +212,22 @@ add_custom_target(start-server
     COMMENT "Starting Minecraft server"
     USES_TERMINAL
 )
+
+# Add clang-format target if clang-format was found
+find_program(CLANG_FORMAT clang-format)
+if(CLANG_FORMAT)
+    message(STATUS "Clang Format found.")
+    set(SOURCES ${CMAKE_SOURCE_DIR}/source ${CMAKE_SOURCE_DIR}/include)
+    set(COMMENT "Formatting Project Sources")
+    if(WIN32)
+        add_custom_target(clang-format
+            COMMAND powershell.exe -Command "Get-ChildItem '${SOURCES}/*' -Include *.cpp,*.hpp -Recurse | Foreach {&'${CLANG_FORMAT}' -i $_.fullname}"
+            COMMENT ${CCOMMENT})
+    else()
+        add_custom_target(clang-format
+            COMMAND find ${SOURCES} -iname *.hpp -o -iname *.cpp | xargs ${CLANG_FORMAT} -i
+            COMMENT ${COMMENT}
+        )
+    endif()
+    unset(COMMENT)
+endif()

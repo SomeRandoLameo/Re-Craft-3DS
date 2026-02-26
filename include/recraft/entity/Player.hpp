@@ -10,7 +10,7 @@
 
 #include <vector>
 
-//TODO: Integrate Entity propperly
+// TODO: Integrate Entity propperly
 class Damage;
 class DebugUI;
 class World;
@@ -32,11 +32,11 @@ public:
     bool CanMove(mc::Vector3f newVec);
 
     mc::Vector3f forwardVec = vecZero;
-    mc::Vector3f rightVec   = vecZero;
-    mc::Vector3f movement   = vecZero;
-    mc::Vector3f velocity   = vecZero;
+    mc::Vector3f rightVec = vecZero;
+    mc::Vector3f movement = vecZero;
+    mc::Vector3f velocity = vecZero;
 
-    float speed     = 0.f;
+    float speed = 0.f;
     float bobbing = 0.f;
     float fovAdd = 0.f;
     float crouchAdd = 0.f;

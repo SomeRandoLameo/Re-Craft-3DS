@@ -16,9 +16,9 @@ public:
 
     Data data;
 
-    bool isMoving   = true;
+    bool isMoving = true;
     bool isMoveDiff = true;
-    bool isLooking  = true;
+    bool isLooking = true;
 
     void update();
 

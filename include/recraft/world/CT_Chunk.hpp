@@ -20,36 +20,36 @@ public:
     constexpr static size_t BYTES_NEEDED = (BlockCount * BITS_PER_BLOCK + 7) / 8;
     constexpr static u16 BLOCK_MASK = (1 << BITS_PER_BLOCK) - 1;
 
-	int y;
-	Metadata metadataLight[Size][Size][Size];  // first half metadata, second half light
+    int y;
+    Metadata metadataLight[Size][Size][Size]; // first half metadata, second half light
 
-	uint32_t revision;
+    uint32_t revision;
 
-	uint16_t seeThrough;
+    uint16_t seeThrough;
 
-	bool empty;
-	uint32_t emptyRevision;
+    bool empty;
+    uint32_t emptyRevision;
 
     VBOBlock vbo;
     VBOBlock transparentVBO;
 
-	size_t vertices;
+    size_t vertices;
     size_t transparentVertices;
 
-	uint32_t vboRevision;
-	bool forceVBOUpdate;
+    uint32_t vboRevision;
+    bool forceVBOUpdate;
 
     BlockID GetBlockID(mc::Vector3i pos) const {
-		int blockIndex = pos.x + pos.y * Size + pos.z * Size * Size;
-		u16 paletteId = GetPackedBlockId(blockIndex);
-		return BlockRegistry::GetBlockID(paletteId);
+        int blockIndex = pos.x + pos.y * Size + pos.z * Size * Size;
+        u16 paletteId = GetPackedBlockId(blockIndex);
+        return BlockRegistry::GetBlockID(paletteId);
     }
 
     /// DO NOT USE THIS MANUALLY
     void SetBlockID(mc::Vector3i pos, BlockID block) {
-		int blockIndex = pos.x + pos.y * Size + pos.z * Size * Size;
-		u16 paletteId = BlockRegistry::GetId(block);
-	    SetPackedBlockId(blockIndex, paletteId);
+        int blockIndex = pos.x + pos.y * Size + pos.z * Size * Size;
+        u16 paletteId = BlockRegistry::GetId(block);
+        SetPackedBlockId(blockIndex, paletteId);
     }
 
     BlockPtr GetBlock(mc::Vector3i pos) const {
@@ -65,29 +65,19 @@ public:
         SetPackedBlockId(blockIndex, paletteId);
     }
 
-    //TODO: REMOVE
-    BlockID GetBlockID(int x, int y, int z) const {
-        return GetBlockID(mc::Vector3i(x, y, z));
-    }
+    // TODO: REMOVE
+    BlockID GetBlockID(int x, int y, int z) const { return GetBlockID(mc::Vector3i(x, y, z)); }
 
-    BlockPtr GetBlock(int x, int y, int z) const {
-        return GetBlock(mc::Vector3i(x, y, z));
-    }
+    BlockPtr GetBlock(int x, int y, int z) const { return GetBlock(mc::Vector3i(x, y, z)); }
 
     bool IsEmpty();
 
     // raw data access for saving/loading only. Do not use for block manipulation!
-    const u8* GetBlockData() const {
-        return m_packedBlocks;
-    }
+    const u8* GetBlockData() const { return m_packedBlocks; }
 
-    u8* GetBlockData() {
-        return m_packedBlocks;
-    }
+    u8* GetBlockData() { return m_packedBlocks; }
 
-    static constexpr size_t GetBlockDataSize() {
-        return BYTES_NEEDED;
-    }
+    static constexpr size_t GetBlockDataSize() { return BYTES_NEEDED; }
 
 private:
     u8 m_packedBlocks[BYTES_NEEDED];
@@ -134,9 +124,9 @@ private:
 typedef Chunk* ChunkPtr;
 
 typedef enum {
-	ChunkGen_Empty,  //
-	ChunkGen_Terrain,
-	ChunkGen_Finished  // Terrain | Decoration
+    ChunkGen_Empty, //
+    ChunkGen_Terrain,
+    ChunkGen_Finished // Terrain | Decoration
 } ChunkGenProgress;
 
 extern Xorshift32 uuidGenerator;
@@ -198,12 +188,11 @@ public:
         m_BlockEntities.insert(std::make_pair(blockEntity->GetPosition(), blockEntity));
     }
 
-    void RemoveBlockEntity(mc::Vector3i pos) {
-        m_BlockEntities.erase(pos);
-    }
+    void RemoveBlockEntity(mc::Vector3i pos) { m_BlockEntities.erase(pos); }
 
     mc::block::BlockEntityPtr GetBlockEntity(mc::Vector3i worldPos);
     std::vector<mc::block::BlockEntityPtr> GetBlockEntities();
+
 private:
     std::array<Chunk, ChunksPerColumn> m_chunks;
     std::map<mc::Vector3i, mc::block::BlockEntityPtr> m_BlockEntities;

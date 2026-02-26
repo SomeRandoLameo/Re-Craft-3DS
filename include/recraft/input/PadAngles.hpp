@@ -4,9 +4,9 @@
 #include <3ds/types.h>
 
 struct PadAngles {
-    u8 up    = 0;
-    u8 down  = 0;
-    u8 left  = 0;
+    u8 up = 0;
+    u8 down = 0;
+    u8 left = 0;
     u8 right = 0;
 
     bool operator==(u8 i) { return this->up == i && this->down == i && this->left == i && this->right == i; }

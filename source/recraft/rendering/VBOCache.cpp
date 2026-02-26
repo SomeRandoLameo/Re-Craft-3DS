@@ -3,9 +3,7 @@
 
 static LightLock lock;
 
-VBOCache::VBOCache() {
-    LightLock_Init(&lock);
-}
+VBOCache::VBOCache() { LightLock_Init(&lock); }
 
 VBOBlock VBOCache::Alloc(size_t size) {
     VBOBlock block;

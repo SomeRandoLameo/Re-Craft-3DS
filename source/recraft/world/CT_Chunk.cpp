@@ -5,17 +5,15 @@ Xorshift32 uuidGenerator = (Xorshift32)314159265;
 
 const uint8_t _seethroughTable[6][6] = {
     // W E B T N S
-    {255, 0, 1, 3, 6, 10},     // West
-    {0, 255, 2, 4, 7, 11},     // East
-    {1, 2, 255, 5, 8, 12},     // Bottom
-    {3, 4, 5, 255, 9, 13},     // Top
-    {6, 7, 8, 9, 255, 14},     // North
-    {10, 11, 12, 13, 14, 255}  // South
+    {255, 0, 1, 3, 6, 10}, // West
+    {0, 255, 2, 4, 7, 11}, // East
+    {1, 2, 255, 5, 8, 12}, // Bottom
+    {3, 4, 5, 255, 9, 13}, // Top
+    {6, 7, 8, 9, 255, 14}, // North
+    {10, 11, 12, 13, 14, 255} // South
 };
 
-uint16_t ChunkSeeThrough(Direction in, Direction out) {
-    return 1 << (uint16_t)(_seethroughTable[in][out]);
-}
+uint16_t ChunkSeeThrough(Direction in, Direction out) { return 1 << (uint16_t)(_seethroughTable[in][out]); }
 
 bool ChunkCanBeSeenThrough(uint16_t visiblity, Direction in, Direction out) {
     return visiblity & (1 << (uint16_t)(_seethroughTable[in][out]));
@@ -55,12 +53,13 @@ void ChunkColumn::RequestGraphicsUpdate(int cluster) {
 }
 
 void ChunkColumn::GenerateHeightmap() {
-	if (heightmapRevision != revision) {
-		for (int x = 0; x < Chunk::Size; x++) {
+    if (heightmapRevision != revision) {
+        for (int x = 0; x < Chunk::Size; x++) {
             for (int z = 0; z < Chunk::Size; z++) {
                 for (int i = ChunksPerColumn - 1; i >= 0; --i) {
                     auto chunk = GetChunk(i);
-                    if (chunk->IsEmpty()) continue;
+                    if (chunk->IsEmpty())
+                        continue;
                     for (int j = Chunk::Size - 1; j >= 0; --j) {
                         if (chunk->GetBlockID(x, j, z) != BlockID::Air) {
                             heightmap[x][z] = i * Chunk::Size + j + 1;
@@ -72,7 +71,7 @@ void ChunkColumn::GenerateHeightmap() {
             }
         }
     }
-	heightmapRevision = revision;
+    heightmapRevision = revision;
 }
 
 uint8_t ChunkColumn::GetHeightMap(int x, int z) {
@@ -81,13 +80,16 @@ uint8_t ChunkColumn::GetHeightMap(int x, int z) {
 }
 
 Metadata ChunkColumn::GetMetadata(mc::Vector3i position) {
-    return GetChunk(position.y / Chunk::Size)->metadataLight[position.x][position.y - (position.y / Chunk::Size * Chunk::Size)][position.z] & 0xf;
+    return GetChunk(position.y / Chunk::Size)
+               ->metadataLight[position.x][position.y - (position.y / Chunk::Size * Chunk::Size)][position.z] &
+        0xf;
 }
 
 void ChunkColumn::SetMetadata(mc::Vector3i position, Metadata metadata) {
     metadata &= 0xf;
     ChunkPtr chunk = GetChunk(position.y / Chunk::Size);
-    uint8_t* addr = &chunk->metadataLight[position.x][position.y - (position.y / Chunk::Size * Chunk::Size)][position.z];
+    uint8_t* addr =
+        &chunk->metadataLight[position.x][position.y - (position.y / Chunk::Size * Chunk::Size)][position.z];
     *addr = (*addr & 0xf0) | metadata;
     ++chunk->revision;
     ++revision;
@@ -138,9 +140,7 @@ void ChunkColumn::SetBlockAndMeta(mc::Vector3i position, BlockID block, uint8_t 
     ++revision;
 }
 
-ChunkPtr ChunkColumn::GetChunk(int y) {
-    return &m_chunks[y];
-}
+ChunkPtr ChunkColumn::GetChunk(int y) { return &m_chunks[y]; }
 
 bool Chunk::IsEmpty() {
     if (emptyRevision == revision) {

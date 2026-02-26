@@ -30,9 +30,8 @@ public:
     Frustum();
 
     void UpdateFromMatrix(const C3D_Mtx& vp);
-    void UpdateCorners(const mc::Vector3f& position, const mc::Vector3f& forward,
-                       const mc::Vector3f& right, const mc::Vector3f& up,
-                       float fov, float aspectRatio, float nearPlane, float farPlane);
+    void UpdateCorners(const mc::Vector3f& position, const mc::Vector3f& forward, const mc::Vector3f& right,
+                       const mc::Vector3f& up, float fov, float aspectRatio, float nearPlane, float farPlane);
 
     bool IsPointVisible(C3D_FVec point) const;
     bool IsAABBVisible(C3D_FVec origin, C3D_FVec size) const;

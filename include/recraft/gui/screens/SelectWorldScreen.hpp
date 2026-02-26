@@ -16,6 +16,7 @@ public:
     bool IsInGameScreen() override;
     void Render(int mouseX, int mouseY, float delta) override;
     void ButtonClicked() override;
+
 private:
     void LoadLevelSource();
 
@@ -35,5 +36,4 @@ private:
     char m_out_worldpath[256];
     char m_out_name[World::NameSize] = {'\0'};
     WorldGenType m_worldType;
-
 };

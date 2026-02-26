@@ -9,9 +9,9 @@ public:
     Entity(World* world);
     ~Entity() = default;
 
-    mc::Vector3f position       = vecZero;
-    mc::Vector3f oldPosition    = vecZero;
-    mc::Vector3f deltaPosition  = vecZero;
+    mc::Vector3f position = vecZero;
+    mc::Vector3f oldPosition = vecZero;
+    mc::Vector3f deltaPosition = vecZero;
 
     bool onGround = false;
     bool removed = false;
@@ -40,6 +40,7 @@ public:
     virtual void CauseFallDamage(float distance);
 
     virtual void Tick();
+
 protected:
     World* m_world = nullptr;
     float m_fallDistance = 0.0f;

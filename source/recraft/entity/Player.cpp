@@ -1,8 +1,8 @@
 #include "entity/Player.hpp"
 
 #include "entity/Damage.hpp"
-#include "input/InputManager.hpp"
 #include "gui/DebugUI.hpp"
+#include "input/InputManager.hpp"
 #include "mcbridge/MCBridge.hpp"
 #include "misc/Collision.hpp"
 #include "world/CT_World.hpp"
@@ -17,20 +17,20 @@ const float GravityPlusFriction = 10.f;
 // Since we are aiming for Minecraft compatibility, this needs to be fixed and adjusted to controller.
 
 // Also, this player is a mess code-wise.
-// This needs to be restructured into an entity base class and player derived class. (Entity because mobs, Particles, TileEntities etc. will share a lot of code too.)
-// Inventory should also be separated.
+// This needs to be restructured into an entity base class and player derived class. (Entity because mobs, Particles,
+// TileEntities etc. will share a lot of code too.) Inventory should also be separated.
 
-Player::Player(World* world): Entity(world), m_input(new PlayerInput()) {
+Player::Player(World* world) : Entity(world), m_input(new PlayerInput()) {
     heightOffset = 1.62f;
     SetSize(0.6f, 1.8f);
     InitializeInventory();
 }
 
-//TODO: Separate from player
+// TODO: Separate from player
 void Player::InitializeInventory() {
     int slotIndex = 0;
-    inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Air),1,0); // Testing
-    inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Stone),1,0);
+    inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Air), 1, 0); // Testing
+    inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Stone), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Dirt), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Grass), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Cobblestone), 1, 0);
@@ -69,14 +69,13 @@ void Player::InitializeInventory() {
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Emerald_Ore), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Furnace), 1, 0);
 
-    for (auto & i : quickSelectBar) {
+    for (auto& i : quickSelectBar) {
         i = mc::inventory::Slot(static_cast<s32>(BlockID::Air), 0, 0);
     }
-
 }
 
 void Player::Update(Damage* dmg) {
-    if(m_input->isLooking) {
+    if (m_input->isLooking) {
         view.x = -sinf(yRot) * cosf(xRot);
         view.y = sinf(xRot);
         view.z = -cosf(yRot) * cosf(xRot);
@@ -85,7 +84,7 @@ void Player::Update(Damage* dmg) {
     blockInSight = Raycast_Cast(m_world, position + mc::Vector3f(0, EyeHeight, 0), view, &viewRayCast);
     blockInActionRange = blockInSight && viewRayCast.distSqr < 3.5f * 3.5f * 3.5f;
 
-    if(gamemode != 1){
+    if (gamemode != 1) {
         HandleFallDamage();
         HandleFireDamage();
         HandleHunger();
@@ -96,51 +95,50 @@ void Player::Update(Damage* dmg) {
 
 void Player::UpdateMovement(DebugUI* dbg, float dt) {
     Damage dmg;
-    
+
     m_input->update();
 
     // Look Direction
-    float lookUp    = getCtrlLook()->up;
-    float lookDown  = getCtrlLook()->down;
-    float lookLeft  = getCtrlLook()->left;
+    float lookUp = getCtrlLook()->up;
+    float lookDown = getCtrlLook()->down;
+    float lookLeft = getCtrlLook()->left;
     float lookRight = getCtrlLook()->right;
     bool isLook = m_input->isLooking; // cpad not 0
     // Walk Movement
-    float moveUp    = getCtrlMove()->up / PAD_MAXF;
-    float moveDown  = getCtrlMove()->down / PAD_MAXF;
-    float moveLeft  = getCtrlMove()->left / PAD_MAXF;
+    float moveUp = getCtrlMove()->up / PAD_MAXF;
+    float moveDown = getCtrlMove()->down / PAD_MAXF;
+    float moveLeft = getCtrlMove()->left / PAD_MAXF;
     float moveRight = getCtrlMove()->right / PAD_MAXF;
     bool isMoveDiff = m_input->isMoveDiff; // stick changed
     bool isMove = m_input->isMoving; // stick not 0
     // Actions
     bool isJump = Input::isPressed(INP_JUMP);
     bool isSneak = Input::isPressed(INP_SNEAK);
-    float jump  = isJump ? 1.f : 0.f;
+    float jump = isJump ? 1.f : 0.f;
     float sneak = isSneak ? 1.f : 0.f;
 
     // C Stick / Direction
     if (isLook) { // stick used
-        //yawPrev = yRot;
-        yRot   += DEG_TO_RAD(lookLeft + -lookRight) * dt;
+        // yawPrev = yRot;
+        yRot += DEG_TO_RAD(lookLeft + -lookRight) * dt;
         xRot += DEG_TO_RAD(-lookDown + lookUp) * dt;
-        xRot  = CLAMP(xRot, DEG_TO_RAD(-89.9f), DEG_TO_RAD(89.9f));
+        xRot = CLAMP(xRot, DEG_TO_RAD(-89.9f), DEG_TO_RAD(89.9f));
     }
 
     // C Pad / Walking
     if (isMoveDiff || isLook) { // pad changed or stick used
-        //if(yRot != yawPrev) { // TODO
-            forwardVec = mc::Vector3f(-sinf(yRot), 0.f, -cosf(yRot));
-            rightVec   = Vector3f_crs(forwardVec, vecY);
+        // if(yRot != yawPrev) { // TODO
+        forwardVec = mc::Vector3f(-sinf(yRot), 0.f, -cosf(yRot));
+        rightVec = Vector3f_crs(forwardVec, vecY);
         //}
 
-        movement = (forwardVec * (moveUp - moveDown))
-                 + (rightVec * (moveRight - moveLeft));
+        movement = (forwardVec * (moveUp - moveDown)) + (rightVec * (moveRight - moveLeft));
     } else if (!isMove && isMoveDiff) { // no pad input but diff on last cycle
         movement = vecZero;
     }
 
     // Calculate Speed
-    if(isMoveDiff || isJump || isSneak) {
+    if (isMoveDiff || isJump || isSneak) {
         speed = MaxWalkVelocity * Vector3f_mag(mc::Vector3f(-moveLeft + moveRight, -sneak + jump, -moveUp + moveDown));
     }
 
@@ -150,7 +148,7 @@ void Player::UpdateMovement(DebugUI* dbg, float dt) {
             movement += vecY;
         } else if (Input::isPressed(INP_FLYDOWN)) {
             movement -= vecY;
-        } else if(movement.y != 0.f) {
+        } else if (movement.y != 0.f) {
             movement.y = 0;
         }
     }
@@ -163,9 +161,9 @@ void Player::UpdateMovement(DebugUI* dbg, float dt) {
     }
 
     // TODO: Segfault sometimes when rejoining the world, this is the problem.
-    mc::inventory::Slot curSlot   = quickSelectBar[quickSelectBarSlot];
-    auto                curStack  = MCBridge::MCLIBSlotToCTItemStack(curSlot);
-    bool                slotEmpty = (curStack.block == BlockID::Air);
+    mc::inventory::Slot curSlot = quickSelectBar[quickSelectBarSlot];
+    auto curStack = MCBridge::MCLIBSlotToCTItemStack(curSlot);
+    bool slotEmpty = (curStack.block == BlockID::Air);
 
     bool hitEntity = viewRayCast.entity;
 
@@ -208,7 +206,7 @@ void Player::UpdateMovement(DebugUI* dbg, float dt) {
     releasedCrouch = Input::isReleased(INP_SNEAK);
     crouching ^= !flying && releasedCrouch;
 
-    bool switchBlockLeft  = Input::isReleased(INP_HOTBAR_LEFT);
+    bool switchBlockLeft = Input::isReleased(INP_HOTBAR_LEFT);
     bool switchBlockRight = Input::isReleased(INP_HOTBAR_RIGHT);
 
     if (switchBlockLeft && --quickSelectBarSlot == -1) {
@@ -232,7 +230,6 @@ void Player::UpdateMovement(DebugUI* dbg, float dt) {
     */
     Move(dt, mc::Vector3f(movement.x, movement.y, movement.z));
     Update(&dmg);
-
 }
 
 void Player::HandleFallDamage() {
@@ -248,7 +245,7 @@ void Player::HandleFallDamage() {
 void Player::HandleFireDamage() {
     if (m_world->GetBlockID(ToVector3i(ToVector3d(position))) == BlockID::Lava) {
         //  DebugUI_Log("ur burning lol");
-        //OvertimeDamage("Fire", 10);
+        // OvertimeDamage("Fire", 10);
     }
 }
 
@@ -273,15 +270,15 @@ void Player::HandleRespawn(Damage* dmg) {
         if (difficulty != 4) {
             if (!spawnset) {
                 if (dmg->cause == NULL) {
-                  //  DebugUI_Log("Player died");
+                    //  DebugUI_Log("Player died");
                 } else {
-                   // DebugUI_Log("Died by %s", dmg->cause);
+                    // DebugUI_Log("Died by %s", dmg->cause);
                 }
-                //DebugUI_Log("No spawn was set");
+                // DebugUI_Log("No spawn was set");
                 position.x = 0.0;
 
                 int spawnY = 1;
-                while (m_world->GetBlockID( ToVector3i(spawnPos)) != BlockID::Air)
+                while (m_world->GetBlockID(ToVector3i(spawnPos)) != BlockID::Air)
                     spawnY++;
 
                 bool shouldOffset = m_world->GetGenSettings().type != WorldGenType::SuperFlat;
@@ -290,9 +287,9 @@ void Player::HandleRespawn(Damage* dmg) {
             }
             if (spawnset) {
                 if (dmg->cause == NULL) {
-                //    DebugUI_Log("Player died");
+                    //    DebugUI_Log("Player died");
                 } else {
-               //     DebugUI_Log("Died by %s", dmg->cause);
+                    //     DebugUI_Log("Died by %s", dmg->cause);
                 }
                 position.x = spawnPos.x;
 
@@ -346,7 +343,7 @@ void Player::Move(float dt, mc::Vector3f accl) {
             speedFactor = 0.5f;
         }
 
-        mc::Vector3f newPos =  position + ( (velocity * SimStep) + (accl * (SimStep * speedFactor)) );
+        mc::Vector3f newPos = position + ((velocity * SimStep) + (accl * (SimStep * speedFactor)));
 
         mc::Vector3f finalPos = position;
 
@@ -359,23 +356,14 @@ void Player::Move(float dt, mc::Vector3f accl) {
             mc::Vector3f axisStep = finalPos;
             axisStep.values[i] = newPos.values[i];
 
-            Box playerBox = Box_Create(
-                    axisStep.x - CollisionBoxSize / 2.f,
-                    axisStep.y,
-                    axisStep.z - CollisionBoxSize / 2.f,
-                    CollisionBoxSize,
-                    Height,
-                    CollisionBoxSize
-            );
+            Box playerBox = Box_Create(axisStep.x - CollisionBoxSize / 2.f, axisStep.y,
+                                       axisStep.z - CollisionBoxSize / 2.f, CollisionBoxSize, Height, CollisionBoxSize);
 
             for (int x = -1; x < 2; x++) {
                 for (int y = 0; y < 3; y++) {
                     for (int z = -1; z < 2; z++) {
-                        auto blockPos = mc::Vector3i(
-                            FastFloor(axisStep.x) + x,
-                            FastFloor(axisStep.y) + y,
-                            FastFloor(axisStep.z) + z
-                        );
+                        auto blockPos = mc::Vector3i(FastFloor(axisStep.x) + x, FastFloor(axisStep.y) + y,
+                                                     FastFloor(axisStep.z) + z);
 
                         if (m_world->GetBlockID(blockPos) != BlockID::Air &&
                             m_world->GetBlockID(blockPos) != BlockID::Lava &&
@@ -445,8 +433,7 @@ void Player::Move(float dt, mc::Vector3f accl) {
             crouchAdd += SimStep * 2.f;
         }
 
-        if (crouching && !onGround && wasGrounded && finalPos.y < position.y &&
-            movDiff.x != 0.f && movDiff.z != 0.f) {
+        if (crouching && !onGround && wasGrounded && finalPos.y < position.y && movDiff.x != 0.f && movDiff.z != 0.f) {
             finalPos = position;
             onGround = true;
             velocity.y = 0.f;
@@ -455,7 +442,7 @@ void Player::Move(float dt, mc::Vector3f accl) {
         position = finalPos;
 
         velocity.x = velocity.x * 0.95f;
-       // velocity.y = velocity.y;
+        // velocity.y = velocity.y;
         velocity.z = velocity.z * 0.95f;
 
         if (ABS(velocity.x) < 0.1f) {
@@ -473,28 +460,20 @@ void Player::Move(float dt, mc::Vector3f accl) {
 void Player::PlaceBlock() {
     if (m_world && blockInActionRange && breakPlaceTimeout < 0.f) {
         const int* offset = DirectionToOffset[viewRayCast.direction];
-        mc::Vector3i placePos(
-            viewRayCast.hitPos.x + offset[0],
-            viewRayCast.hitPos.y + offset[1],
-            viewRayCast.hitPos.z + offset[2]
-        );
+        mc::Vector3i placePos(viewRayCast.hitPos.x + offset[0], viewRayCast.hitPos.y + offset[1],
+                              viewRayCast.hitPos.z + offset[2]);
 
         // Check if block placement would intersect with player
-        AABB blockBox = AABB(
-            mc::Vector3f(placePos.x, placePos.y, placePos.z),
-            mc::Vector3f(placePos.x + 1, placePos.y + 1, placePos.z + 1)
-        );
+        AABB blockBox = AABB(mc::Vector3f(placePos.x, placePos.y, placePos.z),
+                             mc::Vector3f(placePos.x + 1, placePos.y + 1, placePos.z + 1));
 
         if (bb.Intersect(blockBox)) {
             return;
         }
 
         // Place the block
-        m_world->SetBlockAndMeta(
-            placePos,
-            MCBridge::MCLIBSlotToCTItemStack(quickSelectBar[quickSelectBarSlot]).block,
-            MCBridge::MCLIBSlotToCTItemStack(quickSelectBar[quickSelectBarSlot]).meta
-        );
+        m_world->SetBlockAndMeta(placePos, MCBridge::MCLIBSlotToCTItemStack(quickSelectBar[quickSelectBarSlot]).block,
+                                 MCBridge::MCLIBSlotToCTItemStack(quickSelectBar[quickSelectBarSlot]).meta);
     }
 
     if (breakPlaceTimeout < 0.f) {
@@ -522,8 +501,7 @@ void Player::Interact(DebugUI* dbg) {
         BlockID id = m_world->GetBlockID(viewRayCast.hitPos);
         Metadata meta = m_world->GetMetadata(viewRayCast.hitPos);
         std::string logMsg = "Target at: " + to_string(viewRayCast.hitPos) +
-            "  ID=" + std::to_string(static_cast<u8>(id)) +
-            "  Meta=" + std::to_string(meta);
+            "  ID=" + std::to_string(static_cast<u8>(id)) + "  Meta=" + std::to_string(meta);
 
         dbg->Log(logMsg.c_str());
     }

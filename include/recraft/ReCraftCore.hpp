@@ -49,6 +49,7 @@ public:
 
     Screen* TopScreen = nullptr;
     Screen* BotScreen = nullptr;
+
 private:
     static ReCraftCore* m_theReCraftCore;
     SuperFlatGen m_flatGen;

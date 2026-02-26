@@ -2,29 +2,22 @@
 
 #include "CT_Chunk.hpp"
 
-#include <vector>
 #include <3ds.h>
+#include <vector>
 
-enum WorkerItemType {
-	Load,
-	Save,
-	BaseGen,
-	Decorate,
-	PolyGen,
-	Count
-};
+enum WorkerItemType { Load, Save, BaseGen, Decorate, PolyGen, Count };
 
 struct WorkerItem {
-	WorkerItemType type;
-	ChunkColumnPtr column;
-	u32 uuid;
+    WorkerItemType type;
+    ChunkColumnPtr column;
+    u32 uuid;
 };
 
 struct WorkQueue {
     std::vector<WorkerItem> queue;
 
-	LightEvent itemAddedEvent;
-	LightLock listInUse;
+    LightEvent itemAddedEvent;
+    LightLock listInUse;
 };
 
 void WorkQueue_Init(WorkQueue* queue);

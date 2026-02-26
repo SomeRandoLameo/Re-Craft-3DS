@@ -9,7 +9,7 @@ class ReCraftCore;
 
 class Inventory {
 public:
-    static constexpr int QUICKSELECT_HEIGHT = 23;  // 22 + 1
+    static constexpr int QUICKSELECT_HEIGHT = 23; // 22 + 1
     static constexpr int MAX_PER_SITE = 27;
 
     int currentSite = 0;

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <cstdint>
 #include <algorithm>
+#include <cstdint>
 
 #include "../../mclib/common/Common.h"
 #include "../../mclib/core/Client.h"

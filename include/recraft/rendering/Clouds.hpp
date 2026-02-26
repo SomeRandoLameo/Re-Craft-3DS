@@ -11,6 +11,7 @@ public:
     ~Clouds();
 
     void Draw(int projUniform, C3D_Mtx* projectionview, float tx, float tz);
+
 private:
     WorldVertex* m_cloudVBO = nullptr;
     C3D_Tex m_texture;

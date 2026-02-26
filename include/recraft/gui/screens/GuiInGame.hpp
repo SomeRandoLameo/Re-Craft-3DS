@@ -8,6 +8,7 @@ public:
     void Init() override;
     bool IsInGameScreen() override;
     void Render(int mouseX, int mouseY, float delta) override;
+
 private:
     void RenderHealth();
     void RenderExpBar();
@@ -23,10 +24,11 @@ public:
     bool IsInGameScreen() override;
     void Render(int mouseX, int mouseY, float delta) override;
     void ButtonClicked() override;
+
 private:
     void RenderHotbar(int x, int y, mc::inventory::Slot* stacks, int& selected);
     void RenderInventory(int x, int y, mc::inventory::Slot* stacks, int count, int site);
-    void RenderSlot(mc::inventory::Slot *slot, int x, int y); //TODO: Generic GUI Function or something like this
+    void RenderSlot(mc::inventory::Slot* slot, int x, int y); // TODO: Generic GUI Function or something like this
     Player* m_player = nullptr;
     Inventory* m_inventory = nullptr;
 };

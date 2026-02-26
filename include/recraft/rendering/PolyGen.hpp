@@ -23,7 +23,9 @@ struct Face {
 static World* world;
 static Player* player;
 
-typedef struct { int8_t x, y, z; } QueueElement;
+typedef struct {
+    int8_t x, y, z;
+} QueueElement;
 
 static std::vector<QueueElement> floodfill_queue;
 
@@ -46,4 +48,5 @@ uint8_t fastMetadataFetch(World* world, ChunkColumnPtr column, ChunkPtr chunk, i
 
 void addFace(int x, int y, int z, Direction dir, BlockID block, uint8_t metadata, int ao, bool transparent);
 
-uint16_t floodFill(World* world, ChunkColumnPtr chunk, Chunk* cluster, int x, int y, int z, Direction entrySide0, Direction entrySide1, Direction entrySide2);
+uint16_t floodFill(World* world, ChunkColumnPtr chunk, Chunk* cluster, int x, int y, int z, Direction entrySide0,
+                   Direction entrySide1, Direction entrySide2);

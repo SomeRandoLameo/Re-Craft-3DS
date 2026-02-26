@@ -3,10 +3,9 @@
 #include "mcbridge/MCBridge.hpp"
 #include "misc/VecMath.hpp"
 
-//TODO: All of this needs to happen asynchronously in order for consoles not to disconnect due to timeout when loading
-NetworkWorld::NetworkWorld(World* world, mc::protocol::packets::PacketDispatcher* dispatcher)
-    : mc::protocol::packets::PacketHandler(dispatcher)
-{
+// TODO: All of this needs to happen asynchronously in order for consoles not to disconnect due to timeout when loading
+NetworkWorld::NetworkWorld(World* world, mc::protocol::packets::PacketDispatcher* dispatcher) :
+    mc::protocol::packets::PacketHandler(dispatcher) {
     this->m_world = world;
     this->m_world->online = true;
 
@@ -24,20 +23,22 @@ NetworkWorld::~NetworkWorld() {
     this->m_world->online = false;
 }
 
-//TODO: Load a full chunk (16x16x16) with dirt blocks locally for testing
+// TODO: Load a full chunk (16x16x16) with dirt blocks locally for testing
 void NetworkWorld::Test() {
-    for (s32 x = 0; x < Chunk::Size; ++x) {                     // 0-15 for x
-        for (s32 z = 0; z < Chunk::Size; ++z) {                 // 0-15 for Y
-            for (s32 y = 0; y < Chunk::Size; ++y) {             // 0-15 for Z
-                m_world->SetBlockID(mc::Vector3i(x, y, z), BlockID::Dirt);            // Set Block at (x,y,z) to Dirt
+    for (s32 x = 0; x < Chunk::Size; ++x) { // 0-15 for x
+        for (s32 z = 0; z < Chunk::Size; ++z) { // 0-15 for Y
+            for (s32 y = 0; y < Chunk::Size; ++y) { // 0-15 for Z
+                m_world->SetBlockID(mc::Vector3i(x, y, z), BlockID::Dirt); // Set Block at (x,y,z) to Dirt
             }
         }
     }
 }
 
 
-//TODO: We still need some form of block registry to propperly read chunk block data and match it with craftus blocks. This is temporarly redirected through the MCBridge.
-//TODO: DEAR GOD we need this to be asynchronous otherwise this stuff will freeze as hell when new chunks are being loaded.
+// TODO: We still need some form of block registry to propperly read chunk block data and match it with craftus blocks.
+// This is temporarly redirected through the MCBridge.
+// TODO: DEAR GOD we need this to be asynchronous otherwise this stuff will freeze as hell when new chunks are being
+// loaded.
 void NetworkWorld::HandlePacket(mc::protocol::packets::in::ChunkDataPacket* packet) {
     auto sourceColumn = packet->GetChunkColumn();
     auto meta = sourceColumn->GetMetadata();
@@ -59,11 +60,7 @@ void NetworkWorld::HandlePacket(mc::protocol::packets::in::ChunkDataPacket* pack
                     mc::Vector3i columnRelativePos(x, baseWorldY + y, z);
                     auto sourceBlock = sourceColumn->GetBlock(columnRelativePos);
 
-                    mc::Vector3i worldPos(
-                        baseWorldX + x,
-                        baseWorldY + y,
-                        baseWorldZ + z
-                    );
+                    mc::Vector3i worldPos(baseWorldX + x, baseWorldY + y, baseWorldZ + z);
 
                     m_world->SetBlockID(worldPos, MCBridge::MCLibBlockToCTBlock(sourceBlock->GetType()));
                 }
@@ -76,9 +73,7 @@ void NetworkWorld::HandlePacket(mc::protocol::packets::in::UnloadChunkPacket* pa
     m_world->UnloadChunk(m_world->GetChunkColumn(packet->GetChunkX(), packet->GetChunkZ()));
 }
 
-void NetworkWorld::HandlePacket(mc::protocol::packets::in::MultiBlockChangePacket* packet) {
-
-}
+void NetworkWorld::HandlePacket(mc::protocol::packets::in::MultiBlockChangePacket* packet) {}
 
 void NetworkWorld::HandlePacket(mc::protocol::packets::in::BlockChangePacket* packet) {
     mc::block::BlockPtr newBlock = mc::block::BlockRegistry::GetInstance()->GetBlock((u16)packet->GetBlockId());
@@ -98,7 +93,7 @@ void NetworkWorld::HandlePacket(mc::protocol::packets::in::UpdateBlockEntityPack
 
     mc::block::BlockEntityPtr entity = packet->GetBlockEntity();
 
-    if (entity){
+    if (entity) {
         // this is probably wrong but i cannot test this yet sadly...
         m_world->GetChunkColumn(pos.x, pos.z)->AddBlockEntity(entity);
     }
@@ -106,6 +101,4 @@ void NetworkWorld::HandlePacket(mc::protocol::packets::in::UpdateBlockEntityPack
 
 void NetworkWorld::HandlePacket(mc::protocol::packets::in::RespawnPacket* packet) {}
 
-void NetworkWorld::OnTick(){
-
-}
+void NetworkWorld::OnTick() {}

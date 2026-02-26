@@ -2,34 +2,32 @@
 
 extern "C" {
 #include <sino/sino.h>
-
 }
 
-void SmeaGen::Init(World* world) {
-    m_world = world;
-}
+void SmeaGen::Init(World* world) { m_world = world; }
 
 // based of https://github.com/smealum/3dscraft/blob/master/source/generation.c
 void SmeaGen::Generate(WorkQueue* queue, WorkerItem item, void* context) {
-	for (int x = 0; x < Chunk::Size; x++) {
-		for (int z = 0; z < Chunk::Size; z++) {
-			float px = (float)(x + item.column->x * Chunk::Size);
-			float pz = (float)(z + item.column->z * Chunk::Size);
+    for (int x = 0; x < Chunk::Size; x++) {
+        for (int z = 0; z < Chunk::Size; z++) {
+            float px = (float)(x + item.column->x * Chunk::Size);
+            float pz = (float)(z + item.column->z * Chunk::Size);
 
-			const int smeasClusterSize = 8;
-			const int smeasChunkHeight = 16;
-			int height = (int)(sino_2d((px) / (smeasClusterSize * 4), (pz) / (smeasClusterSize * 4)) * smeasClusterSize) +
-				     (smeasChunkHeight * smeasClusterSize / 2);
+            const int smeasClusterSize = 8;
+            const int smeasChunkHeight = 16;
+            int height =
+                (int)(sino_2d((px) / (smeasClusterSize * 4), (pz) / (smeasClusterSize * 4)) * smeasClusterSize) +
+                (smeasChunkHeight * smeasClusterSize / 2);
 
-			for (int y = 0; y < height - 3; y++) {
+            for (int y = 0; y < height - 3; y++) {
                 item.column->SetBlockID(mc::Vector3i(x, y, z), BlockID::Stone);
-			}
+            }
 
-			for (int y = height - 3; y < height; y++) {
+            for (int y = height - 3; y < height; y++) {
                 item.column->SetBlockID(mc::Vector3i(x, y, z), BlockID::Dirt);
-			}
+            }
 
             item.column->SetBlockID(mc::Vector3i(x, height, z), BlockID::Grass);
-		}
-	}
+        }
+    }
 }

@@ -48,7 +48,7 @@ ReCraftCore::ReCraftCore() {
 
     SetScreen(new StartTopScreen, true);
     SetScreen(new StartBotScreen, false);
-    //WorldSelect_Init();
+    // WorldSelect_Init();
 
     m_savemgr.Init(m_player, m_world);
 
@@ -81,7 +81,8 @@ ReCraftCore::ReCraftCore() {
         ImGui::Text("Hunger: %i (Timer: %i)", m_player->hunger, m_player->hungertimer);
         ImGui::Text("Velocity Y: %.3f, RndY: %.3f", m_player->velocity.y, m_player->rndy);
         ImGui::Spacing();
-        ImGui::Text("Move Pad: u%i d%i l%i r%i", m_player->getCtrlMove()->up, m_player->getCtrlMove()->down, m_player->getCtrlMove()->left, m_player->getCtrlMove()->right);
+        ImGui::Text("Move Pad: u%i d%i l%i r%i", m_player->getCtrlMove()->up, m_player->getCtrlMove()->down,
+                    m_player->getCtrlMove()->left, m_player->getCtrlMove()->right);
         ImGui::End();
     });
 }
@@ -103,7 +104,7 @@ ReCraftCore::~ReCraftCore() {
     delete m_debugUI;
     delete m_world;
     sino_exit();
-    //WorldSelect_Deinit();
+    // WorldSelect_Deinit();
 
     delete m_renderer;
     m_chunkWorker.~ChunkWorker();
@@ -113,7 +114,8 @@ ReCraftCore::~ReCraftCore() {
     gfxExit();
 }
 
-void ReCraftCore::InitSinglePlayer(char* path, char* name, const WorldGenType* worldType, Gamemode mode, bool newWorld) {
+void ReCraftCore::InitSinglePlayer(char* path, char* name, const WorldGenType* worldType, Gamemode mode,
+                                   bool newWorld) {
 
     m_chunkWorker.AddHandler(WorkerItemType::BaseGen, (WorkerFuncObj){&SuperFlatGen::Generate, &m_flatGen, true});
 
@@ -180,7 +182,8 @@ void ReCraftCore::RunSinglePlayer() {
                               WorldToChunkCoord(FastFloor(m_player->position.z)));
 }
 void ReCraftCore::ExitSinglePlayer() {
-    if (m_world) m_world->Release(&m_chunkWorker, &m_savemgr);
+    if (m_world)
+        m_world->Release(&m_chunkWorker, &m_savemgr);
     SetScreen(new StartTopScreen, true);
     SetScreen(new SelectWorldBotScreen, false);
 }
@@ -265,10 +268,8 @@ void ReCraftCore::RunMultiPlayer() {
             // rotation and much more)
             // TODO: Yaw is inverted, Server recieves movement as jittery, might be mclib
             mc::protocol::packets::out::PlayerPositionAndLookPacket response(
-                ToVector3d(m_player->position),
-                RAD_TO_DEG(m_player->yRot),
-                RAD_TO_DEG(m_player->xRot),
-                           m_player->onGround);
+                ToVector3d(m_player->position), RAD_TO_DEG(m_player->yRot), RAD_TO_DEG(m_player->xRot),
+                m_player->onGround);
 
             client->GetConnection()->SendPacket(&response);
 
@@ -345,7 +346,7 @@ void ReCraftCore::Main() {
         m_bTopUsingCurrScreen = false;
         if (m_bTopHaveQueuedScreen) {
             SetScreen(m_pTopQueuedScreen, true);
-            m_pTopQueuedScreen     = nullptr;
+            m_pTopQueuedScreen = nullptr;
             m_bTopHaveQueuedScreen = false;
         }
         // return;
@@ -357,7 +358,7 @@ void ReCraftCore::Main() {
         m_bBotUsingCurrScreen = false;
         if (m_bBotHaveQueuedScreen) {
             SetScreen(m_pBotQueuedScreen, false);
-            m_pBotQueuedScreen     = nullptr;
+            m_pBotQueuedScreen = nullptr;
             m_bBotHaveQueuedScreen = false;
         }
         // return;

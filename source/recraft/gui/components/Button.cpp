@@ -30,17 +30,23 @@ Button::Button(int buttonId, const std::string& buttonText) {
 }
 
 bool Button::Clicked(int xPos, int yPos) {
-    if (!m_bEnabled) return false;
-    if (xPos < m_xPos) return false;
-    if (yPos < m_yPos) return false;
-    if (xPos >= m_xPos + m_width) return false;
-    if (yPos >= m_yPos + m_height) return false;
+    if (!m_bEnabled)
+        return false;
+    if (xPos < m_xPos)
+        return false;
+    if (yPos < m_yPos)
+        return false;
+    if (xPos >= m_xPos + m_width)
+        return false;
+    if (yPos >= m_yPos + m_height)
+        return false;
 
     return true;
 }
 
 void Button::Render(ReCraftCore* core, int xPos, int yPos) {
-    if (!m_bVisible) return;
+    if (!m_bVisible)
+        return;
 
-    //RenderData->
+    // RenderData->
 }

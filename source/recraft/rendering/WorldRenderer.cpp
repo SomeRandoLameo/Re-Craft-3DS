@@ -16,7 +16,7 @@
 int sky_time = 0;
 
 WorldRenderer::WorldRenderer(Player* player, World* world, WorkQueue* workqueue, int projectionUniform) :
-    m_player(player), m_world(world), m_workqueue(workqueue), m_projectionUniform(projectionUniform){
+    m_player(player), m_world(world), m_workqueue(workqueue), m_projectionUniform(projectionUniform) {
 
     m_renderingQueue.clear();
     m_transparentClusters.clear();
@@ -72,10 +72,8 @@ void WorldRenderer::RenderWorld() {
 
     int pY = CLAMP(WorldToChunkCoord(FastFloor(m_player->position.y)), 0, ChunkColumn::ChunksPerColumn - 1);
 
-    ChunkColumnPtr columnPtr = m_world->GetChunkColumn(
-        WorldToChunkCoord(FastFloor(m_player->position.x)),
-        WorldToChunkCoord(FastFloor(m_player->position.z))
-    );
+    ChunkColumnPtr columnPtr = m_world->GetChunkColumn(WorldToChunkCoord(FastFloor(m_player->position.x)),
+                                                       WorldToChunkCoord(FastFloor(m_player->position.z)));
 
     if (!columnPtr) {
         // Player is in an invalid/unloaded chunk!
@@ -117,12 +115,14 @@ void WorldRenderer::RenderWorld() {
             if (newX < m_world->cacheTranslationX - (World::ChunkCacheSize >> 1) + 1 ||
                 newX > m_world->cacheTranslationX + (World::ChunkCacheSize >> 1) - 1 ||
                 newZ < m_world->cacheTranslationZ - (World::ChunkCacheSize >> 1) + 1 ||
-                newZ > m_world->cacheTranslationZ + (World::ChunkCacheSize >> 1) - 1 || newY < 0 || newY >= ChunkColumn::ChunksPerColumn)
+                newZ > m_world->cacheTranslationZ + (World::ChunkCacheSize >> 1) - 1 || newY < 0 ||
+                newY >= ChunkColumn::ChunksPerColumn)
                 continue;
 
-            mc::Vector3f dist = mc::Vector3f(newX * Chunk::Size + (Chunk::Size >> 1),
-                                             newY * Chunk::Size + (Chunk::Size >> 1),
-                                             newZ * Chunk::Size + (Chunk::Size >> 1)) - playerPos;
+            mc::Vector3f dist =
+                mc::Vector3f(newX * Chunk::Size + (Chunk::Size >> 1), newY * Chunk::Size + (Chunk::Size >> 1),
+                             newZ * Chunk::Size + (Chunk::Size >> 1)) -
+                playerPos;
             if (Vector3f_dot(dist, dist) > (3.f * Chunk::Size) * (3.f * Chunk::Size)) {
                 continue;
             }
@@ -208,6 +208,7 @@ void WorldRenderer::Render(float iod) {
     m_cubeRenderer->Draw(m_projectionUniform, m_cam.GetVP(), m_world, m_player->position);
 
     if (m_player->blockInActionRange) {
-        m_cursor->Draw(m_projectionUniform, m_cam.GetVP(), m_world, m_player->viewRayCast.hitPos, m_player->viewRayCast.direction);
+        m_cursor->Draw(m_projectionUniform, m_cam.GetVP(), m_world, m_player->viewRayCast.hitPos,
+                       m_player->viewRayCast.direction);
     }
 }
