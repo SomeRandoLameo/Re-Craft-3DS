@@ -49,7 +49,6 @@ add_executable(${PROJECT_NAME}
     source/recraft/gui/DebugUI.cpp
     source/recraft/gui/FontLoader.cpp
     source/recraft/gui/Gui.cpp
-    source/recraft/gui/SpriteBatch.cpp
     source/recraft/gui/GuiChat.cpp
     source/recraft/input/InputManager.cpp
     source/recraft/input/PlayerInput.cpp

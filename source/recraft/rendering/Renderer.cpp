@@ -4,7 +4,6 @@
 #include "blocks/Block.hpp"
 #include "gui/CT_Inventory.hpp"
 #include "gui/Gui.hpp"
-#include "gui/SpriteBatch.hpp"
 #include "rendering/Camera.hpp"
 #include "rendering/Clouds.hpp"
 #include "rendering/Cursor.hpp"
@@ -44,7 +43,6 @@ Renderer::Renderer(World* world, Player* player, WorkQueue* queue) {
     m_worldRenderer = new WorldRenderer(player, world, m_workqueue, m_world_shader_uLocProjection);
 
     Iron::Init();
-    //SpriteBatch_Init(m_gui_shader_uLocProjection);
     C3D_CullFace(GPU_CULL_BACK_CCW);
 
     //Block_Init();
@@ -56,7 +54,6 @@ Renderer::~Renderer() {
     PolyGen_Deinit();
     // delete m_worldRenderer;
     m_worldRenderer = nullptr;
-    //SpriteBatch_Deinit();
 
     delete Top[0];
     delete Top[1];
@@ -134,8 +131,6 @@ void Renderer::RenderTopScreen(int eyeIndex, float iod) {
     Top[eyeIndex]->Clear(SkyClearColor);
     C3D_FrameDrawOn(Top[eyeIndex]->Ptr());
 
-    //SpriteBatch_StartFrame(400, 240);
-
     C3D_TexEnv* env = C3D_GetTexEnv(0);
     C3D_TexEnvInit(env);
     C3D_TexEnvSrc(env, C3D_Both, GPU_TEXTURE0, GPU_PRIMARY_COLOR, (GPU_TEVSRC)0);
@@ -162,15 +157,11 @@ void Renderer::RenderTopScreen(int eyeIndex, float iod) {
     }
 
     pGuiShader->Use();
-
-    //SpriteBatch_Render(GFX_TOP);
 }
 
 void Renderer::RenderBottomScreen(DebugUI* debugUi) {
     Bottom->Clear(BlackClearColor);
     Bottom->Use();
-
-    //SpriteBatch_StartFrame(320, 240);
 
     if (ReCraftCore::GetInstance()->BotScreen){
         ReCraftCore::GetInstance()->BotScreen->Frame();
@@ -187,6 +178,4 @@ void Renderer::RenderBottomScreen(DebugUI* debugUi) {
     if (showDebugInfo) {
         debugUi->Draw();
     }
-
-    //SpriteBatch_Render(GFX_BOTTOM);
 }

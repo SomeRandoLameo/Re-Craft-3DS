@@ -1,5 +1,4 @@
 #include "gui/screens/StartScreen.hpp"
-#include "gui/SpriteBatch.hpp"
 #include "gui/screens/SelectWorldScreen.hpp"
 
 void StartTopScreen::Init() {

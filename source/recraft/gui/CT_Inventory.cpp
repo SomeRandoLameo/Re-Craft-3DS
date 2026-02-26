@@ -2,7 +2,6 @@
 #include <algorithm>
 #include "ReCraftCore.hpp"
 #include "gui/Gui.hpp"
-#include "gui/SpriteBatch.hpp"
 #include "rendering/VertexFmt.hpp"
 
 void Inventory::handleStackClick(mc::inventory::Slot* stack) {

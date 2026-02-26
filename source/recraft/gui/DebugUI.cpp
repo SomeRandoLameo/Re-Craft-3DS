@@ -1,4 +1,3 @@
-#include "gui/SpriteBatch.hpp"
 #include "rendering/VertexFmt.hpp"
 
 #include "ReCraftCore.hpp"

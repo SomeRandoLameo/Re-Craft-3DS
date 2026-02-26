@@ -1,5 +1,4 @@
 #include "gui/screens/CreateWorldScreen.hpp"
-#include "gui/SpriteBatch.hpp"
 
 #include <utility>
 

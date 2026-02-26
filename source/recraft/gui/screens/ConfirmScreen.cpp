@@ -1,5 +1,4 @@
 #include "gui/screens/ConfirmScreen.hpp"
-#include "gui/SpriteBatch.hpp"
 
 ConfirmScreen::ConfirmScreen(Screen* pScreen, const std::string& line1, const std::string& line2, int x) :
 	m_textLine1(line1),
@@ -45,10 +44,10 @@ void ConfirmScreen::Render(int mouseX, int mouseY, float delta) {
     Gui::DrawDefaultBackground();
 
     Gui::Offset(0, 10);
-    Gui::BeginRowCenter(SpriteBatch_GetWidth(), 1);
+    Gui::BeginRowCenter(320, 1);
     Gui::Label(0.f, true, INT16_MAX, true, m_textLine1.c_str());
     Gui::EndRow();
-    Gui::BeginRow(SpriteBatch_GetWidth(), 1);
+    Gui::BeginRow(320, 1);
     Gui::Label(0.f, true, INT16_MAX, true, m_textLine2.c_str());
     Gui::EndRow();
     Gui::VerticalSpace(Gui::RelativeHeight(0.4f));
