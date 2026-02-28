@@ -7,7 +7,11 @@ Please dont be annoyed if this crashed on your device, as this is my first prope
 The current roms are built with focus on the N3DS, however o3DS Support is being tested as well.
 The game should run in theory. If not: create an issue and steps to recreate it. We will greatly appreciate this!
 
-
+> [!DANGER]
+> **BE CAREFUL:** This ROM currently uses original minecraft assets 
+> This is only temporary!!!
+> They will be removed later
+> Proceed only if you fully understand the consequences.
 
 ### Additional libraries (you need to install them in order to build this project)
 - 3ds-zlib
