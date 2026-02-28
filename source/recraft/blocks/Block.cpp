@@ -5,9 +5,9 @@
 #include "rendering/VertexFmt.hpp"
 
 // PATH PREFIX
-#define PPRX "romfs:/assets/textures/blocks/"
+#define PPRX "romfs:/assets/minecraft/textures/blocks/"
 
-const char* blockTextures[] = {"romfs:/assets/notexture.png",
+const char* blockTextures[] = {"romfs:/notexture.png",
                                PPRX "stone.png",
                                PPRX "dirt.png",
                                PPRX "cobblestone.png",

@@ -7,6 +7,8 @@ Please dont be annoyed if this crashed on your device, as this is my first prope
 The current roms are built with focus on the N3DS, however o3DS Support is being tested as well.
 The game should run in theory. If not: create an issue and steps to recreate it. We will greatly appreciate this!
 
+
+
 ### Additional libraries (you need to install them in order to build this project)
 - 3ds-zlib
 - 3ds-curl 

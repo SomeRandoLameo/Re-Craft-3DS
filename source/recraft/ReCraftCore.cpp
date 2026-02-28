@@ -34,11 +34,11 @@ ReCraftCore::ReCraftCore() {
     m_emptyGen.Init(m_world);
 
     auto fnt = Iron::Font::New();
-    fnt->LoadBMF("romfs:/assets/textures/font/ascii.png");
+    fnt->LoadBMF("romfs:/assets/minecraft/textures/font/ascii.png");
     m_AssetMgr.Add("font", fnt);
 
-    m_AssetMgr.AutoLoad("GuiTexture_Widgets", "romfs:/assets/textures/gui/widgets.png");
-    m_AssetMgr.AutoLoad("GuiTexture_DefaultBG", "romfs:/assets/textures/gui/options_background.png");
+    m_AssetMgr.AutoLoad("GuiTexture_Widgets", "romfs:/assets/minecraft/textures/gui/widgets.png");
+    m_AssetMgr.AutoLoad("GuiTexture_DefaultBG", "romfs:/assets/minecraft/textures/gui/options_background.png");
     m_AssetMgr.Get<Amy::Texture>("GuiTexture_DefaultBG")->Wrap(Amy::Texture::Repeat);
 
     // m_AssetMgr.AutoLoad("font", "romfs:/ComicNeue.ttf");

@@ -3,7 +3,7 @@
 
 void StartTopScreen::Init() {
     m_clouds = new Clouds();
-    m_ReCraftCore->GetAssetManager()->AutoLoad("logoTex", "romfs:/assets/textures/gui/title/craftus.png");
+    m_ReCraftCore->GetAssetManager()->AutoLoad("logoTex", "romfs:/assets/minecraft/textures/gui/title/minecraft.png");
 }
 
 void StartTopScreen::Removed() {
