@@ -1,11 +1,13 @@
 #include "gui/screens/GuiInGame.hpp"
 
 void GuiInGameTop::Init() {
-    m_ReCraftCore->GetAssetManager()->AutoLoad("GuiTexture_icons", "romfs:/assets/textures/gui/icons.png");
+    m_ReCraftCore->GetAssetManager()->AutoLoad("GuiTexture_icons", "romfs:/assets/minecraft/textures/gui/icons.png");
     Screen::Init();
 }
 
-bool GuiInGameTop::IsInGameScreen() { return true; }
+bool GuiInGameTop::IsInGameScreen() {
+    return true;
+}
 
 void GuiInGameTop::Render(int mouseX, int mouseY, float delta) {
     RenderData->DrawTex(ReCraftCore::GetInstance()->GetAssetManager()->Get<Amy::Texture>("GuiTexture_icons"));
@@ -22,10 +24,8 @@ void GuiInGameTop::Render(int mouseX, int mouseY, float delta) {
 }
 
 // this is actual minecraft ported code
-// TODO: Add support for damage animations, potion effects like poisin, wither
+// TODO: Add support for damage animations, potion effects like poison, wither
 // and more
-// TODO: Move this somewhere else once the new renderer works, Preferrably as a
-// GuiOverlay
 void GuiInGameTop::RenderHealth() {
     // TODO: Damage flicker bounce + healing white flicker + wither and more
     int health = m_ReCraftCore->GetPlayer()->hp;
@@ -168,7 +168,9 @@ void GuiInGameBot::Removed() {
     delete m_inventory;
 }
 
-bool GuiInGameBot::IsInGameScreen() { return true; }
+bool GuiInGameBot::IsInGameScreen() {
+    return true;
+}
 
 void GuiInGameBot::Render(int mouseX, int mouseY, float delta) {
     // SpriteBatch_SetScale(2);
@@ -182,64 +184,38 @@ void GuiInGameBot::Render(int mouseX, int mouseY, float delta) {
     m_player->inventorySite = m_inventory->currentSite;
     Screen::Render(mouseX, mouseY, delta);
 }
-void GuiInGameBot::ButtonClicked() { Screen::ButtonClicked(); }
+
+void GuiInGameBot::ButtonClicked() {
+    Screen::ButtonClicked();
+}
 
 void GuiInGameBot::RenderHotbar(int x, int y, mc::inventory::Slot* stacks, int& selected) {
-    // SpriteBatch_BindGuiTexture(GuiTexture::Widgets);
     RenderData->DrawTex(ReCraftCore::GetInstance()->GetAssetManager()->Get<Amy::Texture>("GuiTexture_Widgets"));
     for (int i = 0; i < 9; ++i) {
-        // SpriteBatch_SetScale(1);
+        const int rx = i * 20 + x + 3;  // unscaled
+        const int ry = y + 3;            // unscaled
 
-        const int rx = (i * 20 + x + 3) * 2;
-        const int ry = (y + 3) * 2;
-
-        // Render item icon if stack has items
         if (stacks[i].GetItemCount() > 0) {
-            // SpriteBatch_PushIcon(stacks[i], rx, ry, 11);
+            Gui::DrawIcon((BlockID) stacks[i].GetItemId(), 0, Amy::fvec2(rx * 2, ry * 2));
         }
 
-        // Handle cursor interaction
-        if (Gui::EnteredCursorInside(rx - 4, ry - 4, 18 * 2, 18 * 2)) {
+        if (Gui::EnteredCursorInside(rx - 4, ry - 4, 18, 18)) {  // unscaled, no *2
             selected = i;
             m_inventory->handleStackClick(&stacks[i]);
-
-            // if (*ReCraftCore::GetInstance()->GetGameState() ==
-            // GameState::Playing_OnLine) {
-            // TODO: client->GetHotbar().SelectSlot(i);
-            //}
         }
 
-        // SpriteBatch_SetScale(2);
-
-        // Highlight source stack
         if (m_inventory->m_sourceStack == &stacks[i]) {
-            // SpriteBatch_PushSingleColorQuad(
-            //     rx / 2 - 2, ry / 2 - 2, 9, 18, 18,
-            //     SHADER_RGB(20, 5, 2)
-            //);
-
-            // SpriteBatch_BindGuiTexture(GuiTexture::Widgets);
+            // highlight source stack (unchanged)
         }
 
-        // Draw slot separator (except for last two slots)
         if (i < 9 - 2) {
             DrawTexturedModalRect(i * 20 + 21 + x, y, 21, 0, 20, 22);
-            // SpriteBatch_PushQuad(i * 20 + 21 + x, y, 10, 20, 22, 21, 0, 20, 22);
         }
     }
 
-    // SpriteBatch_SetScale(2);
-
-    // Draw hotbar ends
     DrawTexturedModalRect(x, y, 0, 0, 21, 22);
     DrawTexturedModalRect(21 + 20 * 7 + x, y, 161, 0, 21, 22);
-    // SpriteBatch_PushQuad(x, y, 10, 21, 22, 0, 0, 21, 22);
-    // SpriteBatch_PushQuad(21 + 20 * 7 + x, y, 10, 21, 22, 161, 0, 21, 22);
-
-    // Draw selection indicator
     DrawTexturedModalRect(x + selected * 20 - 1, y - 1, 0, 22, 24, 24);
-    // SpriteBatch_PushQuad(x + selected * 20 - 1, y - 1, 14, 24, 24, 0, 22, 24,
-    // 24);
 }
 
 void GuiInGameBot::RenderInventory(int x, int y, mc::inventory::Slot* stacks, int count, int site) {
@@ -283,19 +259,18 @@ void GuiInGameBot::RenderInventory(int x, int y, mc::inventory::Slot* stacks, in
 }
 
 void GuiInGameBot::RenderSlot(mc::inventory::Slot* slot, int x, int y) {
-    // SpriteBatch_PushIcon(*slot, x * 2, y * 2, 10);
+    const Amy::Color backgroundColor = (m_inventory->m_sourceStack == slot) ? Amy::Color(255,0,0) : Amy::Color(21,21,21);
 
-    Gui::DrawIcon(slot->GetItemId(), 0, Amy::fvec2(x * 2, y * 2));
+    RenderData->DrawSolid();
+    RenderData->DrawRectFilled(
+        Amy::fvec2(x * 2, y * 2),
+        Amy::fvec2(16 * 2, 16 * 2),
+        backgroundColor
+    );
 
-    if (Gui::EnteredCursorInside(x * 2, y * 2, 16 * 2, 16 * 2)) {
+    Gui::DrawIcon((BlockID)slot->GetItemId(), 0, Amy::fvec2(x * 2, y * 2));
+
+    if (Gui::EnteredCursorInside(x, y, 16, 16)) {
         m_inventory->handleStackClick(slot);
     }
-
-    const int16_t backgroundColor =
-        (m_inventory->m_sourceStack == slot) ? SHADER_RGB(20, 5, 2) : SHADER_RGB_DARKEN(SHADER_RGB(20, 20, 21), 9);
-
-    // SpriteBatch_PushSingleColorQuad(
-    //     x * 2, y * 2, 9, 16 * 2, 16 * 2,
-    //     backgroundColor
-    //);
 }

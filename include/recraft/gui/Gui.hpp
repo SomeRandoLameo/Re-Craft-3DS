@@ -35,7 +35,7 @@ public:
 
     bool Button(float size, const char* label, ...);
 
-    void DrawIcon(uint16_t b, uint8_t m, Amy::fvec2 pos);
+    void DrawIcon(BlockID blockId, uint8_t m, Amy::fvec2 pos);
 
     static bool IsCursorInside(int x, int y, int w, int h);
     static bool WasCursorInside(int x, int y, int w, int h);
@@ -64,6 +64,7 @@ public:
 
 private:
     int relativeToAbsoluteSize(float s) const;
+
     struct Row {
         int width;
         int highestElement;

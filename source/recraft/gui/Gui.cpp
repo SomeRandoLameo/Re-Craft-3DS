@@ -60,8 +60,13 @@ void Gui::Offset(int x, int y) {
     windowY = y;
 }
 
-int Gui::RelativeWidth(float x) const { return viewWidth * x; }
-int Gui::RelativeHeight(float y) const { return viewHeight * y; }
+int Gui::RelativeWidth(float x) const {
+    return viewWidth * x;
+}
+
+int Gui::RelativeHeight(float y) const {
+    return viewHeight * y;
+}
 
 void Gui::BeginRowCenter(int width, int count) {
     windowX = viewWidth / 2 - width / 2;
@@ -130,8 +135,13 @@ bool Gui::Button(float size, const char* label, ...) {
     return Input::isKeyUp(KEY_TOUCH) && Gui::WasCursorInside(x, y, w, BUTTON_HEIGHT);
 }
 
-void Gui::Space(float space) { relativeX += relativeToAbsoluteSize(space) + paddingX; }
-void Gui::VerticalSpace(int y) { windowY += y; }
+void Gui::Space(float space) {
+    relativeX += relativeToAbsoluteSize(space) + paddingX;
+}
+
+void Gui::VerticalSpace(int y) {
+    windowY += y;
+}
 
 bool Gui::IsCursorInside(int x, int y, int w, int h) {
     int sclInputX = Input::getTouch().px / 2; // m_guiScale;
@@ -258,7 +268,7 @@ Amy::fvec3 Mtx4xFvec3(const Amy::mat4& m, const Amy::fvec3& v) {
     return ret;
 }
 
-void Gui::DrawIcon(uint16_t b, uint8_t m, Amy::fvec2 pos) {
+void Gui::DrawIcon(BlockID blockId, uint8_t m, Amy::fvec2 pos) {
 #define UV_PRECISION 32768
     static WorldVertex vtx[6 * 6];
     memcpy(vtx, cube_sides_lut, sizeof(WorldVertex) * 36);
@@ -273,8 +283,8 @@ void Gui::DrawIcon(uint16_t b, uint8_t m, Amy::fvec2 pos) {
             continue;
         int16_t iconUV[2];
         uint8_t color[3];
-        BlockRegistry::GetBlock(b)->getTexture((Direction)i, iconUV);
-        BlockRegistry::GetBlock(b)->getColor(m, (Direction)i, color);
+        BlockRegistry::GetBlock(blockId)->getTexture((Direction)i, iconUV);
+        BlockRegistry::GetBlock(blockId)->getColor(m, (Direction)i, color);
 
         for (int j = 0; j < 5; j++) {
             int k = i * 6 + j;
@@ -298,9 +308,9 @@ void Gui::DrawIcon(uint16_t b, uint8_t m, Amy::fvec2 pos) {
             clr32 = Amy::Color(color[0] * 0.9, color[1] * 0.9, color[2] * 0.9, 255);
         }
         /**
-         * Very advanced usage of the palladium Renderign API
+         * Very advanced usage of the amethyst Rendering API
          * Please dont try to understand it by this example...
-         * Probabl the code in Lithium Drawlist is a better start
+         * Probably the code in Lithium Drawlist is a better start
          */
         Amy::Rect uvs = Amy::fvec4(
             (float)iconUV[0] / (float)UV_PRECISION, (float)(iconUV[1] + TextureMap::TileSize) / (float)UV_PRECISION,
