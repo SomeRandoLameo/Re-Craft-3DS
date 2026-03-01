@@ -76,6 +76,7 @@ TextureMap BlockRegistry::m_textureMap;
 
 BlockRegistry::BlockRegistry() {
     m_textureMap.Init(blockTextures, sizeof(blockTextures) / sizeof(blockTextures[0]));
+
 #define GETICON(x) m_textureMap.Get(PPRX x ".png")
 
     RegisterBlock((new Block(BlockID::Air, "air"))
@@ -137,7 +138,7 @@ BlockRegistry::BlockRegistry() {
                       ->setOpaque(false)
                       ->setDestroyTime(0.3f));
 
-    RegisterBlock((new Block(BlockID::Brick, "brick"))
+    RegisterBlock((new Block(BlockID::Brick_Block, "brick"))
                       ->setAllSidesTexture(GETICON("brick"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(2.0f));
@@ -243,16 +244,17 @@ BlockRegistry::BlockRegistry() {
                       //->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.5f));
 
+    /* Fake
     RegisterBlock((new Block(BlockID::Coarse, "coarse_dirt"))
                       ->setAllSidesTexture(GETICON("coarse_dirt"))
                       //->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.5f));
-
+*/
     // TODO: Doors or multiblock structures
     // icon.door_top            = Texture_MapGetIcon(&textureMap, blockTextures[17]);
     // icon.door_bottom         = Texture_MapGetIcon(&textureMap, blockTextures[18]);
 
-
+/* Fake
     RegisterBlock((new Block(BlockID::Snow_Grass, "snow_grass"))
                       ->setTopBottomSidesTexture(GETICON("snow"), // top
                                                  GETICON("dirt"), // bottom
@@ -260,7 +262,7 @@ BlockRegistry::BlockRegistry() {
                                                  )
                       //->setSoundType(SoundType::GRASS)
                       ->setDestroyTime(0.6f));
-
+*/
     RegisterBlock((new Block(BlockID::Snow, "snow"))
                       ->setAllSidesTexture(GETICON("snow"))
                       //->setSoundType(SoundType::STONE)

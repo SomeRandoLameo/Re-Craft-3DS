@@ -39,7 +39,7 @@ void Player::InitializeInventory() {
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Leaves), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Glass), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Stonebrick), 1, 0);
-    inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Brick), 1, 0);
+    inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Brick_Block), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Planks), 1, 0);
     //for (u8 i = 0; i < 16; i++) {
     //    inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Wool), 1, i);
@@ -50,8 +50,8 @@ void Player::InitializeInventory() {
 
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Bedrock), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Gravel), 1, 0);
-    inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Coarse), 1, 0);
-    inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Snow_Grass), 1, 0);
+    //inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Coarse), 1, 0);
+    //inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Snow_Grass), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Snow), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Obsidian), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Netherrack), 1, 0);

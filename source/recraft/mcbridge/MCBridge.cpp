@@ -307,7 +307,7 @@ BlockID MCBridge::MCLibBlockToCTBlock(u32 BlockType) {
     // registry->RegisterBlock(new Block("minecraft:stone_slab", 710, true));
     // registry->RegisterBlock(new Block("minecraft:stone_slab", 711, true));
     else if (BlockType == 720)
-        return BlockID::Brick;
+        return BlockID::Brick_Block;
     // registry->RegisterBlock(new Block("minecraft:tnt", 736, true));
     // registry->RegisterBlock(new Block("minecraft:bookshelf", 752, true));
     // registry->RegisterBlock(new Block("minecraft:mossy_cobblestone", 768, true));

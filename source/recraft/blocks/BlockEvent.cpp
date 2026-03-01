@@ -22,11 +22,11 @@ void BlockEvent_RandomTick(World* world, ChunkColumnPtr column, int x[], int y[]
                     column->SetBlockID(defaultPosition, BlockID::Dirt);
                 }
                 break;
-            case BlockID::Snow_Grass:
-                if (column->GetBlock(blockPosition)->isOpaque()) {
-                    column->SetBlockID(defaultPosition, BlockID::Dirt);
-                }
-                break;
+            //case BlockID::Snow_Grass:
+            //    if (column->GetBlock(blockPosition)->isOpaque()) {
+            //        column->SetBlockID(defaultPosition, BlockID::Dirt);
+            //    }
+            //    break;
             case BlockID::Grass_Path:
                 if (column->GetBlock(blockPosition)->isOpaque()) {
                     column->SetBlockID(defaultPosition, BlockID::Dirt);
