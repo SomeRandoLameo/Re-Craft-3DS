@@ -5,9 +5,7 @@ void GuiInGameTop::Init() {
     Screen::Init();
 }
 
-bool GuiInGameTop::IsInGameScreen() {
-    return true;
-}
+bool GuiInGameTop::IsInGameScreen() { return true; }
 
 void GuiInGameTop::Render(int mouseX, int mouseY, float delta) {
     RenderData->DrawTex(ReCraftCore::GetInstance()->GetAssetManager()->Get<Amy::Texture>("GuiTexture_icons"));
@@ -168,9 +166,7 @@ void GuiInGameBot::Removed() {
     delete m_inventory;
 }
 
-bool GuiInGameBot::IsInGameScreen() {
-    return true;
-}
+bool GuiInGameBot::IsInGameScreen() { return true; }
 
 void GuiInGameBot::Render(int mouseX, int mouseY, float delta) {
     // SpriteBatch_SetScale(2);
@@ -185,21 +181,19 @@ void GuiInGameBot::Render(int mouseX, int mouseY, float delta) {
     Screen::Render(mouseX, mouseY, delta);
 }
 
-void GuiInGameBot::ButtonClicked() {
-    Screen::ButtonClicked();
-}
+void GuiInGameBot::ButtonClicked() { Screen::ButtonClicked(); }
 
 void GuiInGameBot::RenderHotbar(int x, int y, mc::inventory::Slot* stacks, int& selected) {
     RenderData->DrawTex(ReCraftCore::GetInstance()->GetAssetManager()->Get<Amy::Texture>("GuiTexture_Widgets"));
     for (int i = 0; i < 9; ++i) {
-        const int rx = i * 20 + x + 3;  // unscaled
-        const int ry = y + 3;            // unscaled
+        const int rx = i * 20 + x + 3; // unscaled
+        const int ry = y + 3; // unscaled
 
         if (stacks[i].GetItemCount() > 0) {
-            Gui::DrawIcon((BlockID) stacks[i].GetItemId(), 0, Amy::fvec2(rx * 2, ry * 2));
+            Gui::DrawIcon((BlockID)stacks[i].GetItemId(), 0, Amy::fvec2(rx * 2, ry * 2));
         }
 
-        if (Gui::EnteredCursorInside(rx - 4, ry - 4, 18, 18)) {  // unscaled, no *2
+        if (Gui::EnteredCursorInside(rx - 4, ry - 4, 18, 18)) { // unscaled, no *2
             selected = i;
             m_inventory->handleStackClick(&stacks[i]);
         }
@@ -259,14 +253,11 @@ void GuiInGameBot::RenderInventory(int x, int y, mc::inventory::Slot* stacks, in
 }
 
 void GuiInGameBot::RenderSlot(mc::inventory::Slot* slot, int x, int y) {
-    const Amy::Color backgroundColor = (m_inventory->m_sourceStack == slot) ? Amy::Color(255,0,0) : Amy::Color(21,21,21);
+    const Amy::Color backgroundColor =
+        (m_inventory->m_sourceStack == slot) ? Amy::Color(255, 0, 0) : Amy::Color(21, 21, 21);
 
     RenderData->DrawSolid();
-    RenderData->DrawRectFilled(
-        Amy::fvec2(x * 2, y * 2),
-        Amy::fvec2(16 * 2, 16 * 2),
-        backgroundColor
-    );
+    RenderData->DrawRectFilled(Amy::fvec2(x * 2, y * 2), Amy::fvec2(16 * 2, 16 * 2), backgroundColor);
 
     Gui::DrawIcon((BlockID)slot->GetItemId(), 0, Amy::fvec2(x * 2, y * 2));
 

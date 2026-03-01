@@ -60,13 +60,9 @@ void Gui::Offset(int x, int y) {
     windowY = y;
 }
 
-int Gui::RelativeWidth(float x) const {
-    return viewWidth * x;
-}
+int Gui::RelativeWidth(float x) const { return viewWidth * x; }
 
-int Gui::RelativeHeight(float y) const {
-    return viewHeight * y;
-}
+int Gui::RelativeHeight(float y) const { return viewHeight * y; }
 
 void Gui::BeginRowCenter(int width, int count) {
     windowX = viewWidth / 2 - width / 2;
@@ -135,13 +131,9 @@ bool Gui::Button(float size, const char* label, ...) {
     return Input::isKeyUp(KEY_TOUCH) && Gui::WasCursorInside(x, y, w, BUTTON_HEIGHT);
 }
 
-void Gui::Space(float space) {
-    relativeX += relativeToAbsoluteSize(space) + paddingX;
-}
+void Gui::Space(float space) { relativeX += relativeToAbsoluteSize(space) + paddingX; }
 
-void Gui::VerticalSpace(int y) {
-    windowY += y;
-}
+void Gui::VerticalSpace(int y) { windowY += y; }
 
 bool Gui::IsCursorInside(int x, int y, int w, int h) {
     int sclInputX = Input::getTouch().px / 2; // m_guiScale;
@@ -269,7 +261,7 @@ Amy::fvec3 Mtx4xFvec3(const Amy::mat4& m, const Amy::fvec3& v) {
 }
 
 void Gui::DrawIcon(BlockID blockId, uint8_t m, Amy::fvec2 pos) {
-#define UV_PRECISION 32768
+    constexpr static int numTiles = TextureMap::UvPrecision / TextureMap::MapTiles;
     static WorldVertex vtx[6 * 6];
     memcpy(vtx, cube_sides_lut, sizeof(WorldVertex) * 36);
 
@@ -312,9 +304,10 @@ void Gui::DrawIcon(BlockID blockId, uint8_t m, Amy::fvec2 pos) {
          * Please dont try to understand it by this example...
          * Probably the code in Lithium Drawlist is a better start
          */
-        Amy::Rect uvs = Amy::fvec4(
-            (float)iconUV[0] / (float)UV_PRECISION, (float)(iconUV[1] + TextureMap::TileSize) / (float)UV_PRECISION,
-            (float)(iconUV[0] + TextureMap::TileSize) / (float)UV_PRECISION, (float)iconUV[1] / (float)UV_PRECISION);
+        Amy::Rect uvs = Amy::fvec4((float)iconUV[0] / (float)TextureMap::UvPrecision,
+                                   (float)(iconUV[1] + numTiles) / (float)TextureMap::UvPrecision,
+                                   (float)(iconUV[0] + numTiles) / (float)TextureMap::UvPrecision,
+                                   (float)iconUV[1] / (float)TextureMap::UvPrecision);
         auto cmd = RenderData->NewCommand();
         cmd->Tex = pBlockTex;
         cmd->Add(0).Add(1).Add(2);
