@@ -29,7 +29,7 @@ Player::Player(World* world) : Entity(world), m_input(new PlayerInput()) {
 // TODO: Separate from player
 void Player::InitializeInventory() {
     int slotIndex = 0;
-    inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Air), 1, 0); // Testing
+   // inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Air), 1, 0); // Testing
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Stone), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Dirt), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Grass), 1, 0);
@@ -41,9 +41,13 @@ void Player::InitializeInventory() {
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Stonebrick), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Brick), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Planks), 1, 0);
-    for (u8 i = 0; i < 16; i++) {
-        inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Wool), 1, i);
-    }
+    //for (u8 i = 0; i < 16; i++) {
+    //    inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Wool), 1, i);
+    //}
+    // For now, we only have one type of wool because we need relation to meta + blockModelBakery for the alternatives.
+    // More options will be added once those are implemented.
+    inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Wool), 1, 0);
+
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Bedrock), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Gravel), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Coarse), 1, 0);
@@ -52,11 +56,11 @@ void Player::InitializeInventory() {
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Obsidian), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Netherrack), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Sandstone), 1, 0);
-    inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Smooth_Stone), 1, 0);
+    //inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Smooth_Stone), 1, 0); (doesnt exist in 1.12 for some reason)
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Crafting_Table), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Grass_Path), 1, 0);
-    inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Lava), 1, 0);
-    inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Water), 1, 0);
+    //inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Lava), 1, 0); Not accessible, bevause the texture is atlass based, not face based
+    //inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Water), 1, 0); same reason here
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Iron_Block), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Iron_Ore), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Coal_Block), 1, 0);

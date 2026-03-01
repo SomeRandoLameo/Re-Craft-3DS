@@ -1,7 +1,6 @@
 #include "blocks/Block.hpp"
 #include "blocks/GrassBlock.h"
 #include "blocks/LeavesBlock.h"
-#include "blocks/WoolBlock.h"
 #include "rendering/VertexFmt.hpp"
 
 // PATH PREFIX
@@ -21,16 +20,33 @@ const char* blockTextures[] = {"romfs:/notexture.png",
                                PPRX "glass.png",
                                PPRX "brick.png",
                                PPRX "planks_oak.png",
-                               PPRX "wool.png",
+
+                               PPRX "wool_colored_black.png",
+                               PPRX "wool_colored_blue.png",
+                               PPRX "wool_colored_brown.png",
+                               PPRX "wool_colored_cyan.png",
+                               PPRX "wool_colored_gray.png",
+                               PPRX "wool_colored_green.png",
+                               PPRX "wool_colored_light_blue.png",
+                               PPRX "wool_colored_lime.png",
+                               PPRX "wool_colored_magenta.png",
+                               PPRX "wool_colored_orange.png",
+                               PPRX "wool_colored_pink.png",
+                               PPRX "wool_colored_purple.png",
+                               PPRX "wool_colored_red.png",
+                               PPRX "wool_colored_silver.png",
+                               PPRX "wool_colored_white.png",
+                               PPRX "wool_colored_yellow.png",
+
                                PPRX "bedrock.png",
                                PPRX "gravel.png",
                                PPRX "coarse_dirt.png",
                                PPRX "door_top.png",
                                PPRX "door_bottom.png",
-                               PPRX "snow_grass_side.png",
+                               PPRX "grass_side_snowed.png",
                                PPRX "snow.png",
                                PPRX "obsidian.png",
-                               PPRX "sandstone_side.png",
+                               PPRX "sandstone_normal.png",
                                PPRX "sandstone_top.png",
                                PPRX "sandstone_bottom.png",
                                PPRX "netherrack.png",
@@ -52,7 +68,7 @@ const char* blockTextures[] = {"romfs:/notexture.png",
                                PPRX "emerald_ore.png",
                                PPRX "emerald_block.png",
                                PPRX "furnace_side.png",
-                               PPRX "furnace_front.png",
+                               PPRX "furnace_front_off.png",
                                PPRX "furnace_top.png"};
 
 TextureMap BlockRegistry::m_textureMap;
@@ -131,10 +147,90 @@ BlockRegistry::BlockRegistry() {
                       //->setSoundType(SoundType::WOOD)
                       ->setDestroyTime(2.0f));
 
-    RegisterBlock((new WoolBlock(BlockID::Wool, "wool"))
-                      ->setAllSidesTexture(GETICON("wool"))
+
+// TODO: This is the part, where Minecrafts ModelBakery would come to show. All of these texture variants with their metadata (EnumDyeColor.COLOR.getMetadata()) are determined by their identifier and what base block (model) they use based on their json.
+    /*
+    RegisterBlock((new Block(BlockID::Wool, "black_wool"))
+                      ->setAllSidesTexture(GETICON("wool_colored_black"))
                       //->setSoundType(SoundType::WOOD)
                       ->setDestroyTime(0.8f));
+
+    RegisterBlock((new Block(BlockID::Wool, "blue_wool"))
+                      ->setAllSidesTexture(GETICON("wool_colored_blue"))
+                      //->setSoundType(SoundType::WOOD)
+                      ->setDestroyTime(0.8f));
+
+    RegisterBlock((new Block(BlockID::Wool, "brown_wool"))
+                      ->setAllSidesTexture(GETICON("wool_colored_brown"))
+                      //->setSoundType(SoundType::WOOD)
+                      ->setDestroyTime(0.8f));
+
+    RegisterBlock((new Block(BlockID::Wool, "cyan_wool"))
+                      ->setAllSidesTexture(GETICON("wool_colored_cyan"))
+                      //->setSoundType(SoundType::WOOD)
+                      ->setDestroyTime(0.8f));
+
+    RegisterBlock((new Block(BlockID::Wool, "gray_wool"))
+                      ->setAllSidesTexture(GETICON("wool_colored_gray"))
+                      //->setSoundType(SoundType::WOOD)
+                      ->setDestroyTime(0.8f));
+
+    RegisterBlock((new Block(BlockID::Wool, "green_wool"))
+                      ->setAllSidesTexture(GETICON("wool_colored_green"))
+                      //->setSoundType(SoundType::WOOD)
+                      ->setDestroyTime(0.8f));
+
+    RegisterBlock((new Block(BlockID::Wool, "light_blue_wool"))
+                      ->setAllSidesTexture(GETICON("wool_colored_light_blue"))
+                      //->setSoundType(SoundType::WOOD)
+                      ->setDestroyTime(0.8f));
+
+    RegisterBlock((new Block(BlockID::Wool, "lime_wool"))
+                      ->setAllSidesTexture(GETICON("wool_colored_lime"))
+                      //->setSoundType(SoundType::WOOD)
+                      ->setDestroyTime(0.8f));
+
+    RegisterBlock((new Block(BlockID::Wool, "magenta_wool"))
+                      ->setAllSidesTexture(GETICON("wool_colored_magenta"))
+                      //->setSoundType(SoundType::WOOD)
+                      ->setDestroyTime(0.8f));
+
+    RegisterBlock((new Block(BlockID::Wool, "orange_wool"))
+                      ->setAllSidesTexture(GETICON("wool_colored_orange"))
+                      //->setSoundType(SoundType::WOOD)
+                      ->setDestroyTime(0.8f));
+
+    RegisterBlock((new Block(BlockID::Wool, "pink_wool"))
+                      ->setAllSidesTexture(GETICON("wool_colored_pink"))
+                      //->setSoundType(SoundType::WOOD)
+                      ->setDestroyTime(0.8f));
+
+    RegisterBlock((new Block(BlockID::Wool, "purple_wool"))
+                      ->setAllSidesTexture(GETICON("wool_colored_purple"))
+                      //->setSoundType(SoundType::WOOD)
+                      ->setDestroyTime(0.8f));
+
+    RegisterBlock((new Block(BlockID::Wool, "red_wool"))
+                      ->setAllSidesTexture(GETICON("wool_colored_red"))
+                      //->setSoundType(SoundType::WOOD)
+                      ->setDestroyTime(0.8f));
+
+    RegisterBlock((new Block(BlockID::Wool, "silver_wool"))
+                      ->setAllSidesTexture(GETICON("wool_colored_silver"))
+                      //->setSoundType(SoundType::WOOD)
+                      ->setDestroyTime(0.8f));
+*/
+
+    RegisterBlock((new Block(BlockID::Wool, "white_wool"))
+                      ->setAllSidesTexture(GETICON("wool_colored_white"))
+                      //->setSoundType(SoundType::WOOD)
+                      ->setDestroyTime(0.8f));
+    /*
+    RegisterBlock((new Block(BlockID::Wool, "yellow_wool"))
+                      ->setAllSidesTexture(GETICON("wool_colored_yellow"))
+                      //->setSoundType(SoundType::WOOD)
+                      ->setDestroyTime(0.8f));
+*/
 
     RegisterBlock((new Block(BlockID::Bedrock, "bedrock"))
                       ->setAllSidesTexture(GETICON("bedrock"))
@@ -160,7 +256,7 @@ BlockRegistry::BlockRegistry() {
     RegisterBlock((new Block(BlockID::Snow_Grass, "snow_grass"))
                       ->setTopBottomSidesTexture(GETICON("snow"), // top
                                                  GETICON("dirt"), // bottom
-                                                 GETICON("snow_grass_side") // sides
+                                                 GETICON("grass_side_snowed") // sides
                                                  )
                       //->setSoundType(SoundType::GRASS)
                       ->setDestroyTime(0.6f));
@@ -178,7 +274,7 @@ BlockRegistry::BlockRegistry() {
     RegisterBlock((new Block(BlockID::Sandstone, "sandstone"))
                       ->setTopBottomSidesTexture(GETICON("sandstone_top"), // top
                                                  GETICON("sandstone_bottom"), // bottom
-                                                 GETICON("sandstone_side") // sides
+                                                 GETICON("sandstone_normal") // sides
                                                  )
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.8f));
@@ -188,10 +284,12 @@ BlockRegistry::BlockRegistry() {
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.8f));
 
-    RegisterBlock((new Block(BlockID::Smooth_Stone, "smooth_stone"))
+    /*RegisterBlock((new Block(BlockID::Smooth_Stone, "smooth_stone"))
                       ->setAllSidesTexture(GETICON("smooth_stone"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.8f));
+                      Doesnt exist in 1.12 for some reason.
+*/
 
     RegisterBlock((new Block(BlockID::Lava, "lava"))
                       ->setAllSidesTexture(GETICON("lava"))
@@ -268,7 +366,7 @@ BlockRegistry::BlockRegistry() {
     // TODO: Propper furnace texture mapping
     RegisterBlock((new Block(BlockID::Furnace, "furnace"))
                       ->setTopBottomSouthSidesTexture(GETICON("furnace_top"), GETICON("furnace_top"),
-                                                      GETICON("furnace_front"), GETICON("furnace_side"))
+                                                      GETICON("furnace_front_off"), GETICON("furnace_side"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.8f));
 

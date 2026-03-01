@@ -30,7 +30,7 @@ enum class BlockID : u16 {
     Obsidian,
     Netherrack,
     Sandstone,
-    Smooth_Stone,
+    __Smooth_Stone,
     Crafting_Table,
     Grass_Path,
     Water,
@@ -88,8 +88,8 @@ typedef u8 Metadata;
 
 class Block {
 public:
-    Block(BlockID id, const char* name) :
-        m_id(id), m_name(name), m_destroyTime(1.0f), m_opaque(true), m_solid(true), m_soundType(SoundType::STONE),
+    Block(BlockID id, const char* identifier) :
+        m_id(id), m_identifier(identifier), m_destroyTime(1.0f), m_opaque(true), m_solid(true), m_soundType(SoundType::STONE),
         m_hasMetadata(false), m_lightEmission(0) {}
 
     virtual ~Block() = default;
@@ -205,7 +205,7 @@ public:
     }
 
     BlockID GetID() const { return m_id; }
-    const char* getName() const { return m_name; }
+    const char* getName() const { return m_identifier; }
     float getDestroyTime() const { return m_destroyTime; }
     bool isOpaque(Metadata metadata = 0) const { return m_opaque; }
     bool isSolid() const { return m_solid; }
@@ -214,7 +214,7 @@ public:
 
 protected:
     BlockID m_id;
-    const char* m_name;
+    const char* m_identifier;
     BlockTextures m_textures;
     float m_destroyTime;
     bool m_opaque;
