@@ -7,7 +7,8 @@
 #include "mclib/inventory/Slot.h"
 #include "rendering/TextureMap.hpp"
 
-//These IDs are pre-flattening update based. Some blocks are "Mapped" meaning 1 (stone) : 3 (variant - Diorite). Variants are metadata based.
+// These IDs are pre-flattening update based. Some blocks are "Mapped" meaning 1 (stone) : 3 (variant - Diorite).
+// Variants are metadata based.
 enum class BlockID : u16 {
     Air,
     Stone,
@@ -262,8 +263,8 @@ enum class BlockID : u16 {
     Black_Glazed_Terracotta,
     Concrete,
     Concrete_Powder,
-    //empty
-    //empty
+    // empty
+    // empty
     Structure_Block = 255,
     Count,
 };
@@ -308,8 +309,8 @@ typedef u8 Metadata;
 class Block {
 public:
     Block(BlockID id, const char* identifier) :
-        m_id(id), m_identifier(identifier), m_destroyTime(1.0f), m_opaque(true), m_solid(true), m_soundType(SoundType::STONE),
-        m_hasMetadata(false), m_lightEmission(0) {}
+        m_id(id), m_identifier(identifier), m_destroyTime(1.0f), m_opaque(true), m_solid(true),
+        m_soundType(SoundType::STONE), m_hasMetadata(false), m_lightEmission(0) {}
 
     virtual ~Block() = default;
 
