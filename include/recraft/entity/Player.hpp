@@ -83,7 +83,7 @@ public:
     Raycast_Result viewRayCast;
     bool blockInSight = false;
     bool blockInActionRange = false;
-    mc::inventory::Slot inventory[64];
+    mc::inventory::Slot inventory[255];
 
 
     static constexpr float EyeHeight = 1.65f;

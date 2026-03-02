@@ -110,18 +110,18 @@ BlockRegistry::BlockRegistry() {
 
 #define GETICON(x) m_textureMap.Get(x ".png")
 
-    RegisterBlock((new Block(BlockID::Air, "air"))
+    RegisterBlock(BlockID::Air, "air", (new Block())
                       ->setAllSidesTexture(0, 0)
                       ->setOpaque(false)
                       ->setSolid(false)
                       ->setDestroyTime(0.0f));
 
-    RegisterBlock((new Block(BlockID::Stone, "stone"))
+    RegisterBlock(BlockID::Stone, "stone",(new Block())
                       ->setAllSidesTexture(GETICON("stone"))
                       //->setSoundType(SoundType::STONE)
                       ->setDestroyTime(1.5f));
 
-    RegisterBlock((new GrassBlock(BlockID::Grass, "grass"))
+    RegisterBlock(BlockID::Grass, "grass",(new GrassBlock())
                       ->setTopBottomSidesTexture(GETICON("grass_top"), // top (grass_top)
                                                  GETICON("dirt"), // bottom (dirt)
                                                  GETICON("grass_side") // sides (grass_side)
@@ -129,76 +129,76 @@ BlockRegistry::BlockRegistry() {
                       //->setSoundType(SoundType::GRASS)
                       ->setDestroyTime(0.6f));
 
-    RegisterBlock((new Block(BlockID::Dirt, "dirt"))
+    RegisterBlock(BlockID::Dirt, "dirt",(new Block())
                       ->setAllSidesTexture(GETICON("dirt"))
                       //->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.5f));
 
-    RegisterBlock((new Block(BlockID::Cobblestone, "cobblestone"))
+    RegisterBlock(BlockID::Cobblestone, "cobblestone",(new Block())
                       ->setAllSidesTexture(GETICON("cobblestone"))
                       //->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.5f));
 
-    RegisterBlock((new Block(BlockID::Planks, "planks"))
+    RegisterBlock(BlockID::Planks, "planks",(new Block())
                       ->setAllSidesTexture(GETICON("planks_oak"))
                       //->setSoundType(SoundType::WOOD)
                       ->setDestroyTime(2.0f));
 
-    RegisterBlock((new Block(BlockID::Sapling, "sapling"))
+    RegisterBlock(BlockID::Sapling, "sapling",(new Block())
                       ->setAllSidesTexture(GETICON("sapling_oak"))
                       //->setSoundType(SoundType::WOOD)
                       ->setDestroyTime(2.0f));
     // TODO BEGIN
-    RegisterBlock((new Block(BlockID::Flowing_Water, "flowing_water"))
+    RegisterBlock(BlockID::Flowing_Water, "flowing_water",(new Block())
                   //->setAllSidesTexture(GETICON("sapling_oak"))
                   //->setSoundType(SoundType::WOOD)
                   // ->setDestroyTime(2.0f)
     );
 
-    RegisterBlock((new Block(BlockID::Water, "water"))
+    RegisterBlock(BlockID::Water, "water",(new Block())
                   //->setAllSidesTexture(GETICON("sapling_oak"))
                   //->setSoundType(SoundType::WOOD)
                   // ->setDestroyTime(2.0f)
     );
 
-    RegisterBlock((new Block(BlockID::Flowing_Lava, "flowing_lava"))
+    RegisterBlock(BlockID::Flowing_Lava, "flowing_lava",(new Block())
                   //->setAllSidesTexture(GETICON("sapling_oak"))
                   //->setSoundType(SoundType::WOOD)
                   // ->setDestroyTime(2.0f)
     );
 
-    RegisterBlock((new Block(BlockID::Lava, "lava"))
+    RegisterBlock(BlockID::Lava, "lava",(new Block())
                   //->setAllSidesTexture(GETICON("sapling_oak"))
                   //->setSoundType(SoundType::WOOD)
                   // ->setDestroyTime(2.0f)
     );
     // TODO END
-    RegisterBlock((new Block(BlockID::Sand, "sand"))
+    RegisterBlock(BlockID::Sand, "sand",(new Block())
                       ->setAllSidesTexture(GETICON("sand"))
                       //->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.5f));
 
-    RegisterBlock((new Block(BlockID::Gravel, "gravel"))
+    RegisterBlock(BlockID::Gravel, "gravel",(new Block())
                       ->setAllSidesTexture(GETICON("gravel"))
                       //->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.5f));
 
-    RegisterBlock((new Block(BlockID::Gold_Ore, "gold_ore"))
+    RegisterBlock(BlockID::Gold_Ore, "gold_ore",(new Block())
                       ->setAllSidesTexture(GETICON("gold_ore"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.8f));
 
-    RegisterBlock((new Block(BlockID::Iron_Ore, "iron_ore"))
+    RegisterBlock(BlockID::Iron_Ore, "iron_ore",(new Block())
                       ->setAllSidesTexture(GETICON("iron_ore"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.8f));
 
-    RegisterBlock((new Block(BlockID::Coal_Ore, "coal_ore"))
+    RegisterBlock(BlockID::Coal_Ore, "coal_ore",(new Block())
                       ->setAllSidesTexture(GETICON("coal_ore"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.8f));
 
-    RegisterBlock((new Block(BlockID::Log, "log"))
+    RegisterBlock(BlockID::Log, "log",(new Block())
                       ->setTopBottomSidesTexture(GETICON("log_oak_top"), // top (oaklog_top)
                                                  GETICON("log_oak_top"), // bottom (oaklog_top)
                                                  GETICON("log_oak") // sides (oaklog_side)
@@ -206,44 +206,44 @@ BlockRegistry::BlockRegistry() {
                       //->setSoundType(SoundType::WOOD)
                       ->setDestroyTime(2.0f));
 
-    RegisterBlock((new LeavesBlock(BlockID::Leaves, "leaves"))
+    RegisterBlock(BlockID::Leaves, "leaves",(new LeavesBlock())
                       ->setAllSidesTexture(GETICON("leaves_oak"))
                       //->setSoundType(SoundType::GRASS)
                       ->setOpaque(false)
                       ->setDestroyTime(0.2f));
 
-    RegisterBlock((new LeavesBlock(BlockID::Sponge, "sponge"))
+    RegisterBlock(BlockID::Sponge, "sponge",(new Block())
                       ->setAllSidesTexture(GETICON("sponge"))
                       //->setSoundType(SoundType::GRASS)
                       ->setOpaque(false)
                       ->setDestroyTime(0.2f));
 
-    RegisterBlock((new Block(BlockID::Glass, "glass"))
+    RegisterBlock(BlockID::Glass, "glass",(new Block())
                       ->setAllSidesTexture(GETICON("glass"))
                       //->setSoundType(SoundType::GLASS)
                       ->setOpaque(false)
                       ->setDestroyTime(0.3f));
 
-    RegisterBlock((new Block(BlockID::Lapis_Ore, "lapis_ore"))
+    RegisterBlock(BlockID::Lapis_Ore, "lapis_ore",(new Block())
                       ->setAllSidesTexture(GETICON("lapis_ore"))
                       //->setSoundType(SoundType::GLASS)
                       ->setOpaque(false)
                       ->setDestroyTime(0.3f));
 
-    RegisterBlock((new Block(BlockID::Lapis_Block, "lapis_block"))
+    RegisterBlock(BlockID::Lapis_Block, "lapis_block",(new Block())
                       ->setAllSidesTexture(GETICON("lapis_block"))
                       //->setSoundType(SoundType::GLASS)
                       ->setOpaque(false)
                       ->setDestroyTime(0.3f));
 
-    RegisterBlock((new Block(BlockID::Dispenser, "dispenser"))
+    RegisterBlock(BlockID::Dispenser, "dispenser",(new Block())
                       ->setTopBottomSouthSidesTexture(GETICON("furnace_top"), GETICON("furnace_top"),
                                                       GETICON("dispenser_front_horizontal"), GETICON("furnace_side"))
                       //->setSoundType(SoundType::GLASS)
                       ->setOpaque(false)
                       ->setDestroyTime(0.3f));
 
-    RegisterBlock((new Block(BlockID::Sandstone, "sandstone"))
+    RegisterBlock(BlockID::Sandstone, "sandstone",(new Block())
                       ->setTopBottomSidesTexture(GETICON("sandstone_top"), // top
                                                  GETICON("sandstone_bottom"), // bottom
                                                  GETICON("sandstone_normal") // sides
@@ -251,28 +251,28 @@ BlockRegistry::BlockRegistry() {
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.8f));
 
-    RegisterBlock((new Block(BlockID::Noteblock, "noteblock"))
+    RegisterBlock(BlockID::Noteblock, "noteblock",(new Block())
                       ->setAllSidesTexture(GETICON("noteblock"))
                       //->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.5f));
     // TODO:
-    RegisterBlock((new Block(BlockID::Bed, "bed"))
+    RegisterBlock(BlockID::Bed, "bed",(new Block())
                   //->setAllSidesTexture(GETICON("sapling_oak"))
                   //->setSoundType(SoundType::WOOD)
                   // ->setDestroyTime(2.0f)
     );
 
-    RegisterBlock((new Block(BlockID::Golden_Rail, "rail_golden"))
+    RegisterBlock(BlockID::Golden_Rail, "rail_golden",(new Block())
                       ->setAllSidesTexture(GETICON("rail_golden"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(2.0f));
 
-    RegisterBlock((new Block(BlockID::Detector_Rail, "rail_detector"))
+    RegisterBlock(BlockID::Detector_Rail, "rail_detector",(new Block())
                       ->setAllSidesTexture(GETICON("rail_detector"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(2.0f));
 
-    RegisterBlock((new Block(BlockID::Sticky_Piston, "sticky_piston"))
+    RegisterBlock(BlockID::Sticky_Piston, "sticky_piston",(new Block())
                       ->setTopBottomSidesTexture(GETICON("piston_top_sticky"), // top
                                                  GETICON("piston_bottom"), // bottom
                                                  GETICON("piston_side") // sides
@@ -280,22 +280,22 @@ BlockRegistry::BlockRegistry() {
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(2.0f));
 
-    RegisterBlock((new Block(BlockID::Web, "web"))
+    RegisterBlock(BlockID::Web, "web",(new Block())
                       ->setAllSidesTexture(GETICON("web"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(2.0f));
 
-    RegisterBlock((new Block(BlockID::Tallgrass, "tallgrass"))
+    RegisterBlock(BlockID::Tallgrass, "tallgrass",(new Block())
                       ->setAllSidesTexture(GETICON("tallgrass"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(2.0f));
 
-    RegisterBlock((new Block(BlockID::Deadbush, "deadbush"))
+    RegisterBlock(BlockID::Deadbush, "deadbush",(new Block())
                       ->setAllSidesTexture(GETICON("deadbush"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(2.0f));
 
-    RegisterBlock((new Block(BlockID::Piston, "piston"))
+    RegisterBlock(BlockID::Piston, "piston",(new Block())
                       ->setTopBottomSidesTexture(GETICON("piston_top_normal"), // top
                                                  GETICON("piston_bottom"), // bottom
                                                  GETICON("piston_side") // sides
@@ -303,70 +303,70 @@ BlockRegistry::BlockRegistry() {
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(2.0f));
 
-    RegisterBlock((new Block(BlockID::Piston_Head, "piston_head"))
+    RegisterBlock(BlockID::Piston_Head, "piston_head",(new Block())
                       ->setAllSidesTexture(GETICON("piston_top_normal"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(2.0f));
 
-    RegisterBlock((new Block(BlockID::Wool, "wool"))
+    RegisterBlock(BlockID::Wool, "wool",(new Block())
                       ->setAllSidesTexture(GETICON("wool_colored_white"))
                       //->setSoundType(SoundType::WOOD)
                       ->setDestroyTime(0.8f));
     // TODO: What even is this?
-    RegisterBlock((new Block(BlockID::Piston_Extension, "piston_extension"))
+    RegisterBlock(BlockID::Piston_Extension, "piston_extension",(new Block())
                   //->setAllSidesTexture(GETICON("sapling_oak"))
                   //->setSoundType(SoundType::WOOD)
                   // ->setDestroyTime(2.0f)
     );
 
-    RegisterBlock((new Block(BlockID::Yellow_Flower, "yellow_flower"))
+    RegisterBlock(BlockID::Yellow_Flower, "yellow_flower",(new Block())
                       ->setAllSidesTexture(GETICON("flower_dandelion"))
                       //->setSoundType(SoundType::WOOD)
                       ->setDestroyTime(0.8f));
 
-    RegisterBlock((new Block(BlockID::Red_Flower, "red_flower"))
+    RegisterBlock(BlockID::Red_Flower, "red_flower",(new Block())
                       ->setAllSidesTexture(GETICON("flower_rose"))
                       //->setSoundType(SoundType::WOOD)
                       ->setDestroyTime(0.8f));
 
-    RegisterBlock((new Block(BlockID::Brown_Mushroom, "brown_mushroom"))
+    RegisterBlock(BlockID::Brown_Mushroom, "brown_mushroom",(new Block())
                       ->setAllSidesTexture(GETICON("mushroom_brown"))
                       //->setSoundType(SoundType::WOOD)
                       ->setDestroyTime(0.8f));
 
-    RegisterBlock((new Block(BlockID::Red_Mushroom, "red_mushroom"))
+    RegisterBlock(BlockID::Red_Mushroom, "red_mushroom",(new Block())
                       ->setAllSidesTexture(GETICON("mushroom_red"))
                       //->setSoundType(SoundType::WOOD)
                       ->setDestroyTime(0.8f));
 
-    RegisterBlock((new Block(BlockID::Gold_Block, "gold_block"))
+    RegisterBlock(BlockID::Gold_Block, "gold_block",(new Block())
                       ->setAllSidesTexture(GETICON("gold_block"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.8f));
 
-    RegisterBlock((new Block(BlockID::Iron_Block, "iron_block"))
+    RegisterBlock(BlockID::Iron_Block, "iron_block",(new Block())
                       ->setAllSidesTexture(GETICON("iron_block"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.8f));
     // TODO:
-    RegisterBlock((new Block(BlockID::Double_Stone_Slab, "double_stone_slab"))
+    RegisterBlock(BlockID::Double_Stone_Slab, "double_stone_slab",(new Block())
                   //->setAllSidesTexture(GETICON("sapling_oak"))
                   //->setSoundType(SoundType::WOOD)
                   // ->setDestroyTime(2.0f)
     );
     // TODO:
-    RegisterBlock((new Block(BlockID::Stone_Slab, "stone_slab"))
+    RegisterBlock(BlockID::Stone_Slab, "stone_slab",(new Block())
                   //->setAllSidesTexture(GETICON("sapling_oak"))
                   //->setSoundType(SoundType::WOOD)
                   // ->setDestroyTime(2.0f)
     );
 
-    RegisterBlock((new Block(BlockID::Brick_Block, "brick_block"))
+    RegisterBlock(BlockID::Brick_Block, "brick_block", (new Block())
                       ->setAllSidesTexture(GETICON("brick"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(2.0f));
 
-    RegisterBlock((new Block(BlockID::Tnt, "tnt"))
+    RegisterBlock(BlockID::Tnt, "tnt",(new Block())
                       ->setTopBottomSidesTexture(GETICON("tnt_top"), // top
                                                  GETICON("tnt_bottom"), // bottom
                                                  GETICON("tnt_side") // sides
@@ -374,7 +374,7 @@ BlockRegistry::BlockRegistry() {
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(2.0f));
 
-    RegisterBlock((new Block(BlockID::Bookshelf, "bookshelf"))
+    RegisterBlock(BlockID::Bookshelf, "bookshelf",(new Block())
                       ->setTopBottomSidesTexture(GETICON("planks_oak"), // top
                                                  GETICON("planks_oak"), // bottom
                                                  GETICON("bookshelf") // sides
@@ -382,67 +382,67 @@ BlockRegistry::BlockRegistry() {
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(2.0f));
 
-    RegisterBlock((new Block(BlockID::Mossy_Cobblestone, "mossy_cobblestone"))
+    RegisterBlock(BlockID::Mossy_Cobblestone, "mossy_cobblestone",(new Block())
                       ->setAllSidesTexture(GETICON("cobblestone_mossy"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.8f));
 
-    RegisterBlock((new Block(BlockID::Obsidian, "obsidian"))
+    RegisterBlock(BlockID::Obsidian, "obsidian",(new Block())
                       ->setAllSidesTexture(GETICON("obsidian"))
                       //->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.5f));
 
-    RegisterBlock((new Block(BlockID::Torch, "torch"))
+    RegisterBlock(BlockID::Torch, "torch",(new Block())
                       ->setAllSidesTexture(GETICON("torch_on"))
                       //->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.5f));
     // TODO:
-    RegisterBlock((new Block(BlockID::Fire, "fire"))
+    RegisterBlock(BlockID::Fire, "fire",(new Block())
                   //->setAllSidesTexture(GETICON("sapling_oak"))
                   //->setSoundType(SoundType::WOOD)
                   // ->setDestroyTime(2.0f)
     );
 
-    RegisterBlock((new Block(BlockID::Mob_Spawner, "mob_spawner"))
+    RegisterBlock(BlockID::Mob_Spawner, "mob_spawner",(new Block())
                       ->setAllSidesTexture(GETICON("mob_spawner"))
                       //->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.5f));
     // TODO:
-    RegisterBlock((new Block(BlockID::Oak_Stairs, "oak_stairs"))
+    RegisterBlock(BlockID::Oak_Stairs, "oak_stairs",(new Block())
                   //->setAllSidesTexture(GETICON("sapling_oak"))
                   //->setSoundType(SoundType::WOOD)
                   // ->setDestroyTime(2.0f)
     );
     // TODO: Chest has an animated model, meaning it is hardcoded, not in a json
-    RegisterBlock((new Block(BlockID::Chest, "chest"))
+    RegisterBlock(BlockID::Chest, "chest",(new Block())
                   //->setAllSidesTexture(GETICON("sapling_oak"))
                   //->setSoundType(SoundType::WOOD)
                   // ->setDestroyTime(2.0f)
     );
 
-    RegisterBlock((new Block(BlockID::Redstone_Wire, "redstone_wire"))
+    RegisterBlock(BlockID::Redstone_Wire, "redstone_wire",(new Block())
                   //->setAllSidesTexture(GETICON("sapling_oak"))
                   //->setSoundType(SoundType::WOOD)
                   // ->setDestroyTime(2.0f)
     );
 
-    RegisterBlock((new Block(BlockID::Diamond_Ore, "diamond_ore"))
+    RegisterBlock(BlockID::Diamond_Ore, "diamond_ore",(new Block())
                       ->setAllSidesTexture(GETICON("diamond_ore"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.8f));
 
-    RegisterBlock((new Block(BlockID::Diamond_Block, "diamond_block"))
+    RegisterBlock(BlockID::Diamond_Block, "diamond_block",(new Block())
                       ->setAllSidesTexture(GETICON("diamond_block"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.8f));
 
-    RegisterBlock((new Block(BlockID::Crafting_Table, "crafting_table"))
+    RegisterBlock(BlockID::Crafting_Table, "crafting_table",(new Block())
                       ->setTopBottomSidesTexture(GETICON("crafting_table_top"), GETICON("planks_oak"),
                                                  GETICON("crafting_table_side"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.8f));
     // TODO: wheat has stages of growth
-    RegisterBlock((new Block(BlockID::Wheat, "wheat"))
+    RegisterBlock(BlockID::Wheat, "wheat",(new Block())
                   // ->setTopBottomSidesTexture(GETICON("crafting_table_top"),
                   // GETICON("planks_oak"),
                   //                             GETICON("crafting_table_side"))
@@ -452,7 +452,7 @@ BlockRegistry::BlockRegistry() {
 
     // TODO: Farmland has a dynamic texture, which is determined by its moisture
     // level.
-    RegisterBlock((new Block(BlockID::Farmland, "farmland"))
+    RegisterBlock(BlockID::Farmland, "farmland",(new Block())
                   //->setTopBottomSidesTexture(GETICON("crafting_table_top"),
                   //                           GETICON("planks_oak"),
                   //                           GETICON("crafting_table_side"))
@@ -460,19 +460,19 @@ BlockRegistry::BlockRegistry() {
                   //->setDestroyTime(0.8f)
     );
 
-    RegisterBlock((new Block(BlockID::Furnace, "furnace"))
+    RegisterBlock(BlockID::Furnace, "furnace",(new Block())
                       ->setTopBottomSouthSidesTexture(GETICON("furnace_top"), GETICON("furnace_top"),
                                                       GETICON("furnace_front_off"), GETICON("furnace_side"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.8f));
 
-    RegisterBlock((new Block(BlockID::Lit_Furnace, "lit_furnace"))
+    RegisterBlock(BlockID::Lit_Furnace, "lit_furnace",(new Block())
                       ->setTopBottomSouthSidesTexture(GETICON("furnace_top"), GETICON("furnace_top"),
                                                       GETICON("furnace_front_on"), GETICON("furnace_side"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.8f));
     // TODO: Yea...
-    RegisterBlock((new Block(BlockID::Standing_Sign, "standing_sign"))
+    RegisterBlock(BlockID::Standing_Sign, "standing_sign",(new Block())
                   // ->setTopBottomSidesTexture(GETICON("crafting_table_top"),
                   // GETICON("planks_oak"),
                   //                             GETICON("crafting_table_side"))
@@ -480,7 +480,7 @@ BlockRegistry::BlockRegistry() {
                   // ->setDestroyTime(0.8f)
     );
     // TODO:
-    RegisterBlock((new Block(BlockID::Wooden_Door, "wooden_door"))
+    RegisterBlock(BlockID::Wooden_Door, "wooden_door",(new Block())
                   // ->setTopBottomSidesTexture(GETICON("crafting_table_top"),
                   // GETICON("planks_oak"),
                   //                             GETICON("crafting_table_side"))
@@ -488,23 +488,23 @@ BlockRegistry::BlockRegistry() {
                   // ->setDestroyTime(0.8f)
     );
 
-    RegisterBlock((new Block(BlockID::Ladder, "ladder"))
+    RegisterBlock(BlockID::Ladder, "ladder",(new Block())
                       ->setAllSidesTexture(GETICON("ladder"))
                       //->setSoundType(SoundType::STONE)
                       ->setDestroyTime(1.5f));
 
-    RegisterBlock((new Block(BlockID::Rail, "rail"))
+    RegisterBlock(BlockID::Rail, "rail",(new Block())
                       ->setAllSidesTexture(GETICON("rail_normal"))
                       //->setSoundType(SoundType::STONE)
                       ->setDestroyTime(1.5f));
     // TODO:
-    RegisterBlock((new Block(BlockID::Stone_Stairs, "stone_stairs"))
+    RegisterBlock(BlockID::Stone_Stairs, "stone_stairs",(new Block())
                   //->setAllSidesTexture(GETICON("sapling_oak"))
                   //->setSoundType(SoundType::WOOD)
                   // ->setDestroyTime(2.0f)
     );
 
-    RegisterBlock((new Block(BlockID::Wall_Sign, "wall_sign"))
+    RegisterBlock(BlockID::Wall_Sign, "wall_sign",(new Block())
                   // ->setTopBottomSidesTexture(GETICON("crafting_table_top"),
                   // GETICON("planks_oak"),
                   //                             GETICON("crafting_table_side"))
@@ -512,7 +512,7 @@ BlockRegistry::BlockRegistry() {
                   // ->setDestroyTime(0.8f)
     );
 
-    RegisterBlock((new Block(BlockID::Lever, "lever"))
+    RegisterBlock(BlockID::Lever, "lever",(new Block())
                   // ->setTopBottomSidesTexture(GETICON("crafting_table_top"),
                   // GETICON("planks_oak"),
                   //                             GETICON("crafting_table_side"))
@@ -520,7 +520,7 @@ BlockRegistry::BlockRegistry() {
                   // ->setDestroyTime(0.8f)
     );
 
-    RegisterBlock((new Block(BlockID::Stone_Pressure_Plate, "stone_pressure_plate"))
+    RegisterBlock(BlockID::Stone_Pressure_Plate, "stone_pressure_plate",(new Block())
                   // ->setTopBottomSidesTexture(GETICON("crafting_table_top"),
                   // GETICON("planks_oak"),
                   //                             GETICON("crafting_table_side"))
@@ -528,7 +528,7 @@ BlockRegistry::BlockRegistry() {
                   // ->setDestroyTime(0.8f)
     );
 
-    RegisterBlock((new Block(BlockID::Iron_Door, "iron_door"))
+    RegisterBlock(BlockID::Iron_Door, "iron_door",(new Block())
                   // ->setTopBottomSidesTexture(GETICON("crafting_table_top"),
                   // GETICON("planks_oak"),
                   //                             GETICON("crafting_table_side"))
@@ -536,7 +536,7 @@ BlockRegistry::BlockRegistry() {
                   // ->setDestroyTime(0.8f)
     );
 
-    RegisterBlock((new Block(BlockID::Wooden_Pressure_Plate, "wooden_pressure_plate"))
+    RegisterBlock(BlockID::Wooden_Pressure_Plate, "wooden_pressure_plate",(new Block())
                   // ->setTopBottomSidesTexture(GETICON("crafting_table_top"),
                   // GETICON("planks_oak"),
                   //                             GETICON("crafting_table_side"))
@@ -544,27 +544,27 @@ BlockRegistry::BlockRegistry() {
                   // ->setDestroyTime(0.8f)
     );
 
-    RegisterBlock((new Block(BlockID::Redstone_Ore, "redstone_ore"))
+    RegisterBlock(BlockID::Redstone_Ore, "redstone_ore",(new Block())
                       ->setAllSidesTexture(GETICON("redstone_ore"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.8f));
 
-    RegisterBlock((new Block(BlockID::Lit_Redstone_Ore, "lit_redstone_ore"))
+    RegisterBlock(BlockID::Lit_Redstone_Ore, "lit_redstone_ore",(new Block())
                       ->setAllSidesTexture(GETICON("redstone_ore_turned"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.8f));
 
-    RegisterBlock((new Block(BlockID::Unlit_Redstone_Torch, "unlit_redstone_torch"))
+    RegisterBlock(BlockID::Unlit_Redstone_Torch, "unlit_redstone_torch",(new Block())
                       ->setAllSidesTexture(GETICON("redstone_torch_off"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.8f));
 
-    RegisterBlock((new Block(BlockID::Redstone_Torch, "redstone_torch"))
+    RegisterBlock(BlockID::Redstone_Torch, "redstone_torch",(new Block())
                       ->setAllSidesTexture(GETICON("redstone_torch_on"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.8f));
 
-    RegisterBlock((new Block(BlockID::Bedrock, "bedrock"))
+    RegisterBlock(BlockID::Bedrock, "bedrock",(new Block())
                       ->setAllSidesTexture(GETICON("bedrock"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(-1.0f) // Unbreakable
@@ -577,214 +577,214 @@ BlockRegistry::BlockRegistry() {
                       Doesnt exist in 1.12 for some reason.
   */
 
-    RegisterBlock((new Block(BlockID::Coal_Block, "coal_block"))
+    RegisterBlock(BlockID::Coal_Block, "coal_block",(new Block())
                       ->setAllSidesTexture(GETICON("coal_block"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.8f));
 
-    RegisterBlock((new Block(BlockID::Stone_Button, "")));
-    RegisterBlock((new Block(BlockID::Snow_Layer, "")));
-    RegisterBlock((new Block(BlockID::Ice, "")));
+    RegisterBlock(BlockID::Stone_Button, "",(new Block()));
+    RegisterBlock(BlockID::Snow_Layer, "",(new Block()));
+    RegisterBlock(BlockID::Ice, "",(new Block()));
 
-    RegisterBlock((new Block(BlockID::Snow, "snow"))
+    RegisterBlock(BlockID::Snow, "snow",(new Block())
                       ->setAllSidesTexture(GETICON("snow"))
                       //->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.5f));
 
-    RegisterBlock((new Block(BlockID::Cactus, "")));
-    RegisterBlock((new Block(BlockID::Clay, "")));
-    RegisterBlock((new Block(BlockID::Reeds, "")));
-    RegisterBlock((new Block(BlockID::Jukebox, "")));
-    RegisterBlock((new Block(BlockID::Fence, "")));
-    RegisterBlock((new Block(BlockID::Pumpkin, "")));
+    RegisterBlock(BlockID::Cactus, "",(new Block()));
+    RegisterBlock(BlockID::Clay, "",(new Block()));
+    RegisterBlock(BlockID::Reeds, "",(new Block()));
+    RegisterBlock(BlockID::Jukebox, "",(new Block()));
+    RegisterBlock(BlockID::Fence, "",(new Block()));
+    RegisterBlock(BlockID::Pumpkin, "",(new Block()));
 
-    RegisterBlock((new Block(BlockID::Netherrack, "netherrack"))
+    RegisterBlock(BlockID::Netherrack, "netherrack",(new Block())
                       ->setAllSidesTexture(GETICON("netherrack"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.8f));
 
-    RegisterBlock((new Block(BlockID::Soul_Sand, "")));
-    RegisterBlock((new Block(BlockID::Glowstone, "")));
-    RegisterBlock((new Block(BlockID::Portal, "")));
-    RegisterBlock((new Block(BlockID::Lit_Pumpkin, "")));
-    RegisterBlock((new Block(BlockID::Cake, "")));
-    RegisterBlock((new Block(BlockID::Unpowered_Repeater, "")));
-    RegisterBlock((new Block(BlockID::Powered_Repeater, "")));
-    RegisterBlock((new Block(BlockID::Stained_Glass, "")));
-    RegisterBlock((new Block(BlockID::Trapdoor, "")));
-    RegisterBlock((new Block(BlockID::Monster_Egg, "")));
+    RegisterBlock(BlockID::Soul_Sand, "",(new Block()));
+    RegisterBlock(BlockID::Glowstone, "",(new Block()));
+    RegisterBlock(BlockID::Portal, "",(new Block()));
+    RegisterBlock(BlockID::Lit_Pumpkin, "",(new Block()));
+    RegisterBlock(BlockID::Cake, "",(new Block()));
+    RegisterBlock(BlockID::Unpowered_Repeater, "",(new Block()));
+    RegisterBlock(BlockID::Powered_Repeater, "",(new Block()));
+    RegisterBlock(BlockID::Stained_Glass, "",(new Block()));
+    RegisterBlock(BlockID::Trapdoor, "",(new Block()));
+    RegisterBlock(BlockID::Monster_Egg, "",(new Block()));
 
-    RegisterBlock((new Block(BlockID::Stonebrick, "")));
+    RegisterBlock(BlockID::Stonebrick, "",(new Block()));
 
-    RegisterBlock((new Block(BlockID::Brown_Mushroom_Block, "")));
-    RegisterBlock((new Block(BlockID::Red_Mushroom_Block, "")));
-    RegisterBlock((new Block(BlockID::Iron_Bars, "")));
-    RegisterBlock((new Block(BlockID::Glass_Pane, "")));
-    RegisterBlock((new Block(BlockID::Melon_Block, "")));
-    RegisterBlock((new Block(BlockID::Pumpkin_Stem, "")));
-    RegisterBlock((new Block(BlockID::Melon_Stem, "")));
-    RegisterBlock((new Block(BlockID::Vine, "")));
-    RegisterBlock((new Block(BlockID::Fence_Gate, "")));
-    RegisterBlock((new Block(BlockID::Brick_Stairs, "")));
-    RegisterBlock((new Block(BlockID::Stone_Brick_Stairs, "")));
-    RegisterBlock((new Block(BlockID::Mycelium, "")));
-    RegisterBlock((new Block(BlockID::Waterlily, "")));
-    RegisterBlock((new Block(BlockID::Nether_Brick, "")));
-    RegisterBlock((new Block(BlockID::Nether_Brick_Fence, "")));
-    RegisterBlock((new Block(BlockID::Nether_Brick_Stairs, "")));
-    RegisterBlock((new Block(BlockID::Nether_Wart, "")));
-    RegisterBlock((new Block(BlockID::Enchanting_Table, "")));
-    RegisterBlock((new Block(BlockID::Brewing_Stand, "")));
-    RegisterBlock((new Block(BlockID::Cauldron, "")));
-    RegisterBlock((new Block(BlockID::End_Portal, "")));
-    RegisterBlock((new Block(BlockID::End_Portal_Frame, "")));
-    RegisterBlock((new Block(BlockID::End_Stone, "")));
-    RegisterBlock((new Block(BlockID::Dragon_Egg, "")));
-    RegisterBlock((new Block(BlockID::Redstone_Lamp, "")));
-    RegisterBlock((new Block(BlockID::Lit_Redstone_Lamp, "")));
-    RegisterBlock((new Block(BlockID::Double_Wooden_Slab, "")));
-    RegisterBlock((new Block(BlockID::Wooden_Slab, "")));
-    RegisterBlock((new Block(BlockID::Cocoa, "")));
-    RegisterBlock((new Block(BlockID::Sandstone_Stairs, "")));
+    RegisterBlock(BlockID::Brown_Mushroom_Block, "",(new Block()));
+    RegisterBlock(BlockID::Red_Mushroom_Block, "",(new Block()));
+    RegisterBlock(BlockID::Iron_Bars, "",(new Block()));
+    RegisterBlock(BlockID::Glass_Pane, "",(new Block()));
+    RegisterBlock(BlockID::Melon_Block, "",(new Block()));
+    RegisterBlock(BlockID::Pumpkin_Stem, "",(new Block()));
+    RegisterBlock(BlockID::Melon_Stem, "",(new Block()));
+    RegisterBlock(BlockID::Vine, "",(new Block()));
+    RegisterBlock(BlockID::Fence_Gate, "",(new Block()));
+    RegisterBlock(BlockID::Brick_Stairs, "",(new Block()));
+    RegisterBlock(BlockID::Stone_Brick_Stairs, "",(new Block()));
+    RegisterBlock(BlockID::Mycelium, "",(new Block()));
+    RegisterBlock(BlockID::Waterlily, "",(new Block()));
+    RegisterBlock(BlockID::Nether_Brick, "",(new Block()));
+    RegisterBlock(BlockID::Nether_Brick_Fence, "",(new Block()));
+    RegisterBlock(BlockID::Nether_Brick_Stairs, "",(new Block()));
+    RegisterBlock(BlockID::Nether_Wart, "",(new Block()));
+    RegisterBlock(BlockID::Enchanting_Table, "",(new Block()));
+    RegisterBlock(BlockID::Brewing_Stand, "",(new Block()));
+    RegisterBlock(BlockID::Cauldron, "",(new Block()));
+    RegisterBlock(BlockID::End_Portal, "",(new Block()));
+    RegisterBlock(BlockID::End_Portal_Frame, "",(new Block()));
+    RegisterBlock(BlockID::End_Stone, "",(new Block()));
+    RegisterBlock(BlockID::Dragon_Egg, "",(new Block()));
+    RegisterBlock(BlockID::Redstone_Lamp, "",(new Block()));
+    RegisterBlock(BlockID::Lit_Redstone_Lamp, "",(new Block()));
+    RegisterBlock(BlockID::Double_Wooden_Slab, "",(new Block()));
+    RegisterBlock(BlockID::Wooden_Slab, "",(new Block()));
+    RegisterBlock(BlockID::Cocoa, "",(new Block()));
+    RegisterBlock(BlockID::Sandstone_Stairs, "",(new Block()));
 
-    RegisterBlock((new Block(BlockID::Emerald_Ore, "emerald_ore"))
+    RegisterBlock(BlockID::Emerald_Ore, "emerald_ore",(new Block())
                       ->setAllSidesTexture(GETICON("emerald_ore"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.8f));
 
-    RegisterBlock((new Block(BlockID::Ender_Chest, "")));
-    RegisterBlock((new Block(BlockID::Tripwire_Hook, "")));
-    RegisterBlock((new Block(BlockID::Tripwire, "")));
+    RegisterBlock(BlockID::Ender_Chest, "",(new Block()));
+    RegisterBlock(BlockID::Tripwire_Hook, "",(new Block()));
+    RegisterBlock(BlockID::Tripwire, "",(new Block()));
 
-    RegisterBlock((new Block(BlockID::Emerald_Block, "emerald_block"))
+    RegisterBlock(BlockID::Emerald_Block, "emerald_block",(new Block())
                       ->setAllSidesTexture(GETICON("emerald_block"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.8f));
 
-    RegisterBlock((new Block(BlockID::Spruce_Stairs, "")));
-    RegisterBlock((new Block(BlockID::Birch_Stairs, "")));
-    RegisterBlock((new Block(BlockID::Jungle_Stairs, "")));
-    RegisterBlock((new Block(BlockID::Command_Block, "")));
-    RegisterBlock((new Block(BlockID::Beacon, "")));
-    RegisterBlock((new Block(BlockID::Cobblestone_Wall, "")));
-    RegisterBlock((new Block(BlockID::Flower_Pot, "")));
-    RegisterBlock((new Block(BlockID::Carrots, "")));
-    RegisterBlock((new Block(BlockID::Potatoes, "")));
-    RegisterBlock((new Block(BlockID::Wooden_Button, "")));
-    RegisterBlock((new Block(BlockID::Skull, "")));
-    RegisterBlock((new Block(BlockID::Anvil, "")));
-    RegisterBlock((new Block(BlockID::Trapped_Chest, "")));
-    RegisterBlock((new Block(BlockID::Light_Weighted_Pressure_Plate, "")));
-    RegisterBlock((new Block(BlockID::Heavy_Weighted_Pressure_Plate, "")));
-    RegisterBlock((new Block(BlockID::Unpowered_Comparator, "")));
-    RegisterBlock((new Block(BlockID::Powered_Comparator, "")));
-    RegisterBlock((new Block(BlockID::Daylight_Detector, "")));
-    RegisterBlock((new Block(BlockID::Redstone_Block, "")));
-    RegisterBlock((new Block(BlockID::Quartz_Ore, "")));
-    RegisterBlock((new Block(BlockID::Hopper, "")));
-    RegisterBlock((new Block(BlockID::Quartz_Block, "")));
-    RegisterBlock((new Block(BlockID::Quartz_Stairs, "")));
-    RegisterBlock((new Block(BlockID::Activator_Rail, "")));
-    RegisterBlock((new Block(BlockID::Dropper, "")));
-    RegisterBlock((new Block(BlockID::Stained_Hardened_Clay, "")));
-    RegisterBlock((new Block(BlockID::Stained_Glass_Pane, "")));
-    RegisterBlock((new Block(BlockID::Leaves2, "")));
-    RegisterBlock((new Block(BlockID::Log2, "")));
-    RegisterBlock((new Block(BlockID::Acacia_Stairs, "")));
-    RegisterBlock((new Block(BlockID::Dark_Oak_Stairs, "")));
-    RegisterBlock((new Block(BlockID::Slime, "")));
-    RegisterBlock((new Block(BlockID::Barrier, "")));
-    RegisterBlock((new Block(BlockID::Iron_Trapdoor, "")));
-    RegisterBlock((new Block(BlockID::Prismarine, "")));
-    RegisterBlock((new Block(BlockID::Sea_Lantern, "")));
-    RegisterBlock((new Block(BlockID::Hay_Block, "")));
-    RegisterBlock((new Block(BlockID::Carpet, "")));
-    RegisterBlock((new Block(BlockID::Hardened_Clay, "")));
-    RegisterBlock((new Block(BlockID::Packed_Ice, "")));
-    RegisterBlock((new Block(BlockID::Double_Plant, "")));
-    RegisterBlock((new Block(BlockID::Standing_Banner, "")));
-    RegisterBlock((new Block(BlockID::Wall_Banner, "")));
-    RegisterBlock((new Block(BlockID::Daylight_Detector_Inverted, "")));
-    RegisterBlock((new Block(BlockID::Red_Sandstone, "")));
-    RegisterBlock((new Block(BlockID::Red_Sandstone_Stairs, "")));
-    RegisterBlock((new Block(BlockID::Double_Stone_Slab2, "")));
-    RegisterBlock((new Block(BlockID::Stone_Slab2, "")));
-    RegisterBlock((new Block(BlockID::Spruce_Fence_Gate, "")));
-    RegisterBlock((new Block(BlockID::Birch_Fence_Gate, "")));
-    RegisterBlock((new Block(BlockID::Jungle_Fence_Gate, "")));
-    RegisterBlock((new Block(BlockID::Dark_Oak_Fence_Gate, "")));
-    RegisterBlock((new Block(BlockID::Acacia_Fence_Gate, "")));
-    RegisterBlock((new Block(BlockID::Spruce_Fence, "")));
-    RegisterBlock((new Block(BlockID::Birch_Fence, "")));
-    RegisterBlock((new Block(BlockID::Jungle_Fence, "")));
-    RegisterBlock((new Block(BlockID::Dark_Oak_Fence, "")));
-    RegisterBlock((new Block(BlockID::Acacia_Fence, "")));
-    RegisterBlock((new Block(BlockID::Spruce_Door, "")));
-    RegisterBlock((new Block(BlockID::Birch_Door, "")));
-    RegisterBlock((new Block(BlockID::Jungle_Door, "")));
-    RegisterBlock((new Block(BlockID::Acacia_Door, "")));
-    RegisterBlock((new Block(BlockID::Dark_Oak_Door, "")));
-    RegisterBlock((new Block(BlockID::End_Rod, "")));
-    RegisterBlock((new Block(BlockID::Chorus_Plant, "")));
-    RegisterBlock((new Block(BlockID::Chorus_Flower, "")));
-    RegisterBlock((new Block(BlockID::Purpur_Block, "")));
-    RegisterBlock((new Block(BlockID::Purpur_Pillar, "")));
-    RegisterBlock((new Block(BlockID::Purpur_Stairs, "")));
-    RegisterBlock((new Block(BlockID::Purpur_Double_Slab, "")));
-    RegisterBlock((new Block(BlockID::Purpur_Slab, "")));
-    RegisterBlock((new Block(BlockID::End_Bricks, "")));
-    RegisterBlock((new Block(BlockID::Beetroots, "")));
+    RegisterBlock(BlockID::Spruce_Stairs, "",(new Block()));
+    RegisterBlock(BlockID::Birch_Stairs, "",(new Block()));
+    RegisterBlock(BlockID::Jungle_Stairs, "",(new Block()));
+    RegisterBlock(BlockID::Command_Block, "",(new Block()));
+    RegisterBlock(BlockID::Beacon, "",(new Block()));
+    RegisterBlock(BlockID::Cobblestone_Wall, "",(new Block()));
+    RegisterBlock(BlockID::Flower_Pot, "",(new Block()));
+    RegisterBlock(BlockID::Carrots, "",(new Block()));
+    RegisterBlock(BlockID::Potatoes, "",(new Block()));
+    RegisterBlock(BlockID::Wooden_Button, "",(new Block()));
+    RegisterBlock(BlockID::Skull, "",(new Block()));
+    RegisterBlock(BlockID::Anvil, "",(new Block()));
+    RegisterBlock(BlockID::Trapped_Chest, "",(new Block()));
+    RegisterBlock(BlockID::Light_Weighted_Pressure_Plate, "",(new Block()));
+    RegisterBlock(BlockID::Heavy_Weighted_Pressure_Plate, "",(new Block()));
+    RegisterBlock(BlockID::Unpowered_Comparator, "",(new Block()));
+    RegisterBlock(BlockID::Powered_Comparator, "",(new Block()));
+    RegisterBlock(BlockID::Daylight_Detector, "",(new Block()));
+    RegisterBlock(BlockID::Redstone_Block, "",(new Block()));
+    RegisterBlock(BlockID::Quartz_Ore, "",(new Block()));
+    RegisterBlock(BlockID::Hopper, "",(new Block()));
+    RegisterBlock(BlockID::Quartz_Block, "",(new Block()));
+    RegisterBlock(BlockID::Quartz_Stairs, "",(new Block()));
+    RegisterBlock(BlockID::Activator_Rail, "",(new Block()));
+    RegisterBlock(BlockID::Dropper, "",(new Block()));
+    RegisterBlock(BlockID::Stained_Hardened_Clay, "",(new Block()));
+    RegisterBlock(BlockID::Stained_Glass_Pane, "",(new Block()));
+    RegisterBlock(BlockID::Leaves2, "",(new Block()));
+    RegisterBlock(BlockID::Log2, "",(new Block()));
+    RegisterBlock(BlockID::Acacia_Stairs, "",(new Block()));
+    RegisterBlock(BlockID::Dark_Oak_Stairs, "",(new Block()));
+    RegisterBlock(BlockID::Slime, "",(new Block()));
+    RegisterBlock(BlockID::Barrier, "",(new Block()));
+    RegisterBlock(BlockID::Iron_Trapdoor, "",(new Block()));
+    RegisterBlock(BlockID::Prismarine, "",(new Block()));
+    RegisterBlock(BlockID::Sea_Lantern, "",(new Block()));
+    RegisterBlock(BlockID::Hay_Block, "",(new Block()));
+    RegisterBlock(BlockID::Carpet, "",(new Block()));
+    RegisterBlock(BlockID::Hardened_Clay, "",(new Block()));
+    RegisterBlock(BlockID::Packed_Ice, "",(new Block()));
+    RegisterBlock(BlockID::Double_Plant, "",(new Block()));
+    RegisterBlock(BlockID::Standing_Banner, "",(new Block()));
+    RegisterBlock(BlockID::Wall_Banner, "",(new Block()));
+    RegisterBlock(BlockID::Daylight_Detector_Inverted, "",(new Block()));
+    RegisterBlock(BlockID::Red_Sandstone, "",(new Block()));
+    RegisterBlock(BlockID::Red_Sandstone_Stairs, "",(new Block()));
+    RegisterBlock(BlockID::Double_Stone_Slab2, "",(new Block()));
+    RegisterBlock(BlockID::Stone_Slab2, "",(new Block()));
+    RegisterBlock(BlockID::Spruce_Fence_Gate, "",(new Block()));
+    RegisterBlock(BlockID::Birch_Fence_Gate, "",(new Block()));
+    RegisterBlock(BlockID::Jungle_Fence_Gate, "",(new Block()));
+    RegisterBlock(BlockID::Dark_Oak_Fence_Gate, "",(new Block()));
+    RegisterBlock(BlockID::Acacia_Fence_Gate, "",(new Block()));
+    RegisterBlock(BlockID::Spruce_Fence, "",(new Block()));
+    RegisterBlock(BlockID::Birch_Fence, "",(new Block()));
+    RegisterBlock(BlockID::Jungle_Fence, "",(new Block()));
+    RegisterBlock(BlockID::Dark_Oak_Fence, "",(new Block()));
+    RegisterBlock(BlockID::Acacia_Fence, "",(new Block()));
+    RegisterBlock(BlockID::Spruce_Door, "",(new Block()));
+    RegisterBlock(BlockID::Birch_Door, "",(new Block()));
+    RegisterBlock(BlockID::Jungle_Door, "",(new Block()));
+    RegisterBlock(BlockID::Acacia_Door, "",(new Block()));
+    RegisterBlock(BlockID::Dark_Oak_Door, "",(new Block()));
+    RegisterBlock(BlockID::End_Rod, "",(new Block()));
+    RegisterBlock(BlockID::Chorus_Plant, "",(new Block()));
+    RegisterBlock(BlockID::Chorus_Flower, "",(new Block()));
+    RegisterBlock(BlockID::Purpur_Block, "",(new Block()));
+    RegisterBlock(BlockID::Purpur_Pillar, "",(new Block()));
+    RegisterBlock(BlockID::Purpur_Stairs, "",(new Block()));
+    RegisterBlock(BlockID::Purpur_Double_Slab, "",(new Block()));
+    RegisterBlock(BlockID::Purpur_Slab, "",(new Block()));
+    RegisterBlock(BlockID::End_Bricks, "",(new Block()));
+    RegisterBlock(BlockID::Beetroots, "",(new Block()));
 
-    RegisterBlock((new Block(BlockID::Grass_Path, "grass_path"))
+    RegisterBlock(BlockID::Grass_Path,"",(new Block())
                       ->setTopBottomSidesTexture(GETICON("grass_path_top"), GETICON("dirt"), GETICON("grass_path_side"))
                       //->setSoundType(SoundType::GRASS)
                       ->setDestroyTime(0.6f));
 
-    RegisterBlock((new Block(BlockID::End_Gateway, "")));
-    RegisterBlock((new Block(BlockID::Repeating_Command_Block, "")));
-    RegisterBlock((new Block(BlockID::Chain_Command_Block, "")));
-    RegisterBlock((new Block(BlockID::Frosted_Ice, "")));
-    RegisterBlock((new Block(BlockID::Magma, "")));
-    RegisterBlock((new Block(BlockID::Nether_Wart_Block, "")));
-    RegisterBlock((new Block(BlockID::Red_Nether_Brick, "")));
-    RegisterBlock((new Block(BlockID::Bone_Block, "")));
-    RegisterBlock((new Block(BlockID::Structure_Void, "")));
-    RegisterBlock((new Block(BlockID::Observer, "")));
-    RegisterBlock((new Block(BlockID::White_Shulker_Box, "")));
-    RegisterBlock((new Block(BlockID::Orange_Shulker_Box, "")));
-    RegisterBlock((new Block(BlockID::Magenta_Shulker_Box, "")));
-    RegisterBlock((new Block(BlockID::Light_Blue_Shulker_Box, "")));
-    RegisterBlock((new Block(BlockID::Yellow_Shulker_Box, "")));
-    RegisterBlock((new Block(BlockID::Lime_Shulker_Box, "")));
-    RegisterBlock((new Block(BlockID::Pink_Shulker_Box, "")));
-    RegisterBlock((new Block(BlockID::Gray_Shulker_Box, "")));
-    RegisterBlock((new Block(BlockID::Silver_Shulker_Box, "")));
-    RegisterBlock((new Block(BlockID::Cyan_Shulker_Box, "")));
-    RegisterBlock((new Block(BlockID::Purple_Shulker_Box, "")));
-    RegisterBlock((new Block(BlockID::Blue_Shulker_Box, "")));
-    RegisterBlock((new Block(BlockID::Brown_Shulker_Box, "")));
-    RegisterBlock((new Block(BlockID::Green_Shulker_Box, "")));
-    RegisterBlock((new Block(BlockID::Red_Shulker_Box, "")));
-    RegisterBlock((new Block(BlockID::Black_Shulker_Box, "")));
-    RegisterBlock((new Block(BlockID::White_Glazed_Terracotta, "")));
-    RegisterBlock((new Block(BlockID::Orange_Glazed_Terracotta, "")));
-    RegisterBlock((new Block(BlockID::Magenta_Glazed_Terracotta, "")));
-    RegisterBlock((new Block(BlockID::Light_Blue_Glazed_Terracotta, "")));
-    RegisterBlock((new Block(BlockID::Yellow_Glazed_Terracotta, "")));
-    RegisterBlock((new Block(BlockID::Lime_Glazed_Terracotta, "")));
-    RegisterBlock((new Block(BlockID::Pink_Glazed_Terracotta, "")));
-    RegisterBlock((new Block(BlockID::Gray_Glazed_Terracotta, "")));
-    RegisterBlock((new Block(BlockID::Silver_Glazed_Terracotta, "")));
-    RegisterBlock((new Block(BlockID::Cyan_Glazed_Terracotta, "")));
-    RegisterBlock((new Block(BlockID::Purple_Glazed_Terracotta, "")));
-    RegisterBlock((new Block(BlockID::Blue_Glazed_Terracotta, "")));
-    RegisterBlock((new Block(BlockID::Brown_Glazed_Terracotta, "")));
-    RegisterBlock((new Block(BlockID::Green_Glazed_Terracotta, "")));
-    RegisterBlock((new Block(BlockID::Red_Glazed_Terracotta, "")));
-    RegisterBlock((new Block(BlockID::Black_Glazed_Terracotta, "")));
-    RegisterBlock((new Block(BlockID::Concrete, "")));
-    RegisterBlock((new Block(BlockID::Concrete_Powder, "")));
-    RegisterBlock((new Block(BlockID::Structure_Block, "")));
+    RegisterBlock(BlockID::End_Gateway, "",(new Block()));
+    RegisterBlock(BlockID::Repeating_Command_Block, "",(new Block()));
+    RegisterBlock(BlockID::Chain_Command_Block, "",(new Block()));
+    RegisterBlock(BlockID::Frosted_Ice, "",(new Block()));
+    RegisterBlock(BlockID::Magma, "",(new Block()));
+    RegisterBlock(BlockID::Nether_Wart_Block, "",(new Block()));
+    RegisterBlock(BlockID::Red_Nether_Brick, "",(new Block()));
+    RegisterBlock(BlockID::Bone_Block, "",(new Block()));
+    RegisterBlock(BlockID::Structure_Void, "",(new Block()));
+    RegisterBlock(BlockID::Observer, "",(new Block()));
+    RegisterBlock(BlockID::White_Shulker_Box, "",(new Block()));
+    RegisterBlock(BlockID::Orange_Shulker_Box, "",(new Block()));
+    RegisterBlock(BlockID::Magenta_Shulker_Box, "",(new Block()));
+    RegisterBlock(BlockID::Light_Blue_Shulker_Box, "",(new Block()));
+    RegisterBlock(BlockID::Yellow_Shulker_Box, "",(new Block()));
+    RegisterBlock(BlockID::Lime_Shulker_Box, "",(new Block()));
+    RegisterBlock(BlockID::Pink_Shulker_Box, "",(new Block()));
+    RegisterBlock(BlockID::Gray_Shulker_Box, "",(new Block()));
+    RegisterBlock(BlockID::Silver_Shulker_Box, "",(new Block()));
+    RegisterBlock(BlockID::Cyan_Shulker_Box, "",(new Block()));
+    RegisterBlock(BlockID::Purple_Shulker_Box, "",(new Block()));
+    RegisterBlock(BlockID::Blue_Shulker_Box, "",(new Block()));
+    RegisterBlock(BlockID::Brown_Shulker_Box, "",(new Block()));
+    RegisterBlock(BlockID::Green_Shulker_Box, "",(new Block()));
+    RegisterBlock(BlockID::Red_Shulker_Box, "",(new Block()));
+    RegisterBlock(BlockID::Black_Shulker_Box, "",(new Block()));
+    RegisterBlock(BlockID::White_Glazed_Terracotta, "",(new Block()));
+    RegisterBlock(BlockID::Orange_Glazed_Terracotta, "",(new Block()));
+    RegisterBlock(BlockID::Magenta_Glazed_Terracotta, "",(new Block()));
+    RegisterBlock(BlockID::Light_Blue_Glazed_Terracotta, "",(new Block()));
+    RegisterBlock(BlockID::Yellow_Glazed_Terracotta, "",(new Block()));
+    RegisterBlock(BlockID::Lime_Glazed_Terracotta, "",(new Block()));
+    RegisterBlock(BlockID::Pink_Glazed_Terracotta, "",(new Block()));
+    RegisterBlock(BlockID::Gray_Glazed_Terracotta, "",(new Block()));
+    RegisterBlock(BlockID::Silver_Glazed_Terracotta, "",(new Block()));
+    RegisterBlock(BlockID::Cyan_Glazed_Terracotta, "",(new Block()));
+    RegisterBlock(BlockID::Purple_Glazed_Terracotta, "",(new Block()));
+    RegisterBlock(BlockID::Blue_Glazed_Terracotta, "",(new Block()));
+    RegisterBlock(BlockID::Brown_Glazed_Terracotta, "",(new Block()));
+    RegisterBlock(BlockID::Green_Glazed_Terracotta, "",(new Block()));
+    RegisterBlock(BlockID::Red_Glazed_Terracotta, "",(new Block()));
+    RegisterBlock(BlockID::Black_Glazed_Terracotta, "",(new Block()));
+    RegisterBlock(BlockID::Concrete, "",(new Block()));
+    RegisterBlock(BlockID::Concrete_Powder, "",(new Block()));
+    RegisterBlock(BlockID::Structure_Block, "",(new Block()));
 
     m_blocks.resize(static_cast<size_t>(BlockID::Count));
 }

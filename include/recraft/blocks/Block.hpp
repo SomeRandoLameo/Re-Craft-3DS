@@ -308,8 +308,8 @@ typedef u8 Metadata;
 
 class Block {
 public:
-    Block(BlockID id, const char* identifier) :
-        m_id(id), m_identifier(identifier), m_destroyTime(1.0f), m_opaque(true), m_solid(true),
+    Block() :
+       m_destroyTime(1.0f), m_opaque(true), m_solid(true),
         m_soundType(SoundType::STONE), m_hasMetadata(false), m_lightEmission(0) {}
 
     virtual ~Block() = default;
@@ -456,16 +456,23 @@ public:
         return instance;
     }
 
-    BlockPtr RegisterBlock(BlockPtr block) {
-        uint16_t id = static_cast<uint16_t>(block->GetID());
-        while (id >= m_blocks.size()) {
+    BlockPtr RegisterBlock(BlockID id, const std::string& key, BlockPtr block) {
+        // Resize vector if needed
+        while ((uint16_t)id >= m_blocks.size()) {
             m_blocks.push_back(nullptr);
         }
-        m_blocks[id] = std::unique_ptr<Block>(block);
+
+        // If this key matches the default key, set as default
+        if (key == m_defaultKey) {
+            m_defaultValue = block;
+        }
+
+        m_blocks[(uint16_t)id] = std::unique_ptr<Block>(block);
+        m_keyToId[key] = (uint16_t)id;
+
         return block;
     }
 
-    // Use this to get Block attributes
     static const BlockPtr GetBlock(BlockID id) {
         const auto& blocks = GetInstance().m_blocks;
         uint16_t index = static_cast<uint16_t>(id);
@@ -475,18 +482,40 @@ public:
         return blocks[0].get();
     }
 
-    // Use this to get Block attributes
     static const BlockPtr GetBlock(uint16_t paletteId) { return GetBlock(static_cast<BlockID>(paletteId)); }
+
+    static const BlockPtr GetBlock(const std::string& key) {
+        const auto& registry = GetInstance();
+        auto it = registry.m_keyToId.find(key);
+        if (it != registry.m_keyToId.end()) {
+            return GetBlock(it->second);
+        }
+        return registry.m_defaultValue;
+    }
 
     static BlockID GetBlockID(uint16_t paletteId) { return static_cast<BlockID>(paletteId); }
 
+    static BlockID GetBlockID(const std::string& key) {
+        const auto& registry = GetInstance();
+        auto it = registry.m_keyToId.find(key);
+        if (it != registry.m_keyToId.end()) {
+            return static_cast<BlockID>(it->second);
+        }
+        return static_cast<BlockID>(0);
+    }
+
     static uint16_t GetId(BlockID block) { return static_cast<uint16_t>(block); }
+
+    static void SetDefaultKey(const std::string& key) { GetInstance().m_defaultKey = key; }
 
     static void* GetTextureMap() { return m_textureMap.GetTexture(); }
     static TextureMap* GetTextureMapEx() { return &m_textureMap; }
 
 private:
     std::vector<std::unique_ptr<Block>> m_blocks;
+    std::unordered_map<std::string, uint16_t> m_keyToId;
+    std::string m_defaultKey = "air";
+    BlockPtr m_defaultValue = nullptr;
 
     static TextureMap m_textureMap;
 };

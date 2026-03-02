@@ -4,7 +4,7 @@
 
 class GrassBlock : public Block {
 public:
-    GrassBlock(BlockID id, const char* name) : Block(id, name) {}
+    GrassBlock() : Block() {}
 
     void getColor(Metadata metadata, Direction direction, Metadata out_rgb[]) const override {
         if (direction == Direction::Top) {
