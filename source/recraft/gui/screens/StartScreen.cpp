@@ -17,7 +17,8 @@ void StartTopScreen::Render(int mouseX, int mouseY, float delta) {
 
     // TODO: Why does this tile???
     RenderData->DrawTex(ReCraftCore::GetInstance()->GetAssetManager()->Get<Amy::Texture>("logoTex"));
-    DrawTexturedModalRect(18, 88, 0, 0, 128, 32);
+    DrawTexturedModalRectEx(18, 180, 0, 0, 155, 44, 155, 44, 1);
+    DrawTexturedModalRectEx(173, 180, 0, 45, 120, 44, 120, 44, 1);
 
     DrawStringWithShadow(GIT_COMMIT "-" GIT_BRANCH, 0, 0, Amy::Color(255, 255, 255, 255));
 }

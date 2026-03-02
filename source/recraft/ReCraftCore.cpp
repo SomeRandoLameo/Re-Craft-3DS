@@ -4,11 +4,15 @@
 #include "gui/screens/StartScreen.hpp"
 #include "input/InputManager.hpp"
 
-
 bool showDebugInfo = true;
 ReCraftCore* ReCraftCore::m_theReCraftCore = nullptr;
+const std::string ReCraftCore::m_root = "sdmc:/3ds/recraft";
 
 ReCraftCore::ReCraftCore() {
+    { // tmp create e
+        std::error_code e;
+        std::filesystem::create_directories(m_root, e);
+    }
     m_theReCraftCore = this;
     this->m_gamestate = GameState::SelectWorld;
     gfxInitDefault();
@@ -32,6 +36,9 @@ ReCraftCore::ReCraftCore() {
     m_flatGen.Init(m_world);
     m_smeaGen.Init(m_world);
     m_emptyGen.Init(m_world);
+
+    m_AssetMgr.AppendPath("romfs:");
+    m_AssetMgr.AppendPath("sdmc:/3ds/recraft");
 
     auto fnt = Iron::Font::New();
     fnt->LoadBMF("romfs:/assets/minecraft/textures/font/ascii.png");
@@ -67,7 +74,8 @@ ReCraftCore::ReCraftCore() {
         ImGui::Text("Buffer: %5.2f%%", C3D_GetCmdBufUsage() * 100.f);
         ImGui::Text("Heap: %s [%d] Allocations", Amy::Utils::FormatBytes(Amy::Memory::GetTotalAllocated()).c_str(),
                     Amy::Memory::GetAllocationCount());
-        ImGui::Text("malloc: %lld - free: %lld\ncalloc: %lld - realloc: %lld\nmemalign: %lld",
+        ImGui::Text("malloc: %lld - free: %lld\ncalloc: %lld - realloc: %lld\nmemalign: "
+                    "%lld",
                     Amy::Memory::GetMetrics()._malloc, Amy::Memory::GetMetrics()._free,
                     Amy::Memory::GetMetrics()._calloc, Amy::Memory::GetMetrics()._realloc,
                     Amy::Memory::GetMetrics()._memalign);
@@ -116,7 +124,6 @@ ReCraftCore::~ReCraftCore() {
 
 void ReCraftCore::InitSinglePlayer(char* path, char* name, const WorldGenType* worldType, Gamemode mode,
                                    bool newWorld) {
-
     m_chunkWorker.AddHandler(WorkerItemType::BaseGen, (WorkerFuncObj){&SuperFlatGen::Generate, &m_flatGen, true});
 
     m_chunkWorker.AddHandler(WorkerItemType::BaseGen, (WorkerFuncObj){&SmeaGen::Generate, &m_smeaGen, true});
@@ -188,8 +195,8 @@ void ReCraftCore::ExitSinglePlayer() {
     SetScreen(new SelectWorldBotScreen, false);
 }
 
-// TODO: Something prevents the 03DS from connecting. It isnt memory. My guess is that world data takes too long to load
-// and then server timeout?
+// TODO: Something prevents the 03DS from connecting. It isnt memory. My guess
+// is that world data takes too long to load and then server timeout?
 void ReCraftCore::InitMultiPlayer() {
     m_chunkWorker.AddHandler(WorkerItemType::BaseGen, (WorkerFuncObj){&EmptyGen::Generate, &m_emptyGen, true});
 
@@ -220,7 +227,8 @@ void ReCraftCore::InitMultiPlayer() {
     m_player->hp = 20;
     m_player->gamemode = 1;
 
-    // m_player->position = m_mcBridge.getClient()->GetPlayerController()->GetPosition();
+    // m_player->position =
+    // m_mcBridge.getClient()->GetPlayerController()->GetPosition();
 
     m_chat = new GuiChat(m_mcBridge.getClient()->GetDispatcher(), m_mcBridge.getClient());
     m_networkWorld = new NetworkWorld(m_world, m_mcBridge.getClient()->GetDispatcher());
@@ -259,14 +267,14 @@ void ReCraftCore::ExitMultiplayer() {
     SetScreen(new SelectWorldBotScreen, false);
 }
 
-
 void ReCraftCore::RunMultiPlayer() {
     if (m_mcBridge.isConnected()) {
         m_mcBridge.withClient([&](mc::core::Client* client, mc::protocol::packets::PacketDispatcher* dispatcher) {
-            // TODO: Move this into some NetworkPlayer class that gets updated from here.
-            // NetworkPlayer needs to listen to the server propperly to initialize the player (eg. setting position,
-            // rotation and much more)
-            // TODO: Yaw is inverted, Server recieves movement as jittery, might be mclib
+            // TODO: Move this into some NetworkPlayer class that gets updated from
+            // here. NetworkPlayer needs to listen to the server propperly to
+            // initialize the player (eg. setting position, rotation and much more)
+            // TODO: Yaw is inverted, Server recieves movement as jittery, might be
+            // mclib
             mc::protocol::packets::out::PlayerPositionAndLookPacket response(
                 ToVector3d(m_player->position), RAD_TO_DEG(m_player->yRot), RAD_TO_DEG(m_player->xRot),
                 m_player->onGround);
@@ -297,7 +305,7 @@ void ReCraftCore::RunMultiPlayer() {
                player->quickSelectBar[i] = item;
                debugUI->Text("%d ", item.GetItemId());
              }
-     */
+      */
             bool showChat = true; // TODO: Move somewhere into render to show globally instead
             // of console_activate & console_log, this is just temp
             m_chat->Render(&showChat);

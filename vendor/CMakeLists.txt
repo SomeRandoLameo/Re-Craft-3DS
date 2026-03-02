@@ -27,5 +27,5 @@ target_include_directories(stb INTERFACE stb)
 # MCLIB
 add_subdirectory(mclib)
 # AMY
-set(AMY_BUILD_STB_IMAGE OFF)
+set(AMY_BUILD_STB_IMAGE ON)
 add_subdirectory(amethyst)

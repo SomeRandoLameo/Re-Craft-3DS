@@ -22,17 +22,20 @@ public:
     };
 
     constexpr static int UvPrecision = 32768;
-    constexpr static int MapSize = 512;
-    constexpr static int TileSize = 16;
-    constexpr static int MapTiles = MapSize / TileSize;
 
-    void Init(const char** files, int num_files);
+    void Init(const std::string& path);
     const Icon& Get(const char* filename);
     C3D_Tex* GetTexture() { return &m_texture; }
+
+    const int GetMapSize() const { return m_mapSize; }
+    const int GetTileSize() const { return m_tileSize; }
+    const int GetMapTiles() const { return m_mapSize / m_tileSize; }
 
 private:
     C3D_Tex m_texture;
     std::vector<Icon> m_icons;
+    int m_mapSize = 512;
+    int m_tileSize = 16;
 };
 
 void Texture_TileImage8(u8* src, u8* dst, int size);

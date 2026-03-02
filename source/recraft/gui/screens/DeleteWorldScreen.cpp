@@ -1,6 +1,6 @@
-#include "gui/screens/DeleteWorldScreen.hpp"
 #include <sys/dirent.h>
 
+#include "gui/screens/DeleteWorldScreen.hpp"
 
 DeleteWorldScreen::DeleteWorldScreen(const WorldInfo& info) :
     ConfirmScreen(nullptr, "Are you sure you want to delete this world?",
@@ -9,37 +9,13 @@ DeleteWorldScreen::DeleteWorldScreen(const WorldInfo& info) :
 
 void DeleteWorldScreen::PostResult(bool b) {
     if (b) {
-        char buffer[512];
-        sprintf(buffer, "sdmc:/" SAVE_DIR "/saves/%s", m_info.path);
-        DeleteWorld(buffer);
+        DeleteWorld(ReCraftCore::GetRootDir() + "/saves/" + std::string(m_info.path));
     }
 
     m_ReCraftCore->SetScreen(new SelectWorldBotScreen, false);
 }
 
-
-void DeleteWorldScreen::DeleteWorld(const char* path) {
-    DIR* dir = opendir(path);
-    struct dirent* entry;
-
-    int pathLen = strlen(path);
-
-    while ((entry = readdir(dir))) {
-        if (!strcmp(entry->d_name, "..") || !strcmp(entry->d_name, "."))
-            continue;
-
-        int entryLen = strlen(entry->d_name);
-
-        char buffer[pathLen + entryLen + 1];
-        sprintf(buffer, "%s/%s", path, entry->d_name);
-
-        if (entry->d_type == DT_DIR)
-            DeleteWorld(buffer);
-        else
-            unlink(buffer);
-    }
-
-    closedir(dir);
-
-    rmdir(path);
+void DeleteWorldScreen::DeleteWorld(const std::string& path) {
+    std::error_code e; // just ignore errors
+    std::filesystem::remove_all(path, e);
 }

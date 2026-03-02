@@ -6,6 +6,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <ReCraftCore.hpp>
+#include <amethyst.hpp>
+
 #include "misc/Crash.hpp"
 #include "rendering/TextureMap.hpp"
 
@@ -72,7 +75,7 @@ void Texture_Load(C3D_Tex* result, const char* filename) {
 
         linearFree(imgInLinRam);
     } else {
-        Crash("Failed to load texture %s\n", filename);
+        Crash("Failed to load texture {}\n", filename);
     }
 }
 
@@ -136,19 +139,31 @@ void downscaleImage(u8* data, int size) {
     }
 }
 
-void TextureMap::Init(const char** files, int num_files) {
+void TextureMap::Init(const std::string& path) {
     int locX = 0;
     int locY = 0;
 
-    // printf("TextureMapInit %s\n", files);
-
+    m_mapSize = 1024;
+    m_tileSize = 16;
+    { // determinate tilesize
+        int w = 0;
+        int h = 0;
+        int c = 0;
+        auto buf = stbi_load(std::string(path + "/dirt.png").c_str(), &w, &h, &c, 4);
+        if (buf && w == h) {
+            m_tileSize = w;
+        }
+        if (buf) {
+            stbi_image_free(buf);
+        }
+    }
     const int mipmapLevels = 2;
-    const int maxSize = 4 * MapSize * MapSize;
+    const int maxSize = 4 * m_mapSize * m_mapSize;
 
-    C3D_TexInit(&m_texture, MapSize, MapSize, GPU_RGBA8);
+    C3D_TexInit(&m_texture, m_mapSize, m_mapSize, GPU_RGBA8);
     /*C3D_TexInitParams param;
-    param.width = MapSize;
-    param.height = MapSize;
+    param.width = m_mapSize;
+    param.height = m_mapSize;
     param.maxLevel = 2;
     param.format = GPU_RGBA8;
     param.type = GPU_TEX_2D;
@@ -156,24 +171,37 @@ void TextureMap::Init(const char** files, int num_files) {
      if (!C3D_TexInitWithParams(&m_texture, nullptr, param))
          printf("Couldn't alloc texture memory\n");*/
     C3D_TexSetFilter(&m_texture, GPU_NEAREST, GPU_NEAREST);
+    // Error Tex
+    for (int x = 0; x < m_tileSize; x++) {
+        for (int y = 0; y < m_tileSize; y++) {
+            int idx = D7_TileIndex(x, (m_mapSize - m_tileSize + y), m_mapSize) * 4;
+            bool oc = ((x / (m_tileSize / 2) + y / (m_tileSize / 2)) % 2) == 0;
+            reinterpret_cast<u8*>(m_texture.data)[idx + 0] = 255;
+            reinterpret_cast<u8*>(m_texture.data)[idx + 1] = oc ? 255 : 0;
+            reinterpret_cast<u8*>(m_texture.data)[idx + 2] = 0;
+            reinterpret_cast<u8*>(m_texture.data)[idx + 3] = oc ? 255 : 0;
+        }
+    }
+    locX += m_tileSize;
 
-    int filei = 0;
-    const char* filename = files[filei];
     int c = 0;
-    while (filename != NULL && c < (MapTiles * MapTiles) && filei < num_files) {
+    for (const auto& it : std::filesystem::directory_iterator(path)) {
         int w = 0, h = 0, c1 = 0;
-        unsigned char* image = stbi_load(filename, &w, &h, &c1, 4);
+        std::string file_ = it.path().string();
+        LOG("Adding Texture: {}", file_);
+        unsigned char* image = stbi_load(file_.c_str(), &w, &h, &c1, 4);
 
         if (image != nullptr && c1 == 3) {
+            LOG("Reloading Image: {} ({}, {}, {}) in mode 3", file_, w, h, c);
             stbi_image_free(image);
-            image = stbi_load(filename, &w, &h, &c1, 3);
+            image = stbi_load(file_.c_str(), &w, &h, &c1, 3);
         }
 
-        if (image != nullptr && w == TileSize && h == TileSize) {
-            for (int x = 0; x < TileSize; x++) {
-                for (int y = 0; y < TileSize; y++) {
-                    int src = (((TileSize - 1) - y) * TileSize + x) * c1;
-                    int dst = D7_TileIndex(locX + x, (MapSize - 1) - (locY + y), MapSize) * 4;
+        if (image != nullptr && w == m_tileSize && h == m_tileSize) {
+            for (int x = 0; x < m_tileSize; x++) {
+                for (int y = 0; y < m_tileSize; y++) {
+                    int src = (((m_tileSize - 1) - y) * m_tileSize + x) * c1;
+                    int dst = D7_TileIndex(locX + x, (m_mapSize - 1) - (locY + y), m_mapSize) * 4;
                     if (c1 == 3) {
                         reinterpret_cast<u8*>(m_texture.data)[dst] = 255;
                     } else {
@@ -186,25 +214,24 @@ void TextureMap::Init(const char** files, int num_files) {
             }
 
             Icon icon;
-            icon.Hash = hash((char*)filename);
-            constexpr int m = UvPrecision / MapSize;
+            icon.Hash = hash((char*)it.path().filename().string().c_str());
+            int m = UvPrecision / m_mapSize;
             icon.u = locX * m;
             icon.v = locY * m;
             m_icons.push_back(icon);
 
-            locX += TileSize;
-            if (locX == MapSize) {
-                locY += TileSize;
+            locX += m_tileSize;
+            if (locX == m_mapSize) {
+                locY += m_tileSize;
                 locX = 0;
             }
         } else {
-            printf("Image size(%u, %u) doesn't match or ptr null(internal error) or c "
-                   "not 4 for '%s'\n",
-                   w, h, filename ? filename : "(null)");
+            LOG("Image Size({}, {}) doesn't match or ptr is null(internal error) or "
+                "c is neither 3 or 4 for {}",
+                w, h, it.path().filename().string());
         }
         if (image)
             stbi_image_free(image);
-        filename = files[++filei];
         c++;
     }
 
@@ -215,7 +242,7 @@ void TextureMap::Init(const char** files, int num_files) {
 
 const TextureMap::Icon& TextureMap::Get(const char* filename) {
     uint32_t h = hash(filename);
-    for (size_t i = 0; i < MapTiles * MapTiles; i++) {
+    for (size_t i = 0; i < GetMapTiles() * GetMapTiles(); i++) {
         if (h == m_icons[i].Hash) {
             return m_icons[i];
         }

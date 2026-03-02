@@ -3,118 +3,112 @@
 #include "blocks/LeavesBlock.h"
 #include "rendering/VertexFmt.hpp"
 
-// PATH PREFIX
-#define PPRX "romfs:/assets/minecraft/textures/blocks/"
+const char* blockTextures[] = {"stone.png",
+                               "dirt.png",
+                               "cobblestone.png",
+                               "grass_side.png",
+                               "grass_top.png",
+                               "stonebrick.png",
+                               "sand.png",
+                               "log_oak.png",
+                               "log_oak_top.png",
+                               "leaves_oak.png",
+                               "glass.png",
+                               "brick.png",
+                               "redstone_torch_off.png",
+                               "redstone_torch_on.png",
+                               "planks_oak.png",
+                               "sapling_oak.png",
 
-const char* blockTextures[] = {"romfs:/notexture.png",
-                               PPRX "stone.png",
-                               PPRX "dirt.png",
-                               PPRX "cobblestone.png",
-                               PPRX "grass_side.png",
-                               PPRX "grass_top.png",
-                               PPRX "stonebrick.png",
-                               PPRX "sand.png",
-                               PPRX "log_oak.png",
-                               PPRX "log_oak_top.png",
-                               PPRX "leaves_oak.png",
-                               PPRX "glass.png",
-                               PPRX "brick.png",
-                               PPRX "redstone_torch_off.png",
-                               PPRX "redstone_torch_on.png",
-                               PPRX "planks_oak.png",
-                               PPRX "sapling_oak.png",
+                               "wool_colored_black.png",
+                               "wool_colored_blue.png",
+                               "wool_colored_brown.png",
+                               "wool_colored_cyan.png",
+                               "wool_colored_gray.png",
+                               "wool_colored_green.png",
+                               "wool_colored_light_blue.png",
+                               "wool_colored_lime.png",
+                               "wool_colored_magenta.png",
+                               "wool_colored_orange.png",
+                               "wool_colored_pink.png",
+                               "wool_colored_purple.png",
+                               "wool_colored_red.png",
+                               "wool_colored_silver.png",
+                               "wool_colored_white.png",
+                               "wool_colored_yellow.png",
 
-                               PPRX "wool_colored_black.png",
-                               PPRX "wool_colored_blue.png",
-                               PPRX "wool_colored_brown.png",
-                               PPRX "wool_colored_cyan.png",
-                               PPRX "wool_colored_gray.png",
-                               PPRX "wool_colored_green.png",
-                               PPRX "wool_colored_light_blue.png",
-                               PPRX "wool_colored_lime.png",
-                               PPRX "wool_colored_magenta.png",
-                               PPRX "wool_colored_orange.png",
-                               PPRX "wool_colored_pink.png",
-                               PPRX "wool_colored_purple.png",
-                               PPRX "wool_colored_red.png",
-                               PPRX "wool_colored_silver.png",
-                               PPRX "wool_colored_white.png",
-                               PPRX "wool_colored_yellow.png",
+                               "bedrock.png",
+                               "web.png",
+                               "mob_spawner.png",
+                               "torch_on.png",
+                               "cobblestone_mossy.png",
+                               "bookshelf.png",
+                               "mushroom_brown.png",
+                               "red.png",
+                               "ladder.png",
+                               "flower_rose.png",
+                               "flower_dandelion.png",
+                               "deadbush.png",
+                               "tallgrass.png",
+                               "rail_golden.png",
+                               "rail_detector.png",
+                               "rail_normal.png",
 
-                               PPRX "bedrock.png",
-                               PPRX "web.png",
-                               PPRX "mob_spawner.png",
-                               PPRX "torch_on.png",
-                               PPRX "cobblestone_mossy.png",
-                               PPRX "bookshelf.png",
-                               PPRX "mushroom_brown.png",
-                               PPRX "red.png",
-                               PPRX "ladder.png",
-                               PPRX "flower_rose.png",
-                               PPRX "flower_dandelion.png",
-                               PPRX "deadbush.png",
-                               PPRX "tallgrass.png",
-                               PPRX "rail_golden.png",
-                               PPRX "rail_detector.png",
-                               PPRX "rail_normal.png",
+                               "piston_bottom.png",
+                               "piston_side.png",
+                               "piston_top_normal.png",
+                               "piston_top_sticky.png",
 
-                               PPRX "piston_bottom.png",
-                               PPRX "piston_side.png",
-                               PPRX "piston_top_normal.png",
-                               PPRX "piston_top_sticky.png",
+                               "tnt_bottom.png",
+                               "tnt_side.png",
+                               "tnt_top.png",
 
-                               PPRX "tnt_bottom.png",
-                               PPRX "tnt_side.png",
-                               PPRX "tnt_top.png",
-
-
-                               PPRX "gravel.png",
-                               PPRX "coarse_dirt.png",
-                               PPRX "door_top.png",
-                               PPRX "door_bottom.png",
-                               PPRX "grass_side_snowed.png",
-                               PPRX "snow.png",
-                               PPRX "obsidian.png",
-                               PPRX "sandstone_normal.png",
-                               PPRX "sandstone_top.png",
-                               PPRX "sandstone_bottom.png",
-                               PPRX "sponge.png",
-                               PPRX "netherrack.png",
-                               PPRX "noteblock.png",
-                               PPRX "smooth_stone.png",
-                               PPRX "lava.png",
-                               PPRX "water.png",
-                               PPRX "grass_path_side.png",
-                               PPRX "grass_path_top.png",
-                               PPRX "crafting_table_side.png",
-                               PPRX "crafting_table_top.png",
-                               PPRX "iron_ore.png",
-                               PPRX "redstone_ore.png",
-                               PPRX "redstone_ore_turned.png",
-                               PPRX "iron_block.png",
-                               PPRX "diamond_ore.png",
-                               PPRX "diamond_block.png",
-                               PPRX "gold_ore.png",
-                               PPRX "gold_block.png",
-                               PPRX "lapis_ore.png",
-                               PPRX "lapis_block.png",
-                               PPRX "coal_ore.png",
-                               PPRX "coal_block.png",
-                               PPRX "emerald_ore.png",
-                               PPRX "emerald_block.png",
-                               PPRX "furnace_side.png",
-                               PPRX "furnace_front_off.png",
-                               PPRX "furnace_front_on.png",
-                               PPRX "dispenser_front_horizontal.png",
-                               PPRX "furnace_top.png"};
+                               "gravel.png",
+                               "coarse_dirt.png",
+                               "door_top.png",
+                               "door_bottom.png",
+                               "grass_side_snowed.png",
+                               "snow.png",
+                               "obsidian.png",
+                               "sandstone_normal.png",
+                               "sandstone_top.png",
+                               "sandstone_bottom.png",
+                               "sponge.png",
+                               "netherrack.png",
+                               "noteblock.png",
+                               "smooth_stone.png",
+                               "lava.png",
+                               "water.png",
+                               "grass_path_side.png",
+                               "grass_path_top.png",
+                               "crafting_table_side.png",
+                               "crafting_table_top.png",
+                               "iron_ore.png",
+                               "redstone_ore.png",
+                               "redstone_ore_turned.png",
+                               "iron_block.png",
+                               "diamond_ore.png",
+                               "diamond_block.png",
+                               "gold_ore.png",
+                               "gold_block.png",
+                               "lapis_ore.png",
+                               "lapis_block.png",
+                               "coal_ore.png",
+                               "coal_block.png",
+                               "emerald_ore.png",
+                               "emerald_block.png",
+                               "furnace_side.png",
+                               "furnace_front_off.png",
+                               "furnace_front_on.png",
+                               "dispenser_front_horizontal.png",
+                               "furnace_top.png"};
 
 TextureMap BlockRegistry::m_textureMap;
 
-
 BlockRegistry::BlockRegistry() {
-    m_textureMap.Init(blockTextures, sizeof(blockTextures) / sizeof(blockTextures[0]));
+    m_textureMap.Init("romfs:/assets/minecraft/textures/blocks");
 
-#define GETICON(x) m_textureMap.Get(PPRX x ".png")
+#define GETICON(x) m_textureMap.Get(x ".png")
 
     RegisterBlock((new Block(BlockID::Air, "air"))
                       ->setAllSidesTexture(0, 0)
@@ -449,13 +443,15 @@ BlockRegistry::BlockRegistry() {
                       ->setDestroyTime(0.8f));
     // TODO: wheat has stages of growth
     RegisterBlock((new Block(BlockID::Wheat, "wheat"))
-                  // ->setTopBottomSidesTexture(GETICON("crafting_table_top"), GETICON("planks_oak"),
+                  // ->setTopBottomSidesTexture(GETICON("crafting_table_top"),
+                  // GETICON("planks_oak"),
                   //                             GETICON("crafting_table_side"))
                   //  ->setSoundType(SoundType::STONE)
                   // ->setDestroyTime(0.8f)
     );
 
-    // TODO: Farmland has a dynamic texture, which is determined by its moisture level.
+    // TODO: Farmland has a dynamic texture, which is determined by its moisture
+    // level.
     RegisterBlock((new Block(BlockID::Farmland, "farmland"))
                   //->setTopBottomSidesTexture(GETICON("crafting_table_top"),
                   //                           GETICON("planks_oak"),
@@ -477,14 +473,16 @@ BlockRegistry::BlockRegistry() {
                       ->setDestroyTime(0.8f));
     // TODO: Yea...
     RegisterBlock((new Block(BlockID::Standing_Sign, "standing_sign"))
-                  // ->setTopBottomSidesTexture(GETICON("crafting_table_top"), GETICON("planks_oak"),
+                  // ->setTopBottomSidesTexture(GETICON("crafting_table_top"),
+                  // GETICON("planks_oak"),
                   //                             GETICON("crafting_table_side"))
                   //  ->setSoundType(SoundType::STONE)
                   // ->setDestroyTime(0.8f)
     );
     // TODO:
     RegisterBlock((new Block(BlockID::Wooden_Door, "wooden_door"))
-                  // ->setTopBottomSidesTexture(GETICON("crafting_table_top"), GETICON("planks_oak"),
+                  // ->setTopBottomSidesTexture(GETICON("crafting_table_top"),
+                  // GETICON("planks_oak"),
                   //                             GETICON("crafting_table_side"))
                   //  ->setSoundType(SoundType::STONE)
                   // ->setDestroyTime(0.8f)
@@ -507,35 +505,40 @@ BlockRegistry::BlockRegistry() {
     );
 
     RegisterBlock((new Block(BlockID::Wall_Sign, "wall_sign"))
-                  // ->setTopBottomSidesTexture(GETICON("crafting_table_top"), GETICON("planks_oak"),
+                  // ->setTopBottomSidesTexture(GETICON("crafting_table_top"),
+                  // GETICON("planks_oak"),
                   //                             GETICON("crafting_table_side"))
                   //  ->setSoundType(SoundType::STONE)
                   // ->setDestroyTime(0.8f)
     );
 
     RegisterBlock((new Block(BlockID::Lever, "lever"))
-                  // ->setTopBottomSidesTexture(GETICON("crafting_table_top"), GETICON("planks_oak"),
+                  // ->setTopBottomSidesTexture(GETICON("crafting_table_top"),
+                  // GETICON("planks_oak"),
                   //                             GETICON("crafting_table_side"))
                   //  ->setSoundType(SoundType::STONE)
                   // ->setDestroyTime(0.8f)
     );
 
     RegisterBlock((new Block(BlockID::Stone_Pressure_Plate, "stone_pressure_plate"))
-                  // ->setTopBottomSidesTexture(GETICON("crafting_table_top"), GETICON("planks_oak"),
+                  // ->setTopBottomSidesTexture(GETICON("crafting_table_top"),
+                  // GETICON("planks_oak"),
                   //                             GETICON("crafting_table_side"))
                   //  ->setSoundType(SoundType::STONE)
                   // ->setDestroyTime(0.8f)
     );
 
     RegisterBlock((new Block(BlockID::Iron_Door, "iron_door"))
-                  // ->setTopBottomSidesTexture(GETICON("crafting_table_top"), GETICON("planks_oak"),
+                  // ->setTopBottomSidesTexture(GETICON("crafting_table_top"),
+                  // GETICON("planks_oak"),
                   //                             GETICON("crafting_table_side"))
                   //  ->setSoundType(SoundType::STONE)
                   // ->setDestroyTime(0.8f)
     );
 
     RegisterBlock((new Block(BlockID::Wooden_Pressure_Plate, "wooden_pressure_plate"))
-                  // ->setTopBottomSidesTexture(GETICON("crafting_table_top"), GETICON("planks_oak"),
+                  // ->setTopBottomSidesTexture(GETICON("crafting_table_top"),
+                  // GETICON("planks_oak"),
                   //                             GETICON("crafting_table_side"))
                   //  ->setSoundType(SoundType::STONE)
                   // ->setDestroyTime(0.8f)
@@ -561,21 +564,18 @@ BlockRegistry::BlockRegistry() {
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.8f));
 
-
     RegisterBlock((new Block(BlockID::Bedrock, "bedrock"))
                       ->setAllSidesTexture(GETICON("bedrock"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(-1.0f) // Unbreakable
     );
 
-
     /*RegisterBlock((new Block(BlockID::Smooth_Stone, "smooth_stone"))
                       ->setAllSidesTexture(GETICON("smooth_stone"))
                       ->setSoundType(SoundType::STONE)
                       ->setDestroyTime(0.8f));
                       Doesnt exist in 1.12 for some reason.
-*/
-
+  */
 
     RegisterBlock((new Block(BlockID::Coal_Block, "coal_block"))
                       ->setAllSidesTexture(GETICON("coal_block"))

@@ -1,46 +1,69 @@
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-
 #include <3ds.h>
 
-#include "misc/Crash.hpp"
+#include <ReCraftCore.hpp>
+#include <fstream>
+#include <misc/Crash.hpp>
 
-void Crash(const char* reason, ...) {
-    consoleInit(GFX_TOP, NULL);
+namespace RC {
+#ifdef RC_LOGGING
+    std::ofstream m_log_file;
 
-    va_list vl;
-    va_start(vl, reason);
-    vprintf(reason, vl);
+    void __log_kill() { m_log_file.close(); }
+#endif
 
-    FILE* f = fopen("sdmc:/" SAVE_DIR "/crash.txt", "w");
-    vfprintf(f, reason, vl);
-    fclose(f);
-
-    va_end(vl);
-
-    printf("\n\nFatal error, press start to exit\n");
-    while (aptMainLoop()) {
-        gspWaitForVBlank();
-
-        hidScanInput();
-
-        if (hidKeysDown() & KEY_START)
-            break;
+    void InitLog() {
+#ifdef RC_LOGGING
+        std::error_code e;
+        std::filesystem::create_directories(ReCraftCore::GetRootDir(), e);
+        if (std::filesystem::exists(ReCraftCore::GetRootDir() + "/log.txt")) {
+            if (std::filesystem::exists(ReCraftCore::GetRootDir() + "/log.last.txt")) {
+                std::filesystem::remove(ReCraftCore::GetRootDir() + "/log.last.txt", e);
+            }
+            std::filesystem::rename(ReCraftCore::GetRootDir() + "/log.txt", ReCraftCore::GetRootDir() + "/log.last.txt",
+                                    e);
+        }
+        m_log_file.open(ReCraftCore::GetRootDir() + "/log.txt");
+#endif
     }
 
-    exit(EXIT_FAILURE);
-}
+    void DeinitLog() {
+#ifdef RC_LOGGING
+        __log_kill();
+#endif
+    }
 
-void Log(const char* reason, ...) {
+    void WriteCrash(const std::string& msg) {
+        std::ofstream off(ReCraftCore::GetRootDir() + "/crash.txt");
+        if (off.is_open()) {
+            off << msg;
+            off.close();
+        }
+#ifdef RC_LOGGING
+        __log_kill();
+#endif
+    }
 
-    va_list vl;
-    va_start(vl, reason);
-    vprintf(reason, vl);
+    void Log(const std::string& txt) {
+#ifdef RC_LOGGING
+        if (m_log_file.is_open()) {
+            m_log_file << txt << std::endl;
+        }
+#endif
+    }
 
-    FILE* f = fopen("sdmc:/" SAVE_DIR "/Log.txt", "a");
-    vfprintf(f, reason, vl);
-    fclose(f);
-
-    va_end(vl);
-}
+    void CrashScreen(const std::string& msg) {
+        gfxInitDefault();
+        consoleInit(GFX_TOP, nullptr);
+        std::cout << "ReCraft - " GIT_BRANCH " - " GIT_COMMIT " Error Handler\n\n";
+        std::cout << msg << std::endl;
+        std::cout << "\nPress Start to exit...\n";
+        while (aptMainLoop) {
+            hidScanInput();
+            if (hidKeysDown() & KEY_START) {
+                break;
+            }
+            gspWaitForVBlank();
+            gfxSwapBuffers();
+        }
+    }
+} // namespace RC

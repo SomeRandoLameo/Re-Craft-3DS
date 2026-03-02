@@ -109,8 +109,7 @@ void PolyGen_Harvest(DebugUI* debugUi) {
         if (vboUpdates.size() > 0) {
             if (vboUpdates[0].delay++ > 2) {
                 while (vboUpdates.size() > 0) {
-                    VBOUpdate update = vboUpdates.back();
-                    vboUpdates.pop_back();
+                    auto& update = vboUpdates.back();
 
                     ChunkColumnPtr column = world->GetChunkColumn(update.x, update.z);
                     if (column) {
@@ -128,6 +127,7 @@ void PolyGen_Harvest(DebugUI* debugUi) {
                         column->GetChunk(update.y)->transparentVertices = update.transparentVertices;
                         column->GetChunk(update.y)->seeThrough = update.visibility;
                     }
+                    vboUpdates.pop_back();
                 }
             }
         }
@@ -373,7 +373,8 @@ void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context) 
                     WorldVertex* data = face.transparent ? transparentData : opaqueData;
                     memcpy(data, &cube_sides_lut[face.direction * 6], sizeof(WorldVertex) * 6);
 
-                    const int oneDivIconsPerRow = (TextureMap::UvPrecision / TextureMap::MapTiles);
+                    const int oneDivIconsPerRow =
+                        (TextureMap::UvPrecision / BlockRegistry::GetTextureMapEx()->GetMapTiles());
 
                     uint8_t color[3];
 

@@ -23,6 +23,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 
 set(3DS_IP "" CACHE STRING "3ds IP (make send)")
+option(RC_BUILD_WITHOUT_ASSETS OFF)
+option(RC_ENABLE_LOGS OFF) # SD Destroyer
 
 set(APP_NAME "Re-Craft-3DS")
 set(APP_DESC "a Minecraft client implemented on the 3DS (and new 3DS)")
@@ -47,7 +49,6 @@ add_executable(${PROJECT_NAME}
     source/recraft/entity/Player.cpp
     source/recraft/gui/CT_Inventory.cpp
     source/recraft/gui/DebugUI.cpp
-    source/recraft/gui/FontLoader.cpp
     source/recraft/gui/Gui.cpp
     source/recraft/gui/GuiChat.cpp
     source/recraft/input/InputManager.cpp
@@ -102,8 +103,12 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC
     -D_GNU_SOURCE=1
     -DGIT_COMMIT="${GIT_SHORT_HASH}"
     -DGIT_BRANCH="${GIT_BRANCH}"
-    -DSAVE_DIR="recraft"
 )
+if(RC_ENABLE_LOGS)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC
+    -DRC_LOGGING=1
+)
+endif()
 target_compile_options(${PROJECT_NAME} PUBLIC
     -O3 -Ofast -ffunction-sections -fdata-sections
     -fomit-frame-pointer -mword-relocations

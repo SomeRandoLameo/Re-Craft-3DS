@@ -90,7 +90,7 @@ void SuperChunk_Init(SuperChunk* superchunk, int x, int z) {
 
         mpack_error_t err = mpack_tree_destroy(&tree);
         if (err != mpack_ok) {
-            Crash("MPack error %d while loading superchunk manifest %d %d", err, x, z);
+            Crash("MPack error {} while loading superchunk manifest {} {}", err, x, z);
         }
     } else {
         memset(superchunk->grid, 0x0, sizeof(superchunk->grid));
@@ -222,7 +222,7 @@ void SuperChunk_SaveChunk(SuperChunk* superchunk, ChunkColumnPtr column) {
         mpack_finish_map(&writer);
         mpack_error_t err = mpack_writer_destroy(&writer);
         if (err != mpack_ok) {
-            Crash("MPack error %d while saving chunk(%d, %d) to superchunk", err, column->x, column->z);
+            Crash("MPack error {} while saving chunk({}, {}) to superchunk", err, column->x, column->z);
         }
 
         size_t uncompressedSize = mpack_writer_buffer_used(&writer);
@@ -285,7 +285,7 @@ void SuperChunk_LoadChunk(SuperChunk* superchunk, ChunkColumnPtr column) {
                     if (storedSize == expectedSize) {
                         memcpy(chunk->GetBlockData(), mpack_node_data(blocksNode), expectedSize);
                     } else {
-                        Crash("Block data size mismatch while loading chunk (%zu != %zu)", storedSize, expectedSize);
+                        Crash("Block data size mismatch while loading chunk ({} != {})", storedSize, expectedSize);
                     }
                 }
 
@@ -307,7 +307,7 @@ void SuperChunk_LoadChunk(SuperChunk* superchunk, ChunkColumnPtr column) {
 
             mpack_error_t err = mpack_tree_destroy(&tree);
             if (err != mpack_ok) {
-                Crash("MPack error %d while loading chunk(%d %d) from superchunk", err, column->x, column->z);
+                Crash("MPack error {} while loading chunk({} {}) from superchunk", err, column->x, column->z);
             }
 
             column->revision = chunkInfo.revision;

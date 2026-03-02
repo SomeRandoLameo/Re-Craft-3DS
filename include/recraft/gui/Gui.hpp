@@ -43,6 +43,8 @@ public:
     static bool EnteredCursorInside(int x, int y, int w, int h);
 
     void DrawTexturedModalRect(int x, int y, int textureX, int textureY, int width, int height) const;
+    void DrawTexturedModalRectEx(int x, int y, int textureX, int textureY, int textureW, int textureH, int width,
+                                 int height, float scale) const;
 
     void DrawDefaultBackground() const;
 

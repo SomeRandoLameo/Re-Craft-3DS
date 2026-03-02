@@ -17,7 +17,7 @@ public:
 
     void Init(Player* player, World* world);
 
-    void Load(char* path);
+    void Load(const std::string& path);
     void Unload();
 
     void LoadChunk(WorkQueue* queue, WorkerItem item);

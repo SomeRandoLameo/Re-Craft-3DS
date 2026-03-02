@@ -483,6 +483,7 @@ public:
     static uint16_t GetId(BlockID block) { return static_cast<uint16_t>(block); }
 
     static void* GetTextureMap() { return m_textureMap.GetTexture(); }
+    static TextureMap* GetTextureMapEx() { return &m_textureMap; }
 
 private:
     std::vector<std::unique_ptr<Block>> m_blocks;

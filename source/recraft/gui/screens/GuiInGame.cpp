@@ -162,8 +162,8 @@ void GuiInGameBot::Init() {
     m_inventory = new Inventory();
 }
 void GuiInGameBot::Removed() {
-    delete m_player;
-    delete m_inventory;
+    // delete m_player;
+    // delete m_inventory;
 }
 
 bool GuiInGameBot::IsInGameScreen() { return true; }

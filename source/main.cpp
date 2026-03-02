@@ -4,7 +4,9 @@
 
 int main() {
     Amy::RegisterCxxExceptionHandler();
+    RC::InitLog();
     ReCraftCore core;
     core.Run();
+    RC::DeinitLog();
     return 0;
 }

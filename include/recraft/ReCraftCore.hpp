@@ -46,11 +46,13 @@ public:
     GameState* GetGameState() { return &m_gamestate; }
     Amy::AssetMgr* GetAssetManager() { return &m_AssetMgr; }
     Player* GetPlayer() { return m_player; }
+    static const std::string& GetRootDir() { return m_root; }
 
     Screen* TopScreen = nullptr;
     Screen* BotScreen = nullptr;
 
 private:
+    static const std::string m_root;
     static ReCraftCore* m_theReCraftCore;
     SuperFlatGen m_flatGen;
     SmeaGen m_smeaGen;

@@ -170,6 +170,13 @@ void Gui::DrawTexturedModalRect(int x, int y, int textureX, int textureY, int wi
                               Amy::Color(255, 255, 255, 255));
 }
 
+void Gui::DrawTexturedModalRectEx(int x, int y, int textureX, int textureY, int textureW, int textureH, int width,
+                                  int height, float scale) const {
+    RenderData->DrawFromAtlas(Amy::ivec2(x * scale, y * scale), Amy::ivec2(width * scale, height * scale),
+                              Amy::ivec4(textureX, textureY, textureX + textureW, textureY + textureH),
+                              Amy::Color(255, 255, 255, 255));
+}
+
 // Ideally, this would be in a separate font renderer class, but for now, it's
 // here.
 void Gui::DrawString(const std::string& text, int x, int y, const Amy::Color& color) const {
@@ -261,13 +268,14 @@ Amy::fvec3 Mtx4xFvec3(const Amy::mat4& m, const Amy::fvec3& v) {
 }
 
 void Gui::DrawIcon(BlockID blockId, uint8_t m, Amy::fvec2 pos) {
-    constexpr static int numTiles = TextureMap::UvPrecision / TextureMap::MapTiles;
+    int numTiles = TextureMap::UvPrecision / BlockRegistry::GetTextureMapEx()->GetMapTiles();
     static WorldVertex vtx[6 * 6];
     memcpy(vtx, cube_sides_lut, sizeof(WorldVertex) * 36);
 
     if (!pBlockTex) {
         pBlockTex = Amy::Texture::New();
-        pBlockTex->Load((C3D_Tex*)BlockRegistry::GetTextureMap(), TextureMap::MapSize, Amy::fvec4(0, 1, 1, 0));
+        pBlockTex->Load((C3D_Tex*)BlockRegistry::GetTextureMap(), BlockRegistry::GetTextureMapEx()->GetMapSize(),
+                        Amy::fvec4(0, 1, 1, 0));
     }
 
     for (int i = 0; i < 6; i++) {

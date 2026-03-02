@@ -12,8 +12,9 @@ void SelectWorldBotScreen::Removed() { m_worlds.clear(); }
 
 void SelectWorldBotScreen::Init() {
     m_worlds.clear();
-
+    LOG("Loading Levels");
     LoadLevelSource();
+    LOG("Levels Loaded");
 }
 
 bool SelectWorldBotScreen::IsInGameScreen() { return false; }
@@ -95,35 +96,32 @@ void SelectWorldBotScreen::ButtonClicked() {
 
 void SelectWorldBotScreen::LoadLevelSource() {
     m_worlds.clear();
+    std::string sp = ReCraftCore::GetRootDir() + "/saves";
+    LOG("Levels Dir: {}", sp);
 
-    DIR* directory = opendir("sdmc:/" SAVE_DIR "/saves");
+    for (const auto& it : std::filesystem::directory_iterator(sp)) {
+        LOG("Processing '{}'...", it.path().string());
+        if (!it.is_directory())
+            continue;
+        std::string lvl = it.path().string() + "/level.mp";
+        if (!std::filesystem::exists(lvl))
+            continue;
+        LOG("Loading Level: {}/level.mp", it.path().filename().string());
 
-    char buffer[512];
+        mpack_tree_t tree;
+        mpack_tree_init_file(&tree, lvl.c_str(), 0);
+        mpack_node_t root = mpack_tree_root(&tree);
 
-    struct dirent* entry;
+        char name[World::NameSize];
+        mpack_node_copy_utf8_cstr(mpack_node_map_cstr(root, "name"), name, World::NameSize);
+        if (mpack_tree_destroy(&tree) != mpack_ok)
+            continue;
 
-    while ((entry = readdir(directory))) {
-        sprintf(buffer, "sdmc:/" SAVE_DIR "/saves/%s/level.mp", entry->d_name);
-        if (access(buffer, F_OK) != -1) {
-            mpack_tree_t tree;
-            mpack_tree_init_file(&tree, buffer, 0);
-            mpack_node_t root = mpack_tree_root(&tree);
+        WorldInfo info;
+        std::strncpy(info.name, name, World::NameSize - 1);
+        info.lastPlayed = 0;
 
-            char name[World::NameSize];
-            mpack_node_copy_utf8_cstr(mpack_node_map_cstr(root, "name"), name, World::NameSize);
-
-            if (mpack_tree_destroy(&tree) != mpack_ok) {
-                continue;
-            }
-
-            WorldInfo info;
-            strcpy(info.name, name);
-            info.lastPlayed = 0;
-            strcpy(info.path, entry->d_name);
-
-            m_worlds.push_back(info);
-        }
+        std::strncpy(info.path, it.path().filename().string().c_str(), sizeof(info.path) - 1);
+        m_worlds.push_back(info);
     }
-
-    closedir(directory);
 }

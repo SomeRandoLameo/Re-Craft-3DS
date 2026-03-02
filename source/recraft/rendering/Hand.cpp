@@ -46,7 +46,7 @@ void Hand::Draw(int projUniform, C3D_Mtx* projection, mc::inventory::Slot stack,
                 .GetBlock(stack.GetItemId())
                 ->getColor(stack.GetItemDamage(), (Direction)i, color);
 
-            const int oneDivIconsPerRow = (TextureMap::UvPrecision / TextureMap::MapTiles);
+            const int oneDivIconsPerRow = (TextureMap::UvPrecision / BlockRegistry::GetTextureMapEx()->GetMapTiles());
 
             for (int j = 0; j < 6; j++) {
                 int idx = i * 6 + j;

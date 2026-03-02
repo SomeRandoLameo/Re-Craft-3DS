@@ -1,4 +1,5 @@
 #include "world/savegame/SaveManager.hpp"
+#include <ReCraftCore.hpp>
 
 #include <dirent.h>
 #include <unistd.h>
@@ -8,8 +9,6 @@
 #include "gui/DebugUI.hpp"
 #include "misc/Crash.hpp"
 
-#define mkdirFlags (S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH)
-
 #define mpack_elvis(node, key, typ, default_)                                                                          \
     ((mpack_node_type(mpack_node_map_cstr_optional((node), (key))) != mpack_type_nil)                                  \
          ? mpack_node_##typ(mpack_node_map_cstr_optional((node), (key)))                                               \
@@ -17,8 +16,8 @@
 
 
 void SaveManager::InitFileSystem() {
-    mkdir("sdmc:/" SAVE_DIR, mkdirFlags);
-    mkdir("sdmc:/" SAVE_DIR "/saves", mkdirFlags);
+    std::error_code e;
+    std::filesystem::create_directories(ReCraftCore::GetRootDir() + "/saves", e);
 }
 
 void SaveManager::Init(Player* player, World* world) {
@@ -26,16 +25,15 @@ void SaveManager::Init(Player* player, World* world) {
     m_world = world;
 }
 
-void SaveManager::Load(char* path) {
-    char buffer[256];
+void SaveManager::Load(const std::string& path) {
+    std::error_code e;
+    std::string tmp = ReCraftCore::GetRootDir() + "/saves/" + path;
+    std::filesystem::create_directories(tmp, e);
+    std::filesystem::create_directories(tmp + "/superchunks", e);
 
-    sprintf(buffer, "sdmc:/" SAVE_DIR "/saves/%s", path);
-    mkdir(buffer, mkdirFlags);
-    chdir(buffer);
+    chdir(tmp.c_str());
 
-    mkdir("superchunks", mkdirFlags);
-
-    if (access("level.mp", F_OK) != -1) {
+    if (std::filesystem::exists(tmp + "/level.mp")) {
         mpack_tree_t levelTree;
         mpack_tree_init_file(&levelTree, "level.mp", 0);
         mpack_node_t root = mpack_tree_root(&levelTree);
@@ -86,7 +84,7 @@ void SaveManager::Load(char* path) {
 
         mpack_error_t err = mpack_tree_destroy(&levelTree);
         if (err != mpack_ok) {
-            Crash("Mpack error %d while loading world manifest %s", err, path);
+            Crash("Mpack error {} while loading world manifest {}", err, path);
         }
     }
 }
@@ -160,7 +158,7 @@ void SaveManager::Unload() {
 
     mpack_error_t err = mpack_writer_destroy(&writer);
     if (err != mpack_ok) {
-        Crash("Mpack error %d while saving world manifest", err);
+        Crash("Mpack error {} while saving world manifest", err);
     }
 
     for (auto& superchunk : m_superchunks) {
