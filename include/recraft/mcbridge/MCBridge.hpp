@@ -1,14 +1,14 @@
 #pragma once
 // MCLIB includes
-#include "../../mclib/common/Common.h"
-#include "../../mclib/core/Client.h"
-#include "../../mclib/util/Forge.h"
-#include "../../mclib/util/Hash.h"
-#include "../../mclib/util/Utility.h"
-#include "../../mclib/util/VersionFetcher.h"
+#include "mclib/common/Common.h"
+#include "mclib/core/Client.h"
+#include "mclib/util/Forge.h"
+#include "mclib/util/Hash.h"
+#include "mclib/util/Utility.h"
+#include "mclib/util/VersionFetcher.h"
 
 // Craftus includes
-#include "../inventory/ItemStack.hpp"
+#include "inventory/ItemStack.hpp"
 
 #include <3ds.h>
 #include <atomic>

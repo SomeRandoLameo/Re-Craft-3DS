@@ -3,16 +3,16 @@
 #include <algorithm>
 #include <cstdint>
 
-#include "../../mclib/common/Common.h"
-#include "../../mclib/core/Client.h"
-#include "../../mclib/util/Forge.h"
-#include "../../mclib/util/Hash.h"
-#include "../../mclib/util/Utility.h"
-#include "../../mclib/util/VersionFetcher.h"
+#include "mclib/common/Common.h"
+#include "mclib/core/Client.h"
+#include "mclib/util/Forge.h"
+#include "mclib/util/Hash.h"
+#include "mclib/util/Utility.h"
+#include "mclib/util/VersionFetcher.h"
 
-#include "../blocks/Block.hpp"
+#include "blocks/Block.hpp"
 
-#include "../misc/NumberUtils.hpp"
+#include "misc/NumberUtils.hpp"
 
 class ItemStack {
 public:

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../CT_World.hpp"
+#include "world/CT_World.hpp"
 
 class SuperFlatGen {
 public:

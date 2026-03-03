@@ -2,8 +2,8 @@
 
 #include <citro3d.h>
 
-#include "../../blocks/Block.hpp"
-#include "../../misc/NumberUtils.hpp"
+#include "blocks/Block.hpp"
+#include "misc/NumberUtils.hpp"
 #include "VertexFmt.hpp"
 #include "client/entity/Player.hpp"
 

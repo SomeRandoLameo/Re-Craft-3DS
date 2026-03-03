@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../blocks/Block.hpp"
+#include "blocks/Block.hpp"
 
-#include "../misc/Xorshift.hpp"
+#include "misc/Xorshift.hpp"
 #include "client/renderer/VBOCache.hpp"
 #include "mclib/block/BlockEntity.h"
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../GameStates.hpp"
+#include "GameStates.hpp"
 #include "WorldRenderer.hpp"
 #include "client/entity/Player.hpp"
 #include "client/gui/DebugUI.hpp"
@@ -25,9 +25,9 @@
 #define IMGUI_IMPL_CITRO3D_USE_NPI_ASSERT
 #define IMGUI_IMPL_CIR_USE_NPI_ASSERT
 
-#include "../../../../cmake-build-debug/_deps/imgui-src/imgui.h"
-#include "../../../../vendor/imgui-ctr/include/imgui_impl_citro3d.h"
-#include "../../../../vendor/imgui-ctr/include/imgui_impl_ctr.h"
+#include "imgui.h"
+#include "imgui_impl_citro3d.h"
+#include "imgui_impl_ctr.h"
 
 class ReCraftCore;
 
