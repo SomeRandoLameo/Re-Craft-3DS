@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-#include "../world/Direction.hpp"
+#include "world/Direction.hpp"
 #include "client/renderer/TextureMap.hpp"
 #include "mclib/block/Block.h"
 #include "mclib/inventory/Slot.h"

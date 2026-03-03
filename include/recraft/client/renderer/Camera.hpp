@@ -1,12 +1,12 @@
 #pragma once
 
-#include "../../../../../../../../opt/devkitpro/libctru/include/citro3d.h"
+#include <citro3d.h>
 
 #include "Frustum.hpp"
 #include "client/entity/Player.hpp"
 
 // mclib
-#include "../../../../vendor/mclib/mclib/include/mclib/common/Vector.h"
+#include <mclib/common/Vector.h>
 
 class Camera {
 public:

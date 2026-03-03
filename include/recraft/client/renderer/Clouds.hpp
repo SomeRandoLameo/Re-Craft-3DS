@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../../../../../../../opt/devkitpro/libctru/include/citro3d.h"
+#include <citro3d.h>
 
-#include "../../world/CT_World.hpp"
+#include "world/CT_World.hpp"
 #include "VertexFmt.hpp"
 
 class Clouds {

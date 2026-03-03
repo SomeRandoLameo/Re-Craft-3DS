@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../../../../../../../opt/devkitpro/libctru/include/citro3d.h"
-#include "../../../../vendor/mclib/mclib/include/mclib/common/Vector.h"
+#include <citro3d.h>
+#include <mclib/common/Vector.h>
 
 enum FrustumPlanes {
     Frustum_Near = 0,

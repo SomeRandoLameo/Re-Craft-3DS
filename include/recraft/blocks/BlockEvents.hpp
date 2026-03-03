@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../world/CT_World.hpp"
+#include "world/CT_World.hpp"
 #include "Block.hpp"
 
 #define RANDOMTICKS_PER_CLUSTER (3)
