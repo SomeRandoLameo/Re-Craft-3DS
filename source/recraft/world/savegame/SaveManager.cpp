@@ -6,7 +6,7 @@
 
 #include <mpack/mpack.h>
 
-#include "gui/DebugUI.hpp"
+#include "client/gui/DebugUI.hpp"
 #include "misc/Crash.hpp"
 
 #define mpack_elvis(node, key, typ, default_)                                                                          \

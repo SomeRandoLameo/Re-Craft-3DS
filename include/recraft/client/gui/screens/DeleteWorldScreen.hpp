@@ -1,0 +1,15 @@
+#pragma once
+
+#include "ConfirmScreen.hpp"
+#include "SelectWorldScreen.hpp"
+
+class DeleteWorldScreen : public ConfirmScreen {
+public:
+    DeleteWorldScreen(const WorldInfo& info);
+
+    void PostResult(bool b) override;
+
+private:
+    WorldInfo m_info;
+    void DeleteWorld(const std::string& path);
+};

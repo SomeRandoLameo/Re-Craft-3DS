@@ -1,5 +1,5 @@
 #include "world/NetworkWorld.hpp"
-#include "gui/DebugUI.hpp"
+#include "client/gui/DebugUI.hpp"
 #include "mcbridge/MCBridge.hpp"
 #include "misc/VecMath.hpp"
 

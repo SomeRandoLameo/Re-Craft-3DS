@@ -1,8 +1,8 @@
 #pragma once
 
 #include <cstdio>
-#include "../../entity/Player.hpp"
 #include "SuperChunk.hpp"
+#include "client/entity/Player.hpp"
 
 class SaveManager {
 public:

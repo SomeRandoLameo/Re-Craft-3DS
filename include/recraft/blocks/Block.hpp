@@ -3,9 +3,9 @@
 #include <stdint.h>
 
 #include "../world/Direction.hpp"
+#include "client/renderer/TextureMap.hpp"
 #include "mclib/block/Block.h"
 #include "mclib/inventory/Slot.h"
-#include "rendering/TextureMap.hpp"
 
 // These IDs are pre-flattening update based. Some blocks are "Mapped" meaning 1 (stone) : 3 (variant - Diorite).
 // Variants are metadata based.
@@ -323,8 +323,8 @@ typedef u8 Metadata;
 class Block {
 public:
     Block() :
-        m_blockHardness(1.0f), m_opaque(true), m_solid(true),
-        m_soundType(SoundType::STONE), m_hasMetadata(false), m_lightEmission(0) {}
+        m_blockHardness(1.0f), m_opaque(true), m_solid(true), m_soundType(SoundType::STONE), m_hasMetadata(false),
+        m_lightEmission(0) {}
 
     virtual ~Block() = default;
 
@@ -351,7 +351,7 @@ public:
         return this;
     }
 
-    Block* setUnlocalizedName(const std::string& name){
+    Block* setUnlocalizedName(const std::string& name) {
         m_unlocalizedName = name;
         return this;
     }
