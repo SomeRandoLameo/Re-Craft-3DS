@@ -3,7 +3,7 @@
 #include "../blocks/Block.hpp"
 
 #include "../misc/Xorshift.hpp"
-#include "../rendering/VBOCache.hpp"
+#include "client/renderer/VBOCache.hpp"
 #include "mclib/block/BlockEntity.h"
 
 #include <array>

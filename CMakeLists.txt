@@ -44,13 +44,13 @@ add_executable(${PROJECT_NAME}
     source/main.cpp
     source/recraft/blocks/BlockEvent.cpp
     source/recraft/blocks/Block.cpp
-    source/recraft/entity/Damage.cpp
-    source/recraft/entity/Entity.cpp
-    source/recraft/entity/Player.cpp
-    source/recraft/gui/CT_Inventory.cpp
-    source/recraft/gui/DebugUI.cpp
-    source/recraft/gui/Gui.cpp
-    source/recraft/gui/GuiChat.cpp
+        source/recraft/client/entity/Damage.cpp
+        source/recraft/client/entity/Entity.cpp
+        source/recraft/client/entity/Player.cpp
+        source/recraft/client/gui/CT_Inventory.cpp
+        source/recraft/client/gui/DebugUI.cpp
+        source/recraft/client/gui/Gui.cpp
+        source/recraft/client/gui/GuiChat.cpp
     source/recraft/input/InputManager.cpp
     source/recraft/input/PlayerInput.cpp
     source/recraft/inventory/ItemStack.cpp
@@ -61,17 +61,17 @@ add_executable(${PROJECT_NAME}
     source/recraft/misc/Raycast.cpp
     source/recraft/misc/VecMath.cpp
     source/recraft/ReCraftCore.cpp
-    source/recraft/rendering/Camera.cpp
-    source/recraft/rendering/Frustum.cpp
-    source/recraft/rendering/Clouds.cpp
-    source/recraft/rendering/CubeRenderer.cpp
-    source/recraft/rendering/Cursor.cpp
-    source/recraft/rendering/Hand.cpp
-    source/recraft/rendering/PolyGen.cpp
-    source/recraft/rendering/Renderer.cpp
-    source/recraft/rendering/TextureMap.cpp
-    source/recraft/rendering/VBOCache.cpp
-    source/recraft/rendering/WorldRenderer.cpp
+    source/recraft/client/renderer/Camera.cpp
+    source/recraft/client/renderer/Frustum.cpp
+    source/recraft/client/renderer/Clouds.cpp
+    source/recraft/client/renderer/CubeRenderer.cpp
+    source/recraft/client/renderer/Cursor.cpp
+    source/recraft/client/renderer/Hand.cpp
+    source/recraft/client/renderer/PolyGen.cpp
+    source/recraft/client/renderer/Renderer.cpp
+    source/recraft/client/renderer/TextureMap.cpp
+    source/recraft/client/renderer/VBOCache.cpp
+    source/recraft/client/renderer/WorldRenderer.cpp
     source/recraft/world/ChunkWorker.cpp
     source/recraft/world/CT_Chunk.cpp
     source/recraft/world/CT_World.cpp
@@ -83,16 +83,17 @@ add_executable(${PROJECT_NAME}
     source/recraft/world/worldgen/SmeaGen.cpp
     source/recraft/world/worldgen/EmptyGen.cpp
     source/recraft/world/worldgen/SuperFlatGen.cpp
-    source/recraft/gui/ImGuiManager.cpp
-    source/recraft/gui/Screen.cpp
-    source/recraft/gui/screens/SelectWorldScreen.cpp
-    source/recraft/gui/screens/CreateWorldScreen.cpp
-    source/recraft/gui/screens/ConfirmScreen.cpp
-    source/recraft/gui/screens/DeleteWorldScreen.cpp
-    source/recraft/gui/screens/GuiInGame.cpp
-    source/recraft/gui/screens/StartScreen.cpp
-    source/recraft/gui/components/Button.cpp
+        source/recraft/client/gui/ImGuiManager.cpp
+        source/recraft/client/gui/Screen.cpp
+        source/recraft/client/gui/screens/SelectWorldScreen.cpp
+        source/recraft/client/gui/screens/CreateWorldScreen.cpp
+        source/recraft/client/gui/screens/ConfirmScreen.cpp
+        source/recraft/client/gui/screens/DeleteWorldScreen.cpp
+        source/recraft/client/gui/screens/GuiInGame.cpp
+        source/recraft/client/gui/screens/StartScreen.cpp
+        source/recraft/client/gui/components/Button.cpp
     source/recraft/phys/AABB.cpp
+    source/recraft/util/ResourceLocation.cpp
 )
 target_include_directories(${PROJECT_NAME} PUBLIC
     include/recraft

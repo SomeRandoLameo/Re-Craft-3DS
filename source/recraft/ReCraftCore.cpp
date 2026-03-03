@@ -1,7 +1,7 @@
 #include "ReCraftCore.hpp"
-#include "gui/screens/GuiInGame.hpp"
-#include "gui/screens/SelectWorldScreen.hpp"
-#include "gui/screens/StartScreen.hpp"
+#include "client/gui/screens/GuiInGame.hpp"
+#include "client/gui/screens/SelectWorldScreen.hpp"
+#include "client/gui/screens/StartScreen.hpp"
 #include "input/InputManager.hpp"
 
 bool showDebugInfo = true;
