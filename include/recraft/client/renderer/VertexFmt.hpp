@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdint.h>
+#include "../../../../../../../../opt/devkitpro/devkitARM/lib/gcc/arm-none-eabi/15.2.0/include/stdint.h"
 
 struct WorldVertex {
     int16_t xyz[3];

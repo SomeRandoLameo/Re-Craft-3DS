@@ -1,7 +1,7 @@
 #pragma once
 
 #include <citro3d.h>
-#include "../../mcbridge/MCBridge.hpp"
+#include "mcbridge/MCBridge.hpp"
 #include "Camera.hpp"
 #include "Clouds.hpp"
 #include "CubeRenderer.hpp"

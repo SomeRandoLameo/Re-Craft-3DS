@@ -8,18 +8,18 @@
 #include "world/CT_World.hpp"
 #include "world/WorkQueue.hpp"
 
-#include <citro3d.h>
+#include "../../../../../../../../opt/devkitpro/libctru/include/citro3d.h"
 
 // TODO: Organize
-#include <3ds.h>
-#include <citro3d.h>
-#include <tex3ds.h>
+#include "../../../../../../../../opt/devkitpro/libctru/include/3ds.h"
+#include "../../../../../../../../opt/devkitpro/libctru/include/citro3d.h"
+#include "../../../../../../../../opt/devkitpro/libctru/include/tex3ds.h"
 
-#include <fstream>
-#include <functional>
-#include <iostream>
-#include <map>
-#include <vector>
+#include "../../../../../../../../opt/devkitpro/devkitARM/arm-none-eabi/include/c++/15.2.0/fstream"
+#include "../../../../../../../../opt/devkitpro/devkitARM/arm-none-eabi/include/c++/15.2.0/functional"
+#include "../../../../../../../../opt/devkitpro/devkitARM/arm-none-eabi/include/c++/15.2.0/iostream"
+#include "../../../../../../../../opt/devkitpro/devkitARM/arm-none-eabi/include/c++/15.2.0/map"
+#include "../../../../../../../../opt/devkitpro/devkitARM/arm-none-eabi/include/c++/15.2.0/vector"
 
 // Enable Npi Assert to write Errors to file
 #define IMGUI_IMPL_CITRO3D_USE_NPI_ASSERT

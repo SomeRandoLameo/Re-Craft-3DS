@@ -1,6 +1,6 @@
 #pragma once
 
-#include <citro3d.h>
+#include "../../../../../../../../opt/devkitpro/libctru/include/citro3d.h"
 
 #include "../../world/CT_World.hpp"
 #include "VertexFmt.hpp"

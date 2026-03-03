@@ -4,7 +4,7 @@
 #include "../../world/Direction.hpp"
 #include "VertexFmt.hpp"
 
-#include <citro3d.h>
+#include "../../../../../../../../opt/devkitpro/libctru/include/citro3d.h"
 
 class Cursor {
 public:
