@@ -270,7 +270,21 @@ enum class BlockID : u16 {
 };
 
 // TODO: Add more once sound engine is ready & move into sound engine stuff
-enum class SoundType : u8 { STONE, SOUND_TYPE_COUNT };
+enum class SoundType : u8 {
+    WOOD,
+    GROUND,
+    PLANT,
+    STONE,
+    METAL,
+    GLASS,
+    CLOTH,
+    SAND,
+    SNOW,
+    LADDER,
+    ANVIL,
+    SLIME,
+    SOUND_TYPE_COUNT
+};
 // WIP
 struct BlockTextures {
     int16_t top_u = 0;
@@ -309,14 +323,36 @@ typedef u8 Metadata;
 class Block {
 public:
     Block() :
-       m_destroyTime(1.0f), m_opaque(true), m_solid(true),
+        m_blockHardness(1.0f), m_opaque(true), m_solid(true),
         m_soundType(SoundType::STONE), m_hasMetadata(false), m_lightEmission(0) {}
 
     virtual ~Block() = default;
 
-    // Fluent API for declarative configuration
-    Block* setDestroyTime(float time) {
-        m_destroyTime = time;
+    /**
+     * Sets how many hits it takes to break a block.
+     */
+    Block* setHardness(float hardness) {
+        m_blockHardness = hardness;
+
+        if (m_blockHardness < hardness * 5.0F) {
+            m_blockResistance = hardness * 5.0F;
+        }
+
+        return this;
+    }
+
+    Block* setBlockUnbreakable() {
+        setHardness(-1.0F);
+        return this;
+    }
+
+    Block* setResistance(float resistance) {
+        m_blockResistance = resistance * 3.0F;
+        return this;
+    }
+
+    Block* setUnlocalizedName(const std::string& name){
+        m_unlocalizedName = name;
         return this;
     }
 
@@ -426,7 +462,7 @@ public:
 
     BlockID GetID() const { return m_id; }
     const char* getName() const { return m_identifier; }
-    float getDestroyTime() const { return m_destroyTime; }
+    float getHardness() const { return m_blockHardness; }
     bool isOpaque(Metadata metadata = 0) const { return m_opaque; }
     bool isSolid() const { return m_solid; }
     SoundType getSoundType() const { return m_soundType; }
@@ -436,12 +472,14 @@ protected:
     BlockID m_id;
     const char* m_identifier;
     BlockTextures m_textures;
-    float m_destroyTime;
+    float m_blockHardness;
     bool m_opaque;
     bool m_solid;
     SoundType m_soundType;
     bool m_hasMetadata;
     uint8_t m_lightEmission;
+    float m_blockResistance;
+    std::string m_unlocalizedName;
 };
 
 typedef Block* BlockPtr;
@@ -456,19 +494,19 @@ public:
         return instance;
     }
 
-    BlockPtr RegisterBlock(BlockID id, const std::string& key, BlockPtr block) {
+    BlockPtr RegisterBlock(BlockID id, const std::string& textualID, BlockPtr block) {
         // Resize vector if needed
         while ((uint16_t)id >= m_blocks.size()) {
             m_blocks.push_back(nullptr);
         }
 
         // If this key matches the default key, set as default
-        if (key == m_defaultKey) {
+        if (textualID == m_defaultKey) {
             m_defaultValue = block;
         }
 
         m_blocks[(uint16_t)id] = std::unique_ptr<Block>(block);
-        m_keyToId[key] = (uint16_t)id;
+        m_keyToId[textualID] = (uint16_t)id;
 
         return block;
     }
@@ -482,13 +520,13 @@ public:
         return blocks[0].get();
     }
 
-    static const BlockPtr GetBlock(uint16_t paletteId) { return GetBlock(static_cast<BlockID>(paletteId)); }
+    static const BlockPtr GetBlockById(BlockID paletteId) { return GetBlock(paletteId); }
 
-    static const BlockPtr GetBlock(const std::string& key) {
+    static const BlockPtr GetBlockFromName(const std::string& name) {
         const auto& registry = GetInstance();
-        auto it = registry.m_keyToId.find(key);
+        auto it = registry.m_keyToId.find(name);
         if (it != registry.m_keyToId.end()) {
-            return GetBlock(it->second);
+            return GetBlockById(static_cast<BlockID>(it->second));
         }
         return registry.m_defaultValue;
     }

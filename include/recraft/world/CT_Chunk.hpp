@@ -54,7 +54,7 @@ public:
 
     BlockPtr GetBlock(mc::Vector3i pos) const {
         int blockIndex = pos.x + pos.y * Size + pos.z * Size * Size;
-        u16 paletteId = GetPackedBlockId(blockIndex);
+        BlockID paletteId = (BlockID)GetPackedBlockId(blockIndex);
         return const_cast<BlockPtr>(BlockRegistry::GetBlock(paletteId));
     }
 
