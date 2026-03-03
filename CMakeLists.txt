@@ -44,13 +44,13 @@ add_executable(${PROJECT_NAME}
     source/main.cpp
     source/recraft/blocks/BlockEvent.cpp
     source/recraft/blocks/Block.cpp
-        source/recraft/client/entity/Damage.cpp
-        source/recraft/client/entity/Entity.cpp
-        source/recraft/client/entity/Player.cpp
-        source/recraft/client/gui/CT_Inventory.cpp
-        source/recraft/client/gui/DebugUI.cpp
-        source/recraft/client/gui/Gui.cpp
-        source/recraft/client/gui/GuiChat.cpp
+    source/recraft/client/entity/Damage.cpp
+    source/recraft/client/entity/Entity.cpp
+    source/recraft/client/entity/Player.cpp
+    source/recraft/client/gui/CT_Inventory.cpp
+    source/recraft/client/gui/DebugUI.cpp
+    source/recraft/client/gui/Gui.cpp
+    source/recraft/client/gui/GuiChat.cpp
     source/recraft/input/InputManager.cpp
     source/recraft/input/PlayerInput.cpp
     source/recraft/inventory/ItemStack.cpp
@@ -72,6 +72,10 @@ add_executable(${PROJECT_NAME}
     source/recraft/client/renderer/TextureMap.cpp
     source/recraft/client/renderer/VBOCache.cpp
     source/recraft/client/renderer/WorldRenderer.cpp
+    source/recraft/client/renderer/block/ModelBlock.cpp
+    source/recraft/client/renderer/block/BlockPart.cpp
+    source/recraft/client/renderer/block/BlockPartFace.cpp
+    source/recraft/client/renderer/block/BlockFaceUV.cpp
     source/recraft/world/ChunkWorker.cpp
     source/recraft/world/CT_Chunk.cpp
     source/recraft/world/CT_World.cpp
@@ -83,15 +87,15 @@ add_executable(${PROJECT_NAME}
     source/recraft/world/worldgen/SmeaGen.cpp
     source/recraft/world/worldgen/EmptyGen.cpp
     source/recraft/world/worldgen/SuperFlatGen.cpp
-        source/recraft/client/gui/ImGuiManager.cpp
-        source/recraft/client/gui/Screen.cpp
-        source/recraft/client/gui/screens/SelectWorldScreen.cpp
-        source/recraft/client/gui/screens/CreateWorldScreen.cpp
-        source/recraft/client/gui/screens/ConfirmScreen.cpp
-        source/recraft/client/gui/screens/DeleteWorldScreen.cpp
-        source/recraft/client/gui/screens/GuiInGame.cpp
-        source/recraft/client/gui/screens/StartScreen.cpp
-        source/recraft/client/gui/components/Button.cpp
+    source/recraft/client/gui/ImGuiManager.cpp
+    source/recraft/client/gui/Screen.cpp
+    source/recraft/client/gui/screens/SelectWorldScreen.cpp
+    source/recraft/client/gui/screens/CreateWorldScreen.cpp
+    source/recraft/client/gui/screens/ConfirmScreen.cpp
+    source/recraft/client/gui/screens/DeleteWorldScreen.cpp
+    source/recraft/client/gui/screens/GuiInGame.cpp
+    source/recraft/client/gui/screens/StartScreen.cpp
+    source/recraft/client/gui/components/Button.cpp
     source/recraft/phys/AABB.cpp
     source/recraft/util/ResourceLocation.cpp
 )

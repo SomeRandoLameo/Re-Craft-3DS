@@ -2,11 +2,32 @@
 #include "client/gui/screens/GuiInGame.hpp"
 #include "client/gui/screens/SelectWorldScreen.hpp"
 #include "client/gui/screens/StartScreen.hpp"
+#include "client/renderer/block/ModelBlock.hpp"
 #include "input/InputManager.hpp"
 
 bool showDebugInfo = true;
 ReCraftCore* ReCraftCore::m_theReCraftCore = nullptr;
 const std::string ReCraftCore::m_root = "sdmc:/3ds/recraft";
+
+// TODO: TEMPORARY CODE
+static const char* facingName(EnumFacing::Value v) {
+    switch (v) {
+    case EnumFacing::DOWN:
+        return "down";
+    case EnumFacing::UP:
+        return "up";
+    case EnumFacing::NORTH:
+        return "north";
+    case EnumFacing::SOUTH:
+        return "south";
+    case EnumFacing::WEST:
+        return "west";
+    case EnumFacing::EAST:
+        return "east";
+    default:
+        return "unknown";
+    }
+}
 
 ReCraftCore::ReCraftCore() {
     { // tmp create e
@@ -63,6 +84,12 @@ ReCraftCore::ReCraftCore() {
 
     m_chunkWorker.AddHandler(WorkerItemType::Save, (WorkerFuncObj){SaveManager::SaveChunkCallback, &m_savemgr, true});
 
+    // TODO: TEMPORARY CODE
+    std::ifstream f("romfs:/assets/minecraft/models/block/hopper_side.json");
+    std::stringstream ss;
+    ss << f.rdbuf();
+    ModelBlock model = ModelBlock::deserialize(ss.str());
+
     ImGuiManager::GetInstance()->RegisterCallback("DebugUI", [=, this]() {
         ImGui::Begin("Game Info");
 
@@ -91,6 +118,7 @@ ReCraftCore::ReCraftCore() {
         ImGui::Spacing();
         ImGui::Text("Move Pad: u%i d%i l%i r%i", m_player->getCtrlMove()->up, m_player->getCtrlMove()->down,
                     m_player->getCtrlMove()->left, m_player->getCtrlMove()->right);
+        DebugModel(model); // TODO: TEMPORARY CODE
         ImGui::End();
     });
 }
@@ -408,4 +436,57 @@ void ReCraftCore::SetScreen(Screen* pScreen, bool top) {
     } else {
         delete pScreen;
     }
+}
+// TODO: TEMPORARY CODE
+void ReCraftCore::DebugModel(ModelBlock model) {
+    ImGui::Separator();
+    ImGui::Text("DEBUG MODEL");
+    ImGui::Spacing();
+    ImGui::Text("name: %s", model.name.c_str());
+    ImGui::Text("parent: %s",
+                model.getParentLocation().has_value() ? model.getParentLocation()->toString().c_str() : "none");
+    ImGui::Text("ambientOcclusion: %s", model.isAmbientOcclusion() ? "true" : "false");
+    ImGui::Text("gui3d: %s", model.isGui3d() ? "true" : "false");
+    ImGui::Text("isResolved: %s", model.isResolved() ? "true" : "false");
+    ImGui::Separator();
+    ImGui::Text("resolved textures:");
+    for (const auto& [key, value] : model.getTextures())
+        ImGui::Text("  %s -> %s", key.c_str(), model.resolveTextureName(key).c_str());
+    ImGui::Separator();
+    ImGui::Text("elements: %zu", model.getElements().size());
+
+    int ei = 0;
+    for (const auto& part : model.getElements()) {
+        ImGui::Text("[%d] from: %.1f %.1f %.1f", ei, part.positionFrom.x, part.positionFrom.y, part.positionFrom.z);
+        ImGui::Text("[%d] to:   %.1f %.1f %.1f", ei, part.positionTo.x, part.positionTo.y, part.positionTo.z);
+        ImGui::Text("[%d] shade: %s", ei, part.shade ? "true" : "false");
+
+        if (part.partRotation.has_value()) {
+            const auto& r = *part.partRotation;
+            ImGui::Text("[%d] rotation origin: %.4f %.4f %.4f", ei, r.origin.x, r.origin.y, r.origin.z);
+            ImGui::Text("[%d] rotation angle:  %.1f", ei, r.angle);
+            ImGui::Text("[%d] rotation rescale: %s", ei, r.rescale ? "true" : "false");
+        } else {
+            ImGui::Text("[%d] rotation: none", ei);
+        }
+
+        ImGui::Text("[%d] faces: %zu", ei, part.mapFaces.size());
+        for (const auto& [facing, face] : part.mapFaces) {
+            ImGui::Text("[%d]   %s: texture=%s cullface=%s tintindex=%d", ei, facingName(facing), face.texture.c_str(),
+                        face.cullFace.has_value() ? facingName(*face.cullFace) : "none", face.tintIndex);
+
+            if (face.blockFaceUV.uvs.has_value()) {
+                const auto& uv = *face.blockFaceUV.uvs;
+                ImGui::Text("[%d]     uv: %.1f %.1f %.1f %.1f", ei, uv[0], uv[1], uv[2], uv[3]);
+            } else {
+                ImGui::Text("[%d]     uv: none", ei);
+            }
+            ImGui::Text("[%d]     rotation: %d", ei, face.blockFaceUV.rotation);
+        }
+
+        ++ei;
+    }
+
+    // ImGui::Separator();
+    // ImGui::Text("overrides: %zu", model.getOverrides().size());
 }

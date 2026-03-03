@@ -16,6 +16,7 @@ extern "C" {
 #include "client/gui/Screen.hpp"
 #include "client/renderer/PolyGen.hpp"
 #include "client/renderer/Renderer.hpp"
+#include "client/renderer/block/ModelBlock.hpp"
 #include "mcbridge/MCBridge.hpp"
 #include "misc/Crash.hpp"
 #include "world/CT_World.hpp"
@@ -84,4 +85,5 @@ private:
 
     void RunMultiPlayer();
     void ExitMultiplayer();
+    void DebugModel(ModelBlock model);
 };
