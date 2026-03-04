@@ -3,9 +3,9 @@
 #include "ReCraftCore.hpp"
 #include "amethyst/iron.hpp"
 #include "client/gui/Gui.hpp"
+#include "client/renderer/VertexFmt.hpp"
 #include "input/InputManager.hpp"
 #include "misc/NumberUtils.hpp"
-#include "client/renderer/VertexFmt.hpp"
 
 extern const WorldVertex cube_sides_lut[];
 
@@ -278,6 +278,9 @@ void Gui::DrawIcon(BlockID blockId, uint8_t m, Amy::fvec2 pos) {
                         Amy::fvec4(0, 1, 1, 0));
     }
 
+    auto cmd = RenderData->NewCommand();
+    cmd->Tex = pBlockTex;
+
     for (int i = 0; i < 6; i++) {
         if (i != Direction::Top && i != Direction::South && i != Direction::West)
             continue;
@@ -316,8 +319,8 @@ void Gui::DrawIcon(BlockID blockId, uint8_t m, Amy::fvec2 pos) {
                                    (float)(iconUV[1] + numTiles) / (float)TextureMap::UvPrecision,
                                    (float)(iconUV[0] + numTiles) / (float)TextureMap::UvPrecision,
                                    (float)iconUV[1] / (float)TextureMap::UvPrecision);
-        auto cmd = RenderData->NewCommand();
-        cmd->Tex = pBlockTex;
+
+        cmd->PreAllocate(4, 6);
         cmd->Add(0).Add(1).Add(2);
         cmd->Add(0).Add(2).Add(3);
         cmd->Add(Amy::Iron::Vertex(br, uvs.BotRight(), clr32));

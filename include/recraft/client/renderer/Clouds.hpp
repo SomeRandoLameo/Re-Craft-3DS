@@ -2,8 +2,8 @@
 
 #include <citro3d.h>
 
-#include "world/CT_World.hpp"
 #include "VertexFmt.hpp"
+#include "world/CT_World.hpp"
 
 class Clouds {
 public:

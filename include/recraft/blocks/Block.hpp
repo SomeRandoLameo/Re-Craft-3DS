@@ -2,10 +2,10 @@
 
 #include <stdint.h>
 
-#include "world/Direction.hpp"
 #include "client/renderer/TextureMap.hpp"
 #include "mclib/block/Block.h"
 #include "mclib/inventory/Slot.h"
+#include "world/Direction.hpp"
 
 // These IDs are pre-flattening update based. Some blocks are "Mapped" meaning 1 (stone) : 3 (variant - Diorite).
 // Variants are metadata based.

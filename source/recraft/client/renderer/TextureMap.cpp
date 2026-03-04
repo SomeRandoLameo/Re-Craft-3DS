@@ -9,8 +9,8 @@
 #include "ReCraftCore.hpp"
 #include "amethyst/include/amethyst.hpp"
 
-#include "misc/Crash.hpp"
 #include "client/renderer/TextureMap.hpp"
+#include "misc/Crash.hpp"
 
 uint32_t hash(const char* str) {
     unsigned long hash = 5381;

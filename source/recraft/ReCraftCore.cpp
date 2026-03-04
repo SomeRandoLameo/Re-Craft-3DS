@@ -99,6 +99,7 @@ ReCraftCore::ReCraftCore() {
         ImGui::Text("CPU: %5.2f%%", C3D_GetProcessingTime() * 6.f);
         ImGui::Text("GPU: %5.2f%%", C3D_GetDrawingTime() * 6.f);
         ImGui::Text("Buffer: %5.2f%%", C3D_GetCmdBufUsage() * 100.f);
+#ifndef NDEBUG
         ImGui::Text("Heap: %s [%d] Allocations", Amy::Utils::FormatBytes(Amy::Memory::GetTotalAllocated()).c_str(),
                     Amy::Memory::GetAllocationCount());
         ImGui::Text("malloc: %lld - free: %lld\ncalloc: %lld - realloc: %lld\nmemalign: "
@@ -106,7 +107,13 @@ ReCraftCore::ReCraftCore() {
                     Amy::Memory::GetMetrics()._malloc, Amy::Memory::GetMetrics()._free,
                     Amy::Memory::GetMetrics()._calloc, Amy::Memory::GetMetrics()._realloc,
                     Amy::Memory::GetMetrics()._memalign);
+#endif
         ImGui::Text("Linear Heap: %s", Amy::Utils::FormatBytes(linearSpaceFree()).c_str());
+        ImGui::Separator();
+        ImGui::Text("Amethyst");
+        ImGui::Text("VI: [%d, %d]", Amy::Iron::VerticesDrawn(), Amy::Iron::IndicesDrawn());
+        ImGui::Text("Drawcalls: %d", Amy::Iron::GetDrawCalls());
+
         ImGui::Separator();
         ImGui::Text("Player");
         ImGui::Spacing();

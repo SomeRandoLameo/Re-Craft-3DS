@@ -2,9 +2,9 @@
 
 #include "blocks/Block.hpp"
 
-#include "misc/Xorshift.hpp"
 #include "client/renderer/VBOCache.hpp"
 #include "mclib/block/BlockEntity.h"
+#include "misc/Xorshift.hpp"
 
 #include <array>
 

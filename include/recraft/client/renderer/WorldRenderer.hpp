@@ -1,13 +1,13 @@
 #pragma once
 
 #include <citro3d.h>
-#include "mcbridge/MCBridge.hpp"
 #include "Camera.hpp"
 #include "Clouds.hpp"
 #include "CubeRenderer.hpp"
 #include "Cursor.hpp"
 #include "Hand.hpp"
 #include "client/entity/Player.hpp"
+#include "mcbridge/MCBridge.hpp"
 #include "world/CT_World.hpp"
 #include "world/WorkQueue.hpp"
 

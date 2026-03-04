@@ -1,8 +1,8 @@
 #pragma once
 
+#include "VertexFmt.hpp"
 #include "world/CT_World.hpp"
 #include "world/Direction.hpp"
-#include "VertexFmt.hpp"
 
 #include <citro3d.h>
 

@@ -2,10 +2,10 @@
 
 #include <citro3d.h>
 
-#include "blocks/Block.hpp"
-#include "misc/NumberUtils.hpp"
 #include "VertexFmt.hpp"
+#include "blocks/Block.hpp"
 #include "client/entity/Player.hpp"
+#include "misc/NumberUtils.hpp"
 
 #include "TextureMap.hpp"
 
