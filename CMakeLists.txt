@@ -76,6 +76,10 @@ add_executable(${PROJECT_NAME}
     source/recraft/client/renderer/block/BlockPart.cpp
     source/recraft/client/renderer/block/BlockPartFace.cpp
     source/recraft/client/renderer/block/BlockFaceUV.cpp
+    source/recraft/client/renderer/block/ModelResourceLocation.cpp
+    source/recraft/client/renderer/block/ModelRotation.cpp
+    source/recraft/client/renderer/block/Variant.cpp
+    source/recraft/client/renderer/block/VariantList.cpp
     source/recraft/world/ChunkWorker.cpp
     source/recraft/world/CT_Chunk.cpp
     source/recraft/world/CT_World.cpp
@@ -98,6 +102,7 @@ add_executable(${PROJECT_NAME}
     source/recraft/client/gui/components/Button.cpp
     source/recraft/phys/AABB.cpp
     source/recraft/util/ResourceLocation.cpp
+        source/recraft/client/renderer/block/ModelBakery.cpp
 )
 target_include_directories(${PROJECT_NAME} PUBLIC
     include/recraft
