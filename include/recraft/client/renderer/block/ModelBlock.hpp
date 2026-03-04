@@ -13,7 +13,7 @@ public:
     );
     ModelBlock() : m_gui3d(true), m_ambientOcclusion(true) /*, m_cameraTransforms(ItemCameraTransforms::DEFAULT)*/ {}
 
-    static ModelBlock deserialize(const std::string& json);
+    static ModelBlock deserialize(const nlohmann::json& j);
 
     const std::vector<BlockPart>& getElements() const;
     bool isAmbientOcclusion() const;

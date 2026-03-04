@@ -11,9 +11,9 @@ ModelBlock::ModelBlock(std::optional<ResourceLocation> parentLocationIn, std::ve
     m_textures(std::move(texturesIn)), m_parentLocation(std::move(parentLocationIn)) {}
 
 
-ModelBlock ModelBlock::deserialize(const std::string& json) {
+ModelBlock ModelBlock::deserialize(const nlohmann::json& j) {
     ModelBlock b;
-    ModelBlock::from_json(nlohmann::json::parse(json), b);
+    ModelBlock::from_json(j, b);
     return b;
 }
 

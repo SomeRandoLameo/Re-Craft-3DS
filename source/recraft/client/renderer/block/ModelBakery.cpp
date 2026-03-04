@@ -1,6 +1,7 @@
 #pragma once
 
 #include "client/renderer/block/ModelBakery.hpp"
+#include "misc/Crash.hpp"
 
 #include <fstream>
 #include <sstream>
@@ -11,13 +12,15 @@ ModelBakery::ModelBakery(const std::string& assetRoot) : m_assetRoot(assetRoot) 
 void ModelBakery::bakeAll() {
     for (uint16_t i = 0; i < static_cast<uint16_t>(BlockID::Count); ++i) {
         BlockID id = static_cast<BlockID>(i);
-        const BlockPtr block = BlockRegistry::GetBlock(id);
+
+        BlockPtr block = BlockRegistry::GetInstance().GetBlock(id);
         if (!block)
             continue;
 
-        const char* name = block->getName();
-        if (!name || name[0] == '\0')
+        const std::string& name = BlockRegistry::GetTextualID(id);
+        if (name.empty())
             continue;
+
 
         ModelBlockDefinition definition;
         if (!loadBlockstateJson(name, definition))
@@ -30,30 +33,47 @@ void ModelBakery::bakeAll() {
             const Variant& primary = variantList.getVariantList().front();
 
             ModelBlock model;
-            if (!loadModelJson(primary.getModelLocation(), model))
+            loadModelJson(primary.getModelLocation(), model);
+        }
+
+    }
+
+    std::map<ResourceLocation, ModelBlock*> ptrMap;
+    for (auto& [key, model] : m_modelCache)
+        ptrMap[ResourceLocation(key)] = &model;
+
+    for (auto& [key, model] : m_modelCache)
+        model.getParentFromMap(ptrMap);
+
+    for (uint16_t i = 0; i < static_cast<uint16_t>(BlockID::Count); ++i) {
+        BlockID id = static_cast<BlockID>(i);
+        const BlockPtr block = BlockRegistry::GetBlock(id);
+        if (!block)
+            continue;
+
+        const std::string& name = BlockRegistry::GetTextualID(id);
+        if (name.empty())
+            continue;
+
+        auto defIt = m_blockstateCache.find(name);
+        if (defIt == m_blockstateCache.end())
+            continue;
+
+        for (const auto& [variantKey, variantList] : defIt->second.getVariants()) {
+            if (variantList.getVariantList().empty())
+                continue;
+
+            const Variant& primary = variantList.getVariantList().front();
+
+            auto modelIt = m_modelCache.find(primary.getModelLocation().toString());
+            if (modelIt == m_modelCache.end())
                 continue;
 
             ModelResourceLocation mrl(ResourceLocation("minecraft", name), variantKey);
-            BakedBlockVariant baked = bakeVariant(mrl, variantList, model, primary);
+            BakedBlockVariant baked = bakeVariant(mrl, variantList, modelIt->second, primary);
             m_bakedRegistry.emplace(mrl.toString(), std::move(baked));
         }
     }
-
-    // Resolve parent chains across all loaded models in one pass
-    std::map<ResourceLocation, ModelBlock> modelMap;
-    for (auto& [key, model] : m_modelCache)
-        modelMap[ResourceLocation(key)] = model;
-
-    std::map<ResourceLocation, ModelBlock*> ptrMap;
-    for (auto& [loc, model] : modelMap)
-        ptrMap[loc] = &model;
-
-    for (auto& [loc, model] : modelMap)
-        model.getParentFromMap(ptrMap);
-
-    // Write resolved models back into cache
-    for (auto& [loc, model] : modelMap)
-        m_modelCache[loc.toString()] = model;
 }
 
 const BakedBlockVariant* ModelBakery::getVariant(BlockID id, uint8_t metadata) const {

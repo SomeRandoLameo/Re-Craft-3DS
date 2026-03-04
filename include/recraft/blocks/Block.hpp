@@ -461,7 +461,7 @@ public:
     }
 
     BlockID GetID() const { return m_id; }
-    const char* getName() const { return m_identifier; }
+    //const char* getName() const { return m_identifier; }
     float getHardness() const { return m_blockHardness; }
     bool isOpaque(Metadata metadata = 0) const { return m_opaque; }
     bool isSolid() const { return m_solid; }
@@ -470,7 +470,7 @@ public:
 
 protected:
     BlockID m_id;
-    const char* m_identifier;
+    //const char* m_identifier;
     BlockTextures m_textures;
     float m_blockHardness;
     bool m_opaque;
@@ -483,7 +483,6 @@ protected:
 };
 
 typedef Block* BlockPtr;
-
 class BlockRegistry {
 public:
     BlockRegistry();
@@ -495,29 +494,22 @@ public:
     }
 
     BlockPtr RegisterBlock(BlockID id, const std::string& textualID, BlockPtr block) {
-        // Resize vector if needed
-        while ((uint16_t)id >= m_blocks.size()) {
-            m_blocks.push_back(nullptr);
+        if (textualID == GetInstance().m_defaultKey) {
+            GetInstance().m_defaultValue = block;
         }
 
-        // If this key matches the default key, set as default
-        if (textualID == m_defaultKey) {
-            m_defaultValue = block;
-        }
-
-        m_blocks[(uint16_t)id] = std::unique_ptr<Block>(block);
-        m_keyToId[textualID] = (uint16_t)id;
+        GetInstance().m_registry[(uint16_t)id] = { textualID, std::unique_ptr<Block>(block) };
+        GetInstance().m_keyToId[textualID] = (uint16_t)id;
 
         return block;
     }
 
     static const BlockPtr GetBlock(BlockID id) {
-        const auto& blocks = GetInstance().m_blocks;
-        uint16_t index = static_cast<uint16_t>(id);
-        if (index < blocks.size() && blocks[index]) {
-            return blocks[index].get();
-        }
-        return blocks[0].get();
+        const auto& registry = GetInstance().m_registry;
+        auto it = registry.find((uint16_t)id);
+        if (it != registry.end())
+            return it->second.second.get();
+        return GetInstance().m_defaultValue;
     }
 
     static const BlockPtr GetBlockById(BlockID paletteId) { return GetBlock(paletteId); }
@@ -525,9 +517,8 @@ public:
     static const BlockPtr GetBlockFromName(const std::string& name) {
         const auto& registry = GetInstance();
         auto it = registry.m_keyToId.find(name);
-        if (it != registry.m_keyToId.end()) {
-            return GetBlockById(static_cast<BlockID>(it->second));
-        }
+        if (it != registry.m_keyToId.end())
+            return GetBlock(static_cast<BlockID>(it->second));
         return registry.m_defaultValue;
     }
 
@@ -536,10 +527,18 @@ public:
     static BlockID GetBlockID(const std::string& key) {
         const auto& registry = GetInstance();
         auto it = registry.m_keyToId.find(key);
-        if (it != registry.m_keyToId.end()) {
+        if (it != registry.m_keyToId.end())
             return static_cast<BlockID>(it->second);
-        }
         return static_cast<BlockID>(0);
+    }
+
+    static const std::string& GetTextualID(BlockID id) {
+        const auto& registry = GetInstance().m_registry;
+        auto it = registry.find((uint16_t)id);
+        if (it != registry.end())
+            return it->second.first;
+        static const std::string empty;
+        return empty;
     }
 
     static uint16_t GetId(BlockID block) { return static_cast<uint16_t>(block); }
@@ -550,7 +549,7 @@ public:
     static TextureMap* GetTextureMapEx() { return &m_textureMap; }
 
 private:
-    std::vector<std::unique_ptr<Block>> m_blocks;
+    std::unordered_map<uint16_t, std::pair<std::string, std::unique_ptr<Block>>> m_registry;
     std::unordered_map<std::string, uint16_t> m_keyToId;
     std::string m_defaultKey = "air";
     BlockPtr m_defaultValue = nullptr;

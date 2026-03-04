@@ -65,11 +65,11 @@ ReCraftCore::ReCraftCore() {
 
     m_chunkWorker.AddHandler(WorkerItemType::Save, (WorkerFuncObj){SaveManager::SaveChunkCallback, &m_savemgr, true});
 
-    ModelBakery bakery("romfs:/assets/minecraft");
-    bakery.bakeAll();
+    auto* bakery = new ModelBakery("romfs:/assets/minecraft");
+    bakery->bakeAll();
 
     ModelResourceLocation mrl(ResourceLocation("minecraft", "stone"), "normal");
-    const BakedBlockVariant* variant = bakery.getVariant(mrl);
+    const BakedBlockVariant* variant = bakery->getVariant(mrl);
 
     if (variant) {
         const ModelBlock& model = variant->model;
@@ -116,7 +116,7 @@ ReCraftCore::ReCraftCore() {
         ImGui::Separator();
         ImGui::Text("ModelBakery");
         ImGui::Spacing();
-        for (const auto& [key, variant] : bakery.getAllVariants())
+        for (const auto& [key, variant] : bakery->getAllVariants())
             ImGui::Text("Baked: %s", key.c_str());
         ImGui::End();
     });
