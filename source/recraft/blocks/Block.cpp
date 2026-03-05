@@ -4,9 +4,10 @@
 
 TextureMap BlockRegistry::m_textureMap;
 
-BlockRegistry::BlockRegistry() {
-    m_textureMap.Init("romfs:/assets/minecraft/textures/blocks");
+BlockRegistry::BlockRegistry() {}
 
+void BlockRegistry::Init() {
+    m_textureMap.Init("romfs:/assets/minecraft/textures/blocks");
 #define GETICON(x) m_textureMap.Get(x ".png")
 
     RegisterBlock(BlockID::Air, "air",

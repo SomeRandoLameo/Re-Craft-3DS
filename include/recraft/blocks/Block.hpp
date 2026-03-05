@@ -5,6 +5,7 @@
 #include "client/renderer/TextureMap.hpp"
 #include "mclib/block/Block.h"
 #include "mclib/inventory/Slot.h"
+#include "misc/Crash.hpp"
 #include "world/Direction.hpp"
 
 // These IDs are pre-flattening update based. Some blocks are "Mapped" meaning 1 (stone) : 3 (variant - Diorite).
@@ -493,15 +494,19 @@ public:
         return instance;
     }
 
-    BlockPtr RegisterBlock(BlockID id, const std::string& textualID, BlockPtr block) {
-        if (textualID == GetInstance().m_defaultKey) {
-            GetInstance().m_defaultValue = block;
-        }
+    void Init();
 
+    BlockPtr RegisterBlock(BlockID id, const std::string& textualID, BlockPtr block) {
         GetInstance().m_registry[(uint16_t)id] = { textualID, std::unique_ptr<Block>(block) };
         GetInstance().m_keyToId[textualID] = (uint16_t)id;
 
-        return block;
+        if (textualID == GetInstance().m_defaultKey) {
+            // Get the pointer from the unique_ptr we just stored, not the raw block
+            GetInstance().m_defaultValue = GetInstance().m_registry[(uint16_t)id].second.get();
+        }
+
+        return GetInstance().m_defaultValue != nullptr ?
+                                                       GetInstance().m_registry[(uint16_t)id].second.get() : block;
     }
 
     static const BlockPtr GetBlock(BlockID id) {
@@ -549,8 +554,8 @@ public:
     static TextureMap* GetTextureMapEx() { return &m_textureMap; }
 
 private:
-    std::unordered_map<uint16_t, std::pair<std::string, std::unique_ptr<Block>>> m_registry;
-    std::unordered_map<std::string, uint16_t> m_keyToId;
+    std::map<uint16_t, std::pair<std::string, std::unique_ptr<Block>>> m_registry;
+    std::map<std::string, uint16_t> m_keyToId;
     std::string m_defaultKey = "air";
     BlockPtr m_defaultValue = nullptr;
 

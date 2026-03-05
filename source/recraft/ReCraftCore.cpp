@@ -26,7 +26,7 @@ ReCraftCore::ReCraftCore() {
     SuperChunk_InitPools();
     SaveManager::InitFileSystem();
 
-    new BlockRegistry();
+    BlockRegistry::GetInstance().Init();
 
     m_chunkWorker.AddHandler(WorkerItemType::PolyGen, (WorkerFuncObj){&PolyGen_GeneratePolygons, nullptr, true});
 
