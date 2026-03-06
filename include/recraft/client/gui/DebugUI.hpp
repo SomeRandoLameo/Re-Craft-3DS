@@ -9,7 +9,7 @@ public:
     ~DebugUI();
 
     void Text(const char* text, ...);
-    void Log(const char* text, ...);
+    static void Log(const char* text, ...);
     void Draw();
 
     Iron::Drawlist::Ref RenderData;

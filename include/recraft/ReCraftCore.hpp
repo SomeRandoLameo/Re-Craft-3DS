@@ -16,7 +16,7 @@ extern "C" {
 #include "client/gui/Screen.hpp"
 #include "client/renderer/PolyGen.hpp"
 #include "client/renderer/Renderer.hpp"
-#include "client/renderer/block/ModelBlock.hpp"
+#include "client/renderer/block/ModelBakery.hpp"
 #include "mcbridge/MCBridge.hpp"
 #include "misc/Crash.hpp"
 #include "world/CT_World.hpp"
@@ -47,6 +47,7 @@ public:
     GameState* GetGameState() { return &m_gamestate; }
     Amy::AssetMgr* GetAssetManager() { return &m_AssetMgr; }
     Player* GetPlayer() { return m_player; }
+    ModelBakery* GetModelBakery() { return m_modelBakery; }
     static const std::string& GetRootDir() { return m_root; }
 
     Screen* TopScreen = nullptr;
@@ -77,6 +78,7 @@ private:
     NetworkWorld* m_networkWorld = nullptr;
     GameState m_gamestate;
     Amy::AssetMgr m_AssetMgr;
+    ModelBakery* m_modelBakery = nullptr;
     float m_timeAccum = 0.f;
 
 

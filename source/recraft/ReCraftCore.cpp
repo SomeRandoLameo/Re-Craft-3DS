@@ -28,8 +28,10 @@ ReCraftCore::ReCraftCore() {
 
     BlockRegistry::GetInstance().Init();
 
-    m_chunkWorker.AddHandler(WorkerItemType::PolyGen, (WorkerFuncObj){&PolyGen_GeneratePolygons, nullptr, true});
+    m_modelBakery = new ModelBakery("romfs:/assets/minecraft");
+    m_modelBakery->bakeAll();
 
+    m_chunkWorker.AddHandler(WorkerItemType::PolyGen, (WorkerFuncObj){&PolyGen_GeneratePolygons, nullptr, true});
     sino_init();
 
     m_world = new World(&m_chunkWorker.GetQueue());
@@ -64,19 +66,6 @@ ReCraftCore::ReCraftCore() {
     m_chunkWorker.AddHandler(WorkerItemType::Load, (WorkerFuncObj){SaveManager::LoadChunkCallback, &m_savemgr, true});
 
     m_chunkWorker.AddHandler(WorkerItemType::Save, (WorkerFuncObj){SaveManager::SaveChunkCallback, &m_savemgr, true});
-
-    auto* bakery = new ModelBakery("romfs:/assets/minecraft");
-    bakery->bakeAll();
-
-    ModelResourceLocation mrl(ResourceLocation("minecraft", "stone"), "normal");
-    const BakedBlockVariant* variant = bakery->getVariant(mrl);
-
-    if (variant) {
-        const ModelBlock& model = variant->model;
-        if (variant->rotation.has_value()) {
-            const ModelRotation& rotation = variant->rotation.value();
-        }
-    }
 
     ImGuiManager::GetInstance()->RegisterCallback("DebugUI", [=, this]() {
         ImGui::Begin("Game Info");
@@ -113,11 +102,6 @@ ReCraftCore::ReCraftCore() {
         ImGui::Spacing();
         ImGui::Text("Move Pad: u%i d%i l%i r%i", m_player->getCtrlMove()->up, m_player->getCtrlMove()->down,
                     m_player->getCtrlMove()->left, m_player->getCtrlMove()->right);
-        ImGui::Separator();
-        ImGui::Text("ModelBakery");
-        ImGui::Spacing();
-        for (const auto& [key, variant] : bakery->getAllVariants())
-            ImGui::Text("Baked: %s", key.c_str());
         ImGui::End();
     });
 }

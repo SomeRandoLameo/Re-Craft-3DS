@@ -21,7 +21,6 @@ void ModelBakery::bakeAll() {
         if (name.empty())
             continue;
 
-
         ModelBlockDefinition definition;
         if (!loadBlockstateJson(name, definition))
             continue;
@@ -35,7 +34,6 @@ void ModelBakery::bakeAll() {
             ModelBlock model;
             loadModelJson(primary.getModelLocation(), model);
         }
-
     }
 
     std::map<ResourceLocation, ModelBlock*> ptrMap;
@@ -47,6 +45,7 @@ void ModelBakery::bakeAll() {
 
     for (uint16_t i = 0; i < static_cast<uint16_t>(BlockID::Count); ++i) {
         BlockID id = static_cast<BlockID>(i);
+
         const BlockPtr block = BlockRegistry::GetBlock(id);
         if (!block)
             continue;
@@ -59,6 +58,7 @@ void ModelBakery::bakeAll() {
         if (defIt == m_blockstateCache.end())
             continue;
 
+        uint8_t metadataIdx = 0;
         for (const auto& [variantKey, variantList] : defIt->second.getVariants()) {
             if (variantList.getVariantList().empty())
                 continue;
@@ -71,7 +71,13 @@ void ModelBakery::bakeAll() {
 
             ModelResourceLocation mrl(ResourceLocation("minecraft", name), variantKey);
             BakedBlockVariant baked = bakeVariant(mrl, variantList, modelIt->second, primary);
-            m_bakedRegistry.emplace(mrl.toString(), std::move(baked));
+
+            auto [it, inserted] = m_bakedRegistry.emplace(mrl.toString(), std::move(baked));
+            if (inserted) {
+                uint32_t key = (static_cast<uint32_t>(id) << 4) | (metadataIdx & 0xF);
+                m_metadataIndex[key] = &it->second;
+            }
+            metadataIdx++;
         }
     }
 }
@@ -107,7 +113,6 @@ bool ModelBakery::loadBlockstateJson(const std::string& blockName, ModelBlockDef
         return false;
     }
 }
-
 bool ModelBakery::loadModelJson(const ResourceLocation& location, ModelBlock& outModel) {
     const std::string key = location.toString();
 
@@ -128,6 +133,13 @@ bool ModelBakery::loadModelJson(const ResourceLocation& location, ModelBlock& ou
         outModel = ModelBlock::deserialize(j);
         outModel.name = key;
         m_modelCache[key] = outModel;
+
+        // Recursively load parent
+        if (outModel.getParentLocation().has_value()) {
+            ModelBlock parentModel;
+            loadModelJson(*outModel.getParentLocation(), parentModel);
+        }
+
         return true;
     } catch (...) {
         return false;

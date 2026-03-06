@@ -321,6 +321,23 @@ struct BlockTextures {
 
 typedef u8 Metadata;
 
+//TODO:
+enum class CreativeTabs{
+    BUILDING_BLOCKS,
+    DECORATIONS,
+    REDSTONE,
+    TRANSPORTATION,
+    MISC,
+    SEARCH,
+    FOOD,
+    TOOLS,
+    COMBAT,
+    BREWING,
+    MATERIALS,
+    field_192395_m,
+    INVENTORY,
+};
+
 class Block {
 public:
     Block() :
@@ -332,142 +349,37 @@ public:
     /**
      * Sets how many hits it takes to break a block.
      */
-    Block* setHardness(float hardness) {
-        m_blockHardness = hardness;
+    Block* setHardness(float hardness);
 
-        if (m_blockHardness < hardness * 5.0F) {
-            m_blockResistance = hardness * 5.0F;
-        }
+    Block* setBlockUnbreakable();
 
-        return this;
-    }
+    Block* setResistance(float resistance);
 
-    Block* setBlockUnbreakable() {
-        setHardness(-1.0F);
-        return this;
-    }
+    Block* setUnlocalizedName(const std::string& name);
 
-    Block* setResistance(float resistance) {
-        m_blockResistance = resistance * 3.0F;
-        return this;
-    }
+    Block* setSoundType(SoundType sound);
 
-    Block* setUnlocalizedName(const std::string& name) {
-        m_unlocalizedName = name;
-        return this;
-    }
+    Block* setOpaque(bool opaque);
 
-    Block* setSoundType(SoundType sound) {
-        m_soundType = sound;
-        return this;
-    }
+    Block* setSolid(bool solid);
 
-    Block* setOpaque(bool opaque) {
-        m_opaque = opaque;
-        return this;
-    }
+    Block* setCreativeTab(CreativeTabs tab);
 
-    Block* setSolid(bool solid) {
-        m_solid = solid;
-        return this;
-    }
+    Block* setLightLevel(float value);
 
-    Block* setLightEmission(uint8_t level) {
-        m_lightEmission = level;
-        return this;
-    }
+    Block* setLightOpacity(int opacity);
 
-    Block* setHasMetadata(bool hasMetadata) {
-        m_hasMetadata = hasMetadata;
-        return this;
-    }
+    Block* disableStats();
 
-    Block* setTextures(const BlockTextures& textures) {
-        m_textures = textures;
-        return this;
-    }
+    virtual void getColor(Metadata metadata, Direction direction, Metadata out_rgb[]) const;
 
-    Block* setAllSidesTexture(int16_t u, int16_t v) {
-        m_textures.setAllSides(u, v);
-        return this;
-    }
+    BlockID GetID() const;
+    float getHardness() const;
+    bool isOpaque(Metadata metadata = 0) const;
+    bool isSolid() const;
+    SoundType getSoundType() const;
+    uint8_t getLightEmission() const;
 
-    Block* setAllSidesTexture(const TextureMap::Icon& icn) {
-        m_textures.setAllSides(icn.u, icn.v);
-        return this;
-    }
-
-    Block* setTopBottomSidesTexture(const TextureMap::Icon& top, const TextureMap::Icon& bottom,
-                                    const TextureMap::Icon& side) {
-        m_textures.setTopBottomSides(top.u, top.v, bottom.u, bottom.v, side.u, side.v);
-        return this;
-    }
-
-    Block* setTopBottomSidesTexture(int16_t top_u, int16_t top_v, int16_t bottom_u, int16_t bottom_v, int16_t side_u,
-                                    int16_t side_v) {
-        m_textures.setTopBottomSides(top_u, top_v, bottom_u, bottom_v, side_u, side_v);
-        return this;
-    }
-
-    Block* setTopBottomSouthSidesTexture(const TextureMap::Icon& top, const TextureMap::Icon& bottom,
-                                         const TextureMap::Icon& south, const TextureMap::Icon& side) {
-        m_textures.bottom_u = bottom.u;
-        m_textures.bottom_v = bottom.v;
-        m_textures.top_u = top.u;
-        m_textures.top_v = top.v;
-        m_textures.east_u = side.u;
-        m_textures.east_v = side.v;
-        m_textures.south_u = south.u;
-        m_textures.south_v = south.v;
-        m_textures.north_u = side.u;
-        m_textures.north_v = side.v;
-        m_textures.west_u = side.u;
-        m_textures.west_v = side.v;
-        return this;
-    }
-
-    virtual void getTexture(Direction direction, int16_t* out_uv) const {
-        switch (direction) {
-        case Direction::Top:
-            out_uv[0] = m_textures.top_u;
-            out_uv[1] = m_textures.top_v;
-            break;
-        case Direction::Bottom:
-            out_uv[0] = m_textures.bottom_u;
-            out_uv[1] = m_textures.bottom_v;
-            break;
-        case Direction::North:
-            out_uv[0] = m_textures.north_u;
-            out_uv[1] = m_textures.north_v;
-            break;
-        case Direction::South:
-            out_uv[0] = m_textures.south_u;
-            out_uv[1] = m_textures.south_v;
-            break;
-        case Direction::East:
-            out_uv[0] = m_textures.east_u;
-            out_uv[1] = m_textures.east_v;
-            break;
-        case Direction::West:
-            out_uv[0] = m_textures.west_u;
-            out_uv[1] = m_textures.west_v;
-            break;
-        }
-    }
-
-    virtual void getColor(Metadata metadata, Direction direction, Metadata out_rgb[]) const {
-        out_rgb[0] = 255;
-        out_rgb[1] = 255;
-        out_rgb[2] = 255;
-    }
-
-    BlockID GetID() const { return m_id; }
-    //const char* getName() const { return m_identifier; }
-    float getHardness() const { return m_blockHardness; }
-    bool isOpaque(Metadata metadata = 0) const { return m_opaque; }
-    bool isSolid() const { return m_solid; }
-    SoundType getSoundType() const { return m_soundType; }
-    uint8_t getLightEmission() const { return m_lightEmission; }
 
 protected:
     BlockID m_id;
@@ -477,10 +389,15 @@ protected:
     bool m_opaque;
     bool m_solid;
     SoundType m_soundType;
+    CreativeTabs m_displayOnCreativeTab;
     bool m_hasMetadata;
     uint8_t m_lightEmission;
     float m_blockResistance;
     std::string m_unlocalizedName;
+
+    int m_lightOpacity;
+    bool m_enableStats;
+    int m_lightValue;
 };
 
 typedef Block* BlockPtr;
@@ -549,6 +466,8 @@ public:
     static uint16_t GetId(BlockID block) { return static_cast<uint16_t>(block); }
 
     static void SetDefaultKey(const std::string& key) { GetInstance().m_defaultKey = key; }
+
+    static void GetTextureUV(BlockID block, uint8_t metadata, Direction direction, int16_t* out_uv);
 
     static void* GetTextureMap() { return m_textureMap.GetTexture(); }
     static TextureMap* GetTextureMapEx() { return &m_textureMap; }

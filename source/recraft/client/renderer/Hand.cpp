@@ -1,5 +1,7 @@
 #include "client/renderer/Hand.hpp"
-
+#include "client/renderer/block/ModelBakery.hpp"
+#include "util/EnumFacing.hpp"
+#include "ReCraftCore.hpp"
 int16_t toTexCoord(int x, int tw) { return (int16_t)(((float)(x) / (float)(tw)) * (float)(1 << 15)); }
 
 Hand::Hand() {
@@ -40,7 +42,7 @@ void Hand::Draw(int projUniform, C3D_Mtx* projection, mc::inventory::Slot stack,
             int16_t iconUV[2];
             uint8_t color[3];
 
-            BlockRegistry::GetInstance().GetBlock((BlockID)stack.GetItemId())->getTexture((Direction)i, iconUV);
+            BlockRegistry::GetInstance().GetTextureUV((BlockID)stack.GetItemId(),0,(Direction)i,iconUV);
 
             BlockRegistry::GetInstance()
                 .GetBlock((BlockID)stack.GetItemId())

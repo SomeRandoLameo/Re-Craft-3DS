@@ -6,6 +6,7 @@
 
 #include "client/entity/Player.hpp"
 
+#include "ReCraftCore.hpp"
 
 #include <3ds.h>
 
@@ -367,8 +368,7 @@ void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context) 
 
                     int16_t iconUV[2];
 
-                    BlockRegistry::GetInstance().GetBlock(face.block)->getTexture(face.direction, iconUV);
-
+                    BlockRegistry::GetInstance().GetTextureUV(face.block, face.metadata, face.direction, iconUV);
 
                     WorldVertex* data = face.transparent ? transparentData : opaqueData;
                     memcpy(data, &cube_sides_lut[face.direction * 6], sizeof(WorldVertex) * 6);
@@ -417,4 +417,37 @@ void PolyGen_GeneratePolygons(WorkQueue* queue, WorkerItem item, void* context) 
     }
     item.column->displayRevision = item.column->revision;
     item.column->forceVBOUpdate = false;
+}
+
+void PolyGen_GetTextureUV(BlockID block, uint8_t metadata, Direction direction, int16_t* out_uv) {
+    static const EnumFacing::Value dirToFacing[] = {
+        EnumFacing::WEST,   // West
+        EnumFacing::EAST,   // East
+        EnumFacing::DOWN,   // Bottom
+        EnumFacing::UP,     // Top
+        EnumFacing::NORTH,  // North
+        EnumFacing::SOUTH,  // South
+    };
+
+    ModelBakery* bakery = ReCraftCore::GetInstance()->GetModelBakery();
+
+    const BakedBlockVariant* variant = bakery->getVariant(block, metadata);
+
+    EnumFacing::Value facing = dirToFacing[direction];
+
+    for (const BlockPart& part : variant->model.getElements()) {
+        auto faceIt = part.mapFaces.find(facing);
+        if (faceIt != part.mapFaces.end()) {
+            std::string texName = variant->model.resolveTextureName(faceIt->second.texture);
+            size_t slashPos = texName.rfind('/');
+            std::string filename = (slashPos != std::string::npos)
+                ? texName.substr(slashPos + 1) + ".png"
+                : texName + ".png";
+
+            const TextureMap::Icon& icon = BlockRegistry::GetTextureMapEx()->Get(filename.c_str());
+            out_uv[0] = icon.u;
+            out_uv[1] = icon.v;
+
+        }
+    }
 }

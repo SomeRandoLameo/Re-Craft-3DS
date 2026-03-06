@@ -1,4 +1,5 @@
 #include "client/renderer/block/ModelBlock.hpp"
+#include "misc/Crash.hpp"
 
 #include <stdexcept>
 // TODO: Add the rest if needed
@@ -34,9 +35,23 @@ bool ModelBlock::isResolved() const {
 
 void ModelBlock::getParentFromMap(const std::map<ResourceLocation, ModelBlock*>& map) {
     if (m_parentLocation.has_value()) {
+        // Try direct lookup first
         auto it = map.find(*m_parentLocation);
-        if (it != map.end())
+        if (it != map.end()) {
             m_parent = it->second;
+            return;
+        }
+
+        // Try with minecraft: prefix added
+        ResourceLocation withNamespace("minecraft", m_parentLocation->getResourcePath());
+        it = map.find(withNamespace);
+        if (it != map.end()) {
+            m_parent = it->second;
+            return;
+        }
+
+        Crash("ModelBlock: could not resolve parent {} for model",
+                     m_parentLocation->toString());
     }
 }
 

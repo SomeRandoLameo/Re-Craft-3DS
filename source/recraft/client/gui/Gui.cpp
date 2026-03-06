@@ -286,7 +286,9 @@ void Gui::DrawIcon(BlockID blockId, uint8_t m, Amy::fvec2 pos) {
             continue;
         int16_t iconUV[2];
         uint8_t color[3];
-        BlockRegistry::GetBlock(blockId)->getTexture((Direction)i, iconUV);
+        BlockRegistry::GetInstance().GetTextureUV(blockId, m, (Direction)i, iconUV);
+
+        // TODO: Needed?
         BlockRegistry::GetBlock(blockId)->getColor(m, (Direction)i, color);
 
         for (int j = 0; j < 5; j++) {
