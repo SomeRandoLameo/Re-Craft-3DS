@@ -2,6 +2,13 @@
 
 #include "BlockPart.hpp"
 #include "util/ResourceLocation.hpp"
+#include <map>
+#include <memory>
+#include <optional>
+#include <stdexcept>
+#include <string>
+#include <vector>
+
 // TODO: Add the rest if needed
 class ModelBlock {
 public:
@@ -20,7 +27,8 @@ public:
     bool isGui3d() const;
     bool isResolved() const;
 
-    void getParentFromMap(const std::map<ResourceLocation, ModelBlock*>& map);
+    // Takes the model cache directly — unique_ptr guarantees stable addresses
+    void getParentFromMap(const std::unordered_map<std::string, std::unique_ptr<ModelBlock>>& map);
 
     std::vector<ResourceLocation> getOverrideLocations() const;
     // const std::vector<ItemOverride>& getOverrides() const;
@@ -33,12 +41,13 @@ public:
     const ModelBlock* getRootModel() const;
     // ItemCameraTransforms getAllTransforms() const;
 
-    static void checkModelHierarchy(const std::map<ResourceLocation, ModelBlock>& models);
+    static void checkModelHierarchy(const std::unordered_map<std::string, std::unique_ptr<ModelBlock>>& models);
 
     class LoopException : public std::runtime_error {
     public:
         LoopException() : std::runtime_error("Model hierarchy loop detected") {}
     };
+
     const std::map<std::string, std::string>& getTextures() const { return m_textures; }
 
 private:

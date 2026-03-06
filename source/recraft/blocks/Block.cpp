@@ -389,17 +389,19 @@ void BlockRegistry::GetTextureUV(BlockID block, uint8_t metadata, Direction dire
     const BakedBlockVariant* variant = ReCraftCore::GetInstance()->GetModelBakery()->getVariant(block, metadata);
     EnumFacing::Value facing = dirToFacing[direction];
 
-    for (const BlockPart& part : variant->model.getElements()) {
+    if (!variant || !variant->model)
+        return;
+
+    for (const BlockPart& part : variant->model->getElements()) {
         auto faceIt = part.mapFaces.find(facing);
 
         if (faceIt != part.mapFaces.end()) {
-            std::string texName = variant->model.resolveTextureName(faceIt->second.texture);
+            std::string texName = variant->model->resolveTextureName(faceIt->second.texture);
 
             size_t slashPos = texName.rfind('/');
             std::string filename = (slashPos != std::string::npos)
                 ? texName.substr(slashPos + 1) + ".png"
                 : texName + ".png";
-
 
             const TextureMap::Icon& icon = BlockRegistry::GetTextureMapEx()->Get(filename.c_str());
             out_uv[0] = icon.u;

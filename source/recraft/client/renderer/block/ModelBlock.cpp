@@ -2,6 +2,7 @@
 #include "misc/Crash.hpp"
 
 #include <stdexcept>
+
 // TODO: Add the rest if needed
 ModelBlock::ModelBlock(std::optional<ResourceLocation> parentLocationIn, std::vector<BlockPart> elementsIn,
                        std::map<std::string, std::string> texturesIn, bool ambientOcclusionIn, bool gui3dIn //,
@@ -21,8 +22,12 @@ ModelBlock ModelBlock::deserialize(const nlohmann::json& j) {
 bool ModelBlock::hasParent() const { return m_parent != nullptr; }
 bool ModelBlock::isGui3d() const { return m_gui3d; }
 
+//TODO: Why the hell does it crash here...
 const std::vector<BlockPart>& ModelBlock::getElements() const {
-    return m_elements.empty() && hasParent() ? m_parent->getElements() : m_elements;
+    if (m_elements.empty() && m_parent != nullptr) {
+        return m_parent->getElements();
+    }
+    return m_elements;
 }
 
 bool ModelBlock::isAmbientOcclusion() const {
@@ -33,25 +38,25 @@ bool ModelBlock::isResolved() const {
     return !m_parentLocation.has_value() || (m_parent != nullptr && m_parent->isResolved());
 }
 
-void ModelBlock::getParentFromMap(const std::map<ResourceLocation, ModelBlock*>& map) {
+void ModelBlock::getParentFromMap(const std::unordered_map<std::string, std::unique_ptr<ModelBlock>>& map) {
     if (m_parentLocation.has_value()) {
         // Try direct lookup first
-        auto it = map.find(*m_parentLocation);
+        auto it = map.find(m_parentLocation->toString());
         if (it != map.end()) {
-            m_parent = it->second;
+            m_parent = it->second.get();
             return;
         }
 
         // Try with minecraft: prefix added
         ResourceLocation withNamespace("minecraft", m_parentLocation->getResourcePath());
-        it = map.find(withNamespace);
+        it = map.find(withNamespace.toString());
         if (it != map.end()) {
-            m_parent = it->second;
+            m_parent = it->second.get();
             return;
         }
 
         Crash("ModelBlock: could not resolve parent {} for model",
-                     m_parentLocation->toString());
+              m_parentLocation->toString());
     }
 }
 
@@ -61,12 +66,6 @@ std::vector<ResourceLocation> ModelBlock::getOverrideLocations() const {
     //     locs.push_back(o.getLocation());
     return locs;
 }
-
-// const std::vector<ItemOverride>& ModelBlock::getOverrides() const { return m_overrides; }
-
-// ItemOverrideList ModelBlock::createOverrides() const {
-// return m_overrides.empty() ? ItemOverrideList::NONE : ItemOverrideList(m_overrides);
-// }
 
 std::optional<ResourceLocation> ModelBlock::getParentLocation() const { return m_parentLocation; }
 
@@ -109,26 +108,9 @@ std::string ModelBlock::resolveTextureName(const std::string& textureName, Bookk
     return (!s.empty() && !startsWithHash(s)) ? s : "missingno";
 }
 
-// ItemTransformVec3f ModelBlock::getTransform(ItemCameraTransforms::TransformType type) const {
-//     if (m_parent && !m_cameraTransforms.hasCustomTransform(type))
-//         return m_parent->getTransform(type);
-//     return m_cameraTransforms.getTransform(type);
-// }
-
-// ItemCameraTransforms ModelBlock::getAllTransforms() const {
-//     return ItemCameraTransforms(getTransform(ItemCameraTransforms::TransformType::THIRD_PERSON_LEFT_HAND),
-//                                 getTransform(ItemCameraTransforms::TransformType::THIRD_PERSON_RIGHT_HAND),
-//                                 getTransform(ItemCameraTransforms::TransformType::FIRST_PERSON_LEFT_HAND),
-//                                 getTransform(ItemCameraTransforms::TransformType::FIRST_PERSON_RIGHT_HAND),
-//                                 getTransform(ItemCameraTransforms::TransformType::HEAD),
-//                                 getTransform(ItemCameraTransforms::TransformType::GUI),
-//                                 getTransform(ItemCameraTransforms::TransformType::GROUND),
-//                                 getTransform(ItemCameraTransforms::TransformType::FIXED));
-// }
-
-void ModelBlock::checkModelHierarchy(const std::map<ResourceLocation, ModelBlock>& models) {
-    for (const auto& [loc, block] : models) {
-        const ModelBlock* a = block.m_parent;
+void ModelBlock::checkModelHierarchy(const std::unordered_map<std::string, std::unique_ptr<ModelBlock>>& models) {
+    for (const auto& [key, blockPtr] : models) {
+        const ModelBlock* a = blockPtr->m_parent;
         if (!a)
             continue;
         const ModelBlock* b = a->m_parent;
@@ -168,24 +150,8 @@ std::map<std::string, std::string> ModelBlock::parseTextures(const nlohmann::jso
 
 bool ModelBlock::parseAmbientOcclusion(const nlohmann::json& j) { return j.value("ambientocclusion", true); }
 
-// std::vector<ItemOverride> ModelBlock::parseOverrides(const nlohmann::json& j) {
-//     std::vector<ItemOverride> overrides;
-//     if (j.contains("overrides"))
-//         for (const auto& el : j.at("overrides")) {
-//             ItemOverride o;
-//             ItemOverride::from_json(el, o);
-//             overrides.push_back(std::move(o));
-//         }
-//     return overrides;
-// }
-
-
 void ModelBlock::from_json(const nlohmann::json& j, ModelBlock& b) {
     std::string parent = parseParent(j);
-
-    // ItemCameraTransforms transforms = ItemCameraTransforms::DEFAULT;
-    // if (j.contains("display"))
-    //     ItemCameraTransforms::from_json(j.at("display"), transforms);
 
     b = ModelBlock(parent.empty() ? std::nullopt : std::make_optional<ResourceLocation>(parent),
                    ModelBlock::parseElements(j), ModelBlock::parseTextures(j), ModelBlock::parseAmbientOcclusion(j),

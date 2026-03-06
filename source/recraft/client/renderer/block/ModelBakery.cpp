@@ -1,15 +1,13 @@
-#pragma once
-
 #include "client/renderer/block/ModelBakery.hpp"
 #include "misc/Crash.hpp"
 
 #include <fstream>
 #include <sstream>
 
-
 ModelBakery::ModelBakery(const std::string& assetRoot) : m_assetRoot(assetRoot) {}
 
 void ModelBakery::bakeAll() {
+    // ---- Pass 1: load all models (and their parents) into the cache ----
     for (uint16_t i = 0; i < static_cast<uint16_t>(BlockID::Count); ++i) {
         BlockID id = static_cast<BlockID>(i);
 
@@ -30,19 +28,15 @@ void ModelBakery::bakeAll() {
                 continue;
 
             const Variant& primary = variantList.getVariantList().front();
-
-            ModelBlock model;
-            loadModelJson(primary.getModelLocation(), model);
+            loadModelJson(primary.getModelLocation()); // inserts into m_modelCache
         }
     }
 
-    std::map<ResourceLocation, ModelBlock*> ptrMap;
-    for (auto& [key, model] : m_modelCache)
-        ptrMap[ResourceLocation(key)] = &model;
+    // ---- Pass 2: resolve parents — ALL insertions are done, pointers are stable ----
+    for (auto& [key, modelPtr] : m_modelCache)
+        modelPtr->getParentFromMap(m_modelCache);
 
-    for (auto& [key, model] : m_modelCache)
-        model.getParentFromMap(ptrMap);
-
+    // ---- Pass 3: bake variants ----
     for (uint16_t i = 0; i < static_cast<uint16_t>(BlockID::Count); ++i) {
         BlockID id = static_cast<BlockID>(i);
 
@@ -70,7 +64,7 @@ void ModelBakery::bakeAll() {
                 continue;
 
             ModelResourceLocation mrl(ResourceLocation("minecraft", name), variantKey);
-            BakedBlockVariant baked = bakeVariant(mrl, variantList, modelIt->second, primary);
+            BakedBlockVariant baked = bakeVariant(mrl, variantList, *modelIt->second, primary);
 
             auto [it, inserted] = m_bakedRegistry.emplace(mrl.toString(), std::move(baked));
             if (inserted) {
@@ -113,36 +107,41 @@ bool ModelBakery::loadBlockstateJson(const std::string& blockName, ModelBlockDef
         return false;
     }
 }
-bool ModelBakery::loadModelJson(const ResourceLocation& location, ModelBlock& outModel) {
+
+ModelBlock* ModelBakery::loadModelJson(const ResourceLocation& location) {
     const std::string key = location.toString();
 
-    auto cached = m_modelCache.find(key);
-    if (cached != m_modelCache.end()) {
-        outModel = cached->second;
-        return true;
-    }
+    // Return existing entry — never re-insert, keeps all pointers stable
+    auto it = m_modelCache.find(key);
+    if (it != m_modelCache.end())
+        return it->second.get();
 
     const std::string path = modelPath(location);
     std::ifstream file(path);
     if (!file.is_open())
-        return false;
+        return nullptr;
 
     try {
         nlohmann::json j;
         file >> j;
-        outModel = ModelBlock::deserialize(j);
-        outModel.name = key;
-        m_modelCache[key] = outModel;
 
-        // Recursively load parent
-        if (outModel.getParentLocation().has_value()) {
-            ModelBlock parentModel;
-            loadModelJson(*outModel.getParentLocation(), parentModel);
-        }
+        auto model = std::make_unique<ModelBlock>(ModelBlock::deserialize(j));
+        model->name = key;
 
-        return true;
+        // Grab parent location before moving the model into the cache
+        std::optional<ResourceLocation> parentLoc = model->getParentLocation();
+
+        // Insert into cache BEFORE recursing — prevents infinite loops on cycles
+        ModelBlock* raw = model.get();
+        m_modelCache.emplace(key, std::move(model));
+
+        // Recursively load parent (will early-out above if already cached)
+        if (parentLoc.has_value())
+            loadModelJson(*parentLoc);
+
+        return raw;
     } catch (...) {
-        return false;
+        return nullptr;
     }
 }
 

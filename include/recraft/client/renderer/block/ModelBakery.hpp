@@ -1,12 +1,10 @@
 #pragma once
 
-#pragma once
-
+#include <memory>
 #include <optional>
 #include <string>
 #include <unordered_map>
 #include <vector>
-
 
 #include "ModelBlock.hpp"
 #include "ModelBlockDefinition.hpp"
@@ -19,7 +17,7 @@
 struct BakedBlockVariant {
     ModelResourceLocation location;
     VariantList variantList;
-    ModelBlock model;
+    std::optional<ModelBlock> model;
     std::optional<ModelRotation> rotation;
     bool uvLock = false;
 };
@@ -40,7 +38,8 @@ public:
 private:
     bool loadBlockstateJson(const std::string& blockName, ModelBlockDefinition& outDefinition);
 
-    bool loadModelJson(const ResourceLocation& location, ModelBlock& outModel);
+    // Loads into the cache and returns a stable pointer (nullptr on failure)
+    ModelBlock* loadModelJson(const ResourceLocation& location);
 
     void resolveParents(ModelBlock& model, int depth = 0);
 
@@ -50,12 +49,11 @@ private:
     std::string blockstatePath(const std::string& blockName) const;
     std::string modelPath(const ResourceLocation& location) const;
 
-
     std::string m_assetRoot;
 
-    std::unordered_map<std::string, ModelBlock> m_modelCache;
+    // unique_ptr ensures stable addresses — raw pointers into this map never dangle
+    std::unordered_map<std::string, std::unique_ptr<ModelBlock>> m_modelCache;
 
-    // Blockstate definition cache — keyed by block name
     std::unordered_map<std::string, ModelBlockDefinition> m_blockstateCache;
 
     std::unordered_map<std::string, BakedBlockVariant> m_bakedRegistry;

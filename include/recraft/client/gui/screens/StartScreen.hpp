@@ -13,7 +13,6 @@ public:
 
 private:
     Clouds* m_clouds = nullptr;
-    C3D_Tex m_logoTex;
 };
 
 class StartBotScreen : public Screen {

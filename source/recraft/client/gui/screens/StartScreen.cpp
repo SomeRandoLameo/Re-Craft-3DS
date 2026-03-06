@@ -7,7 +7,6 @@ void StartTopScreen::Init() {
 }
 
 void StartTopScreen::Removed() {
-    C3D_TexDelete(&m_logoTex);
     delete m_clouds;
 }
 
