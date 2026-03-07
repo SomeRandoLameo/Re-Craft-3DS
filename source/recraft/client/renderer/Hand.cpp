@@ -7,11 +7,11 @@ int16_t toTexCoord(int x, int tw) { return (int16_t)(((float)(x) / (float)(tw)) 
 Hand::Hand() {
     m_handVBO = (WorldVertex*)linearAlloc(sizeof(cube_sides_lut));
 
-    Texture_Load(&m_SkinTexture, "romfs:/assets/minecraft/textures/entity/steve.png");
+    m_SkinTexture.Load("romfs:/assets/minecraft/textures/entity/steve.png");
 }
 Hand::~Hand() {
     linearFree(m_handVBO);
-    C3D_TexDelete(&m_SkinTexture);
+    m_SkinTexture.Unload();
 }
 
 void Hand::Draw(int projUniform, C3D_Mtx* projection, mc::inventory::Slot stack, Player* player) {
@@ -61,7 +61,7 @@ void Hand::Draw(int projUniform, C3D_Mtx* projection, mc::inventory::Slot stack,
                 m_handVBO[idx].rgb[2] = color[2];
             }
         } else {
-            C3D_TexBind(0, &m_SkinTexture);
+            m_SkinTexture.Bind();
 
             if (i == Direction::East ||
                 i == Direction::West) { // eines der dümmsten Dinge, die ich jemals in meinem Leben getan habe
@@ -81,12 +81,12 @@ void Hand::Draw(int projUniform, C3D_Mtx* projection, mc::inventory::Slot stack,
                 int idx = i * 6 + j;
 
                 const int16_t uvLookUp[6][4] = {
-                    {toTexCoord(48, 64), toTexCoord(52, 64), toTexCoord(20, 64), toTexCoord(32, 64)}, // west = inside
-                    {toTexCoord(40, 64), toTexCoord(44, 64), toTexCoord(20, 64), toTexCoord(32, 64)}, // east = outside
-                    {toTexCoord(52, 64), toTexCoord(56, 64), toTexCoord(20, 64), toTexCoord(32, 64)}, // bottom = back
-                    {toTexCoord(44, 64), toTexCoord(48, 64), toTexCoord(20, 64), toTexCoord(32, 64)}, // top = front
-                    {toTexCoord(48, 64), toTexCoord(52, 64), toTexCoord(16, 64), toTexCoord(20, 64)}, // south = bottom
-                    {toTexCoord(44, 64), toTexCoord(48, 64), toTexCoord(16, 64), toTexCoord(20, 64)}, // north = top
+                    {toTexCoord(48, 64), toTexCoord(52, 64), toTexCoord(44, 64), toTexCoord(32, 64)}, // west = inside
+                    {toTexCoord(40, 64), toTexCoord(44, 64), toTexCoord(44, 64), toTexCoord(32, 64)}, // east = outside
+                    {toTexCoord(52, 64), toTexCoord(56, 64), toTexCoord(44, 64), toTexCoord(32, 64)}, // bottom = back
+                    {toTexCoord(44, 64), toTexCoord(48, 64), toTexCoord(44, 64), toTexCoord(32, 64)}, // top = front
+                    {toTexCoord(48, 64), toTexCoord(52, 64), toTexCoord(48, 64), toTexCoord(44, 64)}, // south = bottom
+                    {toTexCoord(44, 64), toTexCoord(48, 64), toTexCoord(48, 64), toTexCoord(44, 64)}, // north = top
                 };
 
                 m_handVBO[idx].uv[0] = uvLookUp[i][m_handVBO[idx].uv[0]];

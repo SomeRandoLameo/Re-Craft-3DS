@@ -2,6 +2,8 @@
 
 #include <citro3d.h>
 
+#include <amethyst.hpp>
+
 #include "VertexFmt.hpp"
 #include "world/CT_World.hpp"
 
@@ -14,7 +16,7 @@ public:
 
 private:
     WorldVertex* m_cloudVBO = nullptr;
-    C3D_Tex m_texture;
+    Amy::Texture m_texture;
 
     static const int TEXTURE_SIZE = 64;
 };

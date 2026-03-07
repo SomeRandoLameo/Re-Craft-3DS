@@ -6,8 +6,6 @@ extern "C" {
 #include <string>
 #include <vector>
 
-void Texture_Load(C3D_Tex* result, const char* filename);
-
 class TextureMap {
 public:
     TextureMap() = default;
@@ -37,5 +35,3 @@ private:
     int m_mapSize = 512;
     int m_tileSize = 16;
 };
-
-void Texture_TileImage8(u8* src, u8* dst, int size);

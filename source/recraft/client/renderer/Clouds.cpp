@@ -1,14 +1,12 @@
 #include "client/renderer/Clouds.hpp"
-
 #include "client/renderer/VertexFmt.hpp"
 extern "C" {
 #include "sino/sino.h"
 }
 #include <stdint.h>
 
-#include "client/renderer/TextureMap.hpp"
-
 #include "amethyst/include/amethyst.hpp"
+#include "client/renderer/TextureMap.hpp"
 
 static WorldVertex vertices[] = {{{-1, 0, -1}, {0, 0}, {255, 255, 255}, {0, 0, 0}},
                                  {{1, 0, -1}, {INT16_MAX, 0}, {255, 255, 255}, {0, 0, 0}},
@@ -18,7 +16,7 @@ static WorldVertex vertices[] = {{{-1, 0, -1}, {0, 0}, {255, 255, 255}, {0, 0, 0
                                  {{-1, 0, -1}, {0, 0}, {255, 255, 255}, {0, 0, 0}}};
 
 Clouds::Clouds() {
-    uint8_t* map = (uint8_t*)malloc(TEXTURE_SIZE * TEXTURE_SIZE);
+    std::vector<Amy::uc> map(TEXTURE_SIZE * TEXTURE_SIZE, 0x00);
     for (int i = 0; i < TEXTURE_SIZE; i++) {
         for (int j = 0; j < TEXTURE_SIZE; j++) {
             float noise = sino_2d(j * 0.2f, i * 0.3f);
@@ -28,18 +26,14 @@ Clouds::Clouds() {
             map[j + i * TEXTURE_SIZE] = (noise / 3.f > 0.2f) * 15 | (15 << 4);
         }
     }
-    C3D_TexInit(&m_texture, TEXTURE_SIZE, TEXTURE_SIZE, GPU_LA4);
-    C3D_TexSetWrap(&m_texture, GPU_REPEAT, GPU_REPEAT);
-    Texture_TileImage8(map, (uint8_t*)m_texture.data, TEXTURE_SIZE);
-
-    free(map);
+    m_texture.Load(map, TEXTURE_SIZE, TEXTURE_SIZE, 1, Amy::Image::Format::LA4, Amy::Texture::Repeat);
 
     m_cloudVBO = (WorldVertex*)linearAlloc(sizeof(vertices));
     memcpy(m_cloudVBO, vertices, sizeof(vertices));
 }
 
 Clouds::~Clouds() {
-    C3D_TexDelete(&m_texture);
+    m_texture.Unload();
     linearFree(m_cloudVBO);
 }
 
@@ -53,7 +47,7 @@ void Clouds::Draw(int projUniform, C3D_Mtx* projectionview, float tx, float tz) 
 
     C3D_AlphaTest(true, GPU_GREATER, 0);
 
-    C3D_TexBind(0, &m_texture);
+    m_texture.Bind();
 
     const int stepX = 4;
     const int stepZ = 6;

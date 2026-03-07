@@ -1,15 +1,15 @@
 #pragma once
 
 #include <citro3d.h>
+#include <string.h>
 
+#include <amethyst.hpp>
+
+#include "TextureMap.hpp"
 #include "VertexFmt.hpp"
 #include "block/Block.hpp"
 #include "client/entity/Player.hpp"
 #include "misc/NumberUtils.hpp"
-
-#include "TextureMap.hpp"
-
-#include <string.h>
 
 class Hand {
 public:
@@ -19,5 +19,5 @@ public:
 
 private:
     WorldVertex* m_handVBO = nullptr;
-    C3D_Tex m_SkinTexture;
+    Amy::Texture m_SkinTexture;
 };
