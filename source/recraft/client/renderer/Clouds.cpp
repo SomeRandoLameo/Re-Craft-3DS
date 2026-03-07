@@ -1,8 +1,5 @@
 #include "client/renderer/Clouds.hpp"
 #include "client/renderer/VertexFmt.hpp"
-extern "C" {
-#include "sino/sino.h"
-}
 #include <stdint.h>
 
 #include "amethyst/include/amethyst.hpp"
@@ -16,17 +13,7 @@ static WorldVertex vertices[] = {{{-1, 0, -1}, {0, 0}, {255, 255, 255}, {0, 0, 0
                                  {{-1, 0, -1}, {0, 0}, {255, 255, 255}, {0, 0, 0}}};
 
 Clouds::Clouds() {
-    std::vector<Amy::uc> map(TEXTURE_SIZE * TEXTURE_SIZE, 0x00);
-    for (int i = 0; i < TEXTURE_SIZE; i++) {
-        for (int j = 0; j < TEXTURE_SIZE; j++) {
-            float noise = sino_2d(j * 0.2f, i * 0.3f);
-            for (int k = 1; k < 3; k++) {
-                noise += sino_2d(j * 0.15f / 1, i * 0.2f / 1);
-            }
-            map[j + i * TEXTURE_SIZE] = (noise / 3.f > 0.2f) * 15 | (15 << 4);
-        }
-    }
-    m_texture.Load(map, TEXTURE_SIZE, TEXTURE_SIZE, 1, Amy::Image::Format::LA4, Amy::Texture::Repeat);
+    m_texture.Load("romfs:/assets/minecraft/textures/environment/clouds.png", Amy::Texture::Repeat);
 
     m_cloudVBO = (WorldVertex*)linearAlloc(sizeof(vertices));
     memcpy(m_cloudVBO, vertices, sizeof(vertices));
