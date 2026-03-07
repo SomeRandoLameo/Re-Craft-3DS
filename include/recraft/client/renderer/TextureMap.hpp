@@ -23,6 +23,7 @@ public:
 
     void Init(const std::string& path);
     const Icon& Get(const char* filename);
+    const Icon& Get(uint32_t id);
     C3D_Tex* GetTexture() { return &m_texture; }
 
     const int GetMapSize() const { return m_mapSize; }

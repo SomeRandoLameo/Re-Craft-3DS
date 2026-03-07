@@ -378,13 +378,8 @@ void BlockRegistry::GetTextureUV(BlockID block, uint8_t metadata, Direction dire
         auto faceIt = part.mapFaces.find(facing);
 
         if (faceIt != part.mapFaces.end()) {
-            std::string texName = variant->model->resolveTextureName(faceIt->second.texture);
-
-            size_t slashPos = texName.rfind('/');
-            std::string filename =
-                (slashPos != std::string::npos) ? texName.substr(slashPos + 1) + ".png" : texName + ".png";
-
-            const TextureMap::Icon& icon = BlockRegistry::GetTextureMapEx()->Get(filename.c_str());
+            const std::string& texName = variant->model->resolveTextureName(faceIt->second.texture);
+            const TextureMap::Icon& icon = BlockRegistry::GetTextureMapEx()->Get(texName.c_str());
             out_uv[0] = icon.u;
             out_uv[1] = icon.v;
             return;

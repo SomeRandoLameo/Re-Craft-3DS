@@ -4,21 +4,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "stb/stb_image.h"
 
 #include "ReCraftCore.hpp"
 #include "amethyst/include/amethyst.hpp"
-
 #include "client/renderer/TextureMap.hpp"
 #include "misc/Crash.hpp"
-
-uint32_t hash(const char* str) {
-    unsigned long hash = 5381;
-    int c;
-    while ((c = *str++))
-        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
-    return hash;
-}
+#include "stb/stb_image.h"
 
 unsigned int D7_TileIndex(const int& x, const int& y, const int& w) {
     return (((y >> 3) * (w >> 3) + (x >> 3)) << 6) +
@@ -100,7 +91,8 @@ void TextureMap::Init(const std::string& path) {
             }
 
             Icon icon;
-            icon.Hash = hash((char*)it.path().filename().string().c_str());
+            std::string fn = "blocks/" + it.path().filename().replace_extension("").string();
+            icon.Hash = Amy::Utils::FNV32(fn.c_str());
             int m = UvPrecision / m_mapSize;
             icon.u = locX * m;
             icon.v = locY * m;
@@ -127,9 +119,13 @@ void TextureMap::Init(const std::string& path) {
 }
 
 const TextureMap::Icon& TextureMap::Get(const char* filename) {
-    uint32_t h = hash(filename);
+    uint32_t h = Amy::Utils::FNV32(filename);
+    return Get(h);
+}
+
+const TextureMap::Icon& TextureMap::Get(uint32_t id) {
     for (size_t i = 0; i < GetMapTiles() * GetMapTiles(); i++) {
-        if (h == m_icons[i].Hash) {
+        if (id == m_icons[i].Hash) {
             return m_icons[i];
         }
     }
