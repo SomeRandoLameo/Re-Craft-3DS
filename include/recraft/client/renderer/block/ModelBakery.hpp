@@ -10,7 +10,7 @@
 #include "ModelBlockDefinition.hpp"
 #include "ModelResourceLocation.hpp"
 #include "VariantList.hpp"
-#include "blocks/Block.hpp"
+#include "block/Block.hpp"
 
 struct BakedBlockVariant {
     ModelResourceLocation location;

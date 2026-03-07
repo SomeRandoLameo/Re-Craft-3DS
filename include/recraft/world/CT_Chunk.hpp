@@ -1,6 +1,6 @@
 #pragma once
 
-#include "blocks/Block.hpp"
+#include "block/Block.hpp"
 
 #include "client/renderer/VBOCache.hpp"
 #include "mclib/block/BlockEntity.h"

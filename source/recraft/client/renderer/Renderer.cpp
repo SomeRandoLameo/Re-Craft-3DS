@@ -1,7 +1,7 @@
 #include "client/renderer/Renderer.hpp"
 
 #include "ReCraftCore.hpp"
-#include "blocks/Block.hpp"
+#include "block/Block.hpp"
 #include "client/gui/CT_Inventory.hpp"
 #include "client/gui/Gui.hpp"
 #include "client/renderer/Camera.hpp"

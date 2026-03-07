@@ -42,8 +42,8 @@ add_subdirectory(vendor)
 
 add_executable(${PROJECT_NAME}
     source/main.cpp
-    source/recraft/blocks/BlockEvent.cpp
-    source/recraft/blocks/Block.cpp
+    source/recraft/block/BlockEvent.cpp
+    source/recraft/block/Block.cpp
     source/recraft/client/entity/Damage.cpp
     source/recraft/client/entity/Entity.cpp
     source/recraft/client/entity/Player.cpp

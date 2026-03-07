@@ -3,7 +3,7 @@
 #include <citro3d.h>
 
 #include "VertexFmt.hpp"
-#include "blocks/Block.hpp"
+#include "block/Block.hpp"
 #include "client/entity/Player.hpp"
 #include "misc/NumberUtils.hpp"
 

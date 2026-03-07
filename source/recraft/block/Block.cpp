@@ -1,7 +1,7 @@
-#include "blocks/Block.hpp"
+#include "block/Block.hpp"
 #include "ReCraftCore.hpp"
-#include "blocks/GrassBlock.h"
-#include "blocks/LeavesBlock.h"
+#include "block/GrassBlock.h"
+#include "block/LeavesBlock.h"
 #include "util/EnumFacing.hpp"
 
 Block* Block::setHardness(float hardness) {

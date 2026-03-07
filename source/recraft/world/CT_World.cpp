@@ -2,7 +2,7 @@
 #include "world/ChunkWorker.hpp"
 #include "world/savegame/SaveManager.hpp"
 
-#include "blocks/BlockEvents.hpp"
+#include "block/BlockEvents.hpp"
 
 #include <climits>
 #include <cstdint>

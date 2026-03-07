@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 #include "client/renderer/TextureMap.hpp"
+#include "creativetab/CreativeTab.hpp"
 #include "mclib/block/Block.h"
 #include "mclib/inventory/Slot.h"
 #include "misc/Crash.hpp"
@@ -321,22 +322,6 @@ struct BlockTextures {
 
 typedef u8 Metadata;
 
-// TODO:
-enum class CreativeTabs {
-    BUILDING_BLOCKS,
-    DECORATIONS,
-    REDSTONE,
-    TRANSPORTATION,
-    MISC,
-    SEARCH,
-    FOOD,
-    TOOLS,
-    COMBAT,
-    BREWING,
-    MATERIALS,
-    field_192395_m,
-    INVENTORY,
-};
 
 class Block {
 public:

@@ -1,5 +1,5 @@
 #include "client/renderer/WorldRenderer.hpp"
-#include "blocks/Block.hpp"
+#include "block/Block.hpp"
 #include "client/gui/DebugUI.hpp"
 #include "client/renderer/Clouds.hpp"
 #include "client/renderer/Hand.hpp"

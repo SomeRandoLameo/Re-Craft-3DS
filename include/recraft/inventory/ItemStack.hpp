@@ -10,7 +10,7 @@
 #include "mclib/util/Utility.h"
 #include "mclib/util/VersionFetcher.h"
 
-#include "blocks/Block.hpp"
+#include "block/Block.hpp"
 
 #include "misc/NumberUtils.hpp"
 
