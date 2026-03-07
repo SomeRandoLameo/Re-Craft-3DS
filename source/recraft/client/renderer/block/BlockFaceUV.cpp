@@ -1,10 +1,9 @@
 #include "client/renderer/block/BlockFaceUV.hpp"
 
 BlockFaceUV::BlockFaceUV(std::optional<std::array<float, 4>> uvsIn, int rotationIn) :
-    uvs(std::move(uvsIn)), rotation(rotationIn) {}
+    uvs(uvsIn), rotation(rotationIn) {}
 
 int BlockFaceUV::GetVertexRotated(int vertex) const { return (vertex + rotation / 90) % 4; }
-
 
 float BlockFaceUV::GetVertexU(int vertex) const {
     if (!uvs.has_value())
@@ -26,7 +25,7 @@ int BlockFaceUV::GetVertexRotatedRev(int vertex) const { return (vertex + (4 - r
 
 void BlockFaceUV::SetUvs(const std::array<float, 4>& uvsIn) {
     if (!uvs.has_value())
-        uvs = uvsIn;
+        uvs.emplace(uvsIn);
 }
 
 int BlockFaceUV::parseRotation(const nlohmann::json& j) {

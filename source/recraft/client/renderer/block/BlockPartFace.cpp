@@ -6,7 +6,7 @@ BlockPartFace::BlockPartFace(std::optional<EnumFacing::Value> cullFaceIn, int ti
 }
 
 std::optional<EnumFacing::Value> BlockPartFace::parseCullFace(const nlohmann::json& j) {
-    std::string s = j.value("cullface", "");
+    const auto& s = j.value("cullface", std::string{});
     if (s.empty())
         return std::nullopt;
     return EnumFacing::byName(s);

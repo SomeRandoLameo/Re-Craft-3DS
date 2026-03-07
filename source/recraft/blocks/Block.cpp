@@ -49,8 +49,7 @@ Block* Block::setCreativeTab(CreativeTabs tab) {
     return this;
 }
 
-Block* Block::setLightLevel(float value)
-{
+Block* Block::setLightLevel(float value) {
     m_lightValue = (int)(15.0F * value);
     return this;
 }
@@ -60,8 +59,7 @@ Block* Block::setLightOpacity(int opacity) {
     return this;
 }
 
-Block* Block::disableStats()
-{
+Block* Block::disableStats() {
     m_enableStats = false;
     return this;
 }
@@ -72,41 +70,25 @@ void Block::getColor(Metadata metadata, Direction direction, Metadata out_rgb[])
     out_rgb[2] = 255;
 }
 
-BlockID Block::GetID() const {
-    return m_id;
-}
+BlockID Block::GetID() const { return m_id; }
 
-float Block::getHardness() const {
-    return m_blockHardness;
-}
+float Block::getHardness() const { return m_blockHardness; }
 
-bool Block::isOpaque(Metadata metadata) const {
-    return m_opaque;
-}
+bool Block::isOpaque(Metadata metadata) const { return m_opaque; }
 
-bool Block::isSolid() const {
-    return m_solid;
-}
+bool Block::isSolid() const { return m_solid; }
 
-SoundType Block::getSoundType() const {
-    return m_soundType;
-}
+SoundType Block::getSoundType() const { return m_soundType; }
 
-uint8_t Block::getLightEmission() const {
-    return m_lightEmission;
-}
-
-
-
-
-
+uint8_t Block::getLightEmission() const { return m_lightEmission; }
 
 
 TextureMap BlockRegistry::m_textureMap;
 
 BlockRegistry::BlockRegistry() {}
 
-//TODO: Individual block classes
+// TODO: Individual block classes
+// clang-format off
 void BlockRegistry::Init() {
     m_textureMap.Init("romfs:/assets/minecraft/textures/blocks");
 
@@ -370,20 +352,20 @@ void BlockRegistry::Init() {
     RegisterBlock(BlockID::Concrete_Powder, "concrete_powder", (new Block())->setHardness(0.5F)->setSoundType(SoundType::SAND)->setUnlocalizedName("concretePowder"));
     RegisterBlock(BlockID::Structure_Block, "structure_block",(new Block())->setBlockUnbreakable()->setResistance(6000000.0F)->setUnlocalizedName("structureBlock"));
 }
-
+// clang-format on
 BlockRegistry::~BlockRegistry() {}
 
-void BlockRegistry::GetTextureUV(BlockID block, uint8_t metadata, Direction direction, int16_t* out_uv)  {
+void BlockRegistry::GetTextureUV(BlockID block, uint8_t metadata, Direction direction, int16_t* out_uv) {
     out_uv[0] = 0;
     out_uv[1] = 0;
 
     static const EnumFacing::Value dirToFacing[] = {
-        EnumFacing::WEST,   // West
-        EnumFacing::EAST,   // East
-        EnumFacing::DOWN,   // Bottom
-        EnumFacing::UP,     // Top
-        EnumFacing::NORTH,  // North
-        EnumFacing::SOUTH,  // South
+        EnumFacing::WEST, // West
+        EnumFacing::EAST, // East
+        EnumFacing::DOWN, // Bottom
+        EnumFacing::UP, // Top
+        EnumFacing::NORTH, // North
+        EnumFacing::SOUTH, // South
     };
 
     const BakedBlockVariant* variant = ReCraftCore::GetInstance()->GetModelBakery()->getVariant(block, metadata);
@@ -399,9 +381,8 @@ void BlockRegistry::GetTextureUV(BlockID block, uint8_t metadata, Direction dire
             std::string texName = variant->model->resolveTextureName(faceIt->second.texture);
 
             size_t slashPos = texName.rfind('/');
-            std::string filename = (slashPos != std::string::npos)
-                ? texName.substr(slashPos + 1) + ".png"
-                : texName + ".png";
+            std::string filename =
+                (slashPos != std::string::npos) ? texName.substr(slashPos + 1) + ".png" : texName + ".png";
 
             const TextureMap::Icon& icon = BlockRegistry::GetTextureMapEx()->Get(filename.c_str());
             out_uv[0] = icon.u;

@@ -6,9 +6,7 @@ void StartTopScreen::Init() {
     m_ReCraftCore->GetAssetManager()->AutoLoad("logoTex", "romfs:/assets/minecraft/textures/gui/title/minecraft.png");
 }
 
-void StartTopScreen::Removed() {
-    delete m_clouds;
-}
+void StartTopScreen::Removed() { delete m_clouds; }
 
 bool StartTopScreen::IsInGameScreen() { return false; }
 

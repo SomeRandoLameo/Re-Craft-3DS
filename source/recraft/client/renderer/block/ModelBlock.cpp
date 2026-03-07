@@ -12,7 +12,6 @@ ModelBlock::ModelBlock(std::optional<ResourceLocation> parentLocationIn, std::ve
     // m_cameraTransforms(std::move(cameraTransformsIn)), m_overrides(std::move(overridesIn)),
     m_textures(std::move(texturesIn)), m_parentLocation(std::move(parentLocationIn)) {}
 
-
 ModelBlock ModelBlock::deserialize(const nlohmann::json& j) {
     ModelBlock b;
     ModelBlock::from_json(j, b);
@@ -20,13 +19,12 @@ ModelBlock ModelBlock::deserialize(const nlohmann::json& j) {
 }
 
 bool ModelBlock::hasParent() const { return m_parent != nullptr; }
+
 bool ModelBlock::isGui3d() const { return m_gui3d; }
 
-//TODO: Why the hell does it crash here...
 const std::vector<BlockPart>& ModelBlock::getElements() const {
-    if (m_elements.empty() && m_parent != nullptr) {
+    if (m_elements.empty() && m_parent != nullptr)
         return m_parent->getElements();
-    }
     return m_elements;
 }
 
@@ -39,39 +37,32 @@ bool ModelBlock::isResolved() const {
 }
 
 void ModelBlock::getParentFromMap(const std::unordered_map<std::string, std::unique_ptr<ModelBlock>>& map) {
-    if (m_parentLocation.has_value()) {
-        // Try direct lookup first
-        auto it = map.find(m_parentLocation->toString());
-        if (it != map.end()) {
-            m_parent = it->second.get();
-            return;
-        }
+    if (!m_parentLocation.has_value())
+        return;
 
-        // Try with minecraft: prefix added
-        ResourceLocation withNamespace("minecraft", m_parentLocation->getResourcePath());
-        it = map.find(withNamespace.toString());
-        if (it != map.end()) {
-            m_parent = it->second.get();
-            return;
-        }
-
-        Crash("ModelBlock: could not resolve parent {} for model",
-              m_parentLocation->toString());
+    auto it = map.find(m_parentLocation->toString());
+    if (it != map.end()) {
+        m_parent = it->second.get();
+        return;
     }
+
+    ResourceLocation withNamespace("minecraft", m_parentLocation->getResourcePath());
+    it = map.find(withNamespace.toString());
+    if (it != map.end()) {
+        m_parent = it->second.get();
+        return;
+    }
+
+    Crash("ModelBlock: could not resolve parent {} for model", m_parentLocation->toString());
 }
 
 std::vector<ResourceLocation> ModelBlock::getOverrideLocations() const {
-    std::vector<ResourceLocation> locs;
-    // for (const auto& o : m_overrides)
-    //     locs.push_back(o.getLocation());
-    return locs;
+    return {}; // TODO
 }
 
-std::optional<ResourceLocation> ModelBlock::getParentLocation() const { return m_parentLocation; }
+const std::optional<ResourceLocation>& ModelBlock::getParentLocation() const { return m_parentLocation; }
 
 const ModelBlock* ModelBlock::getRootModel() const { return hasParent() ? m_parent->getRootModel() : this; }
-
-// ---- Texture resolution -----------------------------------------------------
 
 bool ModelBlock::startsWithHash(const std::string& s) const { return !s.empty() && s[0] == '#'; }
 
@@ -89,10 +80,8 @@ std::string ModelBlock::resolveTextureName(const std::string& textureName, Bookk
     if (!startsWithHash(textureName))
         return textureName;
 
-    if (this == bk.modelExt) {
-        // LOGGER warn would go here
+    if (this == bk.modelExt)
         return "missingno";
-    }
 
     auto it = m_textures.find(textureName.substr(1));
     std::string s = (it != m_textures.end()) ? it->second : "";
@@ -129,12 +118,16 @@ void ModelBlock::checkModelHierarchy(const std::unordered_map<std::string, std::
 
 std::vector<BlockPart> ModelBlock::parseElements(const nlohmann::json& j) {
     std::vector<BlockPart> elements;
-    if (j.contains("elements"))
-        for (const auto& el : j.at("elements")) {
-            BlockPart part;
-            BlockPart::from_json(el, part);
-            elements.push_back(std::move(part));
-        }
+    if (!j.contains("elements"))
+        return elements;
+
+    const auto& arr = j.at("elements");
+    elements.reserve(arr.size());
+
+    for (const auto& el : arr) {
+        BlockPart& part = elements.emplace_back();
+        BlockPart::from_json(el, part);
+    }
     return elements;
 }
 
@@ -144,7 +137,7 @@ std::map<std::string, std::string> ModelBlock::parseTextures(const nlohmann::jso
     std::map<std::string, std::string> map;
     if (j.contains("textures"))
         for (const auto& [k, v] : j.at("textures").items())
-            map[k] = v.get<std::string>();
+            map.emplace(k, v.get<std::string>());
     return map;
 }
 
@@ -152,8 +145,6 @@ bool ModelBlock::parseAmbientOcclusion(const nlohmann::json& j) { return j.value
 
 void ModelBlock::from_json(const nlohmann::json& j, ModelBlock& b) {
     std::string parent = parseParent(j);
-
-    b = ModelBlock(parent.empty() ? std::nullopt : std::make_optional<ResourceLocation>(parent),
-                   ModelBlock::parseElements(j), ModelBlock::parseTextures(j), ModelBlock::parseAmbientOcclusion(j),
-                   true /*, transforms, ModelBlock::parseOverrides(j)*/);
+    b = ModelBlock(parent.empty() ? std::nullopt : std::make_optional<ResourceLocation>(parent), parseElements(j),
+                   parseTextures(j), parseAmbientOcclusion(j), true);
 }

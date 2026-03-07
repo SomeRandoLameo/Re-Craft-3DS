@@ -7,41 +7,36 @@
 ModelBakery::ModelBakery(const std::string& assetRoot) : m_assetRoot(assetRoot) {}
 
 void ModelBakery::bakeAll() {
-    // ---- Pass 1: load all models (and their parents) into the cache ----
     for (uint16_t i = 0; i < static_cast<uint16_t>(BlockID::Count); ++i) {
         BlockID id = static_cast<BlockID>(i);
 
-        BlockPtr block = BlockRegistry::GetInstance().GetBlock(id);
-        if (!block)
+        if (!BlockRegistry::GetInstance().GetBlock(id))
             continue;
 
         const std::string& name = BlockRegistry::GetTextualID(id);
         if (name.empty())
             continue;
 
-        ModelBlockDefinition definition;
-        if (!loadBlockstateJson(name, definition))
+        const ModelBlockDefinition* definition = loadBlockstateJson(name);
+        if (!definition)
             continue;
 
-        for (const auto& [variantKey, variantList] : definition.getVariants()) {
+        for (const auto& [variantKey, variantList] : definition->getVariants()) {
             if (variantList.getVariantList().empty())
                 continue;
 
             const Variant& primary = variantList.getVariantList().front();
-            loadModelJson(primary.getModelLocation()); // inserts into m_modelCache
+            loadModelJson(primary.getModelLocation());
         }
     }
 
-    // ---- Pass 2: resolve parents — ALL insertions are done, pointers are stable ----
     for (auto& [key, modelPtr] : m_modelCache)
         modelPtr->getParentFromMap(m_modelCache);
 
-    // ---- Pass 3: bake variants ----
     for (uint16_t i = 0; i < static_cast<uint16_t>(BlockID::Count); ++i) {
         BlockID id = static_cast<BlockID>(i);
 
-        const BlockPtr block = BlockRegistry::GetBlock(id);
-        if (!block)
+        if (!BlockRegistry::GetBlock(id))
             continue;
 
         const std::string& name = BlockRegistry::GetTextualID(id);
@@ -91,33 +86,33 @@ const std::unordered_map<std::string, BakedBlockVariant>& ModelBakery::getAllVar
     return m_bakedRegistry;
 }
 
-bool ModelBakery::loadBlockstateJson(const std::string& blockName, ModelBlockDefinition& outDefinition) {
-    const std::string path = blockstatePath(blockName);
-    std::ifstream file(path);
+const ModelBlockDefinition* ModelBakery::loadBlockstateJson(const std::string& blockName) {
+    auto existing = m_blockstateCache.find(blockName);
+    if (existing != m_blockstateCache.end())
+        return &existing->second;
+
+    std::ifstream file(blockstatePath(blockName));
     if (!file.is_open())
-        return false;
+        return nullptr;
 
     try {
         nlohmann::json j;
         file >> j;
-        outDefinition = ModelBlockDefinition::parseFromJson(j);
-        m_blockstateCache[blockName] = outDefinition;
-        return true;
+        auto [it, _] = m_blockstateCache.emplace(blockName, ModelBlockDefinition::parseFromJson(j));
+        return &it->second;
     } catch (...) {
-        return false;
+        return nullptr;
     }
 }
 
 ModelBlock* ModelBakery::loadModelJson(const ResourceLocation& location) {
     const std::string key = location.toString();
 
-    // Return existing entry — never re-insert, keeps all pointers stable
     auto it = m_modelCache.find(key);
     if (it != m_modelCache.end())
         return it->second.get();
 
-    const std::string path = modelPath(location);
-    std::ifstream file(path);
+    std::ifstream file(modelPath(location));
     if (!file.is_open())
         return nullptr;
 
@@ -128,14 +123,11 @@ ModelBlock* ModelBakery::loadModelJson(const ResourceLocation& location) {
         auto model = std::make_unique<ModelBlock>(ModelBlock::deserialize(j));
         model->name = key;
 
-        // Grab parent location before moving the model into the cache
         std::optional<ResourceLocation> parentLoc = model->getParentLocation();
 
-        // Insert into cache BEFORE recursing — prevents infinite loops on cycles
         ModelBlock* raw = model.get();
         m_modelCache.emplace(key, std::move(model));
 
-        // Recursively load parent (will early-out above if already cached)
         if (parentLoc.has_value())
             loadModelJson(*parentLoc);
 

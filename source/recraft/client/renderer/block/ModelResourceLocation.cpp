@@ -20,14 +20,13 @@ ModelResourceLocation::ParsedPath ModelResourceLocation::parsePathString(const s
 
     std::string locationPart = pathIn;
 
-    // Split off variant at '#'
     auto hashPos = pathIn.find('#');
     if (hashPos != std::string::npos) {
         result.variant = pathIn.substr(hashPos + 1);
         if (hashPos > 1)
             locationPart = pathIn.substr(0, hashPos);
         else
-            locationPart = pathIn; // malformed, keep full string as path
+            locationPart = pathIn;
     }
 
     if (result.variant.empty())

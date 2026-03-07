@@ -1,15 +1,15 @@
 #pragma once
 
-#include "BlockPart.hpp"
-#include "util/ResourceLocation.hpp"
 #include <map>
 #include <memory>
 #include <optional>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 #include <vector>
+#include "BlockPart.hpp"
+#include "util/ResourceLocation.hpp"
 
-// TODO: Add the rest if needed
 class ModelBlock {
 public:
     std::string name;
@@ -27,19 +27,16 @@ public:
     bool isGui3d() const;
     bool isResolved() const;
 
-    // Takes the model cache directly — unique_ptr guarantees stable addresses
     void getParentFromMap(const std::unordered_map<std::string, std::unique_ptr<ModelBlock>>& map);
 
     std::vector<ResourceLocation> getOverrideLocations() const;
-    // const std::vector<ItemOverride>& getOverrides() const;
-    // ItemOverrideList createOverrides() const;
 
     bool isTexturePresent(const std::string& textureName) const;
     std::string resolveTextureName(const std::string& textureName) const;
 
-    std::optional<ResourceLocation> getParentLocation() const;
+    const std::optional<ResourceLocation>& getParentLocation() const;
+
     const ModelBlock* getRootModel() const;
-    // ItemCameraTransforms getAllTransforms() const;
 
     static void checkModelHierarchy(const std::unordered_map<std::string, std::unique_ptr<ModelBlock>>& models);
 
@@ -70,13 +67,11 @@ private:
     };
 
     std::string resolveTextureName(const std::string& textureName, Bookkeep& bookkeep) const;
-    // ItemTransformVec3f getTransform(ItemCameraTransforms::TransformType type) const;
 
     static std::vector<BlockPart> parseElements(const nlohmann::json& j);
     static std::string parseParent(const nlohmann::json& j);
     static std::map<std::string, std::string> parseTextures(const nlohmann::json& j);
     static bool parseAmbientOcclusion(const nlohmann::json& j);
-    // static std::vector<ItemOverride> parseOverrides(const nlohmann::json& j);
 
     static void from_json(const nlohmann::json& j, ModelBlock& b);
 };

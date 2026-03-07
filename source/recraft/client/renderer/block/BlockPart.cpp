@@ -5,17 +5,13 @@
 #include <stdexcept>
 #include <string>
 
-// ---- Constructor ------------------------------------------------------------
-
-BlockPart::BlockPart(mc::Vector3f positionFromIn, mc::Vector3f positionToIn,
+BlockPart::BlockPart(const mc::Vector3f& positionFromIn, const mc::Vector3f& positionToIn,
                      std::map<EnumFacing::Value, BlockPartFace> mapFacesIn,
                      std::optional<BlockPartRotation> partRotationIn, bool shadeIn) :
     positionFrom(positionFromIn), positionTo(positionToIn), mapFaces(std::move(mapFacesIn)),
-    partRotation(partRotationIn), shade(shadeIn) {
+    partRotation(std::move(partRotationIn)), shade(shadeIn) {
     SetDefaultUvs();
 }
-
-// ---- UV helpers -------------------------------------------------------------
 
 void BlockPart::SetDefaultUvs() {
     for (auto& [facing, face] : mapFaces)
@@ -40,31 +36,30 @@ std::array<float, 4> BlockPart::GetFaceUvs(EnumFacing::Value facing) const {
     }
 }
 
-
-mc::Vector3f BlockPart::parsePosition(const nlohmann::json& j, const std::string& member) {
+mc::Vector3f BlockPart::parsePosition(const nlohmann::json& j, std::string_view member) {
     const auto& arr = j.at(member);
 
     if (!arr.is_array() || arr.size() != 3) {
         throw nlohmann::json::parse_error::create(
-            101, 0, "Expected 3 " + member + " values, found: " + std::to_string(arr.size()), nullptr);
+            101, 0, "Expected 3 " + std::string(member) + " values, found: " + std::to_string(arr.size()), nullptr);
     }
 
     return {arr[0].get<float>(), arr[1].get<float>(), arr[2].get<float>()};
 }
 
-mc::Vector3f BlockPart::parsePositionBounded(const nlohmann::json& j, const std::string& member) {
+mc::Vector3f BlockPart::parsePositionBounded(const nlohmann::json& j, std::string_view member) {
     mc::Vector3f v = parsePosition(j, member);
 
     if (v.x < -16.0f || v.y < -16.0f || v.z < -16.0f || v.x > 32.0f || v.y > 32.0f || v.z > 32.0f) {
-        throw nlohmann::json::parse_error::create(101, 0, "'" + member + "' specifier exceeds the allowed boundaries",
-                                                  nullptr);
+        throw nlohmann::json::parse_error::create(
+            101, 0, "'" + std::string(member) + "' specifier exceeds the allowed boundaries", nullptr);
     }
 
     return v;
 }
 
 EnumFacing::Axis::Value BlockPart::parseAxis(const nlohmann::json& j) {
-    std::string s = j.at("axis").get<std::string>();
+    const auto& s = j.at("axis").get_ref<const std::string&>();
     auto axis = EnumFacing::Axis::byName(s);
 
     if (!axis) {
@@ -110,10 +105,9 @@ std::map<EnumFacing::Value, BlockPartFace> BlockPart::parseFaces(const nlohmann:
     std::map<EnumFacing::Value, BlockPartFace> map;
     const auto& faces = j.at("faces");
 
-    for (auto& [key, val] : faces.items()) {
-        BlockPartFace face;
+    for (const auto& [key, val] : faces.items()) {
+        auto& face = map[parseEnumFacing(key)];
         BlockPartFace::from_json(val, face);
-        map.emplace(parseEnumFacing(key), std::move(face));
     }
 
     if (map.empty()) {
@@ -127,10 +121,11 @@ void BlockPart::from_json(const nlohmann::json& j, BlockPart& b) {
     bool hasShade = true;
 
     if (j.contains("shade")) {
-        if (!j.at("shade").is_boolean()) {
+        const auto& shadeVal = j.at("shade");
+        if (!shadeVal.is_boolean()) {
             throw nlohmann::json::parse_error::create(101, 0, "Expected shade to be a Boolean", nullptr);
         }
-        hasShade = j.at("shade").get<bool>();
+        hasShade = shadeVal.get<bool>();
     }
 
     b = BlockPart(parsePositionBounded(j, "from"), parsePositionBounded(j, "to"), parseFaces(j), parseRotation(j),

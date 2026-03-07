@@ -3,6 +3,7 @@
 #include <array>
 #include <map>
 #include <optional>
+#include <string_view>
 #include "BlockPartFace.hpp"
 #include "BlockPartRotation.hpp"
 #include "internal/json.hpp"
@@ -15,7 +16,7 @@ public:
     std::optional<BlockPartRotation> partRotation;
     bool shade;
 
-    BlockPart(mc::Vector3f positionFromIn, mc::Vector3f positionToIn,
+    BlockPart(const mc::Vector3f& positionFromIn, const mc::Vector3f& positionToIn,
               std::map<EnumFacing::Value, BlockPartFace> mapFacesIn, std::optional<BlockPartRotation> partRotationIn,
               bool shadeIn);
 
@@ -26,12 +27,10 @@ public:
 private:
     void SetDefaultUvs();
     std::array<float, 4> GetFaceUvs(EnumFacing::Value facing) const;
-    std::optional<std::array<float, 4>> parseUV(const nlohmann::json& j);
-
 
     static std::map<EnumFacing::Value, BlockPartFace> parseFaces(const nlohmann::json& j);
-    static mc::Vector3f parsePosition(const nlohmann::json& j, const std::string& member);
-    static mc::Vector3f parsePositionBounded(const nlohmann::json& j, const std::string& member);
+    static mc::Vector3f parsePosition(const nlohmann::json& j, std::string_view member);
+    static mc::Vector3f parsePositionBounded(const nlohmann::json& j, std::string_view member);
     static EnumFacing::Axis::Value parseAxis(const nlohmann::json& j);
     static float parseAngle(const nlohmann::json& j);
     static std::optional<BlockPartRotation> parseRotation(const nlohmann::json& j);

@@ -7,8 +7,11 @@ Variant::Variant(ResourceLocation modelLocation, const ModelRotation& rotation, 
     m_modelLocation(std::move(modelLocation)), m_rotation(rotation), m_uvLock(uvLock), m_weight(weight) {}
 
 const ResourceLocation& Variant::getModelLocation() const { return m_modelLocation; }
+
 const ModelRotation& Variant::getRotation() const { return m_rotation; }
+
 bool Variant::isUvLock() const { return m_uvLock; }
+
 int Variant::getWeight() const { return m_weight; }
 
 bool Variant::operator==(const Variant& other) const {

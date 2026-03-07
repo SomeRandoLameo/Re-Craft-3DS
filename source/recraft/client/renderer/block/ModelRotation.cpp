@@ -96,6 +96,7 @@ int ModelRotation::rotateVertex(EnumFacing facing, int vertexIndex) const {
 }
 
 bool ModelRotation::operator==(const ModelRotation& other) const { return m_value == other.m_value; }
+
 bool ModelRotation::operator!=(const ModelRotation& other) const { return !(*this == other); }
 
 std::size_t ModelRotation::hashCode() const { return static_cast<std::size_t>(m_value); }

@@ -321,8 +321,8 @@ struct BlockTextures {
 
 typedef u8 Metadata;
 
-//TODO:
-enum class CreativeTabs{
+// TODO:
+enum class CreativeTabs {
     BUILDING_BLOCKS,
     DECORATIONS,
     REDSTONE,
@@ -383,7 +383,7 @@ public:
 
 protected:
     BlockID m_id;
-    //const char* m_identifier;
+    // const char* m_identifier;
     BlockTextures m_textures;
     float m_blockHardness;
     bool m_opaque;
@@ -414,7 +414,7 @@ public:
     void Init();
 
     BlockPtr RegisterBlock(BlockID id, const std::string& textualID, BlockPtr block) {
-        GetInstance().m_registry[(uint16_t)id] = { textualID, std::unique_ptr<Block>(block) };
+        GetInstance().m_registry[(uint16_t)id] = {textualID, std::unique_ptr<Block>(block)};
         GetInstance().m_keyToId[textualID] = (uint16_t)id;
 
         if (textualID == GetInstance().m_defaultKey) {
@@ -422,8 +422,7 @@ public:
             GetInstance().m_defaultValue = GetInstance().m_registry[(uint16_t)id].second.get();
         }
 
-        return GetInstance().m_defaultValue != nullptr ?
-                                                       GetInstance().m_registry[(uint16_t)id].second.get() : block;
+        return GetInstance().m_defaultValue != nullptr ? GetInstance().m_registry[(uint16_t)id].second.get() : block;
     }
 
     static const BlockPtr GetBlock(BlockID id) {
