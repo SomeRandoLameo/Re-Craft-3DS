@@ -2,7 +2,7 @@
 
 void GuiInGameTop::Init() {
     m_ReCraftCore->GetAssetManager()->AutoLoad("GuiTexture_icons", "romfs:/assets/minecraft/textures/gui/icons.png");
-    Screen::Init();
+    GuiScreen::Init();
 }
 
 bool GuiInGameTop::IsInGameScreen() { return true; }
@@ -18,7 +18,7 @@ void GuiInGameTop::Render(int mouseX, int mouseY, float delta) {
         RenderHunger();
     }
 
-    Screen::Render(mouseX, mouseY, delta);
+    GuiScreen::Render(mouseX, mouseY, delta);
 }
 
 // this is actual minecraft ported code
@@ -178,10 +178,10 @@ void GuiInGameBot::Render(int mouseX, int mouseY, float delta) {
                     m_player->inventorySite);
 
     m_player->inventorySite = m_inventory->currentSite;
-    Screen::Render(mouseX, mouseY, delta);
+    GuiScreen::Render(mouseX, mouseY, delta);
 }
 
-void GuiInGameBot::ButtonClicked() { Screen::ButtonClicked(); }
+void GuiInGameBot::ButtonClicked() { GuiScreen::ButtonClicked(); }
 
 void GuiInGameBot::RenderHotbar(int x, int y, mc::inventory::Slot* stacks, int& selected) {
     RenderData->DrawTex(ReCraftCore::GetInstance()->GetAssetManager()->Get<Amy::Texture>("GuiTexture_Widgets"));

@@ -5,7 +5,7 @@
 CreateWorldBotScreen::CreateWorldBotScreen(std::vector<WorldInfo> worldInfo) { m_worlds = std::move(worldInfo); }
 
 
-void CreateWorldBotScreen::Init() { Screen::Init(); }
+void CreateWorldBotScreen::Init() { GuiScreen::Init(); }
 // TODO: De-Noodle-c-ify
 void CreateWorldBotScreen::Render(int mouseX, int mouseY, float f) {
     Gui::DrawDefaultBackground();
@@ -39,7 +39,7 @@ void CreateWorldBotScreen::Render(int mouseX, int mouseY, float f) {
     m_canceled_world_options = Gui::Button(0.45f, "Cancel");
     Gui::Space(0.1f);
     m_confirmed_world_options = Gui::Button(0.45f, "Continue");
-    Screen::Render(mouseX, mouseY, f);
+    GuiScreen::Render(mouseX, mouseY, f);
 }
 
 void CreateWorldBotScreen::ButtonClicked() {

@@ -1,11 +1,11 @@
 #include "client/gui/ConfirmScreen.hpp"
 
-ConfirmScreen::ConfirmScreen(Screen* pScreen, const std::string& line1, const std::string& line2, int x) :
+ConfirmScreen::ConfirmScreen(GuiScreen* pScreen, const std::string& line1, const std::string& line2, int x) :
     m_textLine1(line1), m_textLine2(line2), m_pScreen(pScreen), m_buttonConfirm("Yes"), m_buttonDeny("No"),
     field_40(x) {}
 
-ConfirmScreen::ConfirmScreen(Screen* pScreen, const std::string& line1, const std::string& line2, const std::string& ok,
-                             const std::string& cancel, int x) :
+ConfirmScreen::ConfirmScreen(GuiScreen* pScreen, const std::string& line1, const std::string& line2,
+                             const std::string& ok, const std::string& cancel, int x) :
     m_textLine1(line1), m_textLine2(line2), m_pScreen(pScreen), m_buttonConfirm(ok), m_buttonDeny(cancel), field_40(x) {
 }
 
@@ -45,7 +45,7 @@ void ConfirmScreen::Render(int mouseX, int mouseY, float delta) {
     m_confirmed_deletion = Gui::Button(0.4f, m_buttonConfirm.c_str());
     Gui::EndRow();
 
-    Screen::Render(mouseX, mouseY, delta);
+    GuiScreen::Render(mouseX, mouseY, delta);
 }
 
 void ConfirmScreen::PostResult(bool b) { m_pScreen->ConfirmResult(b, field_40); }

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Screen.hpp"
+#include "GuiScreen.hpp"
 
 
-class GuiInGameTop : public Screen {
+class GuiInGameTop : public GuiScreen {
 public:
     void Init() override;
     bool IsInGameScreen() override;
@@ -16,7 +16,7 @@ private:
 };
 
 // TODO: this is probably something entirely different but for now its enough
-class GuiInGameBot : public Screen {
+class GuiInGameBot : public GuiScreen {
 public:
     void Init() override;
     void Removed() override;

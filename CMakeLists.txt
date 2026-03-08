@@ -91,17 +91,26 @@ add_executable(${PROJECT_NAME}
     source/recraft/world/worldgen/EmptyGen.cpp
     source/recraft/world/worldgen/SuperFlatGen.cpp
     source/recraft/client/gui/ImGuiManager.cpp
-    source/recraft/client/gui/Screen.cpp
-        source/recraft/client/gui/SelectWorldScreen.cpp
-        source/recraft/client/gui/CreateWorldScreen.cpp
-        source/recraft/client/gui/ConfirmScreen.cpp
-        source/recraft/client/gui/DeleteWorldScreen.cpp
-        source/recraft/client/gui/GuiInGame.cpp
-        source/recraft/client/gui/StartScreen.cpp
-        source/recraft/client/gui/Button.cpp
+    source/recraft/client/gui/GuiScreen.cpp
+    source/recraft/client/gui/SelectWorldScreen.cpp
+    source/recraft/client/gui/CreateWorldScreen.cpp
+    source/recraft/client/gui/ConfirmScreen.cpp
+    source/recraft/client/gui/DeleteWorldScreen.cpp
+    source/recraft/client/gui/GuiInGame.cpp
+    source/recraft/client/gui/StartScreen.cpp
+    source/recraft/client/gui/GuiButton.cpp
     source/recraft/phys/AABB.cpp
     source/recraft/util/ResourceLocation.cpp
-        source/recraft/client/renderer/block/ModelBakery.cpp
+    source/recraft/client/renderer/block/ModelBakery.cpp
+    source/recraft/block/material/Material.cpp
+    source/recraft/block/material/MapColor.cpp
+    source/recraft/item/EnumDyeColor.cpp
+    source/recraft/util/text/TextFormatting.cpp
+    source/recraft/block/material/MaterialLiquid.cpp
+    source/recraft/block/material/MaterialTransparent.cpp
+    source/recraft/block/material/MaterialLogic.cpp
+    source/recraft/block/material/MaterialPortal.cpp
+    source/recraft/block/material/MaterialWeb.cpp
 )
 target_include_directories(${PROJECT_NAME} PUBLIC
     include/recraft

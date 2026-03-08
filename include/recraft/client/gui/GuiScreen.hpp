@@ -2,10 +2,10 @@
 
 #include "ReCraftCore.hpp"
 // TODO: Buttonlist if possible (with GUI)
-class Screen : public Gui {
+class GuiScreen : public Gui {
 public:
-    Screen();
-    virtual ~Screen();
+    GuiScreen();
+    virtual ~GuiScreen();
 
     void Init(ReCraftCore*, int, int);
     void UpdateTabButtonSelection();

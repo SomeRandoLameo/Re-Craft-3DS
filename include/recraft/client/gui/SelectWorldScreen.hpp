@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Screen.hpp"
+#include "GuiScreen.hpp"
 
 struct WorldInfo {
     uint32_t lastPlayed;
@@ -8,7 +8,7 @@ struct WorldInfo {
     char path[256];
 };
 
-class SelectWorldBotScreen : public Screen {
+class SelectWorldBotScreen : public GuiScreen {
 public:
     void Init() override;
     void Removed() override;

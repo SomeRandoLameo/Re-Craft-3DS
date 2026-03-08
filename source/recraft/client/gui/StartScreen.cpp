@@ -36,13 +36,13 @@ void StartTopScreen::Render3D(int mouseX, int mouseY, int eyeIndex, int projMat,
 
     m_clouds->Draw(projMat, &vp, 0.f, 0.f);
 
-    Screen::Render(mouseX, mouseY, delta);
+    GuiScreen::Render(mouseX, mouseY, delta);
 }
 
 
-void StartBotScreen::Init() { Screen::Init(); }
+void StartBotScreen::Init() { GuiScreen::Init(); }
 
-void StartBotScreen::Removed() { Screen::Removed(); }
+void StartBotScreen::Removed() { GuiScreen::Removed(); }
 
 bool StartBotScreen::IsInGameScreen() { return false; }
 
@@ -60,7 +60,7 @@ void StartBotScreen::Render(int mouseX, int mouseY, float delta) {
     m_clicked_options = Gui::Button(0.5f, "Options");
     m_clicked_quit = Gui::Button(0.5f, "Quit");
     Gui::EndRow();
-    Screen::Render(mouseX, mouseY, delta);
+    GuiScreen::Render(mouseX, mouseY, delta);
 }
 
 void StartBotScreen::ButtonClicked() {
@@ -82,5 +82,5 @@ void StartBotScreen::ButtonClicked() {
         exit(0);
     }
 
-    Screen::ButtonClicked();
+    GuiScreen::ButtonClicked();
 }

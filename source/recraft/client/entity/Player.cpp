@@ -573,9 +573,9 @@ void Player::Move(float dt, mc::Vector3f accl) {
 
             // Player AABB for this axis step
             mc::AABB playerBox(
-                mc::Vector3d(axisStep.x - CollisionBoxSize / 2.0, axisStep.y,                axisStep.z - CollisionBoxSize / 2.0),
-                mc::Vector3d(axisStep.x + CollisionBoxSize / 2.0, axisStep.y + Height,       axisStep.z + CollisionBoxSize / 2.0)
-            );
+                mc::Vector3d(axisStep.x - CollisionBoxSize / 2.0, axisStep.y, axisStep.z - CollisionBoxSize / 2.0),
+                mc::Vector3d(axisStep.x + CollisionBoxSize / 2.0, axisStep.y + Height,
+                             axisStep.z + CollisionBoxSize / 2.0));
 
             for (int x = -1; x < 2; x++) {
                 for (int y = 0; y < 3; y++) {
@@ -586,10 +586,8 @@ void Player::Move(float dt, mc::Vector3f accl) {
                         if (m_world->GetBlockID(blockPos) != BlockID::Air &&
                             m_world->GetBlockID(blockPos) != BlockID::Lava &&
                             m_world->GetBlockID(blockPos) != BlockID::Water) {
-                            mc::AABB blockBox(
-                                mc::Vector3d(blockPos.x,     blockPos.y,     blockPos.z),
-                                mc::Vector3d(blockPos.x + 1, blockPos.y + 1, blockPos.z + 1)
-                            );
+                            mc::AABB blockBox(mc::Vector3d(blockPos.x, blockPos.y, blockPos.z),
+                                              mc::Vector3d(blockPos.x + 1, blockPos.y + 1, blockPos.z + 1));
 
                             collision |= playerBox.Intersects(blockBox);
                         }

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Screen.hpp"
+#include "GuiScreen.hpp"
 // TODO: THIS
-class ConfirmScreen : public Screen {
+class ConfirmScreen : public GuiScreen {
 public:
-    ConfirmScreen(Screen* pScreen, const std::string& line1, const std::string& line2, int x);
-    ConfirmScreen(Screen* pScreen, const std::string& line1, const std::string& line2, const std::string& ok,
+    ConfirmScreen(GuiScreen* pScreen, const std::string& line1, const std::string& line2, int x);
+    ConfirmScreen(GuiScreen* pScreen, const std::string& line1, const std::string& line2, const std::string& ok,
                   const std::string& cancel, int x);
 
     void ButtonClicked() override;
@@ -15,7 +15,7 @@ public:
     virtual void PostResult(bool b);
 
 private:
-    Screen* m_pScreen = nullptr;
+    GuiScreen* m_pScreen = nullptr;
     int field_40 = 0;
     std::string m_textLine1;
     std::string m_textLine2;

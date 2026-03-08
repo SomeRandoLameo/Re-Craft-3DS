@@ -12,8 +12,8 @@ extern "C" {
 #include "client/gui/DebugUI.hpp"
 #include "client/gui/Gui.hpp"
 #include "client/gui/GuiChat.hpp"
+#include "client/gui/GuiScreen.hpp"
 #include "client/gui/ImGuiManager.hpp"
-#include "client/gui/Screen.hpp"
 #include "client/renderer/PolyGen.hpp"
 #include "client/renderer/Renderer.hpp"
 #include "client/renderer/block/ModelBakery.hpp"
@@ -28,7 +28,7 @@ extern "C" {
 #include "world/worldgen/SmeaGen.hpp"
 #include "world/worldgen/SuperFlatGen.hpp"
 
-class Screen;
+class GuiScreen;
 
 class ReCraftCore : public Amy::App {
 public:
@@ -38,7 +38,7 @@ public:
 
     void Main() override;
 
-    void SetScreen(Screen* pScreen, bool top);
+    void SetScreen(GuiScreen* pScreen, bool top);
 
     void InitSinglePlayer(char* path, char* name, const WorldGenType* worldType, Gamemode gamemode, bool newWorld);
 
@@ -50,8 +50,8 @@ public:
     ModelBakery* GetModelBakery() { return m_modelBakery; }
     static const std::string& GetRootDir() { return m_root; }
 
-    Screen* TopScreen = nullptr;
-    Screen* BotScreen = nullptr;
+    GuiScreen* TopScreen = nullptr;
+    GuiScreen* BotScreen = nullptr;
 
 private:
     static const std::string m_root;
@@ -64,8 +64,8 @@ private:
     MCBridge m_mcBridge;
     DebugUI* m_debugUI = nullptr;
 
-    Screen* m_pTopQueuedScreen = nullptr;
-    Screen* m_pBotQueuedScreen = nullptr;
+    GuiScreen* m_pTopQueuedScreen = nullptr;
+    GuiScreen* m_pBotQueuedScreen = nullptr;
     bool m_bTopUsingCurrScreen = false;
     bool m_bTopHaveQueuedScreen = false;
     bool m_bBotUsingCurrScreen = false;

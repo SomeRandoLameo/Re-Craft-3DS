@@ -1,6 +1,6 @@
 #include "client/renderer/Clouds.hpp"
-#include "client/renderer/VertexFmt.hpp"
 #include <stdint.h>
+#include "client/renderer/VertexFmt.hpp"
 
 #include "amethyst/include/amethyst.hpp"
 #include "client/renderer/TextureMap.hpp"

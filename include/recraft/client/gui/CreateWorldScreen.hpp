@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Screen.hpp"
+#include "GuiScreen.hpp"
 #include "SelectWorldScreen.hpp"
 
-class CreateWorldBotScreen : public Screen {
+class CreateWorldBotScreen : public GuiScreen {
 public:
     CreateWorldBotScreen(std::vector<WorldInfo>);
 

@@ -2,14 +2,14 @@
 
 #include "ReCraftCore.hpp"
 
-class Screen;
+class GuiScreen;
 
-class Button : public Gui
+class GuiButton : public Gui
 {
 public:
-    Button(int buttonId, int x, int y, int width, int height, const std::string& buttonText);
-    Button(int buttonId, int x, int y, const std::string& buttonText);
-    Button(int buttonId, const std::string& buttonText);
+    GuiButton(int buttonId, int x, int y, int width, int height, const std::string& buttonText);
+    GuiButton(int buttonId, int x, int y, const std::string& buttonText);
+    GuiButton(int buttonId, const std::string& buttonText);
 
 
     bool Clicked(int xPos, int yPos);

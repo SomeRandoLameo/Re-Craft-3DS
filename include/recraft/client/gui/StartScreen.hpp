@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Screen.hpp"
+#include "GuiScreen.hpp"
 
-class StartTopScreen : public Screen {
+class StartTopScreen : public GuiScreen {
 public:
     void Init() override;
     void Removed() override;
@@ -15,7 +15,7 @@ private:
     Clouds* m_clouds = nullptr;
 };
 
-class StartBotScreen : public Screen {
+class StartBotScreen : public GuiScreen {
     void Init() override;
     void Removed() override;
 

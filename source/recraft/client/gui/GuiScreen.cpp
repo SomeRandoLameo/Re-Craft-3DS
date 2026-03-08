@@ -1,13 +1,13 @@
-#include "client/gui/Screen.hpp"
+#include "client/gui/GuiScreen.hpp"
 // TODO: Buttonlist if possible (with GUI)
-Screen::Screen() {}
+GuiScreen::GuiScreen() {}
 
-Screen::~Screen() {
+GuiScreen::~GuiScreen() {
     // m_pClickedButton = nullptr;
     // m_buttons.clear();
 }
 
-void Screen::Init(ReCraftCore* pReCraftCore, int width, int height) {
+void GuiScreen::Init(ReCraftCore* pReCraftCore, int width, int height) {
     m_width = width;
     m_height = height;
     m_ReCraftCore = pReCraftCore;
@@ -17,21 +17,21 @@ void Screen::Init(ReCraftCore* pReCraftCore, int width, int height) {
     UpdateTabButtonSelection();
 }
 
-void Screen::Init() {}
+void GuiScreen::Init() {}
 
-void Screen::ButtonClicked(/*Button* pButton*/) {}
+void GuiScreen::ButtonClicked(/*Button* pButton*/) {}
 
-void Screen::ConfirmResult(bool b, int i) {}
+void GuiScreen::ConfirmResult(bool b, int i) {}
 
-bool Screen::HandleBackEvent(bool b) { return false; }
+bool GuiScreen::HandleBackEvent(bool b) { return false; }
 
-bool Screen::IsPauseScreen() { return true; }
+bool GuiScreen::IsPauseScreen() { return true; }
 
-bool Screen::IsErrorScreen() { return false; }
+bool GuiScreen::IsErrorScreen() { return false; }
 
-bool Screen::IsInGameScreen() { return true; }
+bool GuiScreen::IsInGameScreen() { return true; }
 
-void Screen::KeyPressed(int key) {
+void GuiScreen::KeyPressed(int key) {
     if (key == '\x1B') { // escape
         m_ReCraftCore->SetScreen(nullptr, true);
         m_ReCraftCore->SetScreen(nullptr, false);
@@ -76,7 +76,7 @@ void Screen::KeyPressed(int key) {
 }
 
 // TODO: TouchClick
-void Screen::MouseClicked(int xPos, int yPos, int d) /* d = clicked? */ {
+void GuiScreen::MouseClicked(int xPos, int yPos, int d) /* d = clicked? */ {
     /*
     if (!d) return;
 
@@ -101,7 +101,7 @@ textInput->onClick(xPos, yPos);
 */
 }
 
-void Screen::MouseReleased(int xPos, int yPos, int d) {
+void GuiScreen::MouseReleased(int xPos, int yPos, int d) {
     /*
     if (!d) return;
 
@@ -113,7 +113,7 @@ void Screen::MouseReleased(int xPos, int yPos, int d) {
      */
 }
 
-void Screen::Render(int xPos, int yPos, float unused) {
+void GuiScreen::Render(int xPos, int yPos, float unused) {
     /*
     for (auto button : m_buttons)
     {
@@ -131,18 +131,18 @@ void Screen::Render(int xPos, int yPos, float unused) {
     Gui::Frame();
 }
 
-void Screen::Render3D(int xPos, int yPos, int eyeIndex, int projmat, int iod, float) { Gui::Frame(); }
+void GuiScreen::Render3D(int xPos, int yPos, int eyeIndex, int projmat, int iod, float) { Gui::Frame(); }
 
-void Screen::Tick() {}
+void GuiScreen::Tick() {}
 
-void Screen::Removed() {}
+void GuiScreen::Removed() {}
 
-void Screen::SetSize(int width, int height) {
+void GuiScreen::SetSize(int width, int height) {
     m_width = width;
     m_height = height;
 }
 
-void Screen::UpdateEvents() {
+void GuiScreen::UpdateEvents() {
     // if (field_10) return;
     /*
         for (int i = Mouse::_index + 1; i<int(Mouse::_inputs.size()); i++)
@@ -160,7 +160,7 @@ keyboardEvent();
 */
 }
 
-void Screen::KeyboardEvent() {
+void GuiScreen::KeyboardEvent() {
     // @UB: This probably behaves in an unexpected way if _inputs is empty
     /*
     #ifndef ORIGINAL_CODE
@@ -174,7 +174,7 @@ void Screen::KeyboardEvent() {
 }
 
 // TODO: TouchEvent
-void Screen::MouseEvent() {
+void GuiScreen::MouseEvent() {
     /*
     MouseInput& inp = Mouse::_inputs[Mouse::_index];
 
@@ -192,7 +192,7 @@ TODO: TOUCHRELEASED    mouseReleased(m_width * Mouse::_x / Minecraft::width, m_h
 */
 }
 
-void Screen::RenderBackground(int unk) {
+void GuiScreen::RenderBackground(int unk) {
     /*
     if (m_pMinecraft->isLevelGenerated())
     {
@@ -205,9 +205,9 @@ void Screen::RenderBackground(int unk) {
      */
 }
 
-void Screen::RenderBackground() { RenderBackground(0); }
+void GuiScreen::RenderBackground() { RenderBackground(0); }
 
-void Screen::RenderDirtBackground(int unk) {
+void GuiScreen::RenderDirtBackground(int unk) {
     /*
     glDisable(GL_FOG);
 
@@ -226,7 +226,7 @@ void Screen::RenderDirtBackground(int unk) {
 }
 
 
-void Screen::UpdateTabButtonSelection() {
+void GuiScreen::UpdateTabButtonSelection() {
     /*
 #ifndef ENH_HIGHLIGHT_BY_HOVER
     for (int i = 0; i < int(m_buttonTabList.size()); i++)

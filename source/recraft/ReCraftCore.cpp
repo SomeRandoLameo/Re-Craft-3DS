@@ -394,11 +394,11 @@ void ReCraftCore::Main() {
     }
 }
 
-void ReCraftCore::SetScreen(Screen* pScreen, bool top) {
+void ReCraftCore::SetScreen(GuiScreen* pScreen, bool top) {
     bool& usingCurrScreen = top ? m_bTopUsingCurrScreen : m_bBotUsingCurrScreen;
     bool& haveQueuedScreen = top ? m_bTopHaveQueuedScreen : m_bBotHaveQueuedScreen;
-    Screen*& queuedScreen = top ? m_pTopQueuedScreen : m_pBotQueuedScreen;
-    Screen*& currentScreen = top ? TopScreen : BotScreen;
+    GuiScreen*& queuedScreen = top ? m_pTopQueuedScreen : m_pBotQueuedScreen;
+    GuiScreen*& currentScreen = top ? TopScreen : BotScreen;
 
     int screenWidth = top ? int(400 * 0.5f) : int(320 * 0.5);
     int screenHeight = int(240 * 0.5);

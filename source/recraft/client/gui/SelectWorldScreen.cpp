@@ -67,7 +67,7 @@ void SelectWorldBotScreen::Render(int mouseX, int mouseY, float delta) {
     m_clicked_back = Gui::Button(0.333f, "Back");
     Gui::EndRow();
 
-    Screen::Render(mouseX, mouseY, delta);
+    GuiScreen::Render(mouseX, mouseY, delta);
 }
 
 void SelectWorldBotScreen::ButtonClicked() {

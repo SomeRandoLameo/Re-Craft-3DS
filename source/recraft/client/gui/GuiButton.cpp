@@ -1,6 +1,6 @@
-#include "client/gui/Button.h"
+#include "client/gui/GuiButton.h"
 
-Button::Button(int buttonId, int x, int y, int width, int height, const std::string& buttonText) {
+GuiButton::GuiButton(int buttonId, int x, int y, int width, int height, const std::string& buttonText) {
     id = buttonId;
     m_xPos = x;
     m_yPos = y;
@@ -9,7 +9,7 @@ Button::Button(int buttonId, int x, int y, int width, int height, const std::str
     m_height = height;
 }
 
-Button::Button(int buttonId, int x, int y, const std::string& buttonText) {
+GuiButton::GuiButton(int buttonId, int x, int y, const std::string& buttonText) {
     id = buttonId;
     m_xPos = x;
     m_yPos = y;
@@ -18,14 +18,14 @@ Button::Button(int buttonId, int x, int y, const std::string& buttonText) {
     m_height = 24;
 }
 
-Button::Button(int buttonId, const std::string& buttonText) {
+GuiButton::GuiButton(int buttonId, const std::string& buttonText) {
     id = buttonId;
     text = buttonText;
     m_width = 200;
     m_height = 24;
 }
 
-bool Button::Clicked(int xPos, int yPos) {
+bool GuiButton::Clicked(int xPos, int yPos) {
     if (!m_bEnabled)
         return false;
     if (xPos < m_xPos)
@@ -40,7 +40,7 @@ bool Button::Clicked(int xPos, int yPos) {
     return true;
 }
 
-void Button::Render(ReCraftCore* core, int xPos, int yPos) {
+void GuiButton::Render(ReCraftCore* core, int xPos, int yPos) {
     if (!m_bVisible)
         return;
 
