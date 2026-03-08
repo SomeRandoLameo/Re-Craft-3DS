@@ -28,9 +28,10 @@ Player::Player(World* world) : Entity(world), m_input(new PlayerInput()) {
 // TODO: Separate from player
 void Player::InitializeInventory() {
     int slotIndex = 0;
-    // inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Air), 1, 0); // Testing
-    inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Air), 1, 0);
-    inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Stone), 1, 0);
+    // TODO: Stone variant texture mapping
+    for (uint8_t i = 0; i <= 6; i++) {
+        inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Stone), 1, i);
+    }
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Grass), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Dirt), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Cobblestone), 1, 0);
@@ -709,7 +710,6 @@ void Player::HurtEntity() {
     // TODO:
 }
 
-// TODO: When triggered, this cuts the o3DS performance in half...
 void Player::Interact(DebugUI* dbg) {
     if (m_world && blockInActionRange && breakPlaceTimeout < 0.f) {
         BlockID id = m_world->GetBlockID(viewRayCast.hitPos);

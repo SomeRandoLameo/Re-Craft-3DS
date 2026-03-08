@@ -2,9 +2,9 @@
 
 #include "Block.hpp"
 
-class LeavesBlock : public Block {
+class BlockLeaves : public Block {
 public:
-    LeavesBlock() : Block() {}
+    BlockLeaves() : Block() {}
 
     void getColor(Metadata metadata, Direction direction, Metadata out_rgb[]) const override {
         out_rgb[0] = 140;

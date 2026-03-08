@@ -1,7 +1,8 @@
 #include "block/Block.hpp"
 #include "ReCraftCore.hpp"
-#include "block/GrassBlock.h"
-#include "block/LeavesBlock.h"
+#include "block/BlockGrass.h"
+#include "block/BlockLeaves.h"
+#include "block/BlockStone.h"
 #include "util/EnumFacing.hpp"
 
 Block* Block::setHardness(float hardness) {
@@ -98,8 +99,8 @@ void BlockRegistry::Init() {
                       ->setSolid(false) //TODO: Remove
                       ->setUnlocalizedName("air"));
 
-    RegisterBlock(BlockID::Stone, "stone", (new Block())->setHardness(1.5F)->setResistance(10.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("stone"));
-    RegisterBlock(BlockID::Grass, "grass", (new GrassBlock())->setHardness(0.6F)->setSoundType(SoundType::PLANT)->setUnlocalizedName("grass"));
+    RegisterBlock(BlockID::Stone, "stone", (new BlockStone())->setHardness(1.5F)->setResistance(10.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("stone"));
+    RegisterBlock(BlockID::Grass, "grass", (new BlockGrass())->setHardness(0.6F)->setSoundType(SoundType::PLANT)->setUnlocalizedName("grass"));
     RegisterBlock(BlockID::Dirt, "dirt",   (new Block())->setHardness(0.5F)->setSoundType(SoundType::GROUND)->setUnlocalizedName("dirt"));
     RegisterBlock(BlockID::Cobblestone, "cobblestone", (new Block())->setHardness(2.0F)->setResistance(10.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("stonebrick")->setCreativeTab(CreativeTabs::BUILDING_BLOCKS));
     RegisterBlock(BlockID::Planks, "planks", (new Block())->setHardness(2.0F)->setResistance(5.0F)->setSoundType(SoundType::WOOD)->setUnlocalizedName("wood"));
@@ -115,7 +116,7 @@ void BlockRegistry::Init() {
     RegisterBlock(BlockID::Iron_Ore, "iron_ore", (new Block())->setHardness(3.0F)->setResistance(5.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("oreIron"));
     RegisterBlock(BlockID::Coal_Ore, "coal_ore", (new Block())->setHardness(3.0F)->setResistance(5.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("oreCoal"));
     RegisterBlock(BlockID::Log, "log", (new Block())->setUnlocalizedName("log"));
-    RegisterBlock(BlockID::Leaves, "leaves", (new LeavesBlock())->setUnlocalizedName("leaves"));
+    RegisterBlock(BlockID::Leaves, "leaves", (new BlockLeaves())->setUnlocalizedName("leaves"));
     RegisterBlock(BlockID::Sponge, "sponge", (new Block())->setHardness(0.6F)->setSoundType(SoundType::PLANT)->setUnlocalizedName("sponge"));
     RegisterBlock(BlockID::Glass, "glass", (new Block())->setHardness(0.3F)->setSoundType(SoundType::GLASS)->setUnlocalizedName("glass"));
     RegisterBlock(BlockID::Lapis_Ore, "lapis_ore", (new Block())->setHardness(3.0F)->setResistance(5.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("oreLapis"));

@@ -2,9 +2,9 @@
 
 #include "Block.hpp"
 
-class GrassBlock : public Block {
+class BlockGrass : public Block {
 public:
-    GrassBlock() : Block() {}
+    BlockGrass() : Block() {}
 
     void getColor(Metadata metadata, Direction direction, Metadata out_rgb[]) const override {
         if (direction == Direction::Top) {

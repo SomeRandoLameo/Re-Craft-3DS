@@ -309,6 +309,10 @@ public:
 
     virtual void getColor(Metadata metadata, Direction direction, Metadata out_rgb[]) const;
 
+    virtual BlockID getDropID(Metadata meta) const { return m_id; }
+
+    virtual Metadata getDropMeta(Metadata meta) const { return meta; }
+
     BlockID GetID() const;
     float getHardness() const;
     bool isOpaque(Metadata metadata = 0) const;

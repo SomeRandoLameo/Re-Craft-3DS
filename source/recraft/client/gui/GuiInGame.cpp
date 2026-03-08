@@ -190,7 +190,8 @@ void GuiInGameBot::RenderHotbar(int x, int y, mc::inventory::Slot* stacks, int& 
         const int ry = y + 3; // unscaled
 
         if (stacks[i].GetItemCount() > 0) {
-            Gui::DrawIcon((BlockID)stacks[i].GetItemId(), 0, Amy::fvec2(rx * 2, ry * 2));
+            Gui::DrawIcon((BlockID)stacks[i].GetItemId(), (Metadata)stacks[i].GetItemDamage(),
+                          Amy::fvec2(rx * 2, ry * 2));
         }
 
         if (Gui::EnteredCursorInside(rx - 4, ry - 4, 18, 18)) { // unscaled, no *2
@@ -259,7 +260,7 @@ void GuiInGameBot::RenderSlot(mc::inventory::Slot* slot, int x, int y) {
     RenderData->DrawSolid();
     RenderData->DrawRectFilled(Amy::fvec2(x * 2, y * 2), Amy::fvec2(16 * 2, 16 * 2), backgroundColor);
 
-    Gui::DrawIcon((BlockID)slot->GetItemId(), 0, Amy::fvec2(x * 2, y * 2));
+    Gui::DrawIcon((BlockID)slot->GetItemId(), (Metadata)slot->GetItemDamage(), Amy::fvec2(x * 2, y * 2));
 
     if (Gui::EnteredCursorInside(x, y, 16, 16)) {
         m_inventory->handleStackClick(slot);
