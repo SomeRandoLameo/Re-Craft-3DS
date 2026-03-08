@@ -4,7 +4,6 @@
 #include "client/gui/DebugUI.hpp"
 #include "input/InputManager.hpp"
 #include "mcbridge/MCBridge.hpp"
-#include "misc/Collision.hpp"
 #include "world/CT_World.hpp"
 
 const float MaxWalkVelocity = 4.3f;
@@ -572,8 +571,11 @@ void Player::Move(float dt, mc::Vector3f accl) {
             mc::Vector3f axisStep = finalPos;
             axisStep.values[i] = newPos.values[i];
 
-            Box playerBox = Box_Create(axisStep.x - CollisionBoxSize / 2.f, axisStep.y,
-                                       axisStep.z - CollisionBoxSize / 2.f, CollisionBoxSize, Height, CollisionBoxSize);
+            // Player AABB for this axis step
+            mc::AABB playerBox(
+                mc::Vector3d(axisStep.x - CollisionBoxSize / 2.0, axisStep.y,                axisStep.z - CollisionBoxSize / 2.0),
+                mc::Vector3d(axisStep.x + CollisionBoxSize / 2.0, axisStep.y + Height,       axisStep.z + CollisionBoxSize / 2.0)
+            );
 
             for (int x = -1; x < 2; x++) {
                 for (int y = 0; y < 3; y++) {
@@ -584,14 +586,12 @@ void Player::Move(float dt, mc::Vector3f accl) {
                         if (m_world->GetBlockID(blockPos) != BlockID::Air &&
                             m_world->GetBlockID(blockPos) != BlockID::Lava &&
                             m_world->GetBlockID(blockPos) != BlockID::Water) {
-                            Box blockBox = Box_Create(blockPos.x, blockPos.y, blockPos.z, 1, 1, 1);
+                            mc::AABB blockBox(
+                                mc::Vector3d(blockPos.x,     blockPos.y,     blockPos.z),
+                                mc::Vector3d(blockPos.x + 1, blockPos.y + 1, blockPos.z + 1)
+                            );
 
-                            mc::Vector3f normal(0.f, 0.f, 0.f);
-                            float depth = 0.f;
-                            int face = 0;
-
-                            bool intersects = Collision_BoxIntersect(blockBox, playerBox, 0, &normal, &depth, &face);
-                            collision |= intersects;
+                            collision |= playerBox.Intersects(blockBox);
                         }
                     }
                 }

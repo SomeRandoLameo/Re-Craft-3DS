@@ -55,7 +55,6 @@ add_executable(${PROJECT_NAME}
     source/recraft/input/PlayerInput.cpp
     source/recraft/inventory/ItemStack.cpp
     source/recraft/mcbridge/MCBridge.cpp
-    source/recraft/misc/Collision.cpp
     source/recraft/misc/CommandLine.cpp
     source/recraft/misc/Crash.cpp
     source/recraft/misc/Raycast.cpp
