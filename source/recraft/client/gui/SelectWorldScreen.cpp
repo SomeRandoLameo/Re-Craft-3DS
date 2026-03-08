@@ -2,10 +2,10 @@
 
 #include <climits>
 
-#include "client/gui/screens/CreateWorldScreen.hpp"
-#include "client/gui/screens/DeleteWorldScreen.hpp"
-#include "client/gui/screens/SelectWorldScreen.hpp"
-#include "client/gui/screens/StartScreen.hpp"
+#include "client/gui/CreateWorldScreen.hpp"
+#include "client/gui/DeleteWorldScreen.hpp"
+#include "client/gui/SelectWorldScreen.hpp"
+#include "client/gui/StartScreen.hpp"
 #include "mpack.h"
 
 void SelectWorldBotScreen::Removed() { m_worlds.clear(); }

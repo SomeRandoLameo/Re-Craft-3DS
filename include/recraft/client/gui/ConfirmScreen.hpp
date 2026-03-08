@@ -1,6 +1,6 @@
 #pragma once
 
-#include "client/gui/Screen.hpp"
+#include "Screen.hpp"
 // TODO: THIS
 class ConfirmScreen : public Screen {
 public:

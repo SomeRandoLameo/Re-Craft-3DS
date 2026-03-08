@@ -1,5 +1,5 @@
-#include "client/gui/screens/StartScreen.hpp"
-#include "client/gui/screens/SelectWorldScreen.hpp"
+#include "client/gui/StartScreen.hpp"
+#include "client/gui/SelectWorldScreen.hpp"
 
 void StartTopScreen::Init() {
     m_clouds = new Clouds();

@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 
+#include "SoundType.hpp"
 #include "client/renderer/TextureMap.hpp"
 #include "creativetab/CreativeTab.hpp"
 #include "mclib/block/Block.h"
@@ -271,57 +272,7 @@ enum class BlockID : u16 {
     Count,
 };
 
-// TODO: Add more once sound engine is ready & move into sound engine stuff
-enum class SoundType : u8 {
-    WOOD,
-    GROUND,
-    PLANT,
-    STONE,
-    METAL,
-    GLASS,
-    CLOTH,
-    SAND,
-    SNOW,
-    LADDER,
-    ANVIL,
-    SLIME,
-    SOUND_TYPE_COUNT
-};
-// WIP
-struct BlockTextures {
-    int16_t top_u = 0;
-    int16_t top_v = 0;
-    int16_t bottom_u = 0;
-    int16_t bottom_v = 0;
-    int16_t north_u = 0;
-    int16_t north_v = 0;
-    int16_t south_u = 0;
-    int16_t south_v = 0;
-    int16_t east_u = 0;
-    int16_t east_v = 0;
-    int16_t west_u = 0;
-    int16_t west_v = 0;
-
-    // For simple blocks with same texture on all sides
-    void setAllSides(int16_t u, int16_t v) {
-        top_u = bottom_u = north_u = south_u = east_u = west_u = u;
-        top_v = bottom_v = north_v = south_v = east_v = west_v = v;
-    }
-
-    // For blocks with different top/bottom/sides
-    void setTopBottomSides(int16_t top_u_, int16_t top_v_, int16_t bottom_u_, int16_t bottom_v_, int16_t side_u_,
-                           int16_t side_v_) {
-        top_u = top_u_;
-        top_v = top_v_;
-        bottom_u = bottom_u_;
-        bottom_v = bottom_v_;
-        north_u = south_u = east_u = west_u = side_u_;
-        north_v = south_v = east_v = west_v = side_v_;
-    }
-};
-
 typedef u8 Metadata;
-
 
 class Block {
 public:
@@ -369,7 +320,6 @@ public:
 protected:
     BlockID m_id;
     // const char* m_identifier;
-    BlockTextures m_textures;
     float m_blockHardness;
     bool m_opaque;
     bool m_solid;

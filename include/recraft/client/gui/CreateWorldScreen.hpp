@@ -1,7 +1,7 @@
 #pragma once
 
+#include "Screen.hpp"
 #include "SelectWorldScreen.hpp"
-#include "client/gui/Screen.hpp"
 
 class CreateWorldBotScreen : public Screen {
 public:

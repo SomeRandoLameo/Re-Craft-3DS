@@ -93,13 +93,13 @@ add_executable(${PROJECT_NAME}
     source/recraft/world/worldgen/SuperFlatGen.cpp
     source/recraft/client/gui/ImGuiManager.cpp
     source/recraft/client/gui/Screen.cpp
-    source/recraft/client/gui/screens/SelectWorldScreen.cpp
-    source/recraft/client/gui/screens/CreateWorldScreen.cpp
-    source/recraft/client/gui/screens/ConfirmScreen.cpp
-    source/recraft/client/gui/screens/DeleteWorldScreen.cpp
-    source/recraft/client/gui/screens/GuiInGame.cpp
-    source/recraft/client/gui/screens/StartScreen.cpp
-    source/recraft/client/gui/components/Button.cpp
+        source/recraft/client/gui/SelectWorldScreen.cpp
+        source/recraft/client/gui/CreateWorldScreen.cpp
+        source/recraft/client/gui/ConfirmScreen.cpp
+        source/recraft/client/gui/DeleteWorldScreen.cpp
+        source/recraft/client/gui/GuiInGame.cpp
+        source/recraft/client/gui/StartScreen.cpp
+        source/recraft/client/gui/Button.cpp
     source/recraft/phys/AABB.cpp
     source/recraft/util/ResourceLocation.cpp
         source/recraft/client/renderer/block/ModelBakery.cpp

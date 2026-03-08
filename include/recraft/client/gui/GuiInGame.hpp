@@ -1,6 +1,6 @@
 #pragma once
 
-#include "client/gui/Screen.hpp"
+#include "Screen.hpp"
 
 
 class GuiInGameTop : public Screen {

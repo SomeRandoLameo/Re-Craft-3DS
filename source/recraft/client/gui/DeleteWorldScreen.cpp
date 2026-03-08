@@ -1,6 +1,6 @@
 #include <sys/dirent.h>
 
-#include "client/gui/screens/DeleteWorldScreen.hpp"
+#include "client/gui/DeleteWorldScreen.hpp"
 
 DeleteWorldScreen::DeleteWorldScreen(const WorldInfo& info) :
     ConfirmScreen(nullptr, "Are you sure you want to delete this world?",

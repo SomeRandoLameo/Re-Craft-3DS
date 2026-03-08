@@ -1,4 +1,4 @@
-#include "client/gui/screens/GuiInGame.hpp"
+#include "client/gui/GuiInGame.hpp"
 
 void GuiInGameTop::Init() {
     m_ReCraftCore->GetAssetManager()->AutoLoad("GuiTexture_icons", "romfs:/assets/minecraft/textures/gui/icons.png");

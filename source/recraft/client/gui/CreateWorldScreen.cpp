@@ -1,4 +1,4 @@
-#include "client/gui/screens/CreateWorldScreen.hpp"
+#include "client/gui/CreateWorldScreen.hpp"
 
 #include <utility>
 

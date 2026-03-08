@@ -1,4 +1,4 @@
-#include "client/gui/screens/ConfirmScreen.hpp"
+#include "client/gui/ConfirmScreen.hpp"
 
 ConfirmScreen::ConfirmScreen(Screen* pScreen, const std::string& line1, const std::string& line2, int x) :
     m_textLine1(line1), m_textLine2(line2), m_pScreen(pScreen), m_buttonConfirm("Yes"), m_buttonDeny("No"),

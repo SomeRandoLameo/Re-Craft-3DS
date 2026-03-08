@@ -1,4 +1,4 @@
-#include "client/gui/components/Button.h"
+#include "client/gui/Button.h"
 
 Button::Button(int buttonId, int x, int y, int width, int height, const std::string& buttonText) {
     id = buttonId;
