@@ -71,15 +71,15 @@ add_executable(${PROJECT_NAME}
     source/recraft/client/renderer/TextureMap.cpp
     source/recraft/client/renderer/VBOCache.cpp
     source/recraft/client/renderer/WorldRenderer.cpp
-    source/recraft/client/renderer/block/ModelBlock.cpp
-    source/recraft/client/renderer/block/ModelPool.cpp
-    source/recraft/client/renderer/block/BlockPart.cpp
-    source/recraft/client/renderer/block/BlockPartFace.cpp
-    source/recraft/client/renderer/block/BlockFaceUV.cpp
-    source/recraft/client/renderer/block/ModelResourceLocation.cpp
-    source/recraft/client/renderer/block/ModelRotation.cpp
-    source/recraft/client/renderer/block/Variant.cpp
-    source/recraft/client/renderer/block/VariantList.cpp
+    #    back_mdb_src/block/ModelBlock.cpp
+    #    back_mdb_src/block/ModelPool.cpp
+    #    back_mdb_src/block/BlockPart.cpp
+    #    back_mdb_src/block/BlockPartFace.cpp
+    #    back_mdb_src/block/BlockFaceUV.cpp
+    #    back_mdb_src/block/ModelResourceLocation.cpp
+    #    back_mdb_src/block/ModelRotation.cpp
+    #    back_mdb_src/block/Variant.cpp
+    #    back_mdb_src/block/VariantList.cpp
     source/recraft/world/ChunkWorker.cpp
         source/recraft/world/Chunk.cpp
         source/recraft/world/World.cpp
@@ -102,7 +102,7 @@ add_executable(${PROJECT_NAME}
     source/recraft/client/gui/GuiButton.cpp
     source/recraft/phys/AABB.cpp
     source/recraft/util/ResourceLocation.cpp
-    source/recraft/client/renderer/block/ModelBakery.cpp
+    #    back_mdb_src/block/ModelBakery.cpp
     source/recraft/block/material/Material.cpp
     source/recraft/block/material/MapColor.cpp
     source/recraft/item/EnumDyeColor.cpp

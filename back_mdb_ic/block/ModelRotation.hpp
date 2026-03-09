@@ -1,8 +1,8 @@
 #pragma once
 
-#include <amethyst/maths/mat.hpp>
 #include <optional>
 #include <unordered_map>
+#include "amethyst/include/amethyst/maths/mat.hpp"
 #include "util/EnumFacing.hpp"
 
 class ModelRotation {

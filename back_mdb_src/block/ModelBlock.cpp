@@ -6,8 +6,11 @@
 
 ModelBlock::ModelBlock(std::optional<ResourceLocation> parentLocationIn, std::vector<BlockPart> elementsIn,
                        std::map<std::string, std::string> texturesIn, bool ambientOcclusionIn, bool gui3dIn) :
-    m_parentIndex(-1), m_selfIndex(-1), m_elements(std::move(elementsIn)), m_gui3d(gui3dIn),
-    m_ambientOcclusion(ambientOcclusionIn), m_textures(std::move(texturesIn)),
+    m_parentIndex(-1), m_selfIndex(-1),
+    m_elements(std::move(elementsIn)),
+    m_gui3d(gui3dIn),
+    m_ambientOcclusion(ambientOcclusionIn),
+    m_textures(std::move(texturesIn)),
     m_parentLocation(std::move(parentLocationIn)) {}
 
 ModelBlock ModelBlock::deserialize(const nlohmann::json& j) {
@@ -62,7 +65,8 @@ const ModelBlock* ModelBlock::getRootModel(const ModelPool& pool) const {
 }
 
 std::string ModelBlock::resolveTextureIter(const std::string& key, const ModelPool& pool) const {
-    std::string current = key;
+    const std::string* current = &key;
+    std::string       indirectionBuf;
 
     constexpr int MAX_HOPS = 64;
 
@@ -72,13 +76,14 @@ std::string ModelBlock::resolveTextureIter(const std::string& key, const ModelPo
 
         while (node != ModelPool::INVALID_INDEX) {
             const ModelBlock& m = pool.get(node);
-            auto it = m.m_textures.find(current);
+            auto it = m.m_textures.find(*current);
             if (it != m.m_textures.end()) {
                 const std::string& val = it->second;
                 if (!startsWithHash(val))
                     return val;
 
-                current = val.substr(1);
+                indirectionBuf.assign(val, 1, std::string::npos); // strip '#'
+                current = &indirectionBuf;
                 found = true;
                 break;
             }
@@ -93,11 +98,10 @@ std::string ModelBlock::resolveTextureIter(const std::string& key, const ModelPo
 }
 
 std::string ModelBlock::resolveTextureName(const std::string& textureName, const ModelPool& pool) const {
-    const std::string key = startsWithHash(textureName) ? textureName.substr(1) : textureName;
-
     if (!startsWithHash(textureName))
         return textureName;
 
+    std::string key(textureName, 1); // strip leading '#'
     return resolveTextureIter(key, pool);
 }
 
@@ -114,8 +118,7 @@ std::vector<BlockPart> ModelBlock::parseElements(const nlohmann::json& j) {
     elements.reserve(arr.size());
 
     for (const auto& el : arr) {
-        BlockPart& part = elements.emplace_back();
-        BlockPart::from_json(el, part);
+        BlockPart::from_json(el, elements.emplace_back());
     }
     return elements;
 }
@@ -134,6 +137,10 @@ bool ModelBlock::parseAmbientOcclusion(const nlohmann::json& j) { return j.value
 
 void ModelBlock::from_json(const nlohmann::json& j, ModelBlock& b) {
     std::string parent = parseParent(j);
-    b = ModelBlock(parent.empty() ? std::nullopt : std::make_optional<ResourceLocation>(parent), parseElements(j),
-                   parseTextures(j), parseAmbientOcclusion(j), true);
+    b = ModelBlock(
+        parent.empty() ? std::nullopt : std::make_optional<ResourceLocation>(std::move(parent)),
+        parseElements(j),
+        parseTextures(j),
+        parseAmbientOcclusion(j),
+        true);
 }

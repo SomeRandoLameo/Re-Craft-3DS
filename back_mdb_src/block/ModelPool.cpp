@@ -7,17 +7,15 @@ int32_t ModelPool::internOrGet(const std::string& key, ModelBlock model) {
     if (m_frozen)
         Crash("ModelPool::internOrGet called after freeze() — key: {}", key);
 
-    auto it = m_index.find(key);
-    if (it != m_index.end())
+    auto [it, inserted] = m_index.emplace(key, static_cast<int32_t>(m_models.size()));
+    if (!inserted)
         return it->second;
 
-    int32_t index = static_cast<int32_t>(m_models.size());
-    model.m_selfIndex = index;
+    int32_t index = it->second;
+    model.m_selfIndex   = index;
     model.m_parentIndex = INVALID_INDEX;
-    model.name = key;
-
+    model.name          = key;
     m_models.push_back(std::move(model));
-    m_index.emplace(key, index);
     return index;
 }
 
@@ -41,7 +39,6 @@ void ModelPool::freeze() {
         int32_t idx = find(key);
 
         if (idx == INVALID_INDEX) {
-            // Fallback: inject minecraft namespace
             ResourceLocation withNS("minecraft", parentLoc->getResourcePath());
             idx = find(withNS.toString());
         }
@@ -66,12 +63,10 @@ void ModelPool::checkCycles() const {
         int32_t fast = model.m_parentIndex;
 
         while (true) {
-            if (fast == INVALID_INDEX)
-                break;
+            if (fast == INVALID_INDEX) break;
             fast = m_models[fast].m_parentIndex;
 
-            if (fast == INVALID_INDEX)
-                break;
+            if (fast == INVALID_INDEX) break;
             fast = m_models[fast].m_parentIndex;
 
             slow = m_models[slow].m_parentIndex;
@@ -83,8 +78,7 @@ void ModelPool::checkCycles() const {
 }
 
 const ModelBlock& ModelPool::get(int32_t index) const { return m_models.at(static_cast<std::size_t>(index)); }
-
-ModelBlock& ModelPool::get(int32_t index) { return m_models.at(static_cast<std::size_t>(index)); }
+ModelBlock&       ModelPool::get(int32_t index)       { return m_models.at(static_cast<std::size_t>(index)); }
 
 const ModelBlock* ModelPool::findModel(const std::string& key) const {
     int32_t idx = find(key);

@@ -10,43 +10,37 @@ static std::string toLowerMRL(const std::string& s) {
     return result;
 }
 
-static ModelResourceLocation makeFromParsed(const ModelResourceLocation::ParsedPath& p) {
-    std::string loc = (p.domain.empty() ? "minecraft" : p.domain) + ':' + p.path;
-    return ModelResourceLocation(loc, p.variant);
-}
-
 ModelResourceLocation::ParsedPath ModelResourceLocation::parsePathString(const std::string& pathIn) {
     ParsedPath result;
 
-    std::string locationPart = pathIn;
-
     auto hashPos = pathIn.find('#');
+
     if (hashPos != std::string::npos) {
-        result.variant = pathIn.substr(hashPos + 1);
-        if (hashPos > 1)
-            locationPart = pathIn.substr(0, hashPos);
-        else
-            locationPart = pathIn;
+        std::string variantRaw = pathIn.substr(hashPos + 1);
+        result.variant = toLowerMRL(variantRaw);
+
+        const std::string locationPart = (hashPos > 1) ? pathIn.substr(0, hashPos) : pathIn;
+        auto [domain, path] = ResourceLocation::splitObjectName(locationPart);
+        result.domain = std::move(domain);
+        result.path   = std::move(path);
+    } else {
+        result.variant = "normal";
+        auto [domain, path] = ResourceLocation::splitObjectName(pathIn);
+        result.domain = std::move(domain);
+        result.path   = std::move(path);
     }
 
     if (result.variant.empty())
         result.variant = "normal";
-    else
-        result.variant = toLowerMRL(result.variant);
-
-    auto [domain, path] = ResourceLocation::splitObjectName(locationPart);
-    result.domain = domain;
-    result.path = path;
 
     return result;
 }
 
-ModelResourceLocation::ModelResourceLocation(const std::string& pathIn) :
-    ModelResourceLocation([&]() -> ParsedPath { return parsePathString(pathIn); }()) {}
-
-
 ModelResourceLocation::ModelResourceLocation(const ParsedPath& parsed) :
     ResourceLocation(parsed.domain, parsed.path), m_variant(parsed.variant) {}
+
+ModelResourceLocation::ModelResourceLocation(const std::string& pathIn) :
+    ModelResourceLocation(parsePathString(pathIn)) {}
 
 ModelResourceLocation::ModelResourceLocation(const ResourceLocation& location, const std::string& variantIn) :
     ModelResourceLocation(location.toString(), variantIn) {}
@@ -54,10 +48,17 @@ ModelResourceLocation::ModelResourceLocation(const ResourceLocation& location, c
 ModelResourceLocation::ModelResourceLocation(const std::string& location, const std::string& variantIn) :
     ModelResourceLocation(parsePathString(location + '#' + (variantIn.empty() ? "normal" : variantIn))) {}
 
-
 const std::string& ModelResourceLocation::getVariant() const { return m_variant; }
 
-std::string ModelResourceLocation::toString() const { return ResourceLocation::toString() + '#' + m_variant; }
+std::string ModelResourceLocation::toString() const {
+    const std::string base = ResourceLocation::toString();
+    std::string result;
+    result.reserve(base.size() + 1 + m_variant.size());
+    result  = base;
+    result += '#';
+    result += m_variant;
+    return result; // NRVO
+}
 
 bool ModelResourceLocation::operator==(const ModelResourceLocation& other) const {
     return ResourceLocation::operator==(other) && m_variant == other.m_variant;

@@ -369,7 +369,7 @@ void BlockRegistry::GetTextureUV(BlockID block, uint8_t metadata, Direction dire
         EnumFacing::SOUTH, // South
     };
 
-    const ModelBakery* bakery = ReCraftCore::GetInstance()->GetModelBakery();
+    /*const ModelBakery* bakery = ReCraftCore::GetInstance()->GetModelBakery();
     const BakedBlockVariant* variant = bakery->getVariant(block, metadata);
 
     if (!variant || variant->modelIndex == ModelPool::INVALID_INDEX)
@@ -389,5 +389,5 @@ void BlockRegistry::GetTextureUV(BlockID block, uint8_t metadata, Direction dire
             out_uv[1] = icon.v;
             return;
         }
-    }
+    }*/
 }

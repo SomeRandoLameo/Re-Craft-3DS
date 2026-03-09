@@ -8,8 +8,10 @@
 BlockPart::BlockPart(const mc::Vector3f& positionFromIn, const mc::Vector3f& positionToIn,
                      std::map<EnumFacing::Value, BlockPartFace> mapFacesIn,
                      std::optional<BlockPartRotation> partRotationIn, bool shadeIn) :
-    positionFrom(positionFromIn), positionTo(positionToIn), mapFaces(std::move(mapFacesIn)),
-    partRotation(std::move(partRotationIn)), shade(shadeIn) {
+    positionFrom(positionFromIn), positionTo(positionToIn),
+    mapFaces(std::move(mapFacesIn)),
+    partRotation(std::move(partRotationIn)),
+    shade(shadeIn) {
     SetDefaultUvs();
 }
 
@@ -106,8 +108,7 @@ std::map<EnumFacing::Value, BlockPartFace> BlockPart::parseFaces(const nlohmann:
     const auto& faces = j.at("faces");
 
     for (const auto& [key, val] : faces.items()) {
-        auto& face = map[parseEnumFacing(key)];
-        BlockPartFace::from_json(val, face);
+        BlockPartFace::from_json(val, map[parseEnumFacing(key)]);
     }
 
     if (map.empty()) {
@@ -128,6 +129,6 @@ void BlockPart::from_json(const nlohmann::json& j, BlockPart& b) {
         hasShade = shadeVal.get<bool>();
     }
 
-    b = BlockPart(parsePositionBounded(j, "from"), parsePositionBounded(j, "to"), parseFaces(j), parseRotation(j),
-                  hasShade);
+    b = BlockPart(parsePositionBounded(j, "from"), parsePositionBounded(j, "to"),
+                  parseFaces(j), parseRotation(j), hasShade);
 }

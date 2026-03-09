@@ -26,7 +26,7 @@ void ModelBakery::bakeAll() {
                 continue;
 
             const Variant& primary = variantList.getVariantList().front();
-            loadModelJson(primary.getModelLocation()); // recurses for parents
+            loadModelJson(primary.getModelLocation());
         }
     }
 
@@ -52,8 +52,8 @@ void ModelBakery::bakeAll() {
                 continue;
 
             const Variant& primary = variantList.getVariantList().front();
-            const std::string modelKey = primary.getModelLocation().toString();
 
+            const std::string modelKey = primary.getModelLocation().toString();
             int32_t modelIndex = m_pool.find(modelKey);
             if (modelIndex == ModelPool::INVALID_INDEX)
                 continue;
@@ -108,7 +108,6 @@ const ModelBlockDefinition* ModelBakery::loadBlockstateJson(const std::string& b
 int32_t ModelBakery::loadModelJson(const ResourceLocation& location) {
     const std::string key = location.toString();
 
-    // Already in pool — return its index
     int32_t existing = m_pool.find(key);
     if (existing != ModelPool::INVALID_INDEX)
         return existing;
@@ -138,13 +137,29 @@ int32_t ModelBakery::loadModelJson(const ResourceLocation& location) {
 
 BakedBlockVariant ModelBakery::bakeVariant(const ModelResourceLocation& loc, const VariantList& variantList,
                                            int32_t modelIndex, const Variant& chosenVariant) {
-    return BakedBlockVariant{loc, variantList, modelIndex, chosenVariant.getRotation(), chosenVariant.isUvLock()};
+    return BakedBlockVariant{loc, variantList, modelIndex,
+                             chosenVariant.getRotation(), chosenVariant.isUvLock()};
 }
 
 std::string ModelBakery::blockstatePath(const std::string& blockName) const {
-    return m_assetRoot + "/blockstates/" + blockName + ".json";
+    std::string path;
+    path.reserve(m_assetRoot.size() + 13 + blockName.size() + 5);
+    // "/blockstates/" = 13 chars, ".json" = 5 chars
+    path  = m_assetRoot;
+    path += "/blockstates/";
+    path += blockName;
+    path += ".json";
+    return path; // NRVO
 }
 
 std::string ModelBakery::modelPath(const ResourceLocation& location) const {
-    return m_assetRoot + "/models/" + location.getResourcePath() + ".json";
+    const std::string resPath = location.getResourcePath();
+    std::string path;
+    path.reserve(m_assetRoot.size() + 8 + resPath.size() + 5);
+    // "/models/" = 8 chars, ".json" = 5 chars
+    path  = m_assetRoot;
+    path += "/models/";
+    path += resPath;
+    path += ".json";
+    return path; // NRVO
 }

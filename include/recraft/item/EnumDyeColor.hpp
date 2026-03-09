@@ -7,22 +7,22 @@
 
 class EnumDyeColor {
 public:
-    static const EnumDyeColor WHITE;
-    static const EnumDyeColor ORANGE;
-    static const EnumDyeColor MAGENTA;
-    static const EnumDyeColor LIGHT_BLUE;
-    static const EnumDyeColor YELLOW;
-    static const EnumDyeColor LIME;
-    static const EnumDyeColor PINK;
-    static const EnumDyeColor GRAY;
-    static const EnumDyeColor SILVER;
-    static const EnumDyeColor CYAN;
-    static const EnumDyeColor PURPLE;
-    static const EnumDyeColor BLUE;
-    static const EnumDyeColor BROWN;
-    static const EnumDyeColor GREEN;
-    static const EnumDyeColor RED;
-    static const EnumDyeColor BLACK;
+    static const EnumDyeColor& WHITE();
+    static const EnumDyeColor& ORANGE();
+    static const EnumDyeColor& MAGENTA();
+    static const EnumDyeColor& LIGHT_BLUE();
+    static const EnumDyeColor& YELLOW();
+    static const EnumDyeColor& LIME();
+    static const EnumDyeColor& PINK();
+    static const EnumDyeColor& GRAY();
+    static const EnumDyeColor& SILVER();
+    static const EnumDyeColor& CYAN();
+    static const EnumDyeColor& PURPLE();
+    static const EnumDyeColor& BLUE();
+    static const EnumDyeColor& BROWN();
+    static const EnumDyeColor& GREEN();
+    static const EnumDyeColor& RED();
+    static const EnumDyeColor& BLACK();
 
     static const EnumDyeColor& byMetadata(int meta);
     static const EnumDyeColor& byDyeDamage(int damage);
@@ -33,7 +33,7 @@ public:
     const std::string& getName() const;
     const std::string& getUnlocalizedName() const;
     const std::array<float, 3>& getColorComponentValues() const;
-    TextFormatting getChatColor() const;
+    const TextFormatting& getChatColor() const;
 
     std::string toString() const;
 
@@ -45,7 +45,7 @@ public:
 
 private:
     EnumDyeColor(int meta, int dyeDamage, const char* name, const char* unlocalizedName, int colorValue,
-                 TextFormatting chatColor);
+                 const TextFormatting& chatColor);
 
     static void initLookups();
 
@@ -55,7 +55,7 @@ private:
     std::string m_unlocalizedName;
     int m_colorValue;
     std::array<float, 3> m_colorComponents;
-    TextFormatting m_chatColor;
+    const TextFormatting* m_chatColor; // pointer to avoid copying a non-copyable singleton
 
     static const EnumDyeColor* s_metaLookup[16];
     static const EnumDyeColor* s_dyeDamageLookup[16];
