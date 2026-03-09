@@ -1,6 +1,6 @@
 #pragma once
 
-#include "world/CT_World.hpp"
+#include "world/World.hpp"
 
 // mclib
 #include <mclib/common/Vector.h>

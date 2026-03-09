@@ -8,8 +8,8 @@
 #include "Hand.hpp"
 #include "client/entity/Player.hpp"
 #include "mcbridge/MCBridge.hpp"
-#include "world/CT_World.hpp"
 #include "world/WorkQueue.hpp"
+#include "world/World.hpp"
 
 // mclib
 #include <mclib/common/Vector.h>

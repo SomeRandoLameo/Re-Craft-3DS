@@ -1,6 +1,6 @@
 #include "client/entity/Entity.hpp"
 
-#include "world/CT_World.hpp"
+#include "world/World.hpp"
 
 Entity::Entity(World* world) : m_world(world) {}
 

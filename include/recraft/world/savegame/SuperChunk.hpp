@@ -1,6 +1,6 @@
 #pragma once
 
-#include "world/CT_Chunk.hpp"
+#include "world/Chunk.hpp"
 #define SUPERCHUNK_SIZE 8
 #define SUPERCHUNK_BLOCKSIZE (SUPERCHUNK_SIZE * CHUNK_SIZE)
 

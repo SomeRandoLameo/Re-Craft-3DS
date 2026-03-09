@@ -5,7 +5,7 @@
 #include <amethyst.hpp>
 
 #include "VertexFmt.hpp"
-#include "world/CT_World.hpp"
+#include "world/World.hpp"
 
 class Clouds {
 public:

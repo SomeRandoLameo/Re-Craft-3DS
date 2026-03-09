@@ -3,7 +3,7 @@
 #include <citro3d.h>
 
 #include "VertexFmt.hpp"
-#include "world/CT_World.hpp"
+#include "world/World.hpp"
 
 class CubeRenderer {
 public:

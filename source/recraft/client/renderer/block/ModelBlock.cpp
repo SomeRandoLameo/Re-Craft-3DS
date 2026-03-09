@@ -1,16 +1,14 @@
 #include "client/renderer/block/ModelBlock.hpp"
+#include "client/renderer/block/ModelPool.hpp"
 #include "misc/Crash.hpp"
 
 #include <stdexcept>
 
-// TODO: Add the rest if needed
 ModelBlock::ModelBlock(std::optional<ResourceLocation> parentLocationIn, std::vector<BlockPart> elementsIn,
-                       std::map<std::string, std::string> texturesIn, bool ambientOcclusionIn, bool gui3dIn //,
-                       // ItemCameraTransforms cameraTransformsIn, std::vector<ItemOverride> overridesIn
-                       ) :
-    m_elements(std::move(elementsIn)), m_gui3d(gui3dIn), m_ambientOcclusion(ambientOcclusionIn),
-    // m_cameraTransforms(std::move(cameraTransformsIn)), m_overrides(std::move(overridesIn)),
-    m_textures(std::move(texturesIn)), m_parentLocation(std::move(parentLocationIn)) {}
+                       std::map<std::string, std::string> texturesIn, bool ambientOcclusionIn, bool gui3dIn) :
+    m_parentIndex(-1), m_selfIndex(-1), m_elements(std::move(elementsIn)), m_gui3d(gui3dIn),
+    m_ambientOcclusion(ambientOcclusionIn), m_textures(std::move(texturesIn)),
+    m_parentLocation(std::move(parentLocationIn)) {}
 
 ModelBlock ModelBlock::deserialize(const nlohmann::json& j) {
     ModelBlock b;
@@ -18,102 +16,93 @@ ModelBlock ModelBlock::deserialize(const nlohmann::json& j) {
     return b;
 }
 
-bool ModelBlock::hasParent() const { return m_parent != nullptr; }
-
 bool ModelBlock::isGui3d() const { return m_gui3d; }
 
-const std::vector<BlockPart>& ModelBlock::getElements() const {
-    if (m_elements.empty() && m_parent != nullptr)
-        return m_parent->getElements();
-    return m_elements;
-}
-
-bool ModelBlock::isAmbientOcclusion() const {
-    return hasParent() ? m_parent->isAmbientOcclusion() : m_ambientOcclusion;
-}
+const std::optional<ResourceLocation>& ModelBlock::getParentLocation() const { return m_parentLocation; }
 
 bool ModelBlock::isResolved() const {
-    return !m_parentLocation.has_value() || (m_parent != nullptr && m_parent->isResolved());
-}
-
-void ModelBlock::getParentFromMap(const std::unordered_map<std::string, std::unique_ptr<ModelBlock>>& map) {
-    if (!m_parentLocation.has_value())
-        return;
-
-    auto it = map.find(m_parentLocation->toString());
-    if (it != map.end()) {
-        m_parent = it->second.get();
-        return;
-    }
-
-    ResourceLocation withNamespace("minecraft", m_parentLocation->getResourcePath());
-    it = map.find(withNamespace.toString());
-    if (it != map.end()) {
-        m_parent = it->second.get();
-        return;
-    }
-
-    Crash("ModelBlock: could not resolve parent {} for model", m_parentLocation->toString());
+    return !m_parentLocation.has_value() || m_parentIndex != -1;
 }
 
 std::vector<ResourceLocation> ModelBlock::getOverrideLocations() const {
     return {}; // TODO
 }
 
-const std::optional<ResourceLocation>& ModelBlock::getParentLocation() const { return m_parentLocation; }
-
-const ModelBlock* ModelBlock::getRootModel() const { return hasParent() ? m_parent->getRootModel() : this; }
-
 bool ModelBlock::startsWithHash(const std::string& s) const { return !s.empty() && s[0] == '#'; }
 
-bool ModelBlock::isTexturePresent(const std::string& textureName) const {
-    return resolveTextureName(textureName) != "missingno";
+const std::vector<BlockPart>& ModelBlock::getElements(const ModelPool& pool) const {
+    int32_t current = m_selfIndex;
+    while (current != ModelPool::INVALID_INDEX) {
+        const ModelBlock& m = pool.get(current);
+        if (!m.m_elements.empty())
+            return m.m_elements;
+        current = m.m_parentIndex;
+    }
+    return m_elements;
 }
 
-std::string ModelBlock::resolveTextureName(const std::string& textureName) const {
-    std::string t = startsWithHash(textureName) ? textureName : '#' + textureName;
-    Bookkeep bk(this);
-    return resolveTextureName(t, bk);
+bool ModelBlock::isAmbientOcclusion(const ModelPool& pool) const {
+    int32_t current = m_selfIndex;
+    int32_t last = current;
+    while (current != ModelPool::INVALID_INDEX) {
+        last = current;
+        current = pool.get(current).m_parentIndex;
+    }
+    return pool.get(last).m_ambientOcclusion;
 }
 
-std::string ModelBlock::resolveTextureName(const std::string& textureName, Bookkeep& bk) const {
+const ModelBlock* ModelBlock::getRootModel(const ModelPool& pool) const {
+    int32_t current = m_selfIndex;
+    int32_t last = current;
+    while (current != ModelPool::INVALID_INDEX) {
+        last = current;
+        current = pool.get(current).m_parentIndex;
+    }
+    return &pool.get(last);
+}
+
+std::string ModelBlock::resolveTextureIter(const std::string& key, const ModelPool& pool) const {
+    std::string current = key;
+
+    constexpr int MAX_HOPS = 64;
+
+    for (int hop = 0; hop < MAX_HOPS; ++hop) {
+        bool found = false;
+        int32_t node = m_selfIndex;
+
+        while (node != ModelPool::INVALID_INDEX) {
+            const ModelBlock& m = pool.get(node);
+            auto it = m.m_textures.find(current);
+            if (it != m.m_textures.end()) {
+                const std::string& val = it->second;
+                if (!startsWithHash(val))
+                    return val;
+
+                current = val.substr(1);
+                found = true;
+                break;
+            }
+            node = m.m_parentIndex;
+        }
+
+        if (!found)
+            break;
+    }
+
+    return "missingno";
+}
+
+std::string ModelBlock::resolveTextureName(const std::string& textureName, const ModelPool& pool) const {
+    const std::string key = startsWithHash(textureName) ? textureName.substr(1) : textureName;
+
     if (!startsWithHash(textureName))
         return textureName;
 
-    if (this == bk.modelExt)
-        return "missingno";
-
-    auto it = m_textures.find(textureName.substr(1));
-    std::string s = (it != m_textures.end()) ? it->second : "";
-
-    if (s.empty() && hasParent())
-        s = m_parent->resolveTextureName(textureName, bk);
-
-    bk.modelExt = this;
-
-    if (!s.empty() && startsWithHash(s))
-        s = bk.model->resolveTextureName(s, bk);
-
-    return (!s.empty() && !startsWithHash(s)) ? s : "missingno";
+    return resolveTextureIter(key, pool);
 }
 
-void ModelBlock::checkModelHierarchy(const std::unordered_map<std::string, std::unique_ptr<ModelBlock>>& models) {
-    for (const auto& [key, blockPtr] : models) {
-        const ModelBlock* a = blockPtr->m_parent;
-        if (!a)
-            continue;
-        const ModelBlock* b = a->m_parent;
-
-        while (a != b) {
-            if (!a->m_parent || !b->m_parent || !b->m_parent->m_parent)
-                break;
-            a = a->m_parent;
-            b = b->m_parent->m_parent;
-        }
-
-        if (a == b)
-            throw LoopException();
-    }
+bool ModelBlock::isTexturePresent(const std::string& textureName, const ModelPool& pool) const {
+    return resolveTextureName(textureName, pool) != "missingno";
 }
 
 std::vector<BlockPart> ModelBlock::parseElements(const nlohmann::json& j) {

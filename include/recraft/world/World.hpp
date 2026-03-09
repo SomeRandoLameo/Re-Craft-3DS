@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CT_Chunk.hpp"
+#include "Chunk.hpp"
 #include "WorkQueue.hpp"
 
 #include "misc/NumberUtils.hpp"

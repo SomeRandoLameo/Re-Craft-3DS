@@ -1,4 +1,4 @@
-#include "world/CT_World.hpp"
+#include "world/World.hpp"
 #include "world/ChunkWorker.hpp"
 #include "world/savegame/SaveManager.hpp"
 

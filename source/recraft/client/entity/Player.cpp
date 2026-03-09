@@ -4,7 +4,7 @@
 #include "client/gui/DebugUI.hpp"
 #include "input/InputManager.hpp"
 #include "mcbridge/MCBridge.hpp"
-#include "world/CT_World.hpp"
+#include "world/World.hpp"
 
 const float MaxWalkVelocity = 4.3f;
 const float MaxFallVelocity = -50.f;

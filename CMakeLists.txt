@@ -72,6 +72,7 @@ add_executable(${PROJECT_NAME}
     source/recraft/client/renderer/VBOCache.cpp
     source/recraft/client/renderer/WorldRenderer.cpp
     source/recraft/client/renderer/block/ModelBlock.cpp
+    source/recraft/client/renderer/block/ModelPool.cpp
     source/recraft/client/renderer/block/BlockPart.cpp
     source/recraft/client/renderer/block/BlockPartFace.cpp
     source/recraft/client/renderer/block/BlockFaceUV.cpp
@@ -80,8 +81,8 @@ add_executable(${PROJECT_NAME}
     source/recraft/client/renderer/block/Variant.cpp
     source/recraft/client/renderer/block/VariantList.cpp
     source/recraft/world/ChunkWorker.cpp
-    source/recraft/world/CT_Chunk.cpp
-    source/recraft/world/CT_World.cpp
+        source/recraft/world/Chunk.cpp
+        source/recraft/world/World.cpp
     source/recraft/world/Direction.cpp
     source/recraft/world/savegame/SaveManager.cpp
     source/recraft/world/savegame/SuperChunk.cpp

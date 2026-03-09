@@ -1,6 +1,6 @@
 #include "client/renderer/Camera.hpp"
 
-#include "world/CT_Chunk.hpp"
+#include "world/Chunk.hpp"
 
 #include "client/gui/DebugUI.hpp"
 

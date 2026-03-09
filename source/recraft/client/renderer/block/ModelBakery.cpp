@@ -26,12 +26,11 @@ void ModelBakery::bakeAll() {
                 continue;
 
             const Variant& primary = variantList.getVariantList().front();
-            loadModelJson(primary.getModelLocation());
+            loadModelJson(primary.getModelLocation()); // recurses for parents
         }
     }
 
-    for (auto& [key, modelPtr] : m_modelCache)
-        modelPtr->getParentFromMap(m_modelCache);
+    m_pool.freeze();
 
     for (uint16_t i = 0; i < static_cast<uint16_t>(BlockID::Count); ++i) {
         BlockID id = static_cast<BlockID>(i);
@@ -53,20 +52,21 @@ void ModelBakery::bakeAll() {
                 continue;
 
             const Variant& primary = variantList.getVariantList().front();
+            const std::string modelKey = primary.getModelLocation().toString();
 
-            auto modelIt = m_modelCache.find(primary.getModelLocation().toString());
-            if (modelIt == m_modelCache.end())
+            int32_t modelIndex = m_pool.find(modelKey);
+            if (modelIndex == ModelPool::INVALID_INDEX)
                 continue;
 
             ModelResourceLocation mrl(ResourceLocation("minecraft", name), variantKey);
-            BakedBlockVariant baked = bakeVariant(mrl, variantList, *modelIt->second, primary);
+            BakedBlockVariant baked = bakeVariant(mrl, variantList, modelIndex, primary);
 
             auto [it, inserted] = m_bakedRegistry.emplace(mrl.toString(), std::move(baked));
             if (inserted) {
                 uint32_t key = (static_cast<uint32_t>(id) << 4) | (metadataIdx & 0xF);
                 m_metadataIndex[key] = &it->second;
             }
-            metadataIdx++;
+            ++metadataIdx;
         }
     }
 }
@@ -105,41 +105,40 @@ const ModelBlockDefinition* ModelBakery::loadBlockstateJson(const std::string& b
     }
 }
 
-ModelBlock* ModelBakery::loadModelJson(const ResourceLocation& location) {
+int32_t ModelBakery::loadModelJson(const ResourceLocation& location) {
     const std::string key = location.toString();
 
-    auto it = m_modelCache.find(key);
-    if (it != m_modelCache.end())
-        return it->second.get();
+    // Already in pool — return its index
+    int32_t existing = m_pool.find(key);
+    if (existing != ModelPool::INVALID_INDEX)
+        return existing;
 
     std::ifstream file(modelPath(location));
     if (!file.is_open())
-        return nullptr;
+        return ModelPool::INVALID_INDEX;
 
     try {
         nlohmann::json j;
         file >> j;
 
-        auto model = std::make_unique<ModelBlock>(ModelBlock::deserialize(j));
-        model->name = key;
+        ModelBlock model = ModelBlock::deserialize(j);
 
-        std::optional<ResourceLocation> parentLoc = model->getParentLocation();
+        std::optional<ResourceLocation> parentLoc = model.getParentLocation();
 
-        ModelBlock* raw = model.get();
-        m_modelCache.emplace(key, std::move(model));
+        int32_t index = m_pool.internOrGet(key, std::move(model));
 
         if (parentLoc.has_value())
             loadModelJson(*parentLoc);
 
-        return raw;
+        return index;
     } catch (...) {
-        return nullptr;
+        return ModelPool::INVALID_INDEX;
     }
 }
 
 BakedBlockVariant ModelBakery::bakeVariant(const ModelResourceLocation& loc, const VariantList& variantList,
-                                           const ModelBlock& model, const Variant& chosenVariant) {
-    return BakedBlockVariant{loc, variantList, model, chosenVariant.getRotation(), chosenVariant.isUvLock()};
+                                           int32_t modelIndex, const Variant& chosenVariant) {
+    return BakedBlockVariant{loc, variantList, modelIndex, chosenVariant.getRotation(), chosenVariant.isUvLock()};
 }
 
 std::string ModelBakery::blockstatePath(const std::string& blockName) const {

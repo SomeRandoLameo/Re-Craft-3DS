@@ -1,7 +1,7 @@
 #pragma once
 
-#include "CT_World.hpp"
 #include "Client.h"
+#include "World.hpp"
 #include "mclib/protocol/packets/PacketHandler.h"
 
 class NetworkWorld : public mc::protocol::packets::PacketHandler, public mc::core::ClientListener {

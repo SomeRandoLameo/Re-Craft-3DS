@@ -1,4 +1,4 @@
-#include "world/CT_Chunk.hpp"
+#include "world/Chunk.hpp"
 #include <climits>
 
 Xorshift32 uuidGenerator = (Xorshift32)314159265;

@@ -369,17 +369,21 @@ void BlockRegistry::GetTextureUV(BlockID block, uint8_t metadata, Direction dire
         EnumFacing::SOUTH, // South
     };
 
-    const BakedBlockVariant* variant = ReCraftCore::GetInstance()->GetModelBakery()->getVariant(block, metadata);
-    EnumFacing::Value facing = dirToFacing[direction];
+    const ModelBakery* bakery = ReCraftCore::GetInstance()->GetModelBakery();
+    const BakedBlockVariant* variant = bakery->getVariant(block, metadata);
 
-    if (!variant || !variant->model)
+    if (!variant || variant->modelIndex == ModelPool::INVALID_INDEX)
         return;
 
-    for (const BlockPart& part : variant->model->getElements()) {
+    const ModelPool& pool = bakery->getPool();
+    const ModelBlock& model = pool.get(variant->modelIndex);
+    const EnumFacing::Value facing = dirToFacing[direction];
+
+    for (const BlockPart& part : model.getElements(pool)) {
         auto faceIt = part.mapFaces.find(facing);
 
         if (faceIt != part.mapFaces.end()) {
-            const std::string& texName = variant->model->resolveTextureName(faceIt->second.texture);
+            const std::string texName = model.resolveTextureName(faceIt->second.texture, pool);
             const TextureMap::Icon& icon = BlockRegistry::GetTextureMapEx()->Get(texName.c_str());
             out_uv[0] = icon.u;
             out_uv[1] = icon.v;

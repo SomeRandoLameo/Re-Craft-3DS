@@ -5,8 +5,8 @@
 #include "client/entity/Player.hpp"
 #include "client/gui/DebugUI.hpp"
 #include "client/gui/ImGuiManager.hpp"
-#include "world/CT_World.hpp"
 #include "world/WorkQueue.hpp"
+#include "world/World.hpp"
 
 #include <citro3d.h>
 

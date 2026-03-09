@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CT_Chunk.hpp"
+#include "Chunk.hpp"
 
 #include <3ds.h>
 #include <vector>
