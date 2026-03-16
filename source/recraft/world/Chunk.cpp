@@ -127,7 +127,7 @@ void ChunkColumn::SetBlock(mc::Vector3i position, BlockPtr block) {
     SetMetadata(position, 0);
 }
 
-void ChunkColumn::SetBlockAndMeta(mc::Vector3i position, BlockID block, uint8_t metadata) {
+void ChunkColumn::SetBlockAndMeta(mc::Vector3i position, BlockID block, Metadata metadata) {
     ChunkPtr chunk = GetChunk(position.y / Chunk::Size);
     mc::Vector3i localPos = position;
     localPos.y = position.y % Chunk::Size;
@@ -149,11 +149,8 @@ bool Chunk::IsEmpty() {
 
     emptyRevision = revision;
 
-    // Check all blocks in the chunk
     for (int i = 0; i < BlockCount; ++i) {
-        u16 paletteId = GetPackedBlockId(i);
-        BlockID block = BlockRegistry::GetBlockID(paletteId);
-        if (block != BlockID::Air) {
+        if (BlockRegistry::GetBlockID(m_blocks[i]) != BlockID::Air) {
             empty = false;
             return false;
         }

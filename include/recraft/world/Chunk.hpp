@@ -11,17 +11,13 @@
 #include <stdint.h>
 #include <string.h>
 
-
 class Chunk {
 public:
     constexpr static int Size = 16;
-    constexpr static int BITS_PER_BLOCK = 10;
     constexpr static size_t BlockCount = Size * Size * Size;
-    constexpr static size_t BYTES_NEEDED = (BlockCount * BITS_PER_BLOCK + 7) / 8;
-    constexpr static u16 BLOCK_MASK = (1 << BITS_PER_BLOCK) - 1;
 
     int y;
-    Metadata metadataLight[Size][Size][Size]; // first half metadata, second half light
+    Metadata metadataLight[Size][Size][Size];
 
     uint32_t revision;
 
@@ -40,29 +36,21 @@ public:
     bool forceVBOUpdate;
 
     BlockID GetBlockID(mc::Vector3i pos) const {
-        int blockIndex = pos.x + pos.y * Size + pos.z * Size * Size;
-        u16 paletteId = GetPackedBlockId(blockIndex);
-        return BlockRegistry::GetBlockID(paletteId);
+        return BlockRegistry::GetBlockID(m_blocks[BlockIndex(pos)]);
     }
 
     /// DO NOT USE THIS MANUALLY
     void SetBlockID(mc::Vector3i pos, BlockID block) {
-        int blockIndex = pos.x + pos.y * Size + pos.z * Size * Size;
-        u16 paletteId = BlockRegistry::GetId(block);
-        SetPackedBlockId(blockIndex, paletteId);
+        m_blocks[BlockIndex(pos)] = static_cast<u8>(BlockRegistry::GetId(block));
     }
 
     BlockPtr GetBlock(mc::Vector3i pos) const {
-        int blockIndex = pos.x + pos.y * Size + pos.z * Size * Size;
-        BlockID paletteId = (BlockID)GetPackedBlockId(blockIndex);
-        return const_cast<BlockPtr>(BlockRegistry::GetBlock(paletteId));
+        return const_cast<BlockPtr>(BlockRegistry::GetBlock((BlockID)m_blocks[BlockIndex(pos)]));
     }
 
     /// DO NOT USE THIS MANUALLY
     void SetBlock(mc::Vector3i pos, BlockPtr block) {
-        int blockIndex = pos.x + pos.y * Size + pos.z * Size * Size;
-        u16 paletteId = BlockRegistry::GetId(block->GetID());
-        SetPackedBlockId(blockIndex, paletteId);
+        m_blocks[BlockIndex(pos)] = static_cast<u8>(BlockRegistry::GetId(block->GetID()));
     }
 
     // TODO: REMOVE
@@ -73,51 +61,17 @@ public:
     bool IsEmpty();
 
     // raw data access for saving/loading only. Do not use for block manipulation!
-    const u8* GetBlockData() const { return m_packedBlocks; }
+    const u8* GetBlockData() const { return m_blocks; }
 
-    u8* GetBlockData() { return m_packedBlocks; }
+    u8* GetBlockData() { return m_blocks; }
 
-    static constexpr size_t GetBlockDataSize() { return BYTES_NEEDED; }
+    static constexpr size_t GetBlockDataSize() { return BlockCount; }
 
 private:
-    u8 m_packedBlocks[BYTES_NEEDED];
+    u8 m_blocks[BlockCount];
 
-    u16 GetPackedBlockId(int blockIndex) const {
-        size_t bitOffset = blockIndex * BITS_PER_BLOCK;
-        size_t byteOffset = bitOffset / 8;
-        int bitInByte = bitOffset % 8;
-
-        u32 value = 0;
-        value |= m_packedBlocks[byteOffset];
-        if (byteOffset + 1 < BYTES_NEEDED)
-            value |= (m_packedBlocks[byteOffset + 1] << 8);
-        if (byteOffset + 2 < BYTES_NEEDED)
-            value |= (m_packedBlocks[byteOffset + 2] << 16);
-
-        value >>= bitInByte;
-        return static_cast<u16>(value & BLOCK_MASK);
-    }
-
-    void SetPackedBlockId(int blockIndex, u16 id) {
-        size_t bitOffset = blockIndex * BITS_PER_BLOCK;
-        size_t byteOffset = bitOffset / 8;
-        int bitInByte = bitOffset % 8;
-
-        u32 value = 0;
-        value |= m_packedBlocks[byteOffset];
-        if (byteOffset + 1 < BYTES_NEEDED)
-            value |= (m_packedBlocks[byteOffset + 1] << 8);
-        if (byteOffset + 2 < BYTES_NEEDED)
-            value |= (m_packedBlocks[byteOffset + 2] << 16);
-
-        u32 clearMask = ~(BLOCK_MASK << bitInByte);
-        value = (value & clearMask) | ((u32)id << bitInByte);
-
-        m_packedBlocks[byteOffset] = value & 0xFF;
-        if (byteOffset + 1 < BYTES_NEEDED)
-            m_packedBlocks[byteOffset + 1] = (value >> 8) & 0xFF;
-        if (byteOffset + 2 < BYTES_NEEDED)
-            m_packedBlocks[byteOffset + 2] = (value >> 16) & 0xFF;
+    static int BlockIndex(mc::Vector3i pos) {
+        return pos.x + pos.y * Size + pos.z * Size * Size;
     }
 };
 

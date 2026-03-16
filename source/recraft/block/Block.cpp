@@ -356,6 +356,8 @@ void BlockRegistry::Init() {
 // clang-format on
 BlockRegistry::~BlockRegistry() {}
 
+
+// TODO: Block-Texture mapping
 void BlockRegistry::GetTextureUV(BlockID block, uint8_t metadata, Direction direction, int16_t* out_uv) {
     out_uv[0] = 0;
     out_uv[1] = 0;
