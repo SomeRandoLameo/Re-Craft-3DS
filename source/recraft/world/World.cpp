@@ -183,13 +183,13 @@ BlockID World::GetBlockID(mc::Vector3i position) {
 
 BlockPtr World::GetBlock(mc::Vector3i position) {
     if (position.y < 0 || position.y >= World::Height) {
-        return BlockRegistry::GetBlock(BlockID::Air);
+        return const_cast<BlockPtr>(BlockRegistry::GetBlock(BlockID::Air));
     }
 
     ChunkColumnPtr chunk = GetChunkColumn(WorldToChunkCoord(position.x), WorldToChunkCoord(position.z));
 
     if (!chunk) {
-        return BlockRegistry::GetBlock(BlockID::Air);
+        return const_cast<BlockPtr>(BlockRegistry::GetBlock(BlockID::Air));
     }
 
     position.x = WorldToLocalCoord(position.x);
