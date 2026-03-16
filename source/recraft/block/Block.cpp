@@ -376,7 +376,7 @@ void BlockRegistry::GetTextureUV(BlockID blockId, uint8_t metadata,
     }
     if (!name) return;
 
-    const TextureMap::Icon& icon = GetTextureMapEx()->Get(name);
+    const TextureMap::Icon& icon = m_textureMap.Get((std::string(name) + ".png").c_str());
     out_uv[0] = icon.u;
     out_uv[1] = icon.v;
 }
