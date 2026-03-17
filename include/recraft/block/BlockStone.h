@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Block.hpp"
-//TODO: Works, but texture mapping errors on variants
+
 class BlockStone : public Block {
 public:
     enum class Variant : uint8_t {

@@ -42,7 +42,7 @@ void Hand::Draw(int projUniform, C3D_Mtx* projection, mc::inventory::Slot stack,
             int16_t iconUV[2];
             uint8_t color[3];
 
-            BlockRegistry::GetInstance().GetTextureUV((BlockID)stack.GetItemId(), 0, (Direction)i, iconUV);
+            BlockRegistry::GetInstance().GetTextureUV((BlockID)stack.GetItemId(), stack.GetItemDamage(), (Direction)i, iconUV);
 
             BlockRegistry::GetInstance()
                 .GetBlock((BlockID)stack.GetItemId())

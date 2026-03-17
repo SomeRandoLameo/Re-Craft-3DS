@@ -8,6 +8,7 @@
 #include "client/renderer/Clouds.hpp"
 #include "client/renderer/Cursor.hpp"
 #include "client/renderer/PolyGen.hpp"
+#include "client/renderer/Tessellator.hpp"
 #include "client/renderer/TextureMap.hpp"
 
 
@@ -25,6 +26,7 @@ Renderer::Renderer(World* world, Player* player, WorkQueue* queue) {
     pWorldShader = C3D::Shader::New();
     pWorldShader->Load("romfs:/shaders/world.shbin");
     m_world_shader_uLocProjection = pWorldShader->loc("projection");
+    Tessellator::configureAttribs(0, 1, 2, 3);
 
     pGuiShader = C3D::Shader::New();
     pGuiShader->Load("romfs:/shaders/gui.shbin");
@@ -37,6 +39,8 @@ Renderer::Renderer(World* world, Player* player, WorkQueue* queue) {
 
     pGuiShader->Input(GPU_SHORT, 3);
     pGuiShader->Input(GPU_SHORT, 3);
+
+    Tessellator::createInstance(16384);
 
     PolyGen_Init(world, player);
 

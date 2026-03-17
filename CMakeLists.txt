@@ -61,6 +61,7 @@ add_executable(${PROJECT_NAME}
     source/recraft/misc/VecMath.cpp
     source/recraft/ReCraftCore.cpp
     source/recraft/client/renderer/Camera.cpp
+    source/recraft/client/renderer/Tessellator.cpp
     source/recraft/client/renderer/Frustum.cpp
     source/recraft/client/renderer/Clouds.cpp
     source/recraft/client/renderer/CubeRenderer.cpp
