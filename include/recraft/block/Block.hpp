@@ -11,7 +11,7 @@
 #include "world/Direction.hpp"
 
 
-//TODO: Move
+// TODO: Move
 struct TextureSet {
     static constexpr int FaceCount = 6;
     const char* faces[FaceCount] = {};
@@ -19,12 +19,11 @@ struct TextureSet {
     TextureSet() = default;
 
     explicit TextureSet(const char* all) {
-        for (auto& f : faces) f = all;
+        for (auto& f : faces)
+            f = all;
     }
 
-    const char* get(Direction dir) const {
-        return (dir >= 0 && dir < FaceCount) ? faces[dir] : nullptr;
-    }
+    const char* get(Direction dir) const { return (dir >= 0 && dir < FaceCount) ? faces[dir] : nullptr; }
 };
 
 // These IDs are pre-flattening update based. Some blocks are "Mapped" meaning 1 (stone) : 3 (variant - Diorite).
@@ -325,9 +324,7 @@ public:
 
     virtual void getColor(Metadata metadata, Direction direction, Metadata out_rgb[]) const;
 
-    virtual TextureSet getTextures(Metadata metadata) const {
-        return TextureSet(m_unlocalizedName.c_str());
-    }
+    virtual TextureSet getTextures(Metadata metadata) const { return TextureSet(m_unlocalizedName.c_str()); }
 
     virtual BlockID getDropID(Metadata meta) const { return m_id; }
 
@@ -405,10 +402,10 @@ public:
     static TextureMap* GetTextureMapEx() { return &m_textureMap; }
 
 private:
-    std::array<Block, 256>  m_registry;
-    std::array<bool, 256>   m_occupied;
-    u8                      m_defaultId    = 0;
-    const Block*            m_defaultValue = nullptr;
+    std::array<Block, 256> m_registry;
+    std::array<bool, 256> m_occupied;
+    u8 m_defaultId = 0;
+    const Block* m_defaultValue = nullptr;
 
     static TextureMap m_textureMap;
 };

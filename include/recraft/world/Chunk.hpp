@@ -35,9 +35,7 @@ public:
     uint32_t vboRevision;
     bool forceVBOUpdate;
 
-    BlockID GetBlockID(mc::Vector3i pos) const {
-        return BlockRegistry::GetBlockID(m_blocks[BlockIndex(pos)]);
-    }
+    BlockID GetBlockID(mc::Vector3i pos) const { return BlockRegistry::GetBlockID(m_blocks[BlockIndex(pos)]); }
 
     /// DO NOT USE THIS MANUALLY
     void SetBlockID(mc::Vector3i pos, BlockID block) {
@@ -70,9 +68,7 @@ public:
 private:
     u8 m_blocks[BlockCount];
 
-    static int BlockIndex(mc::Vector3i pos) {
-        return pos.x + pos.y * Size + pos.z * Size * Size;
-    }
+    static int BlockIndex(mc::Vector3i pos) { return pos.x + pos.y * Size + pos.z * Size * Size; }
 };
 
 typedef Chunk* ChunkPtr;

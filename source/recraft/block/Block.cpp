@@ -83,7 +83,6 @@ SoundType Block::getSoundType() const { return m_soundType; }
 
 uint8_t Block::getLightEmission() const { return m_lightEmission; }
 
-
 TextureMap BlockRegistry::m_textureMap;
 
 BlockRegistry::BlockRegistry() {}
@@ -356,27 +355,33 @@ void BlockRegistry::Init() {
 // clang-format on
 BlockRegistry::~BlockRegistry() {}
 
-
 // TODO: Block-Texture mapping
-void BlockRegistry::GetTextureUV(BlockID blockId, uint8_t metadata,
-                                 Direction direction, int16_t* out_uv) {
+void BlockRegistry::GetTextureUV(BlockID blockId, uint8_t metadata, Direction direction, int16_t* out_uv) {
     out_uv[0] = 0;
     out_uv[1] = 0;
 
     const Block* block = GetBlock(blockId);
-    if (!block) return;
+    if (!block)
+        return;
 
     TextureSet ts = block->getTextures(metadata);
     const char* name = ts.get(direction);
 
     if (!name) {
-        for (auto & face : ts.faces) {
-            if (face) { name = face; break; }
+        for (auto& face : ts.faces) {
+            if (face) {
+                name = face;
+                break;
+            }
         }
     }
-    if (!name) return;
+    if (!name)
+        return;
 
-    const TextureMap::Icon& icon = m_textureMap.Get((std::string(name) + ".png").c_str());
+    char buffer[256];
+    std::snprintf(buffer, sizeof(buffer), "blocks/%s", name);
+    const TextureMap::Icon& icon = m_textureMap.Get(buffer);
+
     out_uv[0] = icon.u;
     out_uv[1] = icon.v;
 }

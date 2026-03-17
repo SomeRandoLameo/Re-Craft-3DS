@@ -2,8 +2,8 @@
 #include "client/gui/GuiInGame.hpp"
 #include "client/gui/SelectWorldScreen.hpp"
 #include "client/gui/StartScreen.hpp"
-//#include "client/renderer/block/ModelBakery.hpp"
-//#include "client/renderer/block/ModelBlock.hpp"
+// #include "client/renderer/block/ModelBakery.hpp"
+// #include "client/renderer/block/ModelBlock.hpp"
 #include "input/InputManager.hpp"
 
 bool showDebugInfo = true;
@@ -29,7 +29,7 @@ ReCraftCore::ReCraftCore() {
     BlockRegistry::GetInstance().Init();
 
     // UNUSED, TOO MUCH RESOURCE CONSUMPTION
-     //m_modelBakery = new ModelBakery("romfs:/assets/minecraft");
+    // m_modelBakery = new ModelBakery("romfs:/assets/minecraft");
     // m_modelBakery->bakeAll();
 
     m_chunkWorker.AddHandler(WorkerItemType::PolyGen, (WorkerFuncObj){&PolyGen_GeneratePolygons, nullptr, true});

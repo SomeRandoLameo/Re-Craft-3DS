@@ -69,22 +69,22 @@ void MapColor::initDyeColorMapping() {
     if (s_dyeMappingInitialized)
         return;
 
-    field_193575_b[EnumDyeColor::WHITE().getMetadata()]      = &SNOW;
-    field_193575_b[EnumDyeColor::ORANGE().getMetadata()]     = &ADOBE;
-    field_193575_b[EnumDyeColor::MAGENTA().getMetadata()]    = &MAGENTA;
+    field_193575_b[EnumDyeColor::WHITE().getMetadata()] = &SNOW;
+    field_193575_b[EnumDyeColor::ORANGE().getMetadata()] = &ADOBE;
+    field_193575_b[EnumDyeColor::MAGENTA().getMetadata()] = &MAGENTA;
     field_193575_b[EnumDyeColor::LIGHT_BLUE().getMetadata()] = &LIGHT_BLUE;
-    field_193575_b[EnumDyeColor::YELLOW().getMetadata()]     = &YELLOW;
-    field_193575_b[EnumDyeColor::LIME().getMetadata()]       = &LIME;
-    field_193575_b[EnumDyeColor::PINK().getMetadata()]       = &PINK;
-    field_193575_b[EnumDyeColor::GRAY().getMetadata()]       = &GRAY;
-    field_193575_b[EnumDyeColor::SILVER().getMetadata()]     = &SILVER;
-    field_193575_b[EnumDyeColor::CYAN().getMetadata()]       = &CYAN;
-    field_193575_b[EnumDyeColor::PURPLE().getMetadata()]     = &PURPLE;
-    field_193575_b[EnumDyeColor::BLUE().getMetadata()]       = &BLUE;
-    field_193575_b[EnumDyeColor::BROWN().getMetadata()]      = &BROWN;
-    field_193575_b[EnumDyeColor::GREEN().getMetadata()]      = &GREEN;
-    field_193575_b[EnumDyeColor::RED().getMetadata()]        = &RED;
-    field_193575_b[EnumDyeColor::BLACK().getMetadata()]      = &BLACK;
+    field_193575_b[EnumDyeColor::YELLOW().getMetadata()] = &YELLOW;
+    field_193575_b[EnumDyeColor::LIME().getMetadata()] = &LIME;
+    field_193575_b[EnumDyeColor::PINK().getMetadata()] = &PINK;
+    field_193575_b[EnumDyeColor::GRAY().getMetadata()] = &GRAY;
+    field_193575_b[EnumDyeColor::SILVER().getMetadata()] = &SILVER;
+    field_193575_b[EnumDyeColor::CYAN().getMetadata()] = &CYAN;
+    field_193575_b[EnumDyeColor::PURPLE().getMetadata()] = &PURPLE;
+    field_193575_b[EnumDyeColor::BLUE().getMetadata()] = &BLUE;
+    field_193575_b[EnumDyeColor::BROWN().getMetadata()] = &BROWN;
+    field_193575_b[EnumDyeColor::GREEN().getMetadata()] = &GREEN;
+    field_193575_b[EnumDyeColor::RED().getMetadata()] = &RED;
+    field_193575_b[EnumDyeColor::BLACK().getMetadata()] = &BLACK;
 
     s_dyeMappingInitialized = true;
 }

@@ -95,12 +95,9 @@ const TextFormatting& TextFormatting::RESET() {
 
 const std::array<const TextFormatting*, 22>& TextFormatting::allValues() {
     static const std::array<const TextFormatting*, 22> values = {
-        &BLACK(),      &DARK_BLUE(),      &DARK_GREEN(), &DARK_AQUA(),  &DARK_RED(),
-        &DARK_PURPLE(), &GOLD(),          &GRAY(),       &DARK_GRAY(),  &BLUE(),
-        &GREEN(),      &AQUA(),           &RED(),        &LIGHT_PURPLE(), &YELLOW(),
-        &WHITE(),      &OBFUSCATED(),     &BOLD(),       &STRIKETHROUGH(), &UNDERLINE(),
-        &ITALIC(),     &RESET()
-    };
+        &BLACK(),      &DARK_BLUE(), &DARK_GREEN(),    &DARK_AQUA(), &DARK_RED(), &DARK_PURPLE(),  &GOLD(),   &GRAY(),
+        &DARK_GRAY(),  &BLUE(),      &GREEN(),         &AQUA(),      &RED(),      &LIGHT_PURPLE(), &YELLOW(), &WHITE(),
+        &OBFUSCATED(), &BOLD(),      &STRIKETHROUGH(), &UNDERLINE(), &ITALIC(),   &RESET()};
     return values;
 }
 
@@ -120,10 +117,7 @@ TextFormatting::TextFormatting(const char* name, char formattingCode, bool fancy
     TextFormatting(name, formattingCode, fancyStyling, -1) {}
 
 TextFormatting::TextFormatting(const char* name, char formattingCode, bool fancyStyling, int colorIndex) :
-    m_name(name),
-    m_formattingCode(formattingCode),
-    m_fancyStyling(fancyStyling),
-    m_colorIndex(colorIndex),
+    m_name(name), m_formattingCode(formattingCode), m_fancyStyling(fancyStyling), m_colorIndex(colorIndex),
     m_controlString(std::string("\xC2\xA7") + formattingCode) {}
 
 std::string TextFormatting::lowercaseAlpha(const std::string& input) {
@@ -145,9 +139,9 @@ void TextFormatting::initNameMapping() {
     s_initialized = true;
 }
 
-int  TextFormatting::getColorIndex()  const { return m_colorIndex; }
+int TextFormatting::getColorIndex() const { return m_colorIndex; }
 bool TextFormatting::isFancyStyling() const { return m_fancyStyling; }
-bool TextFormatting::isColor()        const { return !m_fancyStyling && (this != &RESET()); }
+bool TextFormatting::isColor() const { return !m_fancyStyling && (this != &RESET()); }
 
 std::string TextFormatting::getFriendlyName() const {
     std::string result = m_name;

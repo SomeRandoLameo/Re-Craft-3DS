@@ -76,9 +76,9 @@ const EnumDyeColor& EnumDyeColor::BLACK() {
 // ---------------------------------------------------------------------------
 // Lookup tables
 // ---------------------------------------------------------------------------
-const EnumDyeColor* EnumDyeColor::s_metaLookup[16]     = {};
+const EnumDyeColor* EnumDyeColor::s_metaLookup[16] = {};
 const EnumDyeColor* EnumDyeColor::s_dyeDamageLookup[16] = {};
-bool EnumDyeColor::s_lookupsInitialized                 = false;
+bool EnumDyeColor::s_lookupsInitialized = false;
 
 void EnumDyeColor::initLookups() {
     if (s_lookupsInitialized)
@@ -86,13 +86,12 @@ void EnumDyeColor::initLookups() {
 
     // Calling each accessor here ensures the instances are alive before we
     // store their addresses — no dangling pointer risk.
-    const EnumDyeColor* all[16] = {
-        &WHITE(),  &ORANGE(), &MAGENTA(), &LIGHT_BLUE(), &YELLOW(), &LIME(),  &PINK(),  &GRAY(),
-        &SILVER(), &CYAN(),   &PURPLE(),  &BLUE(),       &BROWN(),  &GREEN(), &RED(),   &BLACK()
-    };
+    const EnumDyeColor* all[16] = {&WHITE(), &ORANGE(), &MAGENTA(), &LIGHT_BLUE(), &YELLOW(), &LIME(),
+                                   &PINK(),  &GRAY(),   &SILVER(),  &CYAN(),       &PURPLE(), &BLUE(),
+                                   &BROWN(), &GREEN(),  &RED(),     &BLACK()};
 
     for (const EnumDyeColor* color : all) {
-        s_metaLookup[color->m_meta]           = color;
+        s_metaLookup[color->m_meta] = color;
         s_dyeDamageLookup[color->m_dyeDamage] = color;
     }
 
@@ -118,11 +117,7 @@ const EnumDyeColor& EnumDyeColor::byDyeDamage(int damage) {
 // ---------------------------------------------------------------------------
 EnumDyeColor::EnumDyeColor(int meta, int dyeDamage, const char* name, const char* unlocalizedName, int colorValue,
                            const TextFormatting& chatColor) :
-    m_meta(meta),
-    m_dyeDamage(dyeDamage),
-    m_name(name),
-    m_unlocalizedName(unlocalizedName),
-    m_colorValue(colorValue),
+    m_meta(meta), m_dyeDamage(dyeDamage), m_name(name), m_unlocalizedName(unlocalizedName), m_colorValue(colorValue),
     m_chatColor(&chatColor) // store address of the singleton reference
 {
     int r = (colorValue & 0xFF0000) >> 16;
@@ -134,13 +129,13 @@ EnumDyeColor::EnumDyeColor(int meta, int dyeDamage, const char* name, const char
 // ---------------------------------------------------------------------------
 // Accessors
 // ---------------------------------------------------------------------------
-int                        EnumDyeColor::getMetadata()            const { return m_meta; }
-int                        EnumDyeColor::getDyeDamage()           const { return m_dyeDamage; }
-int                        EnumDyeColor::getColorValue()          const { return m_colorValue; }
-const std::string&         EnumDyeColor::getName()                const { return m_name; }
-const std::string&         EnumDyeColor::getUnlocalizedName()     const { return m_unlocalizedName; }
-const std::array<float,3>& EnumDyeColor::getColorComponentValues() const { return m_colorComponents; }
-const TextFormatting&      EnumDyeColor::getChatColor()           const { return *m_chatColor; }
+int EnumDyeColor::getMetadata() const { return m_meta; }
+int EnumDyeColor::getDyeDamage() const { return m_dyeDamage; }
+int EnumDyeColor::getColorValue() const { return m_colorValue; }
+const std::string& EnumDyeColor::getName() const { return m_name; }
+const std::string& EnumDyeColor::getUnlocalizedName() const { return m_unlocalizedName; }
+const std::array<float, 3>& EnumDyeColor::getColorComponentValues() const { return m_colorComponents; }
+const TextFormatting& EnumDyeColor::getChatColor() const { return *m_chatColor; }
 
 // IStringSerializable
 const std::string& EnumDyeColor::getSerializedName() const { return m_name; }
