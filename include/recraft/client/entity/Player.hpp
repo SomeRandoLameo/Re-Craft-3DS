@@ -83,7 +83,9 @@ public:
     Raycast_Result viewRayCast;
     bool blockInSight = false;
     bool blockInActionRange = false;
-    mc::inventory::Slot inventory[260];
+
+    //IDK how many we actually need. this shoult be enough for now
+    mc::inventory::Slot inventory[500];
 
 
     static constexpr float EyeHeight = 1.65f;

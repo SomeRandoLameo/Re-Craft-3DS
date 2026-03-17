@@ -28,40 +28,76 @@ Player::Player(World* world) : Entity(world), m_input(new PlayerInput()) {
 // TODO: Separate from player
 void Player::InitializeInventory() {
     int slotIndex = 0;
-    // TODO: Stone variant texture mapping
-    for (uint8_t i = 0; i <= 6; i++) {
+
+    for (uint8_t i = 0; i <= 6; i++) { // stone and variants
         inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Stone), 1, i);
     }
-    inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Grass), 1, 0);
-    inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Dirt), 1, 0);
+
+    for (uint8_t i = 0; i <= 1; i++) { // grass and variants
+        inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Grass), 1, i);
+    }
+
+    for (uint8_t i = 0; i <= 2; i++) { // dirt and variants
+        inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Dirt), 1, i);
+    }
+
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Cobblestone), 1, 0);
-    inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Planks), 1, 0);
-    inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Sapling), 1, 0);
+
+    for (uint8_t i = 0; i <= 5; i++) { // plank and variants
+        inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Planks), 1, i);
+    }
+
+    for (uint8_t i = 0; i <= 5; i++) { // sapling and variants
+        inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Sapling), 1, i);
+    }
+
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Bedrock), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Flowing_Water), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Water), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Flowing_Lava), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Lava), 1, 0);
-    inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Sand), 1, 0);
+
+    for (uint8_t i = 0; i <= 1; i++) { // sand and variants
+        inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Sand), 1, i);
+    }
+
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Gravel), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Gold_Ore), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Iron_Ore), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Coal_Ore), 1, 0);
-    inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Log), 1, 0);
-    inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Leaves), 1, 0);
-    inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Sponge), 1, 0);
+
+    for (uint8_t i = 0; i <= 3; i++) { // log and variants
+        inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Log), 1, i);
+    }
+
+    for (uint8_t i = 0; i <= 3; i++) { // leaves and variants
+        inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Leaves), 1, 0);
+    }
+
+    for (uint8_t i = 0; i <= 1; i++) { // sponge and variants
+        inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Sponge), 1, i);
+    }
+
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Glass), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Lapis_Ore), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Lapis_Block), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Dispenser), 1, 0);
-    inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Sandstone), 1, 0);
+
+    for (uint8_t i = 0; i <= 2; i++) { // Sandstone and variants
+        inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Sandstone), 1, i);
+    }
+
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Noteblock), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Bed), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Golden_Rail), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Detector_Rail), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Sticky_Piston), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Web), 1, 0);
-    inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Tallgrass), 1, 0);
+
+    for (uint8_t i = 0; i <= 2; i++) { // Tallgrass and variants
+        inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Tallgrass), 1, i);
+    }
+
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Deadbush), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Piston), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Piston_Head), 1, 0);

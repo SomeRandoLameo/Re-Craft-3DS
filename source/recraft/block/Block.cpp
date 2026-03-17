@@ -1,8 +1,29 @@
 #include "block/Block.hpp"
 #include "ReCraftCore.hpp"
-#include "block/BlockGrass.h"
-#include "block/BlockLeaves.h"
-#include "block/BlockStone.h"
+#include "block/BlockAir.hpp"
+#include "block/BlockBed.hpp"
+#include "block/BlockDeadBush.hpp"
+#include "block/BlockDirt.hpp"
+#include "block/BlockDispenser.hpp"
+#include "block/BlockGlass.hpp"
+#include "block/BlockGrass.hpp"
+#include "block/BlockGravel.hpp"
+#include "block/BlockLeaves.hpp"
+#include "block/BlockNote.hpp"
+#include "block/BlockOldLeaves.hpp"
+#include "block/BlockOldLog.hpp"
+#include "block/BlockOre.hpp"
+#include "block/BlockPistonBase.hpp"
+#include "block/BlockPlanks.hpp"
+#include "block/BlockRailDetector.hpp"
+#include "block/BlockRailPowered.hpp"
+#include "block/BlockSand.hpp"
+#include "block/BlockSandStone.hpp"
+#include "block/BlockSapling.hpp"
+#include "block/BlockSponge.hpp"
+#include "block/BlockStone.hpp"
+#include "block/BlockTallGrass.hpp"
+#include "block/BlockWeb.hpp"
 #include "util/EnumFacing.hpp"
 
 BlockPtr Block::setHardness(float hardness) {
@@ -92,44 +113,65 @@ BlockRegistry::BlockRegistry() {}
 void BlockRegistry::Init() {
     m_textureMap.Init("romfs:/assets/minecraft/textures/blocks");
 
-    RegisterBlock(BlockID::Air,
-                  (new Block())
-                      ->setOpaque(false) //TODO: Remove
-                      ->setSolid(false) //TODO: Remove
-                      ->setUnlocalizedName("air"));
-
+    RegisterBlock(BlockID::Air,(new BlockAir())->setUnlocalizedName("air"));
     RegisterBlock(BlockID::Stone, (new BlockStone())->setHardness(1.5F)->setResistance(10.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("stone"));
     RegisterBlock(BlockID::Grass, (new BlockGrass())->setHardness(0.6F)->setSoundType(SoundType::PLANT)->setUnlocalizedName("grass"));
-    RegisterBlock(BlockID::Dirt, (new Block())->setHardness(0.5F)->setSoundType(SoundType::GROUND)->setUnlocalizedName("dirt"));
-    RegisterBlock(BlockID::Cobblestone, (new Block())->setHardness(2.0F)->setResistance(10.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("stonebrick")->setCreativeTab(CreativeTabs::BUILDING_BLOCKS));
-    RegisterBlock(BlockID::Planks, (new Block())->setHardness(2.0F)->setResistance(5.0F)->setSoundType(SoundType::WOOD)->setUnlocalizedName("wood"));
-    RegisterBlock(BlockID::Sapling, (new Block())->setHardness(0.0F)->setSoundType(SoundType::PLANT)->setUnlocalizedName("sapling"));
+    RegisterBlock(BlockID::Dirt, (new BlockDirt())->setHardness(0.5F)->setSoundType(SoundType::GROUND)->setUnlocalizedName("dirt"));
+
+//TODO: Blocks initialize always with material, also cobblestone is reused
+    RegisterBlock(BlockID::Cobblestone, (new Block())->setHardness(2.0F)->setResistance(10.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("cobblestone")->setCreativeTab(CreativeTabs::BUILDING_BLOCKS));
+
+    RegisterBlock(BlockID::Planks, (new BlockPlanks())->setHardness(2.0F)->setResistance(5.0F)->setSoundType(SoundType::WOOD)->setUnlocalizedName("wood"));
+    RegisterBlock(BlockID::Sapling, (new BlockSapling())->setHardness(0.0F)->setSoundType(SoundType::PLANT)->setUnlocalizedName("sapling"));
+
+//TODO: BlockEmptyDrops
     RegisterBlock(BlockID::Bedrock, (new Block())->setBlockUnbreakable()->setResistance(6000000.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("bedrock")->disableStats()->setCreativeTab(CreativeTabs::BUILDING_BLOCKS));
+
+//TODO:BlockDynamicLiquid
     RegisterBlock(BlockID::Flowing_Water, (new Block())->setHardness(100.0F)->setLightOpacity(3)->setUnlocalizedName("water")->disableStats());
+//TODO:BlockStaticLiquid
     RegisterBlock(BlockID::Water, (new Block())->setHardness(100.0F)->setLightOpacity(3)->setUnlocalizedName("water")->disableStats());
+//TODO:BlockDynamicLiquid
     RegisterBlock(BlockID::Flowing_Lava, (new Block())->setHardness(100.0F)->setLightLevel(1.0F)->setUnlocalizedName("lava")->disableStats());
+//TODO:BlockStaticLiquid
     RegisterBlock(BlockID::Lava, (new Block())->setHardness(100.0F)->setLightLevel(1.0F)->setUnlocalizedName("lava")->disableStats());
-    RegisterBlock(BlockID::Sand, (new Block())->setHardness(0.5F)->setSoundType(SoundType::SAND)->setUnlocalizedName("sand"));
-    RegisterBlock(BlockID::Gravel, (new Block())->setHardness(0.6F)->setSoundType(SoundType::GROUND)->setUnlocalizedName("gravel"));
-    RegisterBlock(BlockID::Gold_Ore, (new Block())->setHardness(3.0F)->setResistance(5.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("oreGold"));
-    RegisterBlock(BlockID::Iron_Ore, (new Block())->setHardness(3.0F)->setResistance(5.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("oreIron"));
-    RegisterBlock(BlockID::Coal_Ore, (new Block())->setHardness(3.0F)->setResistance(5.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("oreCoal"));
-    RegisterBlock(BlockID::Log, (new Block())->setUnlocalizedName("log"));
-    RegisterBlock(BlockID::Leaves, (new BlockLeaves())->setUnlocalizedName("leaves"));
-    RegisterBlock(BlockID::Sponge, (new Block())->setHardness(0.6F)->setSoundType(SoundType::PLANT)->setUnlocalizedName("sponge"));
-    RegisterBlock(BlockID::Glass, (new Block())->setHardness(0.3F)->setSoundType(SoundType::GLASS)->setUnlocalizedName("glass"));
-    RegisterBlock(BlockID::Lapis_Ore, (new Block())->setHardness(3.0F)->setResistance(5.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("oreLapis"));
+
+    RegisterBlock(BlockID::Sand, (new BlockSand())->setHardness(0.5F)->setSoundType(SoundType::SAND)->setUnlocalizedName("sand"));
+    RegisterBlock(BlockID::Gravel, (new BlockGravel())->setHardness(0.6F)->setSoundType(SoundType::GROUND)->setUnlocalizedName("gravel"));
+    RegisterBlock(BlockID::Gold_Ore, (new BlockOre())->setHardness(3.0F)->setResistance(5.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("oreGold"));
+    RegisterBlock(BlockID::Iron_Ore, (new BlockOre())->setHardness(3.0F)->setResistance(5.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("oreIron"));
+    RegisterBlock(BlockID::Coal_Ore, (new BlockOre())->setHardness(3.0F)->setResistance(5.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("oreCoal"));
+
+//TODO:BlockOldLog->BlockLog->BlockRotatedPillar->Block-rotation
+    RegisterBlock(BlockID::Log, (new BlockOldLog())->setUnlocalizedName("log"));
+
+//TODO:BlockOldLeaf->BlockLeaves
+    RegisterBlock(BlockID::Leaves, (new BlockOldLeaves())->setUnlocalizedName("leaves"));
+
+    RegisterBlock(BlockID::Sponge, (new BlockSponge())->setHardness(0.6F)->setSoundType(SoundType::PLANT)->setUnlocalizedName("sponge"));
+    RegisterBlock(BlockID::Glass, (new BlockGlass())->setHardness(0.3F)->setSoundType(SoundType::GLASS)->setUnlocalizedName("glass"));
+    RegisterBlock(BlockID::Lapis_Ore, (new BlockOre())->setHardness(3.0F)->setResistance(5.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("oreLapis"));
+
+//TODO: How do you get your texture?
     RegisterBlock(BlockID::Lapis_Block, (new Block())->setHardness(3.0F)->setResistance(5.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("blockLapis")->setCreativeTab(CreativeTabs::BUILDING_BLOCKS));
-    RegisterBlock(BlockID::Dispenser, (new Block())->setHardness(3.5F)->setSoundType(SoundType::STONE)->setUnlocalizedName("dispenser"));
-    RegisterBlock(BlockID::Sandstone, (new Block())->setSoundType(SoundType::STONE)->setHardness(0.8F)->setUnlocalizedName("sandStone"));
-    RegisterBlock(BlockID::Noteblock, (new Block())->setSoundType(SoundType::WOOD)->setHardness(0.8F)->setUnlocalizedName("musicBlock"));
-    RegisterBlock(BlockID::Bed, (new Block())->setSoundType(SoundType::WOOD)->setHardness(0.2F)->setUnlocalizedName("bed")->disableStats());
-    RegisterBlock(BlockID::Golden_Rail, (new Block())->setHardness(0.7F)->setSoundType(SoundType::METAL)->setUnlocalizedName("goldenRail"));
-    RegisterBlock(BlockID::Detector_Rail, (new Block())->setHardness(0.7F)->setSoundType(SoundType::METAL)->setUnlocalizedName("detectorRail"));
-    RegisterBlock(BlockID::Sticky_Piston, (new Block())->setUnlocalizedName("pistonStickyBase"));
-    RegisterBlock(BlockID::Web, (new Block())->setLightOpacity(1)->setHardness(4.0F)->setUnlocalizedName("web"));
-    RegisterBlock(BlockID::Tallgrass, (new Block())->setHardness(0.0F)->setSoundType(SoundType::PLANT)->setUnlocalizedName("tallgrass"));
-    RegisterBlock(BlockID::Deadbush, (new Block())->setHardness(0.0F)->setSoundType(SoundType::PLANT)->setUnlocalizedName("deadbush"));
+
+    RegisterBlock(BlockID::Dispenser, (new BlockDispenser())->setHardness(3.5F)->setSoundType(SoundType::STONE)->setUnlocalizedName("dispenser"));
+    RegisterBlock(BlockID::Sandstone, (new BlockSandStone())->setSoundType(SoundType::STONE)->setHardness(0.8F)->setUnlocalizedName("sandStone"));
+    RegisterBlock(BlockID::Noteblock, (new BlockNote())->setSoundType(SoundType::WOOD)->setHardness(0.8F)->setUnlocalizedName("musicBlock"));
+
+//TODO:BlockHorizontal
+    RegisterBlock(BlockID::Bed, (new BlockBed())->setSoundType(SoundType::WOOD)->setHardness(0.2F)->setUnlocalizedName("bed")->disableStats());
+
+    RegisterBlock(BlockID::Golden_Rail, (new BlockRailPowered())->setHardness(0.7F)->setSoundType(SoundType::METAL)->setUnlocalizedName("goldenRail"));
+    RegisterBlock(BlockID::Detector_Rail, (new BlockRailDetector())->setHardness(0.7F)->setSoundType(SoundType::METAL)->setUnlocalizedName("detectorRail"));
+    RegisterBlock(BlockID::Sticky_Piston, (new BlockPistonBase(true))->setUnlocalizedName("pistonStickyBase"));
+    RegisterBlock(BlockID::Web, (new BlockWeb())->setLightOpacity(1)->setHardness(4.0F)->setUnlocalizedName("web"));
+    RegisterBlock(BlockID::Tallgrass, (new BlockTallGrass())->setHardness(0.0F)->setSoundType(SoundType::PLANT)->setUnlocalizedName("tallgrass"));
+    RegisterBlock(BlockID::Deadbush, (new BlockDeadBush())->setHardness(0.0F)->setSoundType(SoundType::PLANT)->setUnlocalizedName("deadbush"));
+
+
+
+
     RegisterBlock(BlockID::Piston, (new Block())->setUnlocalizedName("pistonBase"));
     RegisterBlock(BlockID::Piston_Head, (new Block())->setUnlocalizedName("pistonBase"));
     RegisterBlock(BlockID::Wool, (new Block())->setHardness(0.8F)->setSoundType(SoundType::CLOTH)->setUnlocalizedName("cloth"));
