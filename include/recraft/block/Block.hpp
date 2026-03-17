@@ -10,7 +10,6 @@
 #include "misc/Crash.hpp"
 #include "world/Direction.hpp"
 
-
 // TODO: Move
 struct TextureSet {
     static constexpr int FaceCount = 6;
@@ -26,8 +25,8 @@ struct TextureSet {
     const char* get(Direction dir) const { return (dir >= 0 && dir < FaceCount) ? faces[dir] : nullptr; }
 };
 
-// These IDs are pre-flattening update based. Some blocks are "Mapped" meaning 1 (stone) : 3 (variant - Diorite).
-// Variants are metadata based.
+// These IDs are pre-flattening update based. Some blocks are "Mapped" meaning 1
+// (stone) : 3 (variant - Diorite). Variants are metadata based.
 enum class BlockID : u8 {
     Air,
     Stone,
@@ -300,27 +299,27 @@ public:
     /**
      * Sets how many hits it takes to break a block.
      */
-    Block& setHardness(float hardness);
+    Block* setHardness(float hardness);
 
-    Block& setBlockUnbreakable();
+    Block* setBlockUnbreakable();
 
-    Block& setResistance(float resistance);
+    Block* setResistance(float resistance);
 
-    Block& setUnlocalizedName(const std::string& name);
+    Block* setUnlocalizedName(const std::string& name);
 
-    Block& setSoundType(SoundType sound);
+    Block* setSoundType(SoundType sound);
 
-    Block& setOpaque(bool opaque);
+    Block* setOpaque(bool opaque);
 
-    Block& setSolid(bool solid);
+    Block* setSolid(bool solid);
 
-    Block& setCreativeTab(CreativeTabs tab);
+    Block* setCreativeTab(CreativeTabs tab);
 
-    Block& setLightLevel(float value);
+    Block* setLightLevel(float value);
 
-    Block& setLightOpacity(int opacity);
+    Block* setLightOpacity(int opacity);
 
-    Block& disableStats();
+    Block* disableStats();
 
     virtual void getColor(Metadata metadata, Direction direction, Metadata out_rgb[]) const;
 
@@ -336,7 +335,6 @@ public:
     bool isSolid() const;
     SoundType getSoundType() const;
     uint8_t getLightEmission() const;
-
 
 protected:
     BlockID m_id;
@@ -370,22 +368,22 @@ public:
 
     void Init();
 
-    const Block* RegisterBlock(BlockID id, const Block& block) {
+    const Block* RegisterBlock(BlockID id, BlockPtr block) {
         auto& instance = GetInstance();
         instance.m_registry[(u8)id] = block;
         instance.m_occupied[(u8)id] = true;
 
         if ((u8)id == instance.m_defaultId)
-            instance.m_defaultValue = &instance.m_registry[(u8)id];
+            instance.m_defaultValue = instance.m_registry[(u8)id];
 
-        return &instance.m_registry[(u8)id];
+        return instance.m_registry[(u8)id];
     }
 
     static const Block* GetBlock(BlockID id) {
         const auto& instance = GetInstance();
         u8 idx = (u8)id;
         if (instance.m_occupied[idx])
-            return &instance.m_registry[idx];
+            return instance.m_registry[idx];
         return instance.m_defaultValue;
     }
 
@@ -395,14 +393,13 @@ public:
 
     static u8 GetId(BlockID block) { return static_cast<u8>(block); }
 
-
     static void GetTextureUV(BlockID block, uint8_t metadata, Direction direction, int16_t* out_uv);
 
     static void* GetTextureMap() { return m_textureMap.GetTexture(); }
     static TextureMap* GetTextureMapEx() { return &m_textureMap; }
 
 private:
-    std::array<Block, 256> m_registry;
+    std::array<BlockPtr, 256> m_registry;
     std::array<bool, 256> m_occupied;
     u8 m_defaultId = 0;
     const Block* m_defaultValue = nullptr;
