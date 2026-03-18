@@ -118,6 +118,11 @@ When the Client disconnects, you are still able to explore the downloaded chunks
 
 When playing on the server, new chunks will get loaded when nessessary, causing some lag spikes. Move around if they dont stop. This is normal for as well.
 
+> [!NOTE]
+> If the rom crashes unexpectedly on multiplayer, blocks are missing or anything else, **READ THIS**
+> Networking will be fully rewritten with a custom engine sooner or later, replacing [mclib-3ds](https://github.com/SomeRandoLameo/mclib-3ds) for better performance and reduced data I/O overhead.
+> Until the new engine is in place, **no client-side changes will be tested against a live server**.
+
 ### Roadmap
 There is a [project board](https://github.com/users/SomeRandoLameo/projects/2/views/2). if you want to contribute, but dont know where to start, check it out. 
 It has priorities and is organized for easy navigation.
