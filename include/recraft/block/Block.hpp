@@ -331,7 +331,7 @@ public:
 
     BlockID GetID() const;
     float getHardness() const;
-    bool isOpaque(Metadata metadata = 0) const;
+    virtual bool isOpaque(Metadata metadata = 0) const;
     bool isSolid() const;
     SoundType getSoundType() const;
     uint8_t getLightEmission() const;

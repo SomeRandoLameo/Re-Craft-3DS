@@ -101,10 +101,18 @@ void Player::InitializeInventory() {
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Deadbush), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Piston), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Piston_Head), 1, 0);
-    inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Wool), 1, 0);
+
+    for (uint8_t i = 0; i <= 15; i++) { // Wool and variants
+        inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Wool), 1, i);
+    }
+
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Piston_Extension), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Yellow_Flower), 1, 0);
-    inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Red_Flower), 1, 0);
+
+    for (uint8_t i = 0; i <= 8; i++) { // Red Flower and variants
+        inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Red_Flower), 1, i);
+    }
+
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Brown_Mushroom), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Red_Mushroom), 1, 0);
     inventory[slotIndex++] = mc::inventory::Slot(static_cast<s32>(BlockID::Gold_Block), 1, 0);

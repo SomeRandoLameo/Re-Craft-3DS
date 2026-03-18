@@ -2,28 +2,50 @@
 #include "ReCraftCore.hpp"
 #include "block/BlockAir.hpp"
 #include "block/BlockBed.hpp"
+#include "block/BlockBookshelf.hpp"
+#include "block/BlockChest.hpp"
+#include "block/BlockColored.hpp"
+#include "block/BlockCrops.hpp"
 #include "block/BlockDeadBush.hpp"
 #include "block/BlockDirt.hpp"
 #include "block/BlockDispenser.hpp"
+#include "block/BlockDoubleStoneSlab.hpp"
+#include "block/BlockFire.hpp"
+#include "block/BlockFurnace.hpp"
 #include "block/BlockGlass.hpp"
 #include "block/BlockGrass.hpp"
 #include "block/BlockGravel.hpp"
+#include "block/BlockHalfStoneSlab.hpp"
 #include "block/BlockLeaves.hpp"
+#include "block/BlockMobSpawner.hpp"
+#include "block/BlockMushroom.hpp"
 #include "block/BlockNote.hpp"
+#include "block/BlockObsidian.hpp"
 #include "block/BlockOldLeaves.hpp"
 #include "block/BlockOldLog.hpp"
 #include "block/BlockOre.hpp"
 #include "block/BlockPistonBase.hpp"
+#include "block/BlockPistonExtension.hpp"
+#include "block/BlockPistonMoving.hpp"
 #include "block/BlockPlanks.hpp"
 #include "block/BlockRailDetector.hpp"
 #include "block/BlockRailPowered.hpp"
+#include "block/BlockRedFlower.hpp"
+#include "block/BlockRedstoneWire.hpp"
 #include "block/BlockSand.hpp"
 #include "block/BlockSandStone.hpp"
 #include "block/BlockSapling.hpp"
 #include "block/BlockSponge.hpp"
+#include "block/BlockStairs.hpp"
+#include "block/BlockStandingSign.hpp"
 #include "block/BlockStone.hpp"
+#include "block/BlockTNT.hpp"
 #include "block/BlockTallGrass.hpp"
+#include "block/BlockTorch.hpp"
+#include "block/BlockWallSign.hpp"
 #include "block/BlockWeb.hpp"
+#include "block/BlockWorkbench.hpp"
+#include "block/BlockYellowFlower.hpp"
 #include "util/EnumFacing.hpp"
 
 BlockPtr Block::setHardness(float hardness) {
@@ -119,21 +141,23 @@ void BlockRegistry::Init() {
     RegisterBlock(BlockID::Dirt, (new BlockDirt())->setHardness(0.5F)->setSoundType(SoundType::GROUND)->setUnlocalizedName("dirt"));
 
 //TODO: Blocks initialize always with material, also cobblestone is reused
-    RegisterBlock(BlockID::Cobblestone, (new Block())->setHardness(2.0F)->setResistance(10.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("cobblestone")->setCreativeTab(CreativeTabs::BUILDING_BLOCKS));
+    auto cobbleBlock = (new Block())->setHardness(2.0F)->setResistance(10.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("cobblestone")->setCreativeTab(CreativeTabs::BUILDING_BLOCKS);
+    RegisterBlock(BlockID::Cobblestone, cobbleBlock);
 
-    RegisterBlock(BlockID::Planks, (new BlockPlanks())->setHardness(2.0F)->setResistance(5.0F)->setSoundType(SoundType::WOOD)->setUnlocalizedName("wood"));
+    auto planksBlock = (new BlockPlanks())->setHardness(2.0F)->setResistance(5.0F)->setSoundType(SoundType::WOOD)->setUnlocalizedName("wood");
+    RegisterBlock(BlockID::Planks, planksBlock);
     RegisterBlock(BlockID::Sapling, (new BlockSapling())->setHardness(0.0F)->setSoundType(SoundType::PLANT)->setUnlocalizedName("sapling"));
 
 //TODO: BlockEmptyDrops
     RegisterBlock(BlockID::Bedrock, (new Block())->setBlockUnbreakable()->setResistance(6000000.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("bedrock")->disableStats()->setCreativeTab(CreativeTabs::BUILDING_BLOCKS));
 
-//TODO:BlockDynamicLiquid
+//TODO:BlockDynamicLiquid, Texture Atlas
     RegisterBlock(BlockID::Flowing_Water, (new Block())->setHardness(100.0F)->setLightOpacity(3)->setUnlocalizedName("water")->disableStats());
-//TODO:BlockStaticLiquid
+//TODO:BlockStaticLiquid, Texture Atlas
     RegisterBlock(BlockID::Water, (new Block())->setHardness(100.0F)->setLightOpacity(3)->setUnlocalizedName("water")->disableStats());
-//TODO:BlockDynamicLiquid
+//TODO:BlockDynamicLiquid, Texture Atlas
     RegisterBlock(BlockID::Flowing_Lava, (new Block())->setHardness(100.0F)->setLightLevel(1.0F)->setUnlocalizedName("lava")->disableStats());
-//TODO:BlockStaticLiquid
+//TODO:BlockStaticLiquid, Texture Atlas
     RegisterBlock(BlockID::Lava, (new Block())->setHardness(100.0F)->setLightLevel(1.0F)->setUnlocalizedName("lava")->disableStats());
 
     RegisterBlock(BlockID::Sand, (new BlockSand())->setHardness(0.5F)->setSoundType(SoundType::SAND)->setUnlocalizedName("sand"));
@@ -152,7 +176,7 @@ void BlockRegistry::Init() {
     RegisterBlock(BlockID::Glass, (new BlockGlass())->setHardness(0.3F)->setSoundType(SoundType::GLASS)->setUnlocalizedName("glass"));
     RegisterBlock(BlockID::Lapis_Ore, (new BlockOre())->setHardness(3.0F)->setResistance(5.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("oreLapis"));
 
-//TODO: How do you get your texture?
+//TODO: How do you get your texture? Some blocks get them via their name
     RegisterBlock(BlockID::Lapis_Block, (new Block())->setHardness(3.0F)->setResistance(5.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("blockLapis")->setCreativeTab(CreativeTabs::BUILDING_BLOCKS));
 
     RegisterBlock(BlockID::Dispenser, (new BlockDispenser())->setHardness(3.5F)->setSoundType(SoundType::STONE)->setUnlocalizedName("dispenser"));
@@ -168,46 +192,63 @@ void BlockRegistry::Init() {
     RegisterBlock(BlockID::Web, (new BlockWeb())->setLightOpacity(1)->setHardness(4.0F)->setUnlocalizedName("web"));
     RegisterBlock(BlockID::Tallgrass, (new BlockTallGrass())->setHardness(0.0F)->setSoundType(SoundType::PLANT)->setUnlocalizedName("tallgrass"));
     RegisterBlock(BlockID::Deadbush, (new BlockDeadBush())->setHardness(0.0F)->setSoundType(SoundType::PLANT)->setUnlocalizedName("deadbush"));
+    RegisterBlock(BlockID::Piston, (new BlockPistonBase(false))->setUnlocalizedName("pistonBase"));
+    RegisterBlock(BlockID::Piston_Head, (new BlockPistonExtension())->setUnlocalizedName("pistonBase"));
+    RegisterBlock(BlockID::Wool, (new BlockColored("wool_colored"))->setHardness(0.8F)->setSoundType(SoundType::CLOTH)->setUnlocalizedName("cloth"));
+    RegisterBlock(BlockID::Piston_Extension, (new BlockPistonMoving()));
+    RegisterBlock(BlockID::Yellow_Flower, (new BlockYellowFlower())->setHardness(0.0F)->setSoundType(SoundType::PLANT)->setUnlocalizedName("flower1"));
+    RegisterBlock(BlockID::Red_Flower, (new BlockRedFlower())->setHardness(0.0F)->setSoundType(SoundType::PLANT)->setUnlocalizedName("flower2"));
 
+//TODO: How do you get your unique texture
+    RegisterBlock(BlockID::Brown_Mushroom, (new BlockMushroom())->setHardness(0.0F)->setSoundType(SoundType::PLANT)->setLightLevel(0.125F)->setUnlocalizedName("mushroom"));
+//TODO: How do you get your unique texture
+    RegisterBlock(BlockID::Red_Mushroom, (new BlockMushroom())->setHardness(0.0F)->setSoundType(SoundType::PLANT)->setUnlocalizedName("mushroom"));
 
-
-
-    RegisterBlock(BlockID::Piston, (new Block())->setUnlocalizedName("pistonBase"));
-    RegisterBlock(BlockID::Piston_Head, (new Block())->setUnlocalizedName("pistonBase"));
-    RegisterBlock(BlockID::Wool, (new Block())->setHardness(0.8F)->setSoundType(SoundType::CLOTH)->setUnlocalizedName("cloth"));
-    RegisterBlock(BlockID::Piston_Extension, (new Block()));
-    RegisterBlock(BlockID::Yellow_Flower, (new Block())->setHardness(0.0F)->setSoundType(SoundType::PLANT)->setUnlocalizedName("flower1"));
-    RegisterBlock(BlockID::Red_Flower, (new Block())->setHardness(0.0F)->setSoundType(SoundType::PLANT)->setUnlocalizedName("flower2"));
-    RegisterBlock(BlockID::Brown_Mushroom, (new Block())->setHardness(0.0F)->setSoundType(SoundType::PLANT)->setLightLevel(0.125F)->setUnlocalizedName("mushroom"));
-    RegisterBlock(BlockID::Red_Mushroom, (new Block())->setHardness(0.0F)->setSoundType(SoundType::PLANT)->setUnlocalizedName("mushroom"));
+//TODO: How do you get your texture? Some blocks get them via their name
     RegisterBlock(BlockID::Gold_Block, (new Block())->setHardness(3.0F)->setResistance(10.0F)->setSoundType(SoundType::METAL)->setUnlocalizedName("blockGold")->setCreativeTab(CreativeTabs::BUILDING_BLOCKS));
+//TODO: How do you get your texture? Some blocks get them via their name
     RegisterBlock(BlockID::Iron_Block, (new Block())->setHardness(5.0F)->setResistance(10.0F)->setSoundType(SoundType::METAL)->setUnlocalizedName("blockIron")->setCreativeTab(CreativeTabs::BUILDING_BLOCKS));
-    RegisterBlock(BlockID::Double_Stone_Slab, (new Block())->setHardness(2.0F)->setResistance(10.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("stoneSlab"));
-    RegisterBlock(BlockID::Stone_Slab, (new Block())->setHardness(2.0F)->setResistance(10.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("stoneSlab"));
+
+//TODO: Do these have metadata variants?
+    RegisterBlock(BlockID::Double_Stone_Slab, (new BlockDoubleStoneSlab())->setHardness(2.0F)->setResistance(10.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("stoneSlab"));
+//TODO: Do these have metadata variants?
+    RegisterBlock(BlockID::Stone_Slab, (new BlockHalfStoneSlab())->setHardness(2.0F)->setResistance(10.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("stoneSlab"));
+
+//TODO: How do you get your texture? Some blocks get them via their name
     RegisterBlock(BlockID::Brick_Block, (new Block())->setHardness(2.0F)->setResistance(10.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("brick")->setCreativeTab(CreativeTabs::BUILDING_BLOCKS));
-    RegisterBlock(BlockID::Tnt, (new Block())->setHardness(0.0F)->setSoundType(SoundType::PLANT)->setUnlocalizedName("tnt"));
-    RegisterBlock(BlockID::Bookshelf, (new Block())->setHardness(1.5F)->setSoundType(SoundType::WOOD)->setUnlocalizedName("bookshelf"));
+
+    RegisterBlock(BlockID::Tnt, (new BlockTNT())->setHardness(0.0F)->setSoundType(SoundType::PLANT)->setUnlocalizedName("tnt"));
+    RegisterBlock(BlockID::Bookshelf, (new BlockBookshelf())->setHardness(1.5F)->setSoundType(SoundType::WOOD)->setUnlocalizedName("bookshelf"));
+
+//TODO: How do you get your texture? Some blocks get them via their name
     RegisterBlock(BlockID::Mossy_Cobblestone, (new Block())->setHardness(2.0F)->setResistance(10.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("stoneMoss")->setCreativeTab(CreativeTabs::BUILDING_BLOCKS));
-    RegisterBlock(BlockID::Obsidian, (new Block())->setHardness(50.0F)->setResistance(2000.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("obsidian"));
-    RegisterBlock(BlockID::Torch, (new Block())->setHardness(0.0F)->setLightLevel(0.9375F)->setSoundType(SoundType::WOOD)->setUnlocalizedName("torch"));
-    RegisterBlock(BlockID::Fire, (new Block())->setHardness(0.0F)->setLightLevel(1.0F)->setSoundType(SoundType::CLOTH)->setUnlocalizedName("fire")->disableStats());
-    RegisterBlock(BlockID::Mob_Spawner, (new Block())->setHardness(5.0F)->setSoundType(SoundType::METAL)->setUnlocalizedName("mobSpawner")->disableStats());
-    RegisterBlock(BlockID::Oak_Stairs, (new Block())->setUnlocalizedName("stairsWood"));
-    RegisterBlock(BlockID::Chest, (new Block())->setHardness(2.5F)->setSoundType(SoundType::WOOD)->setUnlocalizedName("chest"));
-    RegisterBlock(BlockID::Redstone_Wire, (new Block())->setHardness(0.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("redstoneDust")->disableStats());
-    RegisterBlock(BlockID::Diamond_Ore, (new Block())->setHardness(3.0F)->setResistance(5.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("oreDiamond"));
+
+    RegisterBlock(BlockID::Obsidian, (new BlockObsidian())->setHardness(50.0F)->setResistance(2000.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("obsidian"));
+    RegisterBlock(BlockID::Torch, (new BlockTorch())->setHardness(0.0F)->setLightLevel(0.9375F)->setSoundType(SoundType::WOOD)->setUnlocalizedName("torch"));
+
+//TODO:BlockStaticLiquid, Texture Atlas
+    RegisterBlock(BlockID::Fire, (new BlockFire())->setHardness(0.0F)->setLightLevel(1.0F)->setSoundType(SoundType::CLOTH)->setUnlocalizedName("fire")->disableStats());
+
+    RegisterBlock(BlockID::Mob_Spawner, (new BlockMobSpawner())->setHardness(5.0F)->setSoundType(SoundType::METAL)->setUnlocalizedName("mobSpawner")->disableStats());
+    RegisterBlock(BlockID::Oak_Stairs, (new BlockStairs(planksBlock, static_cast<Metadata>(BlockPlanks::Variant::Oak)))->setUnlocalizedName("stairsWood"));
+    RegisterBlock(BlockID::Chest, (new BlockChest(BlockChest::Type::Basic))->setHardness(2.5F)->setSoundType(SoundType::WOOD)->setUnlocalizedName("chest"));
+    RegisterBlock(BlockID::Redstone_Wire, (new BlockRedstoneWire())->setHardness(0.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("redstoneDust")->disableStats());
+    RegisterBlock(BlockID::Diamond_Ore, (new BlockOre())->setHardness(3.0F)->setResistance(5.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("oreDiamond"));
+
+//TODO: How do you get your texture? Some blocks get them via their name
     RegisterBlock(BlockID::Diamond_Block, (new Block())->setHardness(5.0F)->setResistance(10.0F)->setSoundType(SoundType::METAL)->setUnlocalizedName("blockDiamond")->setCreativeTab(CreativeTabs::BUILDING_BLOCKS));
-    RegisterBlock(BlockID::Crafting_Table, (new Block())->setHardness(2.5F)->setSoundType(SoundType::WOOD)->setUnlocalizedName("workbench"));
-    RegisterBlock(BlockID::Wheat, (new Block())->setUnlocalizedName("crops"));
+
+    RegisterBlock(BlockID::Crafting_Table, (new BlockWorkbench())->setHardness(2.5F)->setSoundType(SoundType::WOOD)->setUnlocalizedName("workbench"));
+    RegisterBlock(BlockID::Wheat, (new BlockCrops())->setUnlocalizedName("crops"));
     RegisterBlock(BlockID::Farmland, (new Block())->setHardness(0.6F)->setSoundType(SoundType::GROUND)->setUnlocalizedName("farmland"));
-    RegisterBlock(BlockID::Furnace, (new Block())->setHardness(3.5F)->setSoundType(SoundType::STONE)->setUnlocalizedName("furnace")->setCreativeTab(CreativeTabs::DECORATIONS));
-    RegisterBlock(BlockID::Lit_Furnace, (new  Block())->setHardness(3.5F)->setSoundType(SoundType::STONE)->setLightLevel(0.875F)->setUnlocalizedName("furnace"));
-    RegisterBlock(BlockID::Standing_Sign, (new Block())->setHardness(1.0F)->setSoundType(SoundType::WOOD)->setUnlocalizedName("sign")->disableStats());
+    RegisterBlock(BlockID::Furnace, (new BlockFurnace(false))->setHardness(3.5F)->setSoundType(SoundType::STONE)->setUnlocalizedName("furnace")->setCreativeTab(CreativeTabs::DECORATIONS));
+    RegisterBlock(BlockID::Lit_Furnace, (new BlockFurnace(true))->setHardness(3.5F)->setSoundType(SoundType::STONE)->setLightLevel(0.875F)->setUnlocalizedName("furnace"));
+    RegisterBlock(BlockID::Standing_Sign, (new BlockStandingSign())->setHardness(1.0F)->setSoundType(SoundType::WOOD)->setUnlocalizedName("sign")->disableStats());
     RegisterBlock(BlockID::Wooden_Door, (new Block())->setHardness(3.0F)->setSoundType(SoundType::WOOD)->setUnlocalizedName("doorOak")->disableStats());
     RegisterBlock(BlockID::Ladder, (new Block())->setHardness(0.4F)->setSoundType(SoundType::LADDER)->setUnlocalizedName("ladder"));
     RegisterBlock(BlockID::Rail, (new Block())->setHardness(0.7F)->setSoundType(SoundType::METAL)->setUnlocalizedName("rail"));
-    RegisterBlock(BlockID::Stone_Stairs, (new Block())->setUnlocalizedName("stairsStone"));
-    RegisterBlock(BlockID::Wall_Sign, (new Block())->setHardness(1.0F)->setSoundType(SoundType::WOOD)->setUnlocalizedName("sign")->disableStats());
+    //TODO: Continue RegisterBlock(BlockID::Stone_Stairs, (new BlockStairs(cobbleBlock))->setUnlocalizedName("stairsStone"));
+    RegisterBlock(BlockID::Wall_Sign, (new BlockWallSign())->setHardness(1.0F)->setSoundType(SoundType::WOOD)->setUnlocalizedName("sign")->disableStats());
     RegisterBlock(BlockID::Lever, (new Block())->setHardness(0.5F)->setSoundType(SoundType::WOOD)->setUnlocalizedName("lever"));
     RegisterBlock(BlockID::Stone_Pressure_Plate, (new Block())->setHardness(0.5F)->setSoundType(SoundType::STONE)->setUnlocalizedName("pressurePlateStone"));
     RegisterBlock(BlockID::Iron_Door, (new Block())->setHardness(5.0F)->setSoundType(SoundType::METAL)->setUnlocalizedName("doorIron")->disableStats());
