@@ -107,6 +107,7 @@ add_executable(${PROJECT_NAME}
     source/recraft/block/material/Material.cpp
     source/recraft/block/material/MapColor.cpp
     source/recraft/item/EnumDyeColor.cpp
+    source/recraft/item/Item.cpp
     source/recraft/util/text/TextFormatting.cpp
     source/recraft/block/material/MaterialLiquid.cpp
     source/recraft/block/material/MaterialTransparent.cpp
