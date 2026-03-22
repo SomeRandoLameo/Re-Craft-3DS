@@ -1,0 +1,221 @@
+//
+// Created by elias on 22.03.26.
+//
+#include "item/Item.hpp"
+#include "block/Block.hpp"
+
+void ItemRegistry::RegisterItemBlock(BlockID block, Item* item) {
+    int id = static_cast<int>(static_cast<u8>(block));
+
+    m_registry[id] = item;
+    m_occupied[id] = true;
+    m_blockToItem[static_cast<u8>(block)] = item;
+}
+
+void ItemRegistry::Init() {
+
+    RegisterItemBlock(BlockID::Air, (new Item()));
+    RegisterItemBlock(BlockID::Stone, (new Item()));
+    RegisterItemBlock(BlockID::Grass, (new Item()));
+    RegisterItemBlock(BlockID::Dirt, (new Item()));
+    RegisterItemBlock(BlockID::Cobblestone, (new Item()));
+    RegisterItemBlock(BlockID::Planks, (new Item()));
+    RegisterItemBlock(BlockID::Sapling, (new Item()));
+    RegisterItemBlock(BlockID::Bedrock, (new Item()));
+    RegisterItemBlock(BlockID::Sand, (new Item()));
+    RegisterItemBlock(BlockID::Gravel, (new Item()));
+    RegisterItemBlock(BlockID::Gold_Ore, (new Item()));
+    RegisterItemBlock(BlockID::Iron_Ore, (new Item()));
+    RegisterItemBlock(BlockID::Coal_Ore, (new Item()));
+    RegisterItemBlock(BlockID::Log, (new Item()));
+    RegisterItemBlock(BlockID::Leaves, (new Item()));
+    RegisterItemBlock(BlockID::Sponge, (new Item()));
+    RegisterItemBlock(BlockID::Glass, (new Item()));
+    RegisterItemBlock(BlockID::Lapis_Ore, (new Item()));
+    RegisterItemBlock(BlockID::Lapis_Block, (new Item()));
+    RegisterItemBlock(BlockID::Dispenser, (new Item()));
+    RegisterItemBlock(BlockID::Sandstone, (new Item()));
+    RegisterItemBlock(BlockID::Noteblock, (new Item()));
+    RegisterItemBlock(BlockID::Golden_Rail, (new Item()));
+    RegisterItemBlock(BlockID::Detector_Rail, (new Item()));
+    RegisterItemBlock(BlockID::Sticky_Piston, (new Item()));
+    RegisterItemBlock(BlockID::Web, (new Item()));
+    RegisterItemBlock(BlockID::Tallgrass, (new Item()));
+    RegisterItemBlock(BlockID::Deadbush, (new Item()));
+    RegisterItemBlock(BlockID::Piston, (new Item()));
+    RegisterItemBlock(BlockID::Wool, (new Item()));
+    RegisterItemBlock(BlockID::Yellow_Flower, (new Item()));
+    RegisterItemBlock(BlockID::Red_Flower, (new Item()));
+    RegisterItemBlock(BlockID::Brown_Mushroom, (new Item()));
+    RegisterItemBlock(BlockID::Red_Mushroom, (new Item()));
+    RegisterItemBlock(BlockID::Gold_Block, (new Item()));
+    RegisterItemBlock(BlockID::Iron_Block, (new Item()));
+
+    // Stone slab — item always places as half slab
+    RegisterItemBlock(BlockID::Stone_Slab, (new Item()));
+    RegisterItemBlock(BlockID::Double_Stone_Slab, (new Item()));
+
+    RegisterItemBlock(BlockID::Brick_Block, (new Item()));
+    RegisterItemBlock(BlockID::Tnt, (new Item()));
+    RegisterItemBlock(BlockID::Bookshelf, (new Item()));
+    RegisterItemBlock(BlockID::Mossy_Cobblestone, (new Item()));
+    RegisterItemBlock(BlockID::Obsidian, (new Item()));
+    RegisterItemBlock(BlockID::Torch, (new Item()));
+    RegisterItemBlock(BlockID::Mob_Spawner, (new Item()));
+    RegisterItemBlock(BlockID::Oak_Stairs, (new Item()));
+    RegisterItemBlock(BlockID::Chest, (new Item()));
+    RegisterItemBlock(BlockID::Diamond_Ore, (new Item()));
+    RegisterItemBlock(BlockID::Diamond_Block, (new Item()));
+    RegisterItemBlock(BlockID::Crafting_Table, (new Item()));
+    RegisterItemBlock(BlockID::Farmland, (new Item()));
+    RegisterItemBlock(BlockID::Furnace, (new Item()));
+    RegisterItemBlock(BlockID::Standing_Sign, (new Item()));
+    RegisterItemBlock(BlockID::Ladder, (new Item()));
+    RegisterItemBlock(BlockID::Rail, (new Item()));
+    RegisterItemBlock(BlockID::Stone_Stairs, (new Item()));
+    RegisterItemBlock(BlockID::Lever, (new Item()));
+    RegisterItemBlock(BlockID::Stone_Pressure_Plate, (new Item()));
+    RegisterItemBlock(BlockID::Wooden_Pressure_Plate, (new Item()));
+    RegisterItemBlock(BlockID::Redstone_Ore, (new Item()));
+    RegisterItemBlock(BlockID::Redstone_Torch, (new Item()));
+    RegisterItemBlock(BlockID::Stone_Button, (new Item()));
+    RegisterItemBlock(BlockID::Snow_Layer, (new Item()));
+    RegisterItemBlock(BlockID::Ice, (new Item()));
+    RegisterItemBlock(BlockID::Snow, (new Item()));
+    RegisterItemBlock(BlockID::Cactus, (new Item()));
+    RegisterItemBlock(BlockID::Clay, (new Item()));
+    RegisterItemBlock(BlockID::Jukebox, (new Item()));
+    RegisterItemBlock(BlockID::Fence, (new Item()));
+    RegisterItemBlock(BlockID::Spruce_Fence, (new Item()));
+    RegisterItemBlock(BlockID::Birch_Fence, (new Item()));
+    RegisterItemBlock(BlockID::Jungle_Fence, (new Item()));
+    RegisterItemBlock(BlockID::Dark_Oak_Fence, (new Item()));
+    RegisterItemBlock(BlockID::Acacia_Fence, (new Item()));
+    RegisterItemBlock(BlockID::Pumpkin, (new Item()));
+    RegisterItemBlock(BlockID::Netherrack, (new Item()));
+    RegisterItemBlock(BlockID::Soul_Sand, (new Item()));
+    RegisterItemBlock(BlockID::Glowstone, (new Item()));
+    RegisterItemBlock(BlockID::Lit_Pumpkin, (new Item()));
+    RegisterItemBlock(BlockID::Trapdoor, (new Item()));
+    RegisterItemBlock(BlockID::Monster_Egg, (new Item()));
+    RegisterItemBlock(BlockID::Stonebrick, (new Item()));
+    RegisterItemBlock(BlockID::Brown_Mushroom_Block, (new Item()));
+    RegisterItemBlock(BlockID::Red_Mushroom_Block, (new Item()));
+    RegisterItemBlock(BlockID::Iron_Bars, (new Item()));
+    RegisterItemBlock(BlockID::Glass_Pane, (new Item()));
+    RegisterItemBlock(BlockID::Melon_Block, (new Item()));
+    RegisterItemBlock(BlockID::Fence_Gate, (new Item()));
+    RegisterItemBlock(BlockID::Spruce_Fence_Gate, (new Item()));
+    RegisterItemBlock(BlockID::Birch_Fence_Gate, (new Item()));
+    RegisterItemBlock(BlockID::Jungle_Fence_Gate, (new Item()));
+    RegisterItemBlock(BlockID::Dark_Oak_Fence_Gate, (new Item()));
+    RegisterItemBlock(BlockID::Acacia_Fence_Gate, (new Item()));
+    RegisterItemBlock(BlockID::Brick_Stairs, (new Item()));
+    RegisterItemBlock(BlockID::Stone_Brick_Stairs, (new Item()));
+    RegisterItemBlock(BlockID::Mycelium, (new Item()));
+    RegisterItemBlock(BlockID::Waterlily, (new Item()));
+    RegisterItemBlock(BlockID::Nether_Brick, (new Item()));
+    RegisterItemBlock(BlockID::Nether_Brick_Fence, (new Item()));
+    RegisterItemBlock(BlockID::Nether_Brick_Stairs, (new Item()));
+    RegisterItemBlock(BlockID::Enchanting_Table, (new Item()));
+    RegisterItemBlock(BlockID::End_Portal_Frame, (new Item()));
+    RegisterItemBlock(BlockID::End_Stone, (new Item()));
+    RegisterItemBlock(BlockID::End_Bricks, (new Item()));
+    RegisterItemBlock(BlockID::Dragon_Egg, (new Item()));
+    RegisterItemBlock(BlockID::Redstone_Lamp, (new Item()));
+
+    // Wooden slab
+    RegisterItemBlock(BlockID::Wooden_Slab, (new Item()));
+    RegisterItemBlock(BlockID::Double_Wooden_Slab, (new Item()));
+
+    RegisterItemBlock(BlockID::Sandstone_Stairs, (new Item()));
+    RegisterItemBlock(BlockID::Emerald_Ore, (new Item()));
+    RegisterItemBlock(BlockID::Ender_Chest, (new Item()));
+    RegisterItemBlock(BlockID::Tripwire_Hook, (new Item()));
+    RegisterItemBlock(BlockID::Emerald_Block, (new Item()));
+    RegisterItemBlock(BlockID::Spruce_Stairs, (new Item()));
+    RegisterItemBlock(BlockID::Birch_Stairs, (new Item()));
+    RegisterItemBlock(BlockID::Jungle_Stairs, (new Item()));
+    RegisterItemBlock(BlockID::Command_Block, (new Item()));
+    RegisterItemBlock(BlockID::Beacon, (new Item()));
+    RegisterItemBlock(BlockID::Cobblestone_Wall, (new Item()));
+    RegisterItemBlock(BlockID::Wooden_Button, (new Item()));
+    RegisterItemBlock(BlockID::Anvil, (new Item()));
+    RegisterItemBlock(BlockID::Trapped_Chest, (new Item()));
+    RegisterItemBlock(BlockID::Light_Weighted_Pressure_Plate, (new Item()));
+    RegisterItemBlock(BlockID::Heavy_Weighted_Pressure_Plate, (new Item()));
+    RegisterItemBlock(BlockID::Daylight_Detector, (new Item()));
+    RegisterItemBlock(BlockID::Redstone_Block, (new Item()));
+    RegisterItemBlock(BlockID::Quartz_Ore, (new Item()));
+    RegisterItemBlock(BlockID::Hopper, (new Item()));
+    RegisterItemBlock(BlockID::Quartz_Block, (new Item()));
+    RegisterItemBlock(BlockID::Quartz_Stairs, (new Item()));
+    RegisterItemBlock(BlockID::Activator_Rail, (new Item()));
+    RegisterItemBlock(BlockID::Dropper, (new Item()));
+    RegisterItemBlock(BlockID::Stained_Hardened_Clay, (new Item()));
+    RegisterItemBlock(BlockID::Barrier, (new Item()));
+    RegisterItemBlock(BlockID::Iron_Trapdoor, (new Item()));
+    RegisterItemBlock(BlockID::Hay_Block, (new Item()));
+    RegisterItemBlock(BlockID::Carpet, (new Item()));
+    RegisterItemBlock(BlockID::Hardened_Clay, (new Item()));
+    RegisterItemBlock(BlockID::Coal_Block, (new Item()));
+    RegisterItemBlock(BlockID::Packed_Ice, (new Item()));
+    RegisterItemBlock(BlockID::Acacia_Stairs, (new Item()));
+    RegisterItemBlock(BlockID::Dark_Oak_Stairs, (new Item()));
+    RegisterItemBlock(BlockID::Slime, (new Item()));
+    RegisterItemBlock(BlockID::Grass_Path, (new Item()));
+    RegisterItemBlock(BlockID::Stained_Glass, (new Item()));
+    RegisterItemBlock(BlockID::Stained_Glass_Pane, (new Item()));
+    RegisterItemBlock(BlockID::Prismarine, (new Item()));
+    RegisterItemBlock(BlockID::Sea_Lantern, (new Item()));
+    RegisterItemBlock(BlockID::Red_Sandstone, (new Item()));
+    RegisterItemBlock(BlockID::Red_Sandstone_Stairs, (new Item()));
+    RegisterItemBlock(BlockID::Stone_Slab2, (new Item()));
+    RegisterItemBlock(BlockID::Double_Stone_Slab2, (new Item()));
+    RegisterItemBlock(BlockID::Repeating_Command_Block, (new Item()));
+    RegisterItemBlock(BlockID::Chain_Command_Block, (new Item()));
+    RegisterItemBlock(BlockID::Magma, (new Item()));
+    RegisterItemBlock(BlockID::Nether_Wart_Block, (new Item()));
+    RegisterItemBlock(BlockID::Red_Nether_Brick, (new Item()));
+    RegisterItemBlock(BlockID::Bone_Block, (new Item()));
+    RegisterItemBlock(BlockID::Structure_Void, (new Item()));
+    RegisterItemBlock(BlockID::Observer, (new Item()));
+    RegisterItemBlock(BlockID::White_Shulker_Box, (new Item()));
+    RegisterItemBlock(BlockID::Orange_Shulker_Box, (new Item()));
+    RegisterItemBlock(BlockID::Magenta_Shulker_Box, (new Item()));
+    RegisterItemBlock(BlockID::Light_Blue_Shulker_Box, (new Item()));
+    RegisterItemBlock(BlockID::Yellow_Shulker_Box, (new Item()));
+    RegisterItemBlock(BlockID::Lime_Shulker_Box, (new Item()));
+    RegisterItemBlock(BlockID::Pink_Shulker_Box, (new Item()));
+    RegisterItemBlock(BlockID::Gray_Shulker_Box, (new Item()));
+    RegisterItemBlock(BlockID::Silver_Shulker_Box, (new Item()));
+    RegisterItemBlock(BlockID::Cyan_Shulker_Box, (new Item()));
+    RegisterItemBlock(BlockID::Purple_Shulker_Box, (new Item()));
+    RegisterItemBlock(BlockID::Blue_Shulker_Box, (new Item()));
+    RegisterItemBlock(BlockID::Brown_Shulker_Box, (new Item()));
+    RegisterItemBlock(BlockID::Green_Shulker_Box, (new Item()));
+    RegisterItemBlock(BlockID::Red_Shulker_Box, (new Item()));
+    RegisterItemBlock(BlockID::Black_Shulker_Box, (new Item()));
+    RegisterItemBlock(BlockID::White_Glazed_Terracotta, (new Item()));
+    RegisterItemBlock(BlockID::Orange_Glazed_Terracotta, (new Item()));
+    RegisterItemBlock(BlockID::Magenta_Glazed_Terracotta, (new Item()));
+    RegisterItemBlock(BlockID::Light_Blue_Glazed_Terracotta, (new Item()));
+    RegisterItemBlock(BlockID::Yellow_Glazed_Terracotta, (new Item()));
+    RegisterItemBlock(BlockID::Lime_Glazed_Terracotta, (new Item()));
+    RegisterItemBlock(BlockID::Pink_Glazed_Terracotta, (new Item()));
+    RegisterItemBlock(BlockID::Gray_Glazed_Terracotta, (new Item()));
+    RegisterItemBlock(BlockID::Silver_Glazed_Terracotta, (new Item()));
+    RegisterItemBlock(BlockID::Cyan_Glazed_Terracotta, (new Item()));
+    RegisterItemBlock(BlockID::Purple_Glazed_Terracotta, (new Item()));
+    RegisterItemBlock(BlockID::Blue_Glazed_Terracotta, (new Item()));
+    RegisterItemBlock(BlockID::Brown_Glazed_Terracotta, (new Item()));
+    RegisterItemBlock(BlockID::Green_Glazed_Terracotta, (new Item()));
+    RegisterItemBlock(BlockID::Red_Glazed_Terracotta, (new Item()));
+    RegisterItemBlock(BlockID::Black_Glazed_Terracotta, (new Item()));
+    RegisterItemBlock(BlockID::Concrete, (new Item()));
+    RegisterItemBlock(BlockID::Concrete_Powder, (new Item()));
+    RegisterItemBlock(BlockID::Structure_Block, (new Item()));
+
+    // TODO: Non-block items (tools, food, weapons etc.) need their own
+    // Item subclasses and IDs separate from block IDs
+}

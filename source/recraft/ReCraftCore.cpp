@@ -5,6 +5,7 @@
 // #include "client/renderer/block/ModelBakery.hpp"
 // #include "client/renderer/block/ModelBlock.hpp"
 #include "input/InputManager.hpp"
+#include "item/Item.hpp"
 
 bool showDebugInfo = true;
 ReCraftCore* ReCraftCore::m_theReCraftCore = nullptr;
@@ -27,6 +28,7 @@ ReCraftCore::ReCraftCore() {
     SaveManager::InitFileSystem();
 
     BlockRegistry::GetInstance().Init();
+    ItemRegistry::GetInstance().Init();
 
     // UNUSED, TOO MUCH RESOURCE CONSUMPTION
     // m_modelBakery = new ModelBakery("romfs:/assets/minecraft");
