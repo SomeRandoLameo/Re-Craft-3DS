@@ -136,6 +136,7 @@ My Tag is "SomeRandoLameo"!
 ### Credits
 - Network engine bits from [mclib-3ds](https://github.com/SomeRandoLameo/mclib-3ds)
 - Client Engine bits from [craftus](https://github.com/Onixiya/craftus)
+- Research from Official Minecraft LCE Source code [MinecraftConsoles](https://github.com/smartcmd/MinecraftConsoles)
 - Research from Official Minecraft PE decompilations [MCPED](https://github.com/ReMinecraftPE/mcped)
 - Research from Official Minecraft Legacy Console decompilations [MinecraftLCE](https://github.com/GRAnimated/MinecraftLCE/tree/main)
 - Research from Official Minecraft Decompilations [MCP919](https://github.com/Marcelektro/MCP-919)
@@ -149,7 +150,8 @@ My Tag is "SomeRandoLameo"!
 - Moddimation as another main contributor
 - RSDuck & Onixia ([Craftus](https://github.com/Onixiya/craftus))
 - Plushmonkey ([original mclib](https://github.com/plushmonkey/mclib) & [Terra](https://github.com/plushmonkey/Terracotta))
-- The people behing [MCPED](https://github.com/ReMinecraftPE/mcped)
+- The people behind [MCPED](https://github.com/ReMinecraftPE/mcped)
+- 4J Studios and the people behind [MinecraftConsoles](- The people behing [MCPED](https://github.com/ReMinecraftPE/mcped)
 - The people behind the MCLE Decomp [MinecraftLCE](https://github.com/GRAnimated/MinecraftLCE/tree/main)
 - The people behind MCP919 and the ones that published this build [MCP919](https://github.com/Marcelektro/MCP-919)
 - The people behind [DEAR IMGUI](https://github.com/ocornut/imgui)
