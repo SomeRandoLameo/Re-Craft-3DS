@@ -3,13 +3,13 @@
 #include <citro3d.h>
 #include "Camera.hpp"
 #include "Clouds.hpp"
-#include "CubeRenderer.hpp"
 #include "Cursor.hpp"
 #include "Hand.hpp"
 #include "client/entity/Player.hpp"
 #include "mcbridge/MCBridge.hpp"
 #include "world/WorkQueue.hpp"
 #include "world/World.hpp"
+#include "client/renderer/ChestRenderer.hpp"
 
 // mclib
 #include <mclib/common/Vector.h>
@@ -39,7 +39,7 @@ private:
     void RenderWorld();
 
     Hand* m_hand = nullptr;
-    CubeRenderer* m_cubeRenderer = nullptr;
+    ChestRenderer* m_chestRenderer = nullptr;
     Clouds* m_clouds = nullptr;
     Player* m_player = nullptr;
     World* m_world = nullptr;

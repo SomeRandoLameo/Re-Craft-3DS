@@ -20,12 +20,10 @@ WorldRenderer::WorldRenderer(Player* player, World* world, WorkQueue* workqueue,
 
     m_renderingQueue.clear();
     m_transparentClusters.clear();
-
+    m_chestRenderer = new ChestRenderer();
     m_cursor = new Cursor();
 
     m_hand = new Hand();
-
-    m_cubeRenderer = new CubeRenderer();
 
     // what the hell is event that.
     float data[256];
@@ -56,7 +54,7 @@ WorldRenderer::~WorldRenderer() {
     m_cursor = nullptr;
 
     m_hand->~Hand();
-    m_cubeRenderer->~CubeRenderer();
+    m_chestRenderer->~ChestRenderer();
     m_clouds->~Clouds();
 }
 
@@ -205,7 +203,7 @@ void WorldRenderer::Render(float iod) {
 
     m_clouds->Draw(m_projectionUniform, m_cam.GetVP(), m_player->position.x, m_player->position.z);
 
-    m_cubeRenderer->Draw(m_projectionUniform, m_cam.GetVP(), m_world, m_player->position);
+    m_chestRenderer->Draw(m_projectionUniform, m_cam.GetVP(), 0.0f, 17.0f, 0.0f);
 
     if (m_player->blockInActionRange) {
         m_cursor->Draw(m_projectionUniform, m_cam.GetVP(), m_world, m_player->viewRayCast.hitPos,

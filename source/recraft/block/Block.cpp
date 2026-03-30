@@ -17,6 +17,7 @@
 #include "block/BlockGravel.hpp"
 #include "block/BlockHalfStoneSlab.hpp"
 #include "block/BlockLeaves.hpp"
+#include "block/BlockLever.hpp"
 #include "block/BlockMobSpawner.hpp"
 #include "block/BlockMushroom.hpp"
 #include "block/BlockNote.hpp"
@@ -247,10 +248,11 @@ void BlockRegistry::Init() {
     RegisterBlock(BlockID::Wooden_Door, (new Block())->setHardness(3.0F)->setSoundType(SoundType::WOOD)->setUnlocalizedName("doorOak")->disableStats());
     RegisterBlock(BlockID::Ladder, (new Block())->setHardness(0.4F)->setSoundType(SoundType::LADDER)->setUnlocalizedName("ladder"));
     RegisterBlock(BlockID::Rail, (new Block())->setHardness(0.7F)->setSoundType(SoundType::METAL)->setUnlocalizedName("rail"));
-    //TODO: Continue RegisterBlock(BlockID::Stone_Stairs, (new BlockStairs(cobbleBlock))->setUnlocalizedName("stairsStone"));
+    RegisterBlock(BlockID::Stone_Stairs, (new BlockStairs(cobbleBlock))->setUnlocalizedName("stairsStone"));
     RegisterBlock(BlockID::Wall_Sign, (new BlockWallSign())->setHardness(1.0F)->setSoundType(SoundType::WOOD)->setUnlocalizedName("sign")->disableStats());
-    RegisterBlock(BlockID::Lever, (new Block())->setHardness(0.5F)->setSoundType(SoundType::WOOD)->setUnlocalizedName("lever"));
-    RegisterBlock(BlockID::Stone_Pressure_Plate, (new Block())->setHardness(0.5F)->setSoundType(SoundType::STONE)->setUnlocalizedName("pressurePlateStone"));
+    RegisterBlock(BlockID::Lever, (new BlockLever())->setHardness(0.5F)->setSoundType(SoundType::WOOD)->setUnlocalizedName("lever"));
+    //TODO: Continue
+RegisterBlock(BlockID::Stone_Pressure_Plate, (new Block())->setHardness(0.5F)->setSoundType(SoundType::STONE)->setUnlocalizedName("pressurePlateStone"));
     RegisterBlock(BlockID::Iron_Door, (new Block())->setHardness(5.0F)->setSoundType(SoundType::METAL)->setUnlocalizedName("doorIron")->disableStats());
     RegisterBlock(BlockID::Wooden_Pressure_Plate, (new Block())->setHardness(0.5F)->setSoundType(SoundType::WOOD)->setUnlocalizedName("pressurePlateWood"));
     RegisterBlock(BlockID::Redstone_Ore, (new Block())->setHardness(3.0F)->setResistance(5.0F)->setSoundType(SoundType::STONE)->setUnlocalizedName("oreRedstone")->setCreativeTab(CreativeTabs::BUILDING_BLOCKS));

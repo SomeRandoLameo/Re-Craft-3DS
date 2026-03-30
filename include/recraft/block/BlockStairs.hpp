@@ -6,6 +6,11 @@
 // TODO: Custom AABB for stair collision
 class BlockStairs : public Block {
 public:
+    explicit BlockStairs(const Block* modelBlock, Metadata modelMeta = 0)
+        : Block(), m_modelBlock(modelBlock), m_modelMeta(modelMeta) {
+        setOpaque(false);
+    }
+
     enum class Half : uint8_t {
         Bottom = 0,
         Top    = 1,
@@ -30,11 +35,6 @@ public:
 
     static Half halfFromMeta(Metadata meta) {
         return (meta & 0x4) ? Half::Top : Half::Bottom;
-    }
-
-    explicit BlockStairs(const Block* modelBlock, Metadata modelMeta)
-        : Block(), m_modelBlock(modelBlock), m_modelMeta(modelMeta) {
-        setOpaque(false);
     }
 
     TextureSet getTextures(Metadata meta) const override {
