@@ -5,27 +5,19 @@
 class BlockOldLeaves : public Block {
 public:
     enum class Variant : uint8_t {
-        Oak    = 0,
+        Oak = 0,
         Spruce = 1,
-        Birch  = 2,
+        Birch = 2,
         Jungle = 3,
     };
 
-    static Variant variantFromMeta(Metadata meta) {
-        return static_cast<Variant>(meta & 0x3);
-    }
+    static Variant variantFromMeta(Metadata meta) { return static_cast<Variant>(meta & 0x3); }
 
-    static bool isPlayerPlaced(Metadata meta) {
-        return (meta >> 2) & 0x1;
-    }
+    static bool isPlayerPlaced(Metadata meta) { return (meta >> 2) & 0x1; }
 
-    static bool shouldCheckDecay(Metadata meta) {
-        return (meta >> 3) & 0x1;
-    }
+    static bool shouldCheckDecay(Metadata meta) { return (meta >> 3) & 0x1; }
 
-    BlockOldLeaves() : Block() {
-        setOpaque(false);
-    }
+    BlockOldLeaves() : Block() { setOpaque(false); }
 
     void getColor(Metadata metadata, Direction direction, Metadata out_rgb[]) const override {
         // TODO: Biome tinting, for now use a static foliage color
@@ -52,7 +44,5 @@ public:
         return BlockID::Air;
     }
 
-    Metadata getDropMeta(Metadata meta) const override {
-        return 0;
-    }
+    Metadata getDropMeta(Metadata meta) const override { return 0; }
 };

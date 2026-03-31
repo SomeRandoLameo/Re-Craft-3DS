@@ -6,10 +6,10 @@
 #include "Cursor.hpp"
 #include "Hand.hpp"
 #include "client/entity/Player.hpp"
+#include "client/renderer/ChestRenderer.hpp"
 #include "mcbridge/MCBridge.hpp"
 #include "world/WorkQueue.hpp"
 #include "world/World.hpp"
-#include "client/renderer/ChestRenderer.hpp"
 
 // mclib
 #include <mclib/common/Vector.h>

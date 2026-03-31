@@ -8,18 +8,18 @@
 // TODO: Should drop redstone dust item, requires item system
 class BlockRedstoneWire : public Block {
 public:
-    static uint8_t powerFromMeta(Metadata meta) {
-        return meta & 0xF;
-    }
+    static uint8_t powerFromMeta(Metadata meta) { return meta & 0xF; }
 
     // Color multiplier based on power level, matching vanilla
     static void getPowerColor(uint8_t power, uint8_t& r, uint8_t& g, uint8_t& b) {
-        float f  = (float)power / 15.0f;
+        float f = (float)power / 15.0f;
         float f1 = f * 0.6f + (power == 0 ? 0.3f : 0.4f);
         float f2 = f * f * 0.7f - 0.5f;
         float f3 = f * f * 0.6f - 0.7f;
-        if (f2 < 0.0f) f2 = 0.0f;
-        if (f3 < 0.0f) f3 = 0.0f;
+        if (f2 < 0.0f)
+            f2 = 0.0f;
+        if (f3 < 0.0f)
+            f3 = 0.0f;
         r = (uint8_t)(f1 * 255.0f);
         g = (uint8_t)(f2 * 255.0f);
         b = (uint8_t)(f3 * 255.0f);
@@ -38,15 +38,9 @@ public:
         out_rgb[2] = b;
     }
 
-    TextureSet getTextures(Metadata meta) const override {
-        return TextureSet("redstone_dust_cross");
-    }
+    TextureSet getTextures(Metadata meta) const override { return TextureSet("redstone_dust_cross"); }
 
-    BlockID getDropID(Metadata meta) const override {
-        return BlockID::Air;
-    }
+    BlockID getDropID(Metadata meta) const override { return BlockID::Air; }
 
-    Metadata getDropMeta(Metadata meta) const override {
-        return 0;
-    }
+    Metadata getDropMeta(Metadata meta) const override { return 0; }
 };

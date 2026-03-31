@@ -10,20 +10,16 @@ public:
 
     TextureSet getTextures(Metadata meta) const override {
         TextureSet ts;
-        ts.faces[Direction::Top]    = "tnt_top";
+        ts.faces[Direction::Top] = "tnt_top";
         ts.faces[Direction::Bottom] = "tnt_bottom";
-        ts.faces[Direction::North]  = "tnt_side";
-        ts.faces[Direction::South]  = "tnt_side";
-        ts.faces[Direction::West]   = "tnt_side";
-        ts.faces[Direction::East]   = "tnt_side";
+        ts.faces[Direction::North] = "tnt_side";
+        ts.faces[Direction::South] = "tnt_side";
+        ts.faces[Direction::West] = "tnt_side";
+        ts.faces[Direction::East] = "tnt_side";
         return ts;
     }
 
-    BlockID getDropID(Metadata meta) const override {
-        return BlockID::Tnt;
-    }
+    BlockID getDropID(Metadata meta) const override { return BlockID::Tnt; }
 
-    Metadata getDropMeta(Metadata meta) const override {
-        return 0;
-    }
+    Metadata getDropMeta(Metadata meta) const override { return 0; }
 };

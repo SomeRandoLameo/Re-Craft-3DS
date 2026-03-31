@@ -84,7 +84,7 @@ public:
     bool blockInSight = false;
     bool blockInActionRange = false;
 
-    //IDK how many we actually need. this shoult be enough for now
+    // IDK how many we actually need. this shoult be enough for now
     mc::inventory::Slot inventory[500];
 
 

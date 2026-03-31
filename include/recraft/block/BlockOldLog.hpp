@@ -5,16 +5,16 @@
 class BlockOldLog : public Block {
 public:
     enum class Variant : uint8_t {
-        Oak    = 0,
+        Oak = 0,
         Spruce = 1,
-        Birch  = 2,
+        Birch = 2,
         Jungle = 3,
     };
 
     enum class Axis : uint8_t {
-        Y    = 0,
-        X    = 1,
-        Z    = 2,
+        Y = 0,
+        X = 1,
+        Z = 2,
         Bark = 3,
     };
 
@@ -50,40 +50,38 @@ public:
         TextureSet ts;
         switch (axis) {
         case Axis::X:
-            ts.faces[Direction::Top]    = sideNames[idx];
+            ts.faces[Direction::Top] = sideNames[idx];
             ts.faces[Direction::Bottom] = sideNames[idx];
-            ts.faces[Direction::North]  = topNames[idx];
-            ts.faces[Direction::South]  = topNames[idx];
-            ts.faces[Direction::West]   = sideNames[idx];
-            ts.faces[Direction::East]   = sideNames[idx];
+            ts.faces[Direction::North] = topNames[idx];
+            ts.faces[Direction::South] = topNames[idx];
+            ts.faces[Direction::West] = sideNames[idx];
+            ts.faces[Direction::East] = sideNames[idx];
             break;
         case Axis::Z:
-            ts.faces[Direction::Top]    = sideNames[idx];
+            ts.faces[Direction::Top] = sideNames[idx];
             ts.faces[Direction::Bottom] = sideNames[idx];
-            ts.faces[Direction::North]  = sideNames[idx];
-            ts.faces[Direction::South]  = sideNames[idx];
-            ts.faces[Direction::West]   = topNames[idx];
-            ts.faces[Direction::East]   = topNames[idx];
+            ts.faces[Direction::North] = sideNames[idx];
+            ts.faces[Direction::South] = sideNames[idx];
+            ts.faces[Direction::West] = topNames[idx];
+            ts.faces[Direction::East] = topNames[idx];
             break;
         case Axis::Bark:
             ts = TextureSet(sideNames[idx]);
             break;
         case Axis::Y:
         default:
-            ts.faces[Direction::Top]    = topNames[idx];
+            ts.faces[Direction::Top] = topNames[idx];
             ts.faces[Direction::Bottom] = topNames[idx];
-            ts.faces[Direction::North]  = sideNames[idx];
-            ts.faces[Direction::South]  = sideNames[idx];
-            ts.faces[Direction::West]   = sideNames[idx];
-            ts.faces[Direction::East]   = sideNames[idx];
+            ts.faces[Direction::North] = sideNames[idx];
+            ts.faces[Direction::South] = sideNames[idx];
+            ts.faces[Direction::West] = sideNames[idx];
+            ts.faces[Direction::East] = sideNames[idx];
             break;
         }
         return ts;
     }
 
-    BlockID getDropID(Metadata meta) const override {
-        return BlockID::Log;
-    }
+    BlockID getDropID(Metadata meta) const override { return BlockID::Log; }
 
     Metadata getDropMeta(Metadata meta) const override {
         // strip axis bits, only keep wood type

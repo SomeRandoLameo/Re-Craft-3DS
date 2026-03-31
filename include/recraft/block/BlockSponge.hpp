@@ -10,7 +10,8 @@ public:
     };
 
     static Variant variantFromMeta(Metadata meta) {
-        if (meta > 1) meta = 0;
+        if (meta > 1)
+            meta = 0;
         return static_cast<Variant>(meta);
     }
 
@@ -26,7 +27,5 @@ public:
         }
     }
 
-    Metadata getDropMeta(Metadata meta) const override {
-        return static_cast<Metadata>(variantFromMeta(meta));
-    }
+    Metadata getDropMeta(Metadata meta) const override { return static_cast<Metadata>(variantFromMeta(meta)); }
 };

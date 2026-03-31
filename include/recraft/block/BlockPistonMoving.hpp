@@ -16,11 +16,7 @@ public:
         return TextureSet("piston_side");
     }
 
-    BlockID getDropID(Metadata meta) const override {
-        return BlockID::Air;
-    }
+    BlockID getDropID(Metadata meta) const override { return BlockID::Air; }
 
-    Metadata getDropMeta(Metadata meta) const override {
-        return 0;
-    }
+    Metadata getDropMeta(Metadata meta) const override { return 0; }
 };

@@ -4,9 +4,7 @@
 
 class BlockRailPowered : public BlockRailBase {
 public:
-    static bool isPowered(Metadata meta) {
-        return (meta >> 3) & 0x1;
-    }
+    static bool isPowered(Metadata meta) { return (meta >> 3) & 0x1; }
 
     BlockRailPowered() : BlockRailBase() {}
 
@@ -15,11 +13,7 @@ public:
         return TextureSet(isPowered(meta) ? "rail_golden_powered" : "rail_golden");
     }
 
-    BlockID getDropID(Metadata meta) const override {
-        return BlockID::Golden_Rail;
-    }
+    BlockID getDropID(Metadata meta) const override { return BlockID::Golden_Rail; }
 
-    Metadata getDropMeta(Metadata meta) const override {
-        return 0;
-    }
+    Metadata getDropMeta(Metadata meta) const override { return 0; }
 };

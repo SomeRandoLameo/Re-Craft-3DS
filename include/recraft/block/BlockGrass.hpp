@@ -6,11 +6,12 @@ class BlockGrass : public Block {
 public:
     enum class Variant : uint8_t {
         Normal = 0,
-        Snowy  = 1,
+        Snowy = 1,
     };
 
     static Variant variantFromMeta(Metadata meta) {
-        if (meta > 1) meta = 0;
+        if (meta > 1)
+            meta = 0;
         return static_cast<Variant>(meta);
     }
 
@@ -36,31 +37,27 @@ public:
         TextureSet ts;
         switch (variantFromMeta(meta)) {
         case Variant::Snowy:
-            ts.faces[Direction::Top]    = "snow";
+            ts.faces[Direction::Top] = "snow";
             ts.faces[Direction::Bottom] = "dirt";
-            ts.faces[Direction::North]  = "grass_side_snowed";
-            ts.faces[Direction::South]  = "grass_side_snowed";
-            ts.faces[Direction::West]   = "grass_side_snowed";
-            ts.faces[Direction::East]   = "grass_side_snowed";
+            ts.faces[Direction::North] = "grass_side_snowed";
+            ts.faces[Direction::South] = "grass_side_snowed";
+            ts.faces[Direction::West] = "grass_side_snowed";
+            ts.faces[Direction::East] = "grass_side_snowed";
             break;
         case Variant::Normal:
         default:
-            ts.faces[Direction::Top]    = "grass_top";
+            ts.faces[Direction::Top] = "grass_top";
             ts.faces[Direction::Bottom] = "dirt";
-            ts.faces[Direction::North]  = "grass_side";
-            ts.faces[Direction::South]  = "grass_side";
-            ts.faces[Direction::West]   = "grass_side";
-            ts.faces[Direction::East]   = "grass_side";
+            ts.faces[Direction::North] = "grass_side";
+            ts.faces[Direction::South] = "grass_side";
+            ts.faces[Direction::West] = "grass_side";
+            ts.faces[Direction::East] = "grass_side";
             break;
         }
         return ts;
     }
 
-    BlockID getDropID(Metadata meta) const override {
-        return BlockID::Dirt;
-    }
+    BlockID getDropID(Metadata meta) const override { return BlockID::Dirt; }
 
-    Metadata getDropMeta(Metadata meta) const override {
-        return 0;
-    }
+    Metadata getDropMeta(Metadata meta) const override { return 0; }
 };

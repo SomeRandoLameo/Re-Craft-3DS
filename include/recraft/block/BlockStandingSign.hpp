@@ -4,9 +4,7 @@
 
 class BlockStandingSign : public BlockSign {
 public:
-    static uint8_t rotationFromMeta(Metadata meta) {
-        return meta & 0xF;
-    }
+    static uint8_t rotationFromMeta(Metadata meta) { return meta & 0xF; }
 
     BlockStandingSign() : BlockSign() {}
 

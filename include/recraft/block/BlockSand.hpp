@@ -7,12 +7,13 @@
 class BlockSand : public Block {
 public:
     enum class Variant : uint8_t {
-        Sand    = 0,
+        Sand = 0,
         RedSand = 1,
     };
 
     static Variant variantFromMeta(Metadata meta) {
-        if (meta > 1) meta = 0;
+        if (meta > 1)
+            meta = 0;
         return static_cast<Variant>(meta);
     }
 
@@ -28,11 +29,7 @@ public:
         return TextureSet(names[idx]);
     }
 
-    BlockID getDropID(Metadata meta) const override {
-        return BlockID::Sand;
-    }
+    BlockID getDropID(Metadata meta) const override { return BlockID::Sand; }
 
-    Metadata getDropMeta(Metadata meta) const override {
-        return static_cast<Metadata>(variantFromMeta(meta));
-    }
+    Metadata getDropMeta(Metadata meta) const override { return static_cast<Metadata>(variantFromMeta(meta)); }
 };

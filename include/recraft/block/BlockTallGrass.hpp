@@ -8,11 +8,12 @@ public:
     enum class Variant : uint8_t {
         DeadShrub = 0,
         TallGrass = 1,
-        Fern      = 2,
+        Fern = 2,
     };
 
     static Variant variantFromMeta(Metadata meta) {
-        if (meta > 2) meta = 1;
+        if (meta > 2)
+            meta = 1;
         return static_cast<Variant>(meta);
     }
 
@@ -51,7 +52,5 @@ public:
         return BlockID::Air;
     }
 
-    Metadata getDropMeta(Metadata meta) const override {
-        return 0;
-    }
+    Metadata getDropMeta(Metadata meta) const override { return 0; }
 };

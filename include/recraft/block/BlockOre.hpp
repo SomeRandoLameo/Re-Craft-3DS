@@ -10,17 +10,15 @@ class BlockOre : public Block {
 public:
     BlockOre() : Block() {}
 
-    //TODO: How the hell deos minecraft determine these??? this is not the right design...
+    // TODO: How the hell deos minecraft determine these??? this is not the right design...
     TextureSet getTextures(Metadata meta) const override {
-        static const struct { const char* unlocalizedName; const char* textureName; } remap[] = {
-            { "oreGold",        "gold_ore"        },
-            { "oreIron",        "iron_ore"        },
-            { "oreCoal",        "coal_ore"        },
-            { "oreLapis",       "lapis_ore"       },
-            { "oreDiamond",     "diamond_ore"     },
-            { "oreRedstone",    "redstone_ore"    },
-            { "oreEmerald",     "emerald_ore"     },
-            { "netherquartz",   "quartz_ore"      },
+        static const struct {
+            const char* unlocalizedName;
+            const char* textureName;
+        } remap[] = {
+            {"oreGold", "gold_ore"},       {"oreIron", "iron_ore"},        {"oreCoal", "coal_ore"},
+            {"oreLapis", "lapis_ore"},     {"oreDiamond", "diamond_ore"},  {"oreRedstone", "redstone_ore"},
+            {"oreEmerald", "emerald_ore"}, {"netherquartz", "quartz_ore"},
         };
 
         for (auto& entry : remap) {
@@ -43,7 +41,5 @@ public:
         }
     }
 
-    Metadata getDropMeta(Metadata meta) const override {
-        return 0;
-    }
+    Metadata getDropMeta(Metadata meta) const override { return 0; }
 };

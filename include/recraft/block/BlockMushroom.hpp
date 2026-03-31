@@ -8,7 +8,7 @@ class BlockMushroom : public BlockBush {
 public:
     BlockMushroom() : BlockBush() {}
 
-    //TODO: How the hell does Minecraft determine these textures??
+    // TODO: How the hell does Minecraft determine these textures??
     TextureSet getTextures(Metadata meta) const override {
         switch (m_id) {
         case BlockID::Red_Mushroom:
@@ -19,11 +19,7 @@ public:
         }
     }
 
-    BlockID getDropID(Metadata meta) const override {
-        return m_id;
-    }
+    BlockID getDropID(Metadata meta) const override { return m_id; }
 
-    Metadata getDropMeta(Metadata meta) const override {
-        return 0;
-    }
+    Metadata getDropMeta(Metadata meta) const override { return 0; }
 };

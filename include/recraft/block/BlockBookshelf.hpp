@@ -8,12 +8,12 @@ public:
 
     TextureSet getTextures(Metadata meta) const override {
         TextureSet ts;
-        ts.faces[Direction::Top]    = "planks_oak";
+        ts.faces[Direction::Top] = "planks_oak";
         ts.faces[Direction::Bottom] = "planks_oak";
-        ts.faces[Direction::North]  = "bookshelf";
-        ts.faces[Direction::South]  = "bookshelf";
-        ts.faces[Direction::West]   = "bookshelf";
-        ts.faces[Direction::East]   = "bookshelf";
+        ts.faces[Direction::North] = "bookshelf";
+        ts.faces[Direction::South] = "bookshelf";
+        ts.faces[Direction::West] = "bookshelf";
+        ts.faces[Direction::East] = "bookshelf";
         return ts;
     }
 
@@ -22,7 +22,5 @@ public:
         return BlockID::Bookshelf;
     }
 
-    Metadata getDropMeta(Metadata meta) const override {
-        return 0;
-    }
+    Metadata getDropMeta(Metadata meta) const override { return 0; }
 };

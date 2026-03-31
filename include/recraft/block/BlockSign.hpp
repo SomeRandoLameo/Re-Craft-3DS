@@ -11,11 +11,7 @@ public:
         setSolid(false);
     }
 
-    BlockID getDropID(Metadata meta) const override {
-        return BlockID::Standing_Sign;
-    }
+    BlockID getDropID(Metadata meta) const override { return BlockID::Standing_Sign; }
 
-    Metadata getDropMeta(Metadata meta) const override {
-        return 0;
-    }
+    Metadata getDropMeta(Metadata meta) const override { return 0; }
 };

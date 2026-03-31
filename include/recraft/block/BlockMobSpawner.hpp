@@ -7,19 +7,11 @@
 // TODO: Should render spinning mob inside using tile entity renderer
 class BlockMobSpawner : public Block {
 public:
-    BlockMobSpawner() : Block() {
-        setOpaque(false);
-    }
+    BlockMobSpawner() : Block() { setOpaque(false); }
 
-    TextureSet getTextures(Metadata meta) const override {
-        return TextureSet("mob_spawner");
-    }
+    TextureSet getTextures(Metadata meta) const override { return TextureSet("mob_spawner"); }
 
-    BlockID getDropID(Metadata meta) const override {
-        return BlockID::Air;
-    }
+    BlockID getDropID(Metadata meta) const override { return BlockID::Air; }
 
-    Metadata getDropMeta(Metadata meta) const override {
-        return 0;
-    }
+    Metadata getDropMeta(Metadata meta) const override { return 0; }
 };

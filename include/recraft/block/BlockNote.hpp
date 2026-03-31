@@ -7,15 +7,9 @@ class BlockNote : public Block {
 public:
     BlockNote() : Block() {}
 
-    TextureSet getTextures(Metadata meta) const override {
-        return TextureSet("noteblock");
-    }
+    TextureSet getTextures(Metadata meta) const override { return TextureSet("noteblock"); }
 
-    BlockID getDropID(Metadata meta) const override {
-        return BlockID::Noteblock;
-    }
+    BlockID getDropID(Metadata meta) const override { return BlockID::Noteblock; }
 
-    Metadata getDropMeta(Metadata meta) const override {
-        return 0;
-    }
+    Metadata getDropMeta(Metadata meta) const override { return 0; }
 };

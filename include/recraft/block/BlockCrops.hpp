@@ -10,22 +10,16 @@ class BlockCrops : public BlockBush {
 public:
     static constexpr uint8_t MaxAge = 7;
 
-    static uint8_t ageFromMeta(Metadata meta) {
-        return meta & 0x7;
-    }
+    static uint8_t ageFromMeta(Metadata meta) { return meta & 0x7; }
 
-    static bool isMaxAge(Metadata meta) {
-        return ageFromMeta(meta) >= MaxAge;
-    }
+    static bool isMaxAge(Metadata meta) { return ageFromMeta(meta) >= MaxAge; }
 
     BlockCrops() : BlockBush() {
         setOpaque(false);
         setSolid(false);
     }
 
-    virtual const char* getTexturePrefix() const {
-        return "wheat_stage_";
-    }
+    virtual const char* getTexturePrefix() const { return "wheat_stage_"; }
 
     TextureSet getTextures(Metadata meta) const override {
         // TODO: Needs X pattern rendering for proper crop appearance
@@ -34,11 +28,7 @@ public:
         return TextureSet(buffer);
     }
 
-    BlockID getDropID(Metadata meta) const override {
-        return BlockID::Wheat;
-    }
+    BlockID getDropID(Metadata meta) const override { return BlockID::Wheat; }
 
-    Metadata getDropMeta(Metadata meta) const override {
-        return 0;
-    }
+    Metadata getDropMeta(Metadata meta) const override { return 0; }
 };

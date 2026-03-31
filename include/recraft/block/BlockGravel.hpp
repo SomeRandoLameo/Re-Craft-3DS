@@ -8,9 +8,7 @@ class BlockGravel : public Block {
 public:
     BlockGravel() : Block() {}
 
-    TextureSet getTextures(Metadata meta) const override {
-        return TextureSet("gravel");
-    }
+    TextureSet getTextures(Metadata meta) const override { return TextureSet("gravel"); }
 
     BlockID getDropID(Metadata meta) const override {
         // TODO: Should drop flint with a 10% chance instead of gravel
@@ -18,7 +16,5 @@ public:
         return BlockID::Gravel;
     }
 
-    Metadata getDropMeta(Metadata meta) const override {
-        return 0;
-    }
+    Metadata getDropMeta(Metadata meta) const override { return 0; }
 };

@@ -5,39 +5,31 @@
 class BlockStone : public Block {
 public:
     enum class Variant : uint8_t {
-        Stone         = 0,
-        Granite       = 1,
+        Stone = 0,
+        Granite = 1,
         GraniteSmooth = 2,
-        Diorite       = 3,
+        Diorite = 3,
         DioriteSmooth = 4,
-        Andesite      = 5,
-        AndesiteSmooth= 6,
+        Andesite = 5,
+        AndesiteSmooth = 6,
     };
 
     static Variant variantFromMeta(Metadata meta) {
-        if (meta > 6) meta = 0;
+        if (meta > 6)
+            meta = 0;
         return static_cast<Variant>(meta);
     }
 
     BlockID getDropID(Metadata meta) const override {
-        return variantFromMeta(meta) == Variant::Stone
-            ? BlockID::Cobblestone
-            : BlockID::Stone;
+        return variantFromMeta(meta) == Variant::Stone ? BlockID::Cobblestone : BlockID::Stone;
     }
 
-    Metadata getDropMeta(Metadata meta) const override {
-        return variantFromMeta(meta) == Variant::Stone ? 0 : meta;
-    }
+    Metadata getDropMeta(Metadata meta) const override { return variantFromMeta(meta) == Variant::Stone ? 0 : meta; }
 
     TextureSet getTextures(Metadata meta) const override {
         static const char* names[] = {
-            "stone",
-            "stone_granite",
-            "stone_granite_smooth",
-            "stone_diorite",
-            "stone_diorite_smooth",
-            "stone_andesite",
-            "stone_andesite_smooth",
+            "stone",          "stone_granite",         "stone_granite_smooth", "stone_diorite", "stone_diorite_smooth",
+            "stone_andesite", "stone_andesite_smooth",
         };
 
         uint8_t idx = static_cast<uint8_t>(variantFromMeta(meta));

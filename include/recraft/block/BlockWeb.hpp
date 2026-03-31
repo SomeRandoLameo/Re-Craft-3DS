@@ -10,16 +10,12 @@ public:
         setSolid(false);
     }
 
-    TextureSet getTextures(Metadata meta) const override {
-        return TextureSet("web");
-    }
+    TextureSet getTextures(Metadata meta) const override { return TextureSet("web"); }
 
     BlockID getDropID(Metadata meta) const override {
         // TODO: Should drop string, requires item system
         return BlockID::Air;
     }
 
-    Metadata getDropMeta(Metadata meta) const override {
-        return 0;
-    }
+    Metadata getDropMeta(Metadata meta) const override { return 0; }
 };

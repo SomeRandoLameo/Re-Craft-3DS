@@ -6,9 +6,9 @@ class BlockRailBase : public Block {
 public:
     enum class Shape : uint8_t {
         FlatNorthSouth = 0,
-        FlatEastWest   = 1,
-        AscendingEast  = 2,
-        AscendingWest  = 3,
+        FlatEastWest = 1,
+        AscendingEast = 2,
+        AscendingWest = 3,
         AscendingNorth = 4,
         AscendingSouth = 5,
     };
@@ -23,7 +23,8 @@ public:
 
     static Shape shapeFromMeta(Metadata meta) {
         uint8_t shape = meta & 0x7;
-        if (shape > 5) shape = 0;
+        if (shape > 5)
+            shape = 0;
         return static_cast<Shape>(shape);
     }
 
