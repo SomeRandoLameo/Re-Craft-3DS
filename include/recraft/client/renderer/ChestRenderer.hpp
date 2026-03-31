@@ -20,6 +20,7 @@ private:
                   int axis, // 0=X  1=Y  2=Z
                   bool positiveDir, // which side of the slab
                   float u0, float v0, float u1, float v1, float r, float g, float b);
-    void emitBox(Tessellator* t, float ox, float oy, float oz, float w, float h, float d, int texX, int texY, float r,
+
+    void emitBox(Tessellator* tess, float offx, float offy, float offz, float width, float height, float depth, int texX, int texY, float r,
                  float g, float b);
 };

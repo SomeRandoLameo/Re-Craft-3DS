@@ -2,7 +2,7 @@
 #include "misc/NumberUtils.hpp"
 
 static constexpr float ATLAS = 64.0f;
-
+// TODO: Separate into model class/Function
 static inline void texelUV(int tx, int ty, int tw, int th, float& u0, float& v0, float& u1, float& v1) {
     u1 = tx / ATLAS;
     u0 = (tx + tw) / ATLAS;
@@ -158,7 +158,7 @@ void ChestRenderer::emitBox(Tessellator* t, float ox, float oy, float oz, float 
     emitFace(t, x0, y0, z0, x1, y1, z1, 2, true, u0, v0, u1, v1, r * 0.8f, g * 0.8f, b * 0.8f);
 }
 
-// ---------------------------------------------------------------------------
+// TODO: lid opening and closing animation
 void ChestRenderer::Draw(int projUniform, C3D_Mtx* vp, float worldX, float worldY, float worldZ) {
     C3D_Mtx model;
     Mtx_Identity(&model);
@@ -179,12 +179,29 @@ void ChestRenderer::Draw(int projUniform, C3D_Mtx* vp, float worldX, float world
     Tessellator* t = Tessellator::getInstance();
     t->begin(TESS_TRIANGLES);
 
-    // chest
-    emitBox(t, 0, 0, 0, 14, 10, 14, 0, 19, 1, 1, 1);
-    emitBox(t, 0, 10, 0, 14, 5, 14, 0, 0, 1, 1, 1);
+    // chest bottom
+    emitBox(t,
+            0, 0, 0,
+            14, 10, 14,
+            0, 19,
+            1, 1, 1
+            );
+
+    // top
+    emitBox(t,
+            0, 9, 0,
+            14, 5, 14,
+            0, 0,
+            1, 1, 1
+            );
 
     // lock
-    emitBox(t, 6.0f, 8.0f, -1.0f, 2.0f, 4.0f, 1.0f, 0, 0, 1, 1, 1);
+    emitBox(t,
+            6.0f, 7.0f, -1.0f,
+            2.0f, 4.0f, 1.0f,
+            0, 0,
+            1, 1, 1
+            );
 
     t->flush();
 
