@@ -64,7 +64,8 @@ add_executable(${PROJECT_NAME}
     source/recraft/client/renderer/Tessellator.cpp
     source/recraft/client/renderer/Frustum.cpp
     source/recraft/client/renderer/Clouds.cpp
-    source/recraft/client/renderer/ChestRenderer.cpp
+    source/recraft/client/model/ModelChest.cpp
+    source/recraft/client/model/ModelX.cpp
     source/recraft/client/renderer/Cursor.cpp
     source/recraft/client/renderer/Hand.cpp
     source/recraft/client/renderer/PolyGen.cpp

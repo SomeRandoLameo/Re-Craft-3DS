@@ -203,10 +203,14 @@ void ReCraftCore::RunSinglePlayer() {
                               WorldToChunkCoord(FastFloor(m_player->position.z)));
 }
 void ReCraftCore::ExitSinglePlayer() {
-    if (m_world)
-        m_world->Release(&m_chunkWorker, &m_savemgr);
+
+    //we crash here
+    //TODO: Fix Crash when creating StartTopScreen after exitting the world
     SetScreen(new StartTopScreen, true);
     SetScreen(new SelectWorldBotScreen, false);
+
+    if (m_world)
+        m_world->Release(&m_chunkWorker, &m_savemgr);
 }
 
 // TODO: Something prevents the 03DS from connecting. It isnt memory. My guess

@@ -6,7 +6,8 @@
 #include "Cursor.hpp"
 #include "Hand.hpp"
 #include "client/entity/Player.hpp"
-#include "client/renderer/ChestRenderer.hpp"
+#include "client/model/ModelChest.hpp"
+#include "client/model/ModelX.hpp"
 #include "mcbridge/MCBridge.hpp"
 #include "world/WorkQueue.hpp"
 #include "world/World.hpp"
@@ -39,7 +40,8 @@ private:
     void RenderWorld();
 
     Hand* m_hand = nullptr;
-    ChestRenderer* m_chestRenderer = nullptr;
+    ModelChest* m_chestRenderer = nullptr;
+    ModelX* m_xRenderer = nullptr;
     Clouds* m_clouds = nullptr;
     Player* m_player = nullptr;
     World* m_world = nullptr;

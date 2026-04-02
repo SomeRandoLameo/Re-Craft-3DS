@@ -1,16 +1,16 @@
 #pragma once
 
-#include <amethyst.hpp>
 #include <citro3d.h>
+#include "amethyst/include/amethyst.hpp"
 #include "client/renderer/Tessellator.hpp"
 #include "client/renderer/TextureMap.hpp"
 
-class ChestRenderer {
+class ModelChest {
 public:
-    ChestRenderer();
-    ~ChestRenderer();
+    ModelChest();
+    ~ModelChest();
 
-    void Draw(int projUniform, C3D_Mtx* vp, float worldX, float worldY, float worldZ);
+    void Render(int projUniform, C3D_Mtx* vp, float worldX, float worldY, float worldZ);
 
 private:
     Amy::Texture m_chestTexture;

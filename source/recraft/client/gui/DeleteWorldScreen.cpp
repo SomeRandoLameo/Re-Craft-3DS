@@ -16,6 +16,7 @@ void DeleteWorldScreen::PostResult(bool b) {
 }
 
 void DeleteWorldScreen::DeleteWorld(const std::string& path) {
+    //TODO: Freezes the 3DS
     std::error_code e; // just ignore errors
     std::filesystem::remove_all(path, e);
 }

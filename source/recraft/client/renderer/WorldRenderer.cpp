@@ -20,7 +20,8 @@ WorldRenderer::WorldRenderer(Player* player, World* world, WorkQueue* workqueue,
 
     m_renderingQueue.clear();
     m_transparentClusters.clear();
-    m_chestRenderer = new ChestRenderer();
+    m_chestRenderer = new ModelChest();
+    m_xRenderer = new ModelX();
     m_cursor = new Cursor();
 
     m_hand = new Hand();
@@ -54,7 +55,8 @@ WorldRenderer::~WorldRenderer() {
     m_cursor = nullptr;
 
     m_hand->~Hand();
-    m_chestRenderer->~ChestRenderer();
+    m_chestRenderer->~ModelChest();
+    m_xRenderer->~ModelX();
     m_clouds->~Clouds();
 }
 
@@ -203,7 +205,8 @@ void WorldRenderer::Render(float iod) {
 
     m_clouds->Draw(m_projectionUniform, m_cam.GetVP(), m_player->position.x, m_player->position.z);
 
-    m_chestRenderer->Draw(m_projectionUniform, m_cam.GetVP(), 0.0f, 17.0f, 0.0f);
+    m_chestRenderer->Render(m_projectionUniform, m_cam.GetVP(), 0.0f, 17.0f, 0.0f);
+    m_xRenderer->Render(m_projectionUniform, m_cam.GetVP(),1.0f, 17.0f, 0.0f, BlockID::Red_Flower,0,255,255,255);
 
     if (m_player->blockInActionRange) {
         m_cursor->Draw(m_projectionUniform, m_cam.GetVP(), m_world, m_player->viewRayCast.hitPos,

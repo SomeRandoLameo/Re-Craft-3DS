@@ -1,4 +1,4 @@
-#include "client/renderer/ChestRenderer.hpp"
+#include "client/model/ModelChest.hpp"
 #include "misc/NumberUtils.hpp"
 
 static constexpr float ATLAS = 64.0f;
@@ -11,11 +11,11 @@ static inline void texelUV(int tx, int ty, int tw, int th, float& u0, float& v0,
     v0 = 1.0f - ty / ATLAS;
 }
 
-ChestRenderer::ChestRenderer() { m_chestTexture.Load("romfs:/assets/minecraft/textures/entity/chest/normal.png"); }
+ModelChest::ModelChest() { m_chestTexture.Load("romfs:/assets/minecraft/textures/entity/chest/normal.png"); }
 
-ChestRenderer::~ChestRenderer() { m_chestTexture.Unload(); }
+ModelChest::~ModelChest() { m_chestTexture.Unload(); }
 
-void ChestRenderer::emitFace(Tessellator* t, float x0, float y0, float z0, float x1, float y1, float z1, int axis,
+void ModelChest::emitFace(Tessellator* t, float x0, float y0, float z0, float x1, float y1, float z1, int axis,
                              bool positiveDir, float u0, float v0, float u1, float v1, float r, float g, float b) {
     t->color(r, g, b);
 
@@ -123,7 +123,7 @@ void ChestRenderer::emitFace(Tessellator* t, float x0, float y0, float z0, float
     }
 }
 
-void ChestRenderer::emitBox(Tessellator* t, float ox, float oy, float oz, float w, float h, float d, int texX, int texY,
+void ModelChest::emitBox(Tessellator* t, float ox, float oy, float oz, float w, float h, float d, int texX, int texY,
                             float r, float g, float b) {
     float x0 = ox, x1 = ox + w;
     float y0 = oy, y1 = oy + h;
@@ -159,7 +159,7 @@ void ChestRenderer::emitBox(Tessellator* t, float ox, float oy, float oz, float 
 }
 
 // TODO: lid opening and closing animation
-void ChestRenderer::Draw(int projUniform, C3D_Mtx* vp, float worldX, float worldY, float worldZ) {
+void ModelChest::Render(int projUniform, C3D_Mtx* vp, float worldX, float worldY, float worldZ) {
     C3D_Mtx model;
     Mtx_Identity(&model);
 
@@ -178,6 +178,15 @@ void ChestRenderer::Draw(int projUniform, C3D_Mtx* vp, float worldX, float world
 
     Tessellator* t = Tessellator::getInstance();
     t->begin(TESS_TRIANGLES);
+
+    //TODO: Remove dirty fix
+    // This was added brcause the side textures of the first cube model were missing
+    emitBox(t,
+            0, 0, 0,
+            0, 0, 0,
+            0, 0,
+            0, 0, 0
+    );
 
     // chest bottom
     emitBox(t,
